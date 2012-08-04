@@ -1,12 +1,5 @@
 package com.bazaarvoice.concierge.tools;
 
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -166,7 +159,8 @@ public class Jolt {
             current = (Map<String, Object>) next;               // drill down the next level
         }
 
-        // TODO value defensive clone
+        // defensive clone, in case the spec points to a map or list in the input doc
+        value = JsonUtils.cloneJson( value );
 
         // now we're at the very bottom of our path.
         // time to insert our value
@@ -259,47 +253,5 @@ public class Jolt {
             }
             return -1;
         }
-    }
-
-
-    // =========================================================
-    // Temporary test code from here down
-
-    public static void main(String[] args)
-            throws IOException {
-
-        InputStream in = null;
-        InputStream spec = null;
-        if (args.length == 0) {
-            in = Jolt.class.getResourceAsStream( "input_sample.json" );
-            spec = Jolt.class.getResourceAsStream( "spec_sample.json" );
-        } else {
-            in = new FileInputStream( args[0] );
-            spec = new FileInputStream( args[1] );
-        }
-        Map<String, Object> inputMap = jsonToMap( in );
-        Map<String, Object> specMap = jsonToMap( spec );
-
-        Jolt x = new Jolt();
-        Map outMap = x.xform( inputMap, specMap );
-
-        System.out.println( mapToJson( outMap ) );
-    }
-
-    public static Map<String, Object> jsonToMap(InputStream in)
-            throws IOException {
-        JsonFactory factory = new JsonFactory();
-        ObjectMapper mapper = new ObjectMapper(factory);
-        TypeReference<HashMap<String,Object>> typeRef
-                = new TypeReference<HashMap<String,Object>>() {};
-        HashMap<String,Object> o = mapper.readValue(in, typeRef);
-        return o;
-    }
-
-    static String mapToJson(Map map)
-            throws IOException {
-        JsonFactory factory = new JsonFactory();
-        ObjectMapper mapper = new ObjectMapper(factory);
-        return mapper.writeValueAsString( map );
     }
 }
