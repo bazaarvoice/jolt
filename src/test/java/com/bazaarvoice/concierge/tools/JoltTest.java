@@ -4,7 +4,6 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,11 +15,14 @@ import java.util.Map;
 public class JoltTest {
 
     private static String[] TEST_CASES = new String[] {
-//      "firstSample",
-//      "singlePlacement",
-//      "multiPlacement",
-//      "wildcards",
-      "specialKeys"
+      "firstSample",
+      "singlePlacement",
+      "multiPlacement",
+      "wildcards",
+      "specialKeys",
+      "identity",
+      "objectToArray",
+      ""
     };
 
     // TODO: test arrays better (wildcards test array could be in reverse order)
@@ -29,13 +31,17 @@ public class JoltTest {
     public void runTestCases()
             throws IOException {
         for (int i=0; i<TEST_CASES.length; i++) {
+            if ("".equals( TEST_CASES[i] )) {
+                continue;
+            }
+            System.out.println("Running test case "+TEST_CASES[i]);
             String testPath = "/json/jolt/"+TEST_CASES[i];
-            Map<String, Object> input = JsonUtils.jsonToMap( Jolt.class.getResourceAsStream( testPath+"/input.json" ) );
-            Map<String, Object> spec = JsonUtils.jsonToMap( Jolt.class.getResourceAsStream( testPath+"/spec.json" ) );
-            Map<String, Object> expected = JsonUtils.jsonToMap( Jolt.class.getResourceAsStream( testPath+"/output.json" ) );
+            Object input = JsonUtils.jsonToObject( Jolt.class.getResourceAsStream( testPath+"/input.json" ) );
+            Object spec = JsonUtils.jsonToObject( Jolt.class.getResourceAsStream( testPath+"/spec.json" ) );
+            Object expected = JsonUtils.jsonToObject( Jolt.class.getResourceAsStream( testPath+"/output.json" ) );
 
             Jolt jolt = new Jolt();
-            Map<String, Object> actual = jolt.xform( input, spec );
+            Object actual = jolt.xform( input, spec );
 
             Diffy diffy = new Diffy();
             Diffy.Result result = diffy.diff( expected, actual );

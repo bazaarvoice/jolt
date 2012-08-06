@@ -78,71 +78,73 @@ public class Jolt {
     private static final String SPEC_KEY_REFERENCES_INPUT_KEY = "&";
     private static final String SPEC_KEY_REFERENCES_INPUT_VALUE = "@";
 
+    private static final String OUTPUT_PATH_PREFIX = "output";
+
     // TODO construction option that takes a warning/info listener
 
     // TODO support for lists in mappings
 
-    public Map<String, Object> xform(Map<String, Object> input, Map<String, Object> spec) {
+    public Object xform(Object input, Object spec) {
 
         // TODO defense
 
         Map output = new HashMap();
-        this.xform( input, spec, output, new Path() );
-        return output;
+        this.applySpec( input, spec, output, new Path() );
+        return output.get( OUTPUT_PATH_PREFIX );
     }
 
-    public void xform(Map<String, Object> input, Map<String, Object> spec, Map<String, Object> output, Path inputPath) {
+
+    private void applySpec(Object input, Object spec, Map<String,Object> output, Path inputPath) {
 
         // TODO defense
 
-        for( String key: input.keySet() ) {
+        if (spec instanceof Map) {
+            this.applyMapSpec( input, (Map<String, Object>) spec, output, inputPath );
+        }
+        else if (spec instanceof List) {
+            this.applyListSpec( input, (List) spec, output, inputPath );
+        }
+        else if (spec instanceof String) {
+            this.applyStringSpec( input, (String) spec, output, inputPath );
+        }
+        // TODO else warn
+    }
 
-            // process the next top-level item in the input:
-            Path pathToInputItem = new Path( inputPath, key );
-            Object inputItem = input.get( key );
 
-            // find the part in the spec that applies to
-            // the next top-level item to process:
-            String specKey = this.findMatchingSpecKey( spec, key );
-            if (specKey == null) {      // no spec for this item
-                continue;               // that's okay--omit it and keep going.
+
+    private void applyMapSpec(Object input, Map<String, Object> spec, Map<String,Object> output, Path inputPath) {
+        // 1) apply special keys
+        this.handleSpecialKey( spec.get( SPEC_KEY_REFERENCES_INPUT_KEY ), inputPath, output, inputPath.itemFromEnd( 0 ) );
+        this.handleSpecialKey( spec.get( SPEC_KEY_REFERENCES_INPUT_VALUE ), inputPath, output, input );
+
+        // 2) do input type specific stuff
+        if (input instanceof  Map) {
+            Map<String, Object> inputMap = (Map<String, Object>) input;
+            for (String key: inputMap.keySet()) {
+                Object subInput = inputMap.get( key );
+                this.applySubSpec( spec, key, inputPath, subInput, output );
             }
+        }
+        else if (input instanceof List) {
+            List inputList = (List) input;
+            for (int i=0; i<inputList.size(); i++) {
+                Object subInput = inputList.get( i );
+                String key = Integer.toString( i );
+                this.applySubSpec( spec, key, inputPath, subInput, output );
+            }
+        }
+    }
+
+    private void applySubSpec(Map<String, Object> spec, String key, Path inputPath, Object subInput, Map<String,Object> output) {
+        String specKey = this.findMatchingSpecKey( spec, key );
+        if (specKey != null) {
             Object subSpec = spec.get( specKey );
-
-            // the spec either treats the current input item as a map or as a scalar
-            if (subSpec instanceof Map) {                                                   // sub-spec treats this like a map. let's see if we can recurse.
-                Map<String, Object> subSpecMap = (Map<String, Object>) subSpec;            // if the input item is also a map, we can proceed
-
-                this.handleSpecialKey( subSpecMap.get( SPEC_KEY_REFERENCES_INPUT_KEY ), pathToInputItem, output, key );
-                this.handleSpecialKey( subSpecMap.get( SPEC_KEY_REFERENCES_INPUT_VALUE ), pathToInputItem, output, input.get( key ) );
-
-                if (inputItem instanceof Map) {
-                    xform((Map<String, Object>) inputItem, subSpecMap, output, pathToInputItem);               // recurse to the sub input/spec
-                }
-            }
-            else if (subSpec instanceof List) {
-                for (Object subSpecElement: (List) subSpec) {
-                    // TODO: what if spec is a map
-                    // TODO: what if spec is a list
-                    putInOutput( output, new Path( (String) subSpecElement ), input.get( key ), pathToInputItem );   // put the value in the output
-                }
-            }
-            else if (subSpec instanceof String) {
-                putInOutput( output, new Path( (String) subSpec ), input.get( key ), pathToInputItem );   // put the value in the output
-            }
-            // else TODO when there's a warning listener, warn here
+            Path subInputPath = new Path( inputPath, key );
+            this.applySpec( subInput, subSpec, output, subInputPath );
         }
     }
 
-    void handleSpecialKey(Object pathSpec, Path pathToInputItem, Map<String, Object> output, Object value) {
-        if ((pathSpec != null) && (pathSpec instanceof String)) {             // if present and mapped to a string, we use it to place the key above it as a value in the output
-            Path idOutputPath = new Path( (String) pathSpec );                // this path tells us where to put it
-            Path idInputPath = new Path( pathToInputItem, SPEC_KEY_REFERENCES_INPUT_KEY );    // this path tells us where we are in the input for reference
-            putInOutput(output, idOutputPath, value, idInputPath);            // put the key as a value in the output
-        }
-    }
-
-    String findMatchingSpecKey(Map<String, Object> spec, String key) {
+    private String findMatchingSpecKey(Map<String, Object> spec, String key) {
         if (spec.containsKey( key )) {                          // could be an exact match
             return key;                                         // just return it
         }
@@ -162,9 +164,31 @@ public class Jolt {
         return null;
     }
 
-    void putInOutput( Map<String, Object> output, Path where, Object value, Path from) {
+    private void handleSpecialKey(Object pathSpec, Path pathToInputItem, Map<String, Object> output, Object value) {
+        if ((pathSpec != null) && (pathSpec instanceof String)) {             // if present and mapped to a string, we use it to place the key above it as a value in the output
+            Path idOutputPath = new Path( (String) pathSpec );                // this path tells us where to put it
+            Path idInputPath = new Path( pathToInputItem, SPEC_KEY_REFERENCES_INPUT_KEY );    // this path tells us where we are in the input for reference
+            putInOutput(output, idOutputPath, value, idInputPath);            // put the key as a value in the output
+        }
+    }
+
+    private void applyListSpec(Object input, List spec, Map<String,Object> output, Path inputPath) {
+        for (Object subSpec: spec) {
+            this.applySpec( input, subSpec, output, inputPath );
+        }
+    }
+
+    private void applyStringSpec(Object input, String spec, Map<String,Object> output, Path inputPath) {
+        String specStr = spec.toString();
+        Path specPath = new Path( specStr );
+        this.putInOutput( output, specPath, input, inputPath );
+    }
+
+    private void putInOutput( Map<String, Object> output, Path where, Object value, Path from) {
 
         // TODO defense
+
+        where = new Path( OUTPUT_PATH_PREFIX, where );
 
         // we're going to drill down into the output via the path specified in the where argument
         // current is the variable that holds our current location in the output
@@ -220,9 +244,20 @@ public class Jolt {
             this.items.add( toAppend );
         }
 
+        Path(String toPrepend, Path other) {
+            this.items = new ArrayList<String>( other.items.size() + 1);
+            this.items.add( toPrepend );
+            this.items.addAll( other.items );
+        }
+
         Path(String dotNotation) {
-            String[] split = dotNotation.split( "\\." );
-            this.items = Arrays.asList( split );
+            if ((dotNotation == null) || ("".equals( dotNotation ))) {   // TODO blank?
+                this.items = new ArrayList<String>( 0 );
+            }
+            else {
+                String[] split = dotNotation.split( "\\." );
+                this.items = Arrays.asList( split );
+            }
         }
 
         public String toString() {
@@ -263,6 +298,9 @@ public class Jolt {
         }
 
         private String itemFromEnd(int idxFromEnd) {
+            if (this.items.isEmpty()) {
+                return null;
+            }
             return this.items.get( this.items.size() - 1 - idxFromEnd );
         }
 
