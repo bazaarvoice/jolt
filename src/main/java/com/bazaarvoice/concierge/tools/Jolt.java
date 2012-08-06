@@ -25,7 +25,7 @@ import java.util.Map;
  *     "*": {                                           // rating.[anything-but-primary]
  *         "value": "SecondaryRatings.$$1.Value",       // rating.[*-match].value from the input goes to output.SecondaryRatings.[*-match].Value
  *         "max": "SecondaryRatings.$$1.Range",         // rating.[*-match].max from the input goes to output.SecondaryRatings.[*-match].Range
- *         "$$": "SecondaryRatings.$$1.Id"              // [*-match] goes to output.SecondaryRatings.[*-match].Id
+ *         "&": "SecondaryRatings.$$1.Id"               // [*-match] goes to output.SecondaryRatings.[*-match].Id
  *     }
  *   }
  * }
@@ -75,6 +75,9 @@ import java.util.Map;
  */
 public class Jolt {
 
+    private static final String SPEC_KEY_REFERENCES_INPUT_KEY = "&";
+    private static final String SPEC_KEY_REFERENCES_INPUT_VALUE = "@";
+
     // TODO construction option that takes a warning/info listener
 
     // TODO support for lists in mappings
@@ -108,18 +111,14 @@ public class Jolt {
 
             // the spec either treats the current input item as a map or as a scalar
             if (subSpec instanceof Map) {                                                   // sub-spec treats this like a map. let's see if we can recurse.
-                Map<String, Object> subSpecMap = (Map<String, Object>) subSpec;
-                if (inputItem instanceof Map) {                                             // if the input item is also a map, we can proceed
-                    Map<String, Object> inputItemMap = (Map<String, Object>) inputItem;
-                    Object idPathSpec = subSpecMap.get( "$$" );                             // look for special spec key $$
-                    if ((idPathSpec != null) && (idPathSpec instanceof String)) {           // if present and mapped to a string, we use it to place the key above it as a value in the output
-                        Path idOutputPath = new Path( (String) idPathSpec );                // this path tells us where to put it
-                        Path idInputPath = new Path( pathToInputItem, "$$" );               // this path tells us where we are in the input for reference
-                        putInOutput(output, idOutputPath, key, idInputPath);                // put the key as a value in the output
-                    }
-                    xform(inputItemMap, subSpecMap, output, pathToInputItem);               // recurse to the sub input/spec
+                Map<String, Object> subSpecMap = (Map<String, Object>) subSpec;            // if the input item is also a map, we can proceed
+
+                this.handleSpecialKey( subSpecMap.get( SPEC_KEY_REFERENCES_INPUT_KEY ), pathToInputItem, output, key );
+                this.handleSpecialKey( subSpecMap.get( SPEC_KEY_REFERENCES_INPUT_VALUE ), pathToInputItem, output, input.get( key ) );
+
+                if (inputItem instanceof Map) {
+                    xform((Map<String, Object>) inputItem, subSpecMap, output, pathToInputItem);               // recurse to the sub input/spec
                 }
-                // else TODO when there's a warning listener, warn here
             }
             else if (subSpec instanceof List) {
                 for (Object subSpecElement: (List) subSpec) {
@@ -132,6 +131,14 @@ public class Jolt {
                 putInOutput( output, new Path( (String) subSpec ), input.get( key ), pathToInputItem );   // put the value in the output
             }
             // else TODO when there's a warning listener, warn here
+        }
+    }
+
+    void handleSpecialKey(Object pathSpec, Path pathToInputItem, Map<String, Object> output, Object value) {
+        if ((pathSpec != null) && (pathSpec instanceof String)) {             // if present and mapped to a string, we use it to place the key above it as a value in the output
+            Path idOutputPath = new Path( (String) pathSpec );                // this path tells us where to put it
+            Path idInputPath = new Path( pathToInputItem, SPEC_KEY_REFERENCES_INPUT_KEY );    // this path tells us where we are in the input for reference
+            putInOutput(output, idOutputPath, value, idInputPath);            // put the key as a value in the output
         }
     }
 

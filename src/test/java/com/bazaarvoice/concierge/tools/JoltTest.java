@@ -16,10 +16,11 @@ import java.util.Map;
 public class JoltTest {
 
     private static String[] TEST_CASES = new String[] {
-      "firstSample",
-      "singlePlacement",
-      "multiPlacement",
-      "wildcards"
+//      "firstSample",
+//      "singlePlacement",
+//      "multiPlacement",
+//      "wildcards",
+      "specialKeys"
     };
 
     // TODO: test arrays better (wildcards test array could be in reverse order)
