@@ -100,14 +100,11 @@ public class Jolt {
 
             // find the part in the spec that applies to
             // the next top-level item to process:
-            Object subSpec = spec.get( key );       // could be a directly corresponding key
-            if (subSpec == null) {                  // if there isn't one, fear not...
-                subSpec = spec.get( "*" );          // there might be a wildcard that matches
+            String specKey = this.findMatchingSpecKey( spec, key );
+            if (specKey == null) {      // no spec for this item
+                continue;               // that's okay--omit it and keep going.
             }
-            if (subSpec == null) {                  // we might not have a spec for this input item
-                // TODO info that an input was ignored because no spec present for it
-                continue;                           // that's okay--omit it and keep going.
-            }
+            Object subSpec = spec.get( specKey );
 
             // the spec either treats the current input item as a map or as a scalar
             if (subSpec instanceof Map) {                                                   // sub-spec treats this like a map. let's see if we can recurse.
@@ -126,8 +123,8 @@ public class Jolt {
             }
             else if (subSpec instanceof List) {
                 for (Object subSpecElement: (List) subSpec) {
-                    // TODO: what if map
-                    // TODO: what if list
+                    // TODO: what if spec is a map
+                    // TODO: what if spec is a list
                     putInOutput( output, new Path( (String) subSpecElement ), input.get( key ), pathToInputItem );   // put the value in the output
                 }
             }
@@ -136,6 +133,26 @@ public class Jolt {
             }
             // else TODO when there's a warning listener, warn here
         }
+    }
+
+    String findMatchingSpecKey(Map<String, Object> spec, String key) {
+        if (spec.containsKey( key )) {                          // could be an exact match
+            return key;                                         // just return it
+        }
+        for (String candidate: spec.keySet()) {                 // look for an enum match
+            if (candidate.indexOf( "|" ) >= 0) {                // any enum will contain a '|'
+                String[] splits = candidate.split( "\\|" );     // find the terms
+                for (String split: splits) {                    // check each of them
+                    if (key.equals( split )) {                  // and on a match
+                        return candidate;                       // return the entire key
+                    }
+                }
+            }
+        }
+        if (spec.containsKey( "*" )) {                          // check for a catchall match
+            return "*";
+        }
+        return null;
     }
 
     void putInOutput( Map<String, Object> output, Path where, Object value, Path from) {

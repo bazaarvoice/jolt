@@ -18,8 +18,11 @@ public class JoltTest {
     private static String[] TEST_CASES = new String[] {
       "firstSample",
       "singlePlacement",
-      "multiPlacement"
+      "multiPlacement",
+      "wildcards"
     };
+
+    // TODO: test arrays better (wildcards test array could be in reverse order)
 
     @Test
     public void runTestCases()
@@ -36,7 +39,7 @@ public class JoltTest {
             Diffy diffy = new Diffy();
             Diffy.Result result = diffy.diff( expected, actual );
             if (!result.isEmpty()) {
-                AssertJUnit.fail( "failed case "+testPath+", diff:\nexpected: "+JsonUtils.toJsonString( result.expected )+"\nactual: "+JsonUtils.toJsonString( result.actual ) );
+                AssertJUnit.fail( "failed case "+testPath+".\nhere is a diff:\nexpected: "+JsonUtils.toJsonString( result.expected )+"\nactual: "+JsonUtils.toJsonString( result.actual ) );
             }
             AssertJUnit.assertTrue( testPath, result.isEmpty() );
         }
