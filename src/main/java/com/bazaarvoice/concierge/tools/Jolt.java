@@ -124,14 +124,17 @@ public class Jolt {
                 }
                 // else TODO when there's a warning listener, warn here
             }
-            else {                                                                          // sub-spec treats this like a scalar. let's put it in the output
-                if (subSpec instanceof String) {
-                    Path outputPath = new Path( (String) subSpec );                         // this path tells us where to put the value in the output
-                    Object value = input.get( key );                                        // this is our output value
-                    putInOutput( output, outputPath, input.get( key ), pathToInputItem );   // put the value in the output
+            else if (subSpec instanceof List) {
+                for (Object subSpecElement: (List) subSpec) {
+                    // TODO: what if map
+                    // TODO: what if list
+                    putInOutput( output, new Path( (String) subSpecElement ), input.get( key ), pathToInputItem );   // put the value in the output
                 }
-                // else TODO when there's a warning listener, warn here
             }
+            else if (subSpec instanceof String) {
+                putInOutput( output, new Path( (String) subSpec ), input.get( key ), pathToInputItem );   // put the value in the output
+            }
+            // else TODO when there's a warning listener, warn here
         }
     }
 
