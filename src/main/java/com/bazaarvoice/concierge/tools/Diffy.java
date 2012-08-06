@@ -18,7 +18,7 @@ public class Diffy {
         return diffHelper( expectedCopy, actualCopy );
     }
 
-    private Result diffHelper(Object expected, Object actual) {
+    Result diffHelper(Object expected, Object actual) {
         if (expected instanceof Map) {
             if (!(actual instanceof Map)) {
                 return new Result( expected, actual );
@@ -34,7 +34,7 @@ public class Diffy {
         return this.diffScalar( expected, actual );
     }
 
-    private Result diffMap(Map<String, Object> expected, Map<String, Object> actual) {
+    Result diffMap(Map<String, Object> expected, Map<String, Object> actual) {
         for (Object key: expected.keySet().toArray()) {
             Result subResult = diffHelper( expected.get( key ), actual.get( key ) );
             if (subResult.isEmpty()) {
@@ -48,7 +48,7 @@ public class Diffy {
         return new Result( expected, actual );
     }
 
-    private Result diffList(List expected, List actual) {
+    Result diffList(List expected, List actual) {
         int shortlen = Math.min( expected.size(), actual.size() );
         boolean emptyDiff = true;
         for (int i=0; i<shortlen; i++) {
@@ -63,7 +63,7 @@ public class Diffy {
         return new Result( expected, actual );
     }
 
-    private Result diffScalar(Object expected, Object actual) {
+    Result diffScalar(Object expected, Object actual) {
         if (expected == null) {
             if (actual == null) {
                 return new Result();                    // both null, isEmpty diff
