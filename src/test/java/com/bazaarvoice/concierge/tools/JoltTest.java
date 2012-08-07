@@ -19,14 +19,15 @@ public class JoltTest {
     @DataProvider
     public Object[][] getTestCaseNames() {
         return new Object[][] {
-            {"firstSample"},
-            {"singlePlacement"},
-            {"multiPlacement"},
-            {"wildcards"},
-            {"specialKeys"},
-            {"identity"},
-            {"objectToArray"},
-            {"keyref"},
+//            {"firstSample"},
+//            {"singlePlacement"},
+//            {"multiPlacement"},
+//            {"wildcards"},
+//            {"specialKeys"},
+//            {"identity"},
+//            {"objectToArray"},
+//            {"keyref"},
+            {"apiToSearch"},
             {""}
         };
     }
