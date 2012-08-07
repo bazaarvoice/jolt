@@ -26,6 +26,7 @@ public class JoltTest {
             {"specialKeys"},
             {"identity"},
             {"objectToArray"},
+            {"keyref"},
             {""}
         };
     }
