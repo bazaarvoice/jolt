@@ -23,9 +23,9 @@ import java.util.Map;
  *         "max": "RatingRange"                         // rating.primary.max from the input goes to output.RatingRange
  *     },
  *     "*": {                                           // rating.[anything-but-primary]
- *         "value": "SecondaryRatings.$$1.Value",       // rating.[*-match].value from the input goes to output.SecondaryRatings.[*-match].Value
- *         "max": "SecondaryRatings.$$1.Range",         // rating.[*-match].max from the input goes to output.SecondaryRatings.[*-match].Range
- *         "&": "SecondaryRatings.$$1.Id"               // [*-match] goes to output.SecondaryRatings.[*-match].Id
+ *         "value": "SecondaryRatings.&1.Value",       // rating.[*-match].value from the input goes to output.SecondaryRatings.[*-match].Value
+ *         "max": "SecondaryRatings.&1.Range",         // rating.[*-match].max from the input goes to output.SecondaryRatings.[*-match].Range
+ *         "&": "SecondaryRatings.&1.Id"               // [*-match] goes to output.SecondaryRatings.[*-match].Id
  *     }
  *   }
  * }
@@ -41,7 +41,7 @@ import java.util.Map;
  *           "value": 3,        // 3 (rating.primary.value) goes to output.Rating
  *           "max": 5           // 5 (rating.primary.max) goes to output.RatingRange
  *       },
- *       "quality": {           // "quality" (rating.*.$$) goes to output.SecondaryRatings.quality.Id
+ *       "quality": {           // "quality" (rating.*.&) goes to output.SecondaryRatings.quality.Id
  *           "value": 3,        // 3 (rating.*.value) goes to output.SecondaryRatings.quality.Value
  *           "max": 7           // 7 (rating.*.max) goes to output.SecondaryRatings.quality.Range
  *       }
@@ -70,7 +70,7 @@ import java.util.Map;
  * - paths contained at the scalar transform attributes are in dot-notation for referencing JSON
  * - "*" as a key matches any key that does not have its own entry
  * - "&" as a key within an object evaluates to the key that references the object
- * - "$$[index]" within a path is a zero-major reference to the keys in the input document starting with current. thus $$0 evaluates to the key
+ * - "&[index]" within a path is a zero-major reference to the keys in the input document starting with current. thus $$0 evaluates to the key
  *   for the current attribute, $$1 evaluates to the key for the parent attribute, and so on.
  */
 public class Jolt {
@@ -283,11 +283,11 @@ public class Jolt {
             // TODO defense
 
             String item = null;
-            if (fromIdx >= 0) {                              // there was $$[index], let's use that index to reference the input path
+            if (fromIdx >= 0) {                              // there was &[index], let's use that index to reference the input path
                 // TODO defense
                 item = reference.itemFromEnd( fromIdx );     // reference is 0-major from the end of the path
             }
-            else {                                           // no $$[index]
+            else {                                           // no &[index]
                 item = fromItem;                             // just use the key supplied in the spec
             }
             return item;
@@ -313,8 +313,12 @@ public class Jolt {
         }
 
         private int indexHelper(String item) {
-            if (item.startsWith( "$$" )) {
-                return Integer.parseInt( item.substring( 2 ) );
+            if (item.startsWith( "&" )) {
+                String indexStr = item.substring( 1 );
+                if ("".equals( indexStr )) {
+                    return 0;
+                }
+                return Integer.parseInt( indexStr );
             }
             return -1;
         }
