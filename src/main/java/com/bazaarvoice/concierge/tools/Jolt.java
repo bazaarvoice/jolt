@@ -70,8 +70,8 @@ import java.util.Map;
  * - paths contained at the scalar transform attributes are in dot-notation for referencing JSON
  * - "*" as a key matches any key that does not have its own entry
  * - "&" as a key within an object evaluates to the key that references the object
- * - "&[index]" within a path is a zero-major reference to the keys in the input document starting with current. thus $$0 evaluates to the key
- *   for the current attribute, $$1 evaluates to the key for the parent attribute, and so on.
+ * - "&[index]" within a path is a zero-major reference to the keys in the input document starting with current. thus &0 evaluates to the key
+ *   for the current attribute, &1 evaluates to the key for the parent attribute, and so on.
  */
 public class Jolt {
 
