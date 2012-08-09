@@ -19,31 +19,31 @@ public class JoltTest {
     @DataProvider
     public Object[][] getTestCaseNames() {
         return new Object[][] {
-//            {"firstSample"},
-//            {"singlePlacement"},
-//            {"multiPlacement"},
-//            {"wildcards"},
-//            {"specialKeys"},
-//            {"identity"},
-//            {"objectToArray"},
-//            {"keyref"},
-            {"apiToSearch"},
-            {""}
+            {"firstSample", null, null, null},
+            {"singlePlacement", null, null, null},
+            {"multiPlacement", null, null, null},
+            {"wildcards", null, null, null},
+            {"specialKeys", null, null, null},
+            {"identity", null, null, null},
+            {"objectToArray", null, null, null},
+            {"keyref", null, null, null},
+            {"apiToSearch", null, "/jolt/apiToSearch.jolt", null},
+            {"", null, null, null}
         };
     }
 
     // TODO: test arrays better (wildcards test array could be in reverse order)
 
     @Test(dataProvider = "getTestCaseNames")
-    public void runTestCases(String testCaseName)
+    public void runTestCases(String testCaseName, String inputPath, String specPath, String outputPath)
             throws IOException {
         if ("".equals( testCaseName )) {
             return;
         }
         String testPath = "/json/jolt/"+testCaseName;
-        Object input = JsonUtils.jsonToObject( Jolt.class.getResourceAsStream( testPath + "/input.json" ) );
-        Object spec = JsonUtils.jsonToObject( Jolt.class.getResourceAsStream( testPath + "/spec.json" ) );
-        Object expected = JsonUtils.jsonToObject( Jolt.class.getResourceAsStream( testPath + "/output.json" ) );
+        Object input = JsonUtils.jsonToObject( Jolt.class.getResourceAsStream( inputPath == null ? testPath + "/input.json" : inputPath ) );
+        Object spec = JsonUtils.jsonToObject( Jolt.class.getResourceAsStream( specPath == null ? testPath + "/spec.json" : specPath ) );
+        Object expected = JsonUtils.jsonToObject( Jolt.class.getResourceAsStream( outputPath == null ? testPath + "/output.json" : outputPath ) );
 
         Jolt jolt = new Jolt();
         Object actual = jolt.xform( input, spec );
