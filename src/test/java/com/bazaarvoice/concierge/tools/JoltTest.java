@@ -27,7 +27,7 @@ public class JoltTest {
             {"identity", null, null, null},
             {"objectToArray", null, null, null},
             {"keyref", null, null, null},
-            {"apiToSearch", null, "/jolt/apiToSearch.jolt", null},
+            {"apiToSearch", null, "/jolt/apiToSearch/review.jolt", null},
             {"", null, null, null}
         };
     }
