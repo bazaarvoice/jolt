@@ -1,0 +1,14 @@
+{
+    "Rating":3,
+    "SecondaryRatings":{
+        "quality":{
+            "Range":7,
+            "Value":3,
+            "Id":"quality"
+        },
+        "sharpness":{
+            "Value":4,
+            "Id":"sharpness"
+        }
+    }
+}

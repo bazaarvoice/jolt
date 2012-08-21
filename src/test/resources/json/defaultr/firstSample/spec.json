@@ -1,0 +1,20 @@
+{
+    "RatingRange":5,
+    "SecondaryRatings":{
+        "quality|value":{
+            "ValueLabel":null,
+            "Label":null,
+            "MaxLabel":"Great",
+            "MinLabel":"Terrible",
+            "DisplayType":"NORMAL"
+        },
+        "*":{
+            "Range" : 5,
+            "ValueLabel":null,
+            "Label":null,
+            "MaxLabel":"High",
+            "MinLabel":"Low",
+            "DisplayType":"NORMAL"
+        }
+    }
+}

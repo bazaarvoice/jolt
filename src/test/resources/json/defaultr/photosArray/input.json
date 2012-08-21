@@ -1,0 +1,12 @@
+{
+    "photos" :
+    [
+        {
+            "url" : "http://slashdot.org"
+        },
+        {
+            "url" : "http://bazaarvoice.com",
+            "caption" : "Review all the things."
+        }
+    ]
+}
