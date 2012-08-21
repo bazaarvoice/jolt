@@ -4,10 +4,6 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.bazaarvoice.jolt.Jolt;
-import com.bazaarvoice.jolt.JsonUtils;
-import com.bazaarvoice.jolt.Diffy;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -31,6 +27,7 @@ public class JoltTest {
             {"identity", null, null, null},
             {"objectToArray", null, null, null},
             {"keyref", null, null, null},
+            {"queryMappingXform", null, null, null},
             {"", null, null, null}
         };
     }
