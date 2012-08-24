@@ -22,7 +22,7 @@ import java.util.Map;
  * Currently, [operation-name] can be any of the following:
  *
  * - shift: (Shiftr) a tool for moving parts of an input JSON document to a new output document
- * - java: (JavaProcessor) passes control to a Java instance of JoltProcessor for processing
+ * - java: (JavaDelegator) passes control to a Java instance of JoltProcessor for processing
  *
  */
 public class Chainr {
@@ -31,7 +31,7 @@ public class Chainr {
     static {
         HashMap<String, Chainable> temp = new HashMap<String, Chainable>();
         temp.put( "shift", new Shiftr() );
-        temp.put( "java", new JavaProcessor() );
+        temp.put( "java", new Delegatr() );
         // TODO default
         CHAINABLES = Collections.unmodifiableMap( temp );
     }

@@ -2,18 +2,19 @@ package com.bazaarvoice.jolt;
 
 import java.util.Map;
 
-public class JavaProcessor implements Chainable {
+public class Delegatr implements Chainable {
 
     @Override
     public Object process( Object input, Map<String, Object> joltPipelineEntry )
             throws JoltException {
-        String className = joltPipelineEntry.get( "className" ).toString();
-        if (className == null) {
+        Object classNameObj = joltPipelineEntry.get( "className" );
+        if ((classNameObj == null) || !(classNameObj instanceof String)) {
             throw new JoltException( "JOLT JavaProcessor requires a 'className' parameter." );
         }
+        String className = (String) classNameObj;
         try {
             Class cls = Class.forName( className );
-            if (JavaProcessor.class.isAssignableFrom( cls )) {
+            if (Delegatr.class.isAssignableFrom( cls )) {
                 throw new JoltException( "Attempted infinite loop: "+className+" is a JavaProcessor." );
             }
             Object instance = cls.newInstance();

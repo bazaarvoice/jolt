@@ -4,7 +4,7 @@ import java.util.Map;
 
 public interface Chainable {
 
-    Object process(Object input, Map<String, Object> joltPipelineEntry)
+    Object process(Object input, Map<String, Object> pipelineEntry)
             throws JoltException;
 
 }
