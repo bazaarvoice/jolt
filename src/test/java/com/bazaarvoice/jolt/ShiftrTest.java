@@ -14,7 +14,7 @@ import java.util.List;
  * Time: 11:00 PM
  * To change this template use File | Settings | File Templates.
  */
-public class JoltTest {
+public class ShiftrTest {
 
     @DataProvider
     public Object[][] getTestCaseNames() {
@@ -40,12 +40,12 @@ public class JoltTest {
         if ("".equals( testCaseName )) {
             return;
         }
-        String testPath = "/json/jolt/"+testCaseName;
-        Object input = JsonUtils.jsonToObject( Jolt.class.getResourceAsStream( inputPath == null ? testPath + "/input.json" : inputPath ) );
-        Object spec = JsonUtils.jsonToObject( Jolt.class.getResourceAsStream( specPath == null ? testPath + "/spec.json" : specPath ) );
-        Object expected = JsonUtils.jsonToObject( Jolt.class.getResourceAsStream( outputPath == null ? testPath + "/output.json" : outputPath ) );
+        String testPath = "/json/shiftr/"+testCaseName;
+        Object input = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( inputPath == null ? testPath + "/input.json" : inputPath ) );
+        Object spec = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( specPath == null ? testPath + "/spec.json" : specPath ) );
+        Object expected = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( outputPath == null ? testPath + "/output.json" : outputPath ) );
 
-        Jolt jolt = new Jolt();
+        Shiftr jolt = new Shiftr();
         Object actual = jolt.xform( input, spec );
 
         Diffy diffy = new ArrayDisorderDiffy();

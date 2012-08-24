@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ *
+ * TODO fix docs to say Shiftr
+ *
  * JOLT is the JSON Object Language for Transformations (silly contrived name). JOLT encodes
  * JSON to JSON object transformations in a declarative JSON-based language. Instances of this
  * class execute JOLT transformations given a JSON input and transform spec both in Jackson-style
@@ -73,7 +76,7 @@ import java.util.Map;
  * - "&[index]" within a path is a zero-major reference to the keys in the input document starting with current. thus &0 evaluates to the key
  *   for the current attribute, &1 evaluates to the key for the parent attribute, and so on.
  */
-public class Jolt {
+public class Shiftr implements Chainable {
 
     private static final String SPEC_KEY_REFERENCES_INPUT_KEY = "&";
     private static final String SPEC_KEY_REFERENCES_INPUT_VALUE = "@";
@@ -84,7 +87,12 @@ public class Jolt {
 
     // TODO support for lists in mappings
 
-    public Object xform(Object input, Object spec) {
+    @Override
+    public Object process( Object input, Map<String, Object> joltPipelineEntry ) {
+        return this.xform( input, joltPipelineEntry.get( "spec" ) );   // TODO defense
+    }
+
+    public Object xform( Object input, Object spec ) {
 
         // TODO defense
 
