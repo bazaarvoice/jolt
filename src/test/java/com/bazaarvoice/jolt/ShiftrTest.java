@@ -5,7 +5,9 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,6 +17,15 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class ShiftrTest {
+
+    @Test(expectedExceptions = JoltException.class)
+    public void process_itBlowsUpForNoSpec()
+            throws JoltException {
+        Map<String, Object> opEntry = new HashMap<String, Object>();
+        Object input = new Object();
+        Shiftr unit = new Shiftr();
+        unit.process( input, opEntry );
+    }
 
     @DataProvider
     public Object[][] getTestCaseNames() {

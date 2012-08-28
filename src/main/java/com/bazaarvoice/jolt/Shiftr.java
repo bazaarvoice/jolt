@@ -8,14 +8,11 @@ import java.util.Map;
 
 /**
  *
- * TODO fix docs to say Shiftr
+ * Shifter is a kind of JOLT transform that specifies where in some output JSON to put data
+ * from an input JSON. Instances of this class execute Shiftr transformations given a JSON
+ * input and transform spec both in Jackson-style maps of maps.
  *
- * JOLT is the JSON Object Language for Transformations (silly contrived name). JOLT encodes
- * JSON to JSON object transformations in a declarative JSON-based language. Instances of this
- * class execute JOLT transformations given a JSON input and transform spec both in Jackson-style
- * maps of maps.
- *
- * Each entry in a JOLT transform says where to put some data in an output object, if encountered
+ * Each entry in a Shiftr transform says where to put some data in an output object, if encountered
  * in the input object. Here is an example transform spec (annotated with JSON-illegal comments):
  *
  * <pre>
@@ -34,7 +31,7 @@ import java.util.Map;
  * }
  * </pre>
  *
- * A JOLT processor walks the input document, looking up each node in the transform spec and
+ * Shiftr walks the input document, looking up each node in the transform spec and
  * making the specified updates in the output document. This is best explained with an example input file:
  *
  * <pre>
@@ -87,9 +84,24 @@ public class Shiftr implements Chainable {
 
     // TODO support for lists in mappings
 
+    /**
+     * Applies a Shiftr transform for Chainr
+     *
+     * @param input the JSON object to transform
+     * @param operationEntry the JSON object from the Chainr spec containing
+     *  the rest of the details necessary to carry out the transform (specifically,
+     *  in this case, a shiftr spec)
+     * @return the output object with data shifted to it
+     * @throws JoltException for a malformed spec or if there are issues during
+     * the transform
+     */
     @Override
-    public Object process( Object input, Map<String, Object> joltPipelineEntry ) {
-        return this.xform( input, joltPipelineEntry.get( "spec" ) );   // TODO defense
+    public Object process( Object input, Map<String, Object> operationEntry ) throws JoltException {
+        Object spec = operationEntry.get( "spec" );
+        if (spec == null) {
+            throw new JoltException( "JOLT Shiftr expected a spec in its operation entry, but instead got: "+operationEntry.toString() );
+        }
+        return this.xform( input, operationEntry.get( "spec" ) );
     }
 
     public Object xform( Object input, Object spec ) {

@@ -1,5 +1,8 @@
 package com.bazaarvoice.jolt;
 
+/**
+ * The exception thrown by JOLT processors and operations.
+ */
 public class JoltException extends Exception {
 
     public JoltException(String msg) {
