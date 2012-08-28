@@ -39,20 +39,28 @@ public class Chainr {
     public Object process(Object input, Object spec)
             throws JoltException {
         if (!(spec instanceof List)) {
-            throw new IllegalArgumentException( "bad spec" ); // TODO better
+            throw new JoltException( "bad spec" ); // TODO better
         }
         List<Map<String, Object>> pipeline = (List<Map<String, Object>>) spec;
         Object intermediate = input;
         for (Map<String, Object> pipelineEntry: pipeline) {
             Object opname = pipelineEntry.get( "operation" );
             if (opname == null) {
-                throw new IllegalArgumentException( "bad opname: "+opname ); // TODO better
+                throw new JoltException( "bad opname: "+opname ); // TODO better
             }
             Chainable op = CHAINABLES.get( opname.toString().toLowerCase() );
             if (op == null) {
-                throw new IllegalArgumentException( "unknown opname: "+opname ); // TODO better
+                throw new JoltException( "unknown opname: "+opname ); // TODO better
             }
+            try {
             intermediate = op.process( intermediate, pipelineEntry );
+            }
+            catch (Exception ex) {
+                if (ex instanceof JoltException) {
+                    throw (JoltException) ex;
+                }
+                throw new JoltException( ex );  // TODO message?
+            }
         }
         return intermediate;
     }

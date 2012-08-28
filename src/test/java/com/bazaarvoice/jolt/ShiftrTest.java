@@ -56,7 +56,7 @@ public class ShiftrTest {
         AssertJUnit.assertTrue( testPath, result.isEmpty() );
     }
 
-    private class ArrayDisorderDiffy extends Diffy {
+    static class ArrayDisorderDiffy extends Diffy {
         protected Result diffList(List expected, List actual) {
             Result result = super.diffList( expected, actual );
             if (result.isEmpty()) {
