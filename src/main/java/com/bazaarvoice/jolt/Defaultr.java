@@ -183,7 +183,7 @@ public class Defaultr implements Chainable {
             throw new JoltException( "JOLT Defaultr expected a spec in its operation entry, but instead got: " + operationEntry.toString() );
         }
         try {
-            return defaultr( operationEntry.get( "spec" ), input);
+            return defaultr( spec, input);
         }
         catch( Exception e) {
             throw new JoltException( e );

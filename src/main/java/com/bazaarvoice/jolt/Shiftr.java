@@ -101,7 +101,7 @@ public class Shiftr implements Chainable {
         if (spec == null) {
             throw new JoltException( "JOLT Shiftr expected a spec in its operation entry, but instead got: "+operationEntry.toString() );
         }
-        return this.xform( input, operationEntry.get( "spec" ) );
+        return this.xform( input, spec );
     }
 
     public Object xform( Object input, Object spec ) {
