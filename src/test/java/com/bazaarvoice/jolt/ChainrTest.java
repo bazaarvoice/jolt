@@ -29,6 +29,13 @@ public class ChainrTest {
         return activity;
     }
 
+    private Map<String, Object> newDefaultrActivity(Object defaultrSpec ) {
+        Map<String, Object> activity = new HashMap<String, Object>();
+        activity.put( "operation", "default" );
+        activity.put( "spec", defaultrSpec );
+        return activity;
+    }
+
     private Map<String, Object> newDelegatrActivity(Class cls) {
         Map<String, Object> activity = new HashMap<String, Object>();
         activity.put( "operation", "java" );
@@ -42,21 +49,45 @@ public class ChainrTest {
         return retvalue;
     }
 
+    private List<Map<String,Object>> newDefaultrSpec(Object defaultrSpec) {
+        List<Map<String,Object>> retvalue = this.newSpec();
+        retvalue.add( newDefaultrActivity( defaultrSpec ) );
+        return retvalue;
+    }
+
     @Test
     public void process_itCallsShiftr()
             throws IOException, JoltException {
         Object input = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/shiftr/queryMappingXform/input.json" ) );
         Object expected = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/shiftr/queryMappingXform/output.json" ) );
         Object shiftrSpec = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/shiftr/queryMappingXform/spec.json" ) );
-        Object spec = this.newShiftrSpec( shiftrSpec );
+        Object chainrSpec = this.newShiftrSpec( shiftrSpec );
 
         Chainr unit = new Chainr();
-        Object actual = unit.process( input, spec );
+        Object actual = unit.process( input, chainrSpec );
 
         ShiftrTest.ArrayDisorderDiffy diffy = new ShiftrTest.ArrayDisorderDiffy();
         Diffy.Result result = diffy.diff( expected, actual );
         if (!result.isEmpty()) {
             AssertJUnit.fail( "failed shiftr call.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString( result.expected ) + "\nactual: " + JsonUtils.toJsonString( result.actual ) );
+        }
+    }
+
+    @Test
+    public void process_itCallsDefaultr()
+            throws IOException, JoltException {
+        Object input = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/defaultr/firstSample/input.json" ) );
+        Object expected = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/defaultr/firstSample/output.json" ) );
+        Object defaultrSpec = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/defaultr/firstSample/spec.json" ) );
+        Object chainrSpec = this.newDefaultrSpec( defaultrSpec );
+
+        Chainr unit = new Chainr();
+        Object actual = unit.process( input, chainrSpec );
+
+        ShiftrTest.ArrayDisorderDiffy diffy = new ShiftrTest.ArrayDisorderDiffy();
+        Diffy.Result result = diffy.diff( expected, actual );
+        if (!result.isEmpty()) {
+            AssertJUnit.fail( "failed Defaultr call.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString( result.expected ) + "\nactual: " + JsonUtils.toJsonString( result.actual ) );
         }
     }
 

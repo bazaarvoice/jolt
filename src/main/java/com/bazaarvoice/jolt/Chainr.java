@@ -42,8 +42,8 @@ public class Chainr {
     static {
         HashMap<String, Chainable> temp = new HashMap<String, Chainable>();
         temp.put( "shift", new Shiftr() );
+        temp.put( "default", new Defaultr() );
         temp.put( "java", new Delegatr() );
-        // TODO default
         CHAINABLES = Collections.unmodifiableMap( temp );
     }
 

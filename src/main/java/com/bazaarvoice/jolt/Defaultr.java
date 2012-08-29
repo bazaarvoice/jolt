@@ -13,14 +13,13 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Defaultr : Cause its cooler without the 'e'
- * <p/>
- * Defaultr is part of the JOLT transform suite, and is intended to apply default values to JOLT output.
- * <p/>
- * Shitr walks the input data, and asks "Where should this go?"
- * Defaultr walks a spec and asks "Does this exist in the data?  If not, add it."
- * <p/>
- * Given
+ * Defaultr is a kind of JOLT transform that applies default values in a non-destructive way.
+ *
+ * For comparision :
+ * Shitr walks the input data and asks its spec "Where should this go?"
+ * Defaultr walks the spec and asks "Does this exist in the data?  If not, add it."
+ *
+ * Example : Given input Json like
  * <pre>
  * {
  *   "Rating":3,
@@ -37,8 +36,7 @@ import java.util.Set;
  *   }
  * }
  * </pre>
- * <p/>
- * With the desired output being
+ * With the desired output being :
  * <pre>
  * {
  *   "Rating":3,
@@ -67,7 +65,6 @@ import java.util.Set;
  *   }
  * }
  * </pre>
- * <p/>
  * This is what the Defaultr Spec would look like
  * <pre>
  * {
@@ -81,7 +78,7 @@ import java.util.Set;
  *        "DisplayType": "NORMAL"
  *
  *     }
- *     "*": {                       // SecondaryRatings.[anything]
+ *     "*": {
  *        "Range" : 5,
  *        "ValueLabel": null,
  *        "Label": null,
@@ -92,25 +89,66 @@ import java.util.Set;
  *   }
  * }
  * </pre>
- * <p/>
- * Defaultr only supports two wildcards "*" and "|" operators for the path walking.
- * Defaultr keys are applied from most specific to least specific :
- *   Literals
- *   ORs
- *   Stars
- * <p/>
+ *
+ * The Spec file format for Defaulr a tree Map<String, Object> objects.   Defaultr handles outputing
+ *  of Json Arrays via special wildcard in the Spec.
+ *
+ * Defaltr Spec WildCards and Flag :
+ * "*" aka STAR : Apply these defaults to all input keys at this level
+ * "|" aka OR  : Apply these defaults to input keys, if they exist
+ * "[]" aka : Signal to Defaultr that the data for this key should be an array.
+ *   This means all defaultr keys below this entry have to be "integers".
+ *
+ * Valid Array Specification :
+ * <pre>
+ * {
+ *   "photos[]" : {
+ *     "2" : {
+ *       "url" : "http://www.bazaarvoice.com",
+ *       "caption" : ""
+ *     }
+ *   }
+ * }
+ * </pre>
+ *
+ * An Invalid Array Specification would be :
+ * <pre>
+ * {
+ *   "photos[]" : {
+ *     "photo-id-1234" : {
+ *       "url" : "http://www.bazaarvoice.com",
+ *       "caption" : ""
+ *     }
+ *   }
+ * }
+ * </pre>
+ *
+ * Algorithm
+ * Defaultr walks its Spec in a depth first way.
+ * At each level in the Spec tree, Defaultr, applies Spec from most specific to least specific :
+ *   Literals key values
+ *   "|"
+ *   "*"
+ *
+ * At a given level in the Defaultr Spec tree, only literal keys force Defaultr to create new entries
+ *  in the input data: either as a single literal value or adding new nested Array or Map objects.
+ * The wildcard operators, are applied after the literal keys, and will not cause the those keys to be
+ *  added if they are not already present in the input document (either naturally or having been defaulted
+ *  in from literal spec keys).
+ *
+ *
+ * Algorithm :
  * 1) Walk the spec
  * 2) for each literal key in the spec (specKey)
- * 2.1) if the value of the specKey, is a literal, default the literal speckey and value into the output
- * 2.2) if the value of the specKey, is a map or array, default the speckey and an empty Map or Array into the output
+ * 2.1) if the the specKey is a map or array, and the input is null, default an empty Map or Array into the output
  * 2.2.1) re-curse on the literal spec
+ * 2.2) if the the specKey is a map or array, and the input is not null, but of the "wrong" type, skip and do not recurse
+ * 2.2) if the the specKey, is a literal value, default the literal and value into the output and do not recurse
  * 3) for each wildcard in the spec
  * 3.1) find all keys from the defaultee that match the wildcard
- * 3.2) treat each key as a literal spec value
- *
- * TODO doc Array Handling
+ * 3.2) treat each key as a literal speckey
  */
-public class Defaultr {
+public class Defaultr implements Chainable {
 
     public interface WildCards {
         public static final String STAR = "*";
@@ -121,16 +159,35 @@ public class Defaultr {
     private DefaultrKeyComparator keyComparator = new DefaultrKeyComparator();
 
     /**
-     * Top level Defaultr method.
+     * Applies a Defaultr transform for Chainr
+     *
+     * @param input the JSON object to transform
+     * @param operationEntry the JSON object from the Chainr spec containing
+     *  the rest of the details necessary to carry out the transform (specifically,
+     *  in this case, a defaultr spec)
+     * @return the output object with defaults applied to it
+     * @throws JoltException for a malformed spec or if there are issues
+     */
+    @Override
+    public Object process( Object input, Map<String, Object> operationEntry ) throws JoltException {
+        Object spec = operationEntry.get( "spec" );
+        if (spec == null) {
+            throw new JoltException( "JOLT Defaultr expected a spec in its operation entry, but instead got: " + operationEntry.toString() );
+        }
+        return defaultr( operationEntry.get( "spec" ), input);
+    }
+
+    /**
+     * Top level standalone Defaultr method.
+     *
      * @param spec Defaultr spec
      * @param defaultee Json object to have defaults applied to.  This will be modifed.
      * @return the modifed defaultee
      */
-    public Object defaulter( Object spec, Object defaultee ) {
+    public Object defaultr( Object spec, Object defaultee ) {
 
         // TODO : Make copy of the defaultee?
-
-        Map<DefaultrKey, Object> keyedSpec = DefaultrKey.processSpec( (Map<String, Object>) spec );
+        Map<DefaultrKey, Object> keyedSpec = DefaultrKey.parseSpec( (Map<String, Object>) spec );
 
         // Setup to call the recursive method
         DefaultrKey root = new DefaultrKey( false, "root" );
@@ -138,15 +195,21 @@ public class Defaultr {
             defaultee = createDefaultContainerObject(root);
         }
 
-        // Defaultr works by looking and working one level down the tree, hence we need to pass in a root and a valid defaultee
+        // Defaultr works by looking one level down the tree, hence we need to pass in a root and a valid defaultee
         this.applySpec( root, keyedSpec, defaultee );
 
         return defaultee;
     }
 
     /**
-     * This is the main "recursive" method.   All of the inputs are never null, in that we don't recurse
-     *  if spec ! instanceof Map, or there isn't a defaultee (either there was one or we created it).
+     * This is the main "recursive" method.   The parentKey and the spce are never null, in that we don't recurse
+     *  if spec !instanceof Map.  The only time defaultee is null, is if there is a mismatch between the data and the
+     *  spec wrt Array vs Map.
+     *
+     *  SPECTULATIVE TODO : It might be possible to get rid of the complexity of defaulting into Maps vs Arrays, by
+     *   translating arrays into Maps, applying Default logic, and then translating back into an array.   This
+     *   could be facilitated by having this method returned a constructed object, which the parent stack frame
+     *   could translate as needed.
      */
     private void applySpec( DefaultrKey parentKey, Map<DefaultrKey, Object> spec, Object defaultee ) {
 
@@ -192,7 +255,8 @@ public class Defaultr {
                 this.defaultLiteralValue( (String) literalKey, childKey, subSpec, (Map<String, Object>) defaultee );
             }
         }
-        // Else defaultee was not a container object, and we couldn't push values into it
+        // Else defaultee was not a container object, the wrong type of container object, or null
+        //  net effect, we couldn't push values into it
     }
 
     /**
@@ -205,15 +269,14 @@ public class Defaultr {
         if ( subSpec instanceof Map ) {
             if ( defaulteeValue == null ) {
                 defaulteeValue = createDefaultContainerObject( dkey );
-                defaultee.set( literalIndex, defaulteeValue );
+                defaultee.set( literalIndex, defaulteeValue ); // make a new Array in the output
             }
 
             // Re-curse into subspec
             this.applySpec( dkey, (Map<DefaultrKey, Object>) subSpec, defaulteeValue );
         } else {
             if ( defaulteeValue == null ) {
-                // Finally, apply a default value
-                defaultee.set( literalIndex, subSpec );
+                defaultee.set( literalIndex, subSpec );  // apply a default value into a List, assumes the list as already been expanded if needed.
             }
         }
     }
@@ -228,15 +291,15 @@ public class Defaultr {
         if ( subSpec instanceof Map ) {
             if ( defaulteeValue == null ) {
                 defaulteeValue = createDefaultContainerObject( dkey );
-                defaultee.put( literalKey, defaulteeValue );
+                defaultee.put( literalKey, defaulteeValue );  // make a new map in the output
             }
 
             // Re-curse into subspec
             this.applySpec( dkey, (Map<DefaultrKey, Object>) subSpec, defaulteeValue );
         } else {
             if ( defaulteeValue == null ) {
-                // Finally, apply a default value
-                defaultee.put( literalKey, subSpec );
+                defaultee.put( literalKey, subSpec );  // apply a default value into a map
+
             }
         }
     }
@@ -244,13 +307,14 @@ public class Defaultr {
 
     private Collection findMatchingDefaulteeKeys( DefaultrKey key, Object defaultee ) {
 
+        if ( defaultee == null ) {
+            return Collections.emptyList();
+        }
+
         switch ( key.op ) {
             // If the Defaultee is not null, it should get these literal values added to it
             case LITERAL:
-                if ( defaultee != null ) {
-                    return key.getKeyValues();
-                }
-                break;
+                return key.getKeyValues();
             // If the Defaultee is not null, identify all its keys
             case STAR:
                 if ( !key.isArrayKey && defaultee instanceof Map ) {

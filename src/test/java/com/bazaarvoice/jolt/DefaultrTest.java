@@ -6,7 +6,6 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 public class DefaultrTest {
 
@@ -37,7 +36,7 @@ public class DefaultrTest {
         Object expected = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( outputPath == null ? testPath + "/output.json" : outputPath ) );
 
         Defaultr defaultr = new Defaultr();
-        Object actual = defaultr.defaulter( spec, input );
+        Object actual = defaultr.defaultr( spec, input );
 
         Diffy diffy = new ArrayDisorderDiffy();
         Diffy.Result result = diffy.diff( expected, actual );

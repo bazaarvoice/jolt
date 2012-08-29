@@ -15,12 +15,12 @@ import java.util.Map;
 public class DefaultrKey {
 
     /**
-     * Factory-ish method to recursively process a Map<String, Object> into a Map<DefaultrKey, Object>.
+     * Factory-ish method that recursively processes a Map<String, Object> into a Map<DefaultrKey, Object>.
      *
      * @param spec Simple Jackson default Map<String,Object> input
      * @return processed spec
      */
-    public static Map<DefaultrKey, Object> processSpec( Map<String, Object> spec ) {
+    public static Map<DefaultrKey, Object> parseSpec( Map<String, Object> spec ) {
         return processSpec( false, spec );
     }
 
@@ -52,6 +52,7 @@ public class DefaultrKey {
                 // TODO : Ensure there is only one STAR entry
             }
             else {
+                // literal such as String, number, or Json array
                 result.put( dk, obj );
             }
         }
