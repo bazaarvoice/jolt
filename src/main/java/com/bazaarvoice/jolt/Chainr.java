@@ -70,7 +70,7 @@ public class Chainr {
             Map operation = (Map) entry;
             Object opname = operation.get( "operation" );
             if (opname == null) {
-                throw new JoltException( "JOLT Chainr does not support operation: "+opname );
+                throw new JoltException( "JOLT Chainr needs a specified operation" );
             }
             Chainable op = CHAINABLES.get( opname.toString().toLowerCase() );
             if (op == null) {
