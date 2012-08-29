@@ -23,8 +23,6 @@ public class DefaultrTest {
         };
     }
 
-    // TODO: test arrays better (wildcards test array could be in reverse order)
-
     @Test(dataProvider = "getTestCaseNames")
     public void runTestCases(String testCaseName, String inputPath, String specPath, String outputPath)
             throws IOException {

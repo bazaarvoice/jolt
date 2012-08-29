@@ -42,7 +42,7 @@ public enum DefaultrOPS {
                 return -1;
             }
 
-            // op has to be OR if we get here
+            // if we get here, "ops" has to equal OR
             if ( STAR == ops1) {
                 return -1;
             }

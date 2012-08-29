@@ -34,7 +34,6 @@ public class DefaultrKey {
 
         for ( String key : spec.keySet() ) {
             DefaultrKey dk = new DefaultrKey( parentIsArray, key );
-            dk.isArrayKey = parentIsArray;
 
             Object obj = spec.get( key );
             // Spec is String -> Map or String -> Literal only
@@ -68,15 +67,15 @@ public class DefaultrKey {
     // Am I supposed to be a key in a Json array?  If so I need to speak Int key values.
     public boolean isArrayKey = false;
 
-    // Am I supposed to be parent of an array?  If so I need to make sure that I
-    //  inform my children they need to be ArrayKeys, and I need to make sure that the output array
-    //  I will write to is big enough
+    // Am I supposed to be parent of an array?  If so I need to make sure that I inform
+    //  my children they need to be ArrayKeys, and I need to make sure that the output array
+    //  I will write to is big enough.
     public boolean isArrayOutput = false;
 
     public int orCount = 0;
     public int maxLiteralKey = -1;
 
-    private static final String OR_INPUT_REGEX = "\\" + Defaultr.WildCards.OR ;
+    private static final String OR_INPUT_REGEX = "\\" + Defaultr.WildCards.OR;
 
     public DefaultrKey( boolean isArrayKey, String jsonKey ) {
 
@@ -88,7 +87,7 @@ public class DefaultrKey {
             literalValue = literalValue.replace( Defaultr.WildCards.ARRAY, "" );
         }
 
-        //// FIGURE OUT WHAT THE KEY VALUES ARE
+        //// FIGURE OUT WHAT THE keyValues ARE
         op = DefaultrOPS.parse( literalValue );
         if ( op == OR ) {
             List<String> keyStrings = Arrays.asList( literalValue.split( OR_INPUT_REGEX ) );
@@ -127,7 +126,7 @@ public class DefaultrKey {
 
     private int getMaxValue( int currentMaxValue ) {
 
-        // only force the defaultee array size to grow if we are literal Key, and we are trying to index beyond the current max
+        // only force the defaultee array size to grow if we are literal Key and we are going to default beyond the current max
         if ( op == LITERAL && keyInt > currentMaxValue ) {
             return keyInt;
         }

@@ -293,7 +293,7 @@ public class Defaultr implements Chainable {
         if ( subSpec instanceof Map ) {
             if ( defaulteeValue == null ) {
                 defaulteeValue = createDefaultContainerObject( dkey );
-                defaultee.set( literalIndex, defaulteeValue ); // make a new Array in the output
+                defaultee.set( literalIndex, defaulteeValue ); // push a new sub-container into this list
             }
 
             // Re-curse into subspec
@@ -315,7 +315,7 @@ public class Defaultr implements Chainable {
         if ( subSpec instanceof Map ) {
             if ( defaulteeValue == null ) {
                 defaulteeValue = createDefaultContainerObject( dkey );
-                defaultee.put( literalKey, defaulteeValue );  // make a new map in the output
+                defaultee.put( literalKey, defaulteeValue );  // push a new sub-container into this map
             }
 
             // Re-curse into subspec
@@ -339,7 +339,7 @@ public class Defaultr implements Chainable {
             // If the Defaultee is not null, it should get these literal values added to it
             case LITERAL:
                 return key.getKeyValues();
-            // If the Defaultee is not null, identify all its keys
+            // Identify all its keys
             case STAR:
                 if ( !key.isArrayKey && defaultee instanceof Map ) {
                     return ( (Map) defaultee ).keySet();
@@ -355,7 +355,7 @@ public class Defaultr implements Chainable {
                     return allIndexes;
                 }
                 break;
-            // If the Defaultee is not null, identify the intersection between its keys and the OR values
+            // Identify the intersection between its keys and the OR values
             case OR:
                 if ( !key.isArrayKey && defaultee instanceof Map ) {
 
