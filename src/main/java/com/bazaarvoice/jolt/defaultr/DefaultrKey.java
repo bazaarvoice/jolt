@@ -1,7 +1,7 @@
-package com.bazaarvoice.jolt.helpers;
+package com.bazaarvoice.jolt.defaultr;
 
 import com.bazaarvoice.jolt.Defaultr;
-import static com.bazaarvoice.jolt.helpers.DefaultrOPS.*;
+import static com.bazaarvoice.jolt.defaultr.DefaultrOPS.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;

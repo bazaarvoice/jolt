@@ -1,0 +1,18 @@
+[
+    {
+        "url" : "http://slashdot.org",
+        "caption" : "Default Caption"
+    },
+    {
+        "url" : "http://bazaarvoice.com",
+        "caption" : "Review all the things."
+    },
+    {
+        "url" : "http://default.com",
+        "caption" : "Default Caption"
+    },
+    {
+        "url" : "http://tuna.com",
+        "caption" : "The Best"
+    }
+]

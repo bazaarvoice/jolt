@@ -1,4 +1,4 @@
-package com.bazaarvoice.jolt.helpers;
+package com.bazaarvoice.jolt.defaultr;
 
 import com.bazaarvoice.jolt.Defaultr;
 

@@ -1,7 +1,7 @@
 package com.bazaarvoice.jolt;
 
-import com.bazaarvoice.jolt.helpers.DefaultrKey;
-import com.bazaarvoice.jolt.helpers.DefaultrKey.DefaultrKeyComparator;
+import com.bazaarvoice.jolt.defaultr.DefaultrKey;
+import com.bazaarvoice.jolt.defaultr.DefaultrKey.DefaultrKeyComparator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -147,6 +147,14 @@ import java.util.Set;
  * 3) for each wildcard in the spec
  * 3.1) find all keys from the defaultee that match the wildcard
  * 3.2) treat each key as a literal speckey
+ *
+ * Corner Cases :
+ *
+ * Due to Defaultr's array syntax, we can't actually express that we expect the top level of the input to be an Array.
+ * The workaround for this is that we check the type of the object that is at the root level of the input.
+ * If it is a map, no problem.
+ * If it is an array, we treat the "root" level of the Defaultr spec, as if it were the child of an Array type Defaultr entry.
+ * To force unambiguity, Defaultr throws an Exception if the input is null.
  */
 public class Defaultr implements Chainable {
 
@@ -174,7 +182,12 @@ public class Defaultr implements Chainable {
         if (spec == null) {
             throw new JoltException( "JOLT Defaultr expected a spec in its operation entry, but instead got: " + operationEntry.toString() );
         }
-        return defaultr( operationEntry.get( "spec" ), input);
+        try {
+            return defaultr( operationEntry.get( "spec" ), input);
+        }
+        catch( Exception e) {
+            throw new JoltException( e );
+        }
     }
 
     /**
@@ -186,17 +199,28 @@ public class Defaultr implements Chainable {
      */
     public Object defaultr( Object spec, Object defaultee ) {
 
-        // TODO : Make copy of the defaultee?
-        Map<DefaultrKey, Object> keyedSpec = DefaultrKey.parseSpec( (Map<String, Object>) spec );
-
-        // Setup to call the recursive method
-        DefaultrKey root = new DefaultrKey( false, "root" );
         if ( defaultee == null ) {
-            defaultee = createDefaultContainerObject(root);
+            throw new IllegalArgumentException( "Defaultr needs to be passed a non-null input data to apply defaults to." );
+        }
+        // TODO : Make copy of the defaultee?
+
+        // Due to defaultr's array syntax, we can't actually express that we expect the top level of the defaultee to be an
+        //  array.   Thus we check the top level type of the defaultee, and if null throw an exception (done above).
+        String rootKey = "root";
+        if ( defaultee instanceof List ) {
+            // Create a fake root string entry as an Array, so that proper array sizing logic will happen during the DefaultrKey.parseSpec method.
+            rootKey += WildCards.ARRAY;
         }
 
+        // Setup to call the recursive method
+        Map<String, Object> rootedSpec = new LinkedHashMap<String, Object>();
+        rootedSpec.put( rootKey, spec );
+
+        Map<DefaultrKey, Object> rootedKeyedSpec = DefaultrKey.parseSpec( rootedSpec );
+        DefaultrKey root = rootedKeyedSpec.keySet().iterator().next();
+
         // Defaultr works by looking one level down the tree, hence we need to pass in a root and a valid defaultee
-        this.applySpec( root, keyedSpec, defaultee );
+        this.applySpec( root, (Map<DefaultrKey, Object>) rootedKeyedSpec.get( root ), defaultee );
 
         return defaultee;
     }

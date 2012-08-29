@@ -18,7 +18,8 @@ public class DefaultrTest {
             {"photosArray", null, null, null},
             {"arrayMismatch1", null, null, null},
             {"arrayMismatch2", null, null, null},
-            {"starsOfStars", null, null, null}
+            {"starsOfStars", null, null, null},
+            {"topLevelIsArray", null, null, null}
         };
     }
 
@@ -44,6 +45,19 @@ public class DefaultrTest {
             AssertJUnit.fail("failed case " + testPath + ".\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\nactual: " + JsonUtils.toJsonString(result.actual));
         }
         AssertJUnit.assertTrue( testPath, result.isEmpty() );
+    }
+
+    @Test
+    public void throwExceptionOnNullDefaultee() throws IOException {
+        Object spec = JsonUtils.jsonToMap( "{ \"tuna\": \"marlin\" }" );
+
+        Defaultr defaultr = new Defaultr();
+        try {
+            defaultr.defaultr( spec, null );
+            AssertJUnit.fail("expected illegal argument exception when passing null input into Defaultr");
+        }
+        catch( IllegalArgumentException iae )
+        { }
     }
 
     private class ArrayDisorderDiffy extends Diffy {
