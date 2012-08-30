@@ -5,8 +5,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
-public class ArrayKey extends Key<Integer> {
+public class ArrayKey extends Key<Integer, List<Object>> {
 
     private Collection<Integer> keyInts;
     private int keyInt = -1;
@@ -45,6 +46,41 @@ public class ArrayKey extends Key<Integer> {
     public int getLiteralIntKey() {
         return keyInt;
     }
+
+    @Override
+    public void applySubSpec( Object subSpec, Object defaultee ) {
+
+        if ( defaultee instanceof List ) {
+
+            // Find all defaultee keys that match the childKey spec.  Simple for Literal keys, more work for * and |.
+            for ( Integer literalKey : findMatchingDefaulteeKeys( defaultee ) ) {
+                defaultLiteralValue( literalKey, subSpec, (List<Object>) defaultee );
+            }
+        }
+        // Else defaultee was not a container object, the wrong type of container object, or null
+        //  net effect, we couldn't push values into it
+    }
+
+    @Override
+    public void defaultLiteralValue( Integer literalIndex, Object subSpec, List<Object> defaultee ) {
+
+        Object defaulteeValue = defaultee.get( literalIndex );
+
+        if ( subSpec instanceof Map ) {
+            if ( defaulteeValue == null ) {
+                defaulteeValue = createDefaultContainerObject();
+                defaultee.set( literalIndex, defaulteeValue ); // push a new sub-container into this list
+            }
+
+            // Re-curse into subspec
+            applySpec( (Map<Key, Object>) subSpec, defaulteeValue );
+        } else {
+            if ( defaulteeValue == null ) {
+                defaultee.set( literalIndex, subSpec );  // apply a default value into a List, assumes the list as already been expanded if needed.
+            }
+        }
+    }
+
 
     @Override
     public Collection<Integer> findMatchingDefaulteeKeys( Object defaultee ) {

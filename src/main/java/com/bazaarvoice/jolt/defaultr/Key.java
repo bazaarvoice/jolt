@@ -12,7 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class Key<T> {
+public abstract class Key<K,D> {
 
     /**
      * Factory-ish method that recursively processes a Map<String, Object> into a Map<DefaultrKey, Object>.
@@ -32,7 +32,7 @@ public abstract class Key<T> {
 
         Map<Key, Object> result = new LinkedHashMap<Key, Object>();
 
-        Key dk = null;
+        Key dk;
         for ( String key : spec.keySet() ) {
             if ( parentIsArray ) {
                 dk = new ArrayKey( key );
@@ -51,13 +51,11 @@ public abstract class Key<T> {
                     // loop over children and find the max literal value
                     for( Key childKey : children.keySet() ) {
                         int childValue = childKey.getLiteralIntKey();
-                        if ( childValue > dk.maxChildrenLiteralKey ) {
-                            dk.maxChildrenLiteralKey = childValue;
+                        if ( childValue > dk.outputArraySize ) {
+                            dk.outputArraySize = childValue;
                         }
                     }
                 }
-
-                // TODO : Ensure there is only one STAR entry
             }
             else {
                 // literal such as String, number, or Json array
@@ -71,6 +69,9 @@ public abstract class Key<T> {
 
     public static final String OR_INPUT_REGEX = "\\" + Defaultr.WildCards.OR;
 
+    private static Key.KeyPrecedenceComparator keyComparator = new Key.KeyPrecedenceComparator();
+
+
     // Am I supposed to be parent of an array?  If so I need to make sure that I inform
     //  my children they need to be ArrayKeys, and I need to make sure that the output array
     //  I will write to is big enough.
@@ -79,14 +80,14 @@ public abstract class Key<T> {
     protected String rawKey;
     protected OPS op = null;
     protected int orCount = 0;
-    protected int maxChildrenLiteralKey = -1;
+    protected int outputArraySize = -1;
     protected List<String> keyStrings;
 
-    protected abstract Collection<T> getKeyValues();
+    protected abstract Collection<K> getKeyValues();
     public abstract int getLiteralIntKey();
-    public abstract Collection<T> findMatchingDefaulteeKeys( Object defaultee );
+    public abstract Collection<K> findMatchingDefaulteeKeys( Object defaultee );
 
-        protected void init( String rawJsonKey ) {
+    protected void init( String rawJsonKey ) {
 
         rawKey = rawJsonKey;
         if ( rawJsonKey.endsWith( Defaultr.WildCards.ARRAY ) ) {
@@ -112,8 +113,39 @@ public abstract class Key<T> {
         }
     }
 
+    /**
+     * This is the main "recursive" method.   The parentKey and the spce are never null, in that we don't recurse
+     *  if spec !instanceof Map.  The only time defaultee is null, is if there is a mismatch between the data and the
+     *  spec wrt Array vs Map.
+     */
+    public void applySpec( Map<Key, Object> spec, Object defaultee ) {
+
+        if ( isArrayOutput() && defaultee instanceof List) {
+
+            List<Object> defaultList = (List<Object>) defaultee;
+
+            // extend the defaultee list if needed
+            for ( int index = defaultList.size() - 1; index < getOutputArraySize(); index++ ) {
+                defaultList.add( null );
+            }
+        }
+
+        // Find and sort the children DefaultrKeys : literals, |, then *
+        ArrayList<Key> sortedChildren = new ArrayList<Key>();
+        sortedChildren.addAll( spec.keySet() );
+        Collections.sort( sortedChildren, keyComparator );
+
+        for ( Key childKey : sortedChildren ) {
+            childKey.applySubSpec( spec.get( childKey ), defaultee );
+        }
+    }
+
+    public abstract void applySubSpec( Object subSpec, Object defaultee );
+
+    public abstract void defaultLiteralValue( K literalKey, Object subSpec, D defaultee );
+
     public int getOrCount() {
-        return orCount;
+       return orCount;
     }
 
     public boolean isArrayOutput() {
@@ -124,8 +156,8 @@ public abstract class Key<T> {
         return op;
     }
 
-    public int getMaxChildrenLiteralKey() {
-        return maxChildrenLiteralKey;
+    public int getOutputArraySize() {
+        return outputArraySize;
     }
 
     public Object createDefaultContainerObject() {
