@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class ArrayKey extends Key<Integer, List<Object>> {
+public class ArrayKey extends Key {
 
     private Collection<Integer> keyInts;
     private int keyInt = -1;
@@ -31,13 +31,8 @@ public class ArrayKey extends Key<Integer, List<Object>> {
                 keyInts = Collections.emptyList();
                 break;
             default :
-                throw new IllegalStateException( "Someone has added an op type without changing this method." );
+                throw new IllegalArgumentException( "Someone has added an op type without changing this method." );
         }
-    }
-
-    @Override
-    protected Collection<Integer> getKeyValues() {
-        return keyInts;
     }
 
     @Override
@@ -57,11 +52,10 @@ public class ArrayKey extends Key<Integer, List<Object>> {
             }
         }
         // Else there is disagreement (with respect to Array vs Map) between the data in
-        //  the container vs the Defaultr Spec type for this key.  Container wins so do nothing.
+        //  the Container vs the Defaultr Spec type for this key.  Container wins, so do nothing.
     }
 
-    @Override
-    protected void applyLiteralKeyToContainer( Integer literalIndex, List<Object> container ) {
+    private void applyLiteralKeyToContainer( Integer literalIndex, List<Object> container ) {
 
         Object defaulteeValue = container.get( literalIndex );
 
@@ -81,13 +75,12 @@ public class ArrayKey extends Key<Integer, List<Object>> {
         }
     }
 
-    @Override
-    protected Collection<Integer> determineMatchingContainerKeys( List<Object> container ) {
+    private Collection<Integer> determineMatchingContainerKeys( List<Object> container ) {
 
         switch ( getOp() ) {
             case LITERAL:
                 // Container it should get these literal values added to it
-                return getKeyValues();
+                return keyInts;
             case STAR:
                 // Identify all its keys
                 // this assumes the container list has already been expanded to the right size
@@ -102,7 +95,7 @@ public class ArrayKey extends Key<Integer, List<Object>> {
                 // Identify the intersection between the container "keys" and the OR values
                 List<Integer> indexesInRange = new ArrayList<Integer>();
 
-                for ( Integer orValue : getKeyValues() ) {
+                for ( Integer orValue : keyInts ) {
                     if ( orValue < ((List) container ).size() ) {
                         indexesInRange.add( orValue );
                     }

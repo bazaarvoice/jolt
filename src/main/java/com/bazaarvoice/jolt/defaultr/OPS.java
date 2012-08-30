@@ -10,6 +10,11 @@ public enum OPS {
 
     public static OPS parse( String key ) {
         if ( key.contains( Defaultr.WildCards.STAR ) ){
+
+            if ( ! Defaultr.WildCards.STAR.equals( key ) ) {
+                throw new IllegalArgumentException("Defaultr key " + key + " is invalid.  * keys can only contain *, and no other characters." );
+            }
+
             return STAR;
         }
         if ( key.contains( Defaultr.WildCards.OR ) ) {
@@ -51,7 +56,7 @@ public enum OPS {
             }
 
             // both are ORs, should never get here
-            throw new IllegalStateException( "Someone has added an op type without changing this method." );
+            throw new IllegalArgumentException( "Someone has added an op type without changing this method." );
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.bazaarvoice.jolt.defaultr;
 
 import com.bazaarvoice.jolt.Defaultr;
+import org.codehaus.jackson.map.util.Comparators;
+
 import static com.bazaarvoice.jolt.defaultr.OPS.*;
 
 import java.util.ArrayList;
@@ -14,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class Key<K,D> {
+public abstract class Key {
 
     /**
      * Factory-ish method that recursively processes a Map<String, Object> into a Set<Key> objects.
@@ -87,7 +89,7 @@ public abstract class Key<K,D> {
                 keyStrings = Collections.emptyList();
                 break;
             default :
-                throw new IllegalStateException( "Someone has added an op type without changing this method." );
+                throw new IllegalArgumentException( "Someone has added an op type without changing this method." );
         }
 
         // Spec is String -> Map   or   String -> Literal only
@@ -118,7 +120,7 @@ public abstract class Key<K,D> {
     public void applyChildren( Object defaultee ) {
 
         if ( defaultee == null ) {
-            throw new IllegalStateException( "Defaultee should never be null when " +
+            throw new IllegalArgumentException( "Defaultee should never be null when " +
                     "passed to the applyChildren method." );
         }
 
@@ -152,12 +154,6 @@ public abstract class Key<K,D> {
      * If this Key is a WildCard key, this may apply to many entries in the container.
      */
     protected abstract void applyChild( Object container );
-
-    protected abstract void applyLiteralKeyToContainer( K literalKey, D container );
-
-    protected abstract Collection<K> getKeyValues();
-
-    protected abstract Collection<K> determineMatchingContainerKeys( D container );
 
     public int getOrCount() {
        return orCount;
@@ -194,11 +190,10 @@ public abstract class Key<K,D> {
 
             if ( opsEqual == 0 && OR == a.getOp() && OR == b.getOp() )
             {
-                // For deterministic behavior, sub sort on the specificity of the OR
-                //   aka as an Or, the more star like, the higher your value
-                return (a.getOrCount() < b.getOrCount() ? -1 : (a.getOrCount() == b.getOrCount() ? 0 : 1));
-
-                // TODO : if the orCounts are the same, make more deterministic?
+                // For deterministic behavior, sub sort on the specificity of the OR and then alphabetically on the rawKey
+                //   For the Or, the more star like, the higher your value
+                //   If the or count matches, fall back to alphabetical on the rawKey from the spec file
+                return (a.getOrCount() < b.getOrCount() ? -1 : (a.getOrCount() == b.getOrCount() ? a.rawKey.compareTo( b.rawKey ) : 1 ) );
             }
 
             return opsEqual;

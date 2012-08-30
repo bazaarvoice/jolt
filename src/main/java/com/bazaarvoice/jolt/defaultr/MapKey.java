@@ -6,19 +6,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class MapKey extends Key<String, Map<String,Object>> {
+public class MapKey extends Key {
 
     public MapKey( String jsonKey, Object spec ) {
         super( jsonKey, spec );
     }
 
-    protected Collection<String> getKeyValues() {
-        return Collections.unmodifiableCollection(keyStrings);
-    }
-
     @Override
     protected int getLiteralIntKey() {
-        throw new IllegalStateException( "Shouldn't be be asking a MapKey for int getLiteralIntKey()."  );
+        throw new UnsupportedOperationException( "Shouldn't be be asking a MapKey for int getLiteralIntKey()."  );
     }
 
     @Override
@@ -33,11 +29,10 @@ public class MapKey extends Key<String, Map<String,Object>> {
             }
         }
         // Else there is disagreement (with respect to Array vs Map) between the data in
-        //  the container vs the Defaultr Spec type for this key.  Container wins so do nothing.
+        //  the Container vs the Defaultr Spec type for this key.  Container wins, so do nothing.
     }
 
-    @Override
-    protected void applyLiteralKeyToContainer( String literalKey, Map<String, Object> container ) {
+    private void applyLiteralKeyToContainer( String literalKey, Map<String, Object> container ) {
 
         Object defaulteeValue = container.get( literalKey );
 
@@ -57,20 +52,19 @@ public class MapKey extends Key<String, Map<String,Object>> {
         }
     }
 
-    @Override
-    protected Collection<String> determineMatchingContainerKeys( Map<String, Object> container ) {
+    private Collection<String> determineMatchingContainerKeys( Map<String, Object> container ) {
 
         switch ( getOp() ) {
             case LITERAL:
                 // the container should get these literal values added to it
-                return getKeyValues();
+                return keyStrings;
             case STAR:
                 // Identify all its keys
                 return ( (Map) container ).keySet();
             case OR:
                 // Identify the intersection between its keys and the OR values
                 Set<String> intersection = new HashSet<String>( ( (Map) container ).keySet() );
-                intersection.retainAll( getKeyValues() );
+                intersection.retainAll( keyStrings );
                 return intersection;
             default :
                 throw new IllegalStateException( "Someone has added an op type without changing this method." );

@@ -1,0 +1,4 @@
+{
+    "foo" : "foo|x wins",
+    "bar" : "z|bar wins cause it is more specific"
+}

@@ -5,6 +5,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class DefaultrTest {
@@ -12,27 +13,28 @@ public class DefaultrTest {
     @DataProvider
     public Object[][] getTestCaseNames() {
         return new Object[][] {
-            {"firstSample", null, null, null},
-            {"identity", null, null, null},
-            {"expansionOnly", null, null, null},
-            {"photosArray", null, null, null},
-            {"arrayMismatch1", null, null, null},
-            {"arrayMismatch2", null, null, null},
-            {"starsOfStars", null, null, null},
-            {"topLevelIsArray", null, null, null}
+            {"firstSample"},
+            {"identity"},
+            {"expansionOnly"},
+            {"photosArray"},
+            {"arrayMismatch1"},
+            {"arrayMismatch2"},
+            {"starsOfStars"},
+            {"topLevelIsArray"},
+            {"orOrdering"}
         };
     }
 
     @Test(dataProvider = "getTestCaseNames")
-    public void runTestCases(String testCaseName, String inputPath, String specPath, String outputPath)
+    public void runTestCases(String testCaseName)
             throws IOException {
         if ("".equals( testCaseName )) {
             return;
         }
         String testPath = "/json/defaultr/" + testCaseName;
-        Object input = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( inputPath == null ? testPath + "/input.json" : inputPath ) );
-        Object spec = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( specPath == null ? testPath + "/spec.json" : specPath ) );
-        Object expected = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( outputPath == null ? testPath + "/output.json" : outputPath ) );
+        Object input = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( testPath + "/input.json" ) );
+        Object spec = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( testPath + "/spec.json" ) );
+        Object expected = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( testPath + "/output.json" ) );
 
         Defaultr defaultr = new Defaultr();
         Object actual = defaultr.defaultr( spec, input );
@@ -52,10 +54,29 @@ public class DefaultrTest {
         Defaultr defaultr = new Defaultr();
         try {
             defaultr.defaultr( spec, null );
-            AssertJUnit.fail("expected illegal argument exception when passing null input into Defaultr");
+            AssertJUnit.fail("expected illegal argument exception");
         }
         catch( IllegalArgumentException iae )
         { }
+        catch( Exception e ){
+            AssertJUnit.fail("expected illegal argument exception, but got something else");
+        }
+    }
+
+    @Test
+    public void throwExceptionOnBadSpec() throws IOException {
+        Object spec = JsonUtils.jsonToMap( "{ \"tuna*\": \"marlin\" }" );
+
+        Defaultr defaultr = new Defaultr();
+        try {
+            defaultr.defaultr( spec, new LinkedHashMap() );
+            AssertJUnit.fail("expected illegal argument exception");
+        }
+        catch( IllegalArgumentException iae )
+        { }
+        catch( Exception e ){
+            AssertJUnit.fail("expected illegal argument exception, but got something else");
+        }
     }
 
     private class ArrayDisorderDiffy extends Diffy {

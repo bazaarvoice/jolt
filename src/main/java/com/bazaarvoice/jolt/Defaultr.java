@@ -120,9 +120,9 @@ import java.util.Set;
  *
  * Algorithm
  * Defaultr walks its Spec in a depth first way.
- * At each level in the Spec tree, Defaultr, applies Spec from most specific to least specific :
+ * At each level in the Spec tree, Defaultr, works from most specific to least specific Spec key:
  *   Literals key values
- *   "|", sub sorted by how many or values there are (for deterministic behavior)
+ *   "|", sub-sorted by how many or values there, then alphabetically (for deterministic behavior)
  *   "*"
  *
  * At a given level in the Defaultr Spec tree, only literal keys force Defaultr to create new entries
@@ -150,23 +150,6 @@ import java.util.Set;
  * If it is a map, no problem.
  * If it is an array, we treat the "root" level of the Defaultr spec, as if it were the child of an Array type Defaultr entry.
  * To force unambiguity, Defaultr throws an Exception if the input is null.
- *
- * Undefined Behavior :
- *
- * Specificity on the "|" Defaultr specs.   If you specify the same literal key in to different OR keys of the same size,
- * the order of applying defaults is undefined.
- *
- * Example
- * {
- *   "foo|bar" : {
- *     "output" : "bar"
- *   }
- *   "foo|baz" : {
- *     "output" : "baz"
- *   }
- * }
- *
- * You can't determine the value of "foo.output" in the output.  It could be "bar" or "baz" in an undeterministic way.
  */
 public class Defaultr implements Chainable {
 
