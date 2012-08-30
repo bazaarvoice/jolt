@@ -1,7 +1,8 @@
 package com.bazaarvoice.jolt;
 
-import com.bazaarvoice.jolt.defaultr.DefaultrKey;
-import com.bazaarvoice.jolt.defaultr.DefaultrKey.DefaultrKeyComparator;
+import com.bazaarvoice.jolt.defaultr.ArrayKey;
+import com.bazaarvoice.jolt.defaultr.Key;
+import com.bazaarvoice.jolt.defaultr.MapKey;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -164,7 +165,7 @@ public class Defaultr implements Chainable {
         public static final String ARRAY = "[]";
     }
 
-    private DefaultrKeyComparator keyComparator = new DefaultrKeyComparator();
+    private Key.KeyPrecedenceComparator keyComparator = new Key.KeyPrecedenceComparator();
 
     /**
      * Applies a Defaultr transform for Chainr
@@ -216,11 +217,11 @@ public class Defaultr implements Chainable {
         Map<String, Object> rootedSpec = new LinkedHashMap<String, Object>();
         rootedSpec.put( rootKey, spec );
 
-        Map<DefaultrKey, Object> rootedKeyedSpec = DefaultrKey.parseSpec( rootedSpec );
-        DefaultrKey root = rootedKeyedSpec.keySet().iterator().next();
+        Map<Key, Object> rootedKeyedSpec = Key.parseSpec( rootedSpec );
+        Key root = rootedKeyedSpec.keySet().iterator().next();
 
         // Defaultr works by looking one level down the tree, hence we need to pass in a root and a valid defaultee
-        this.applySpec( root, (Map<DefaultrKey, Object>) rootedKeyedSpec.get( root ), defaultee );
+        this.applySpec( root, (Map<Key, Object>) rootedKeyedSpec.get( root ), defaultee );
 
         return defaultee;
     }
@@ -235,18 +236,18 @@ public class Defaultr implements Chainable {
      *   could be facilitated by having this method returned a constructed object, which the parent stack frame
      *   could translate as needed.
      */
-    private void applySpec( DefaultrKey parentKey, Map<DefaultrKey, Object> spec, Object defaultee ) {
+    private void applySpec( Key parentKey, Map<Key, Object> spec, Object defaultee ) {
 
-        if ( parentKey.isArrayOutput ) {
-            ensureArraySize( parentKey.maxLiteralKey, defaultee );
+        if ( parentKey.isArrayOutput() ) {
+            ensureArraySize( parentKey.getMaxChildrenLiteralKey(), defaultee );
         }
 
         // Find and sort the children DefaultrKeys : literals, |, then *
-        ArrayList<DefaultrKey> sortedChildren = new ArrayList<DefaultrKey>();
+        ArrayList<Key> sortedChildren = new ArrayList<Key>();
         sortedChildren.addAll( spec.keySet() );
         Collections.sort( sortedChildren, keyComparator );
 
-        for ( DefaultrKey childeKey : sortedChildren ) {
+        for ( Key childeKey : sortedChildren ) {
             applyDefaultrKey( childeKey, spec.get( childeKey ), defaultee );
         }
     }
@@ -264,17 +265,17 @@ public class Defaultr implements Chainable {
         }
     }
 
-    private void applyDefaultrKey( DefaultrKey childKey, Object subSpec, Object defaultee ) {
+    private void applyDefaultrKey( Key childKey, Object subSpec, Object defaultee ) {
 
         // Find all defaultee keys that match the childKey spec.  Simple for Literal keys, more work for * and |.
         Collection literalKeys = this.findMatchingDefaulteeKeys( childKey, defaultee );
 
-        if ( childKey.isArrayKey && defaultee instanceof List ) {
+        if ( childKey instanceof ArrayKey && defaultee instanceof List ) {
             for ( Object literalKey : literalKeys ) {
                 this.defaultLiteralValue( (Integer) literalKey, childKey, subSpec, (List<Object>) defaultee );
             }
         }
-        else if ( !childKey.isArrayKey && defaultee instanceof Map ) {
+        else if ( childKey instanceof MapKey && defaultee instanceof Map ) {
             for ( Object literalKey : literalKeys ) {
                 this.defaultLiteralValue( (String) literalKey, childKey, subSpec, (Map<String, Object>) defaultee );
             }
@@ -286,7 +287,7 @@ public class Defaultr implements Chainable {
     /**
      * Default a literal value into a List.
      */
-    private void defaultLiteralValue( Integer literalIndex, DefaultrKey dkey, Object subSpec, List<Object> defaultee ) {
+    private void defaultLiteralValue( Integer literalIndex, Key dkey, Object subSpec, List<Object> defaultee ) {
 
         Object defaulteeValue = defaultee.get( literalIndex );
 
@@ -297,7 +298,7 @@ public class Defaultr implements Chainable {
             }
 
             // Re-curse into subspec
-            this.applySpec( dkey, (Map<DefaultrKey, Object>) subSpec, defaulteeValue );
+            this.applySpec( dkey, (Map<Key, Object>) subSpec, defaulteeValue );
         } else {
             if ( defaulteeValue == null ) {
                 defaultee.set( literalIndex, subSpec );  // apply a default value into a List, assumes the list as already been expanded if needed.
@@ -308,7 +309,7 @@ public class Defaultr implements Chainable {
     /**
      * Default into a Map
      */
-    private void defaultLiteralValue( String literalKey, DefaultrKey dkey, Object subSpec, Map<String, Object> defaultee ) {
+    private void defaultLiteralValue( String literalKey, Key dkey, Object subSpec, Map<String, Object> defaultee ) {
 
         Object defaulteeValue = defaultee.get( literalKey );
 
@@ -319,32 +320,31 @@ public class Defaultr implements Chainable {
             }
 
             // Re-curse into subspec
-            this.applySpec( dkey, (Map<DefaultrKey, Object>) subSpec, defaulteeValue );
+            this.applySpec( dkey, (Map<Key, Object>) subSpec, defaulteeValue );
         } else {
             if ( defaulteeValue == null ) {
                 defaultee.put( literalKey, subSpec );  // apply a default value into a map
-
             }
         }
     }
 
 
-    private Collection findMatchingDefaulteeKeys( DefaultrKey key, Object defaultee ) {
+    private Collection findMatchingDefaulteeKeys( Key key, Object defaultee ) {
 
         if ( defaultee == null ) {
             return Collections.emptyList();
         }
 
-        switch ( key.op ) {
+        switch ( key.getOp() ) {
             // If the Defaultee is not null, it should get these literal values added to it
             case LITERAL:
                 return key.getKeyValues();
             // Identify all its keys
             case STAR:
-                if ( !key.isArrayKey && defaultee instanceof Map ) {
+                if ( key instanceof MapKey && defaultee instanceof Map ) {
                     return ( (Map) defaultee ).keySet();
                 }
-                else if ( key.isArrayKey && defaultee instanceof List ) {
+                else if ( key instanceof ArrayKey && defaultee instanceof List ) {
                     // this assumes the defaultee list has already been expanded to the right size
                     List defaultList = (List) defaultee;
                     List<Integer> allIndexes = new ArrayList<Integer>( defaultList.size() );
@@ -357,13 +357,13 @@ public class Defaultr implements Chainable {
                 break;
             // Identify the intersection between its keys and the OR values
             case OR:
-                if ( !key.isArrayKey && defaultee instanceof Map ) {
+                if ( key instanceof MapKey && defaultee instanceof Map ) {
 
                     Set<String> intersection = new HashSet<String>( ( (Map) defaultee ).keySet() );
                     intersection.retainAll( key.getKeyValues() );
                     return intersection;
                 }
-                else if ( key.isArrayKey && defaultee instanceof List ) {
+                else if ( key instanceof ArrayKey && defaultee instanceof List ) {
 
                     List<Integer> indexesInRange = new ArrayList<Integer>();
                     for ( Object orValue : key.getKeyValues() ) {
@@ -379,8 +379,8 @@ public class Defaultr implements Chainable {
         return Collections.emptyList();
     }
 
-    private Object createDefaultContainerObject( DefaultrKey dkey ) {
-        if ( dkey.isArrayOutput ) {
+    private Object createDefaultContainerObject( Key dkey ) {
+        if ( dkey.isArrayOutput() ) {
             return new ArrayList<Object>();
         } else {
             return new LinkedHashMap<String, Object>();

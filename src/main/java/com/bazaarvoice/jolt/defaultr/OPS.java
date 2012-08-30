@@ -4,11 +4,11 @@ import com.bazaarvoice.jolt.Defaultr;
 
 import java.util.Comparator;
 
-public enum DefaultrOPS {
+public enum OPS {
 
     STAR, OR, LITERAL;
 
-    public static DefaultrOPS parse( String key ) {
+    public static OPS parse( String key ) {
         if ( key.contains( Defaultr.WildCards.STAR ) ){
             return STAR;
         }
@@ -18,13 +18,13 @@ public enum DefaultrOPS {
         return LITERAL;
     }
 
-    public static class OpsPrecedenceComparator implements Comparator<DefaultrOPS> {
+    public static class OpsPrecedenceComparator implements Comparator<OPS> {
         /**
          * The order we want to apply Defaultr logic is Literals, Or, and then Star.
          * Since we walk the sorted data from 0 to n, that means Literals need to low, and Star should be high.
          */
         @Override
-        public int compare(DefaultrOPS ops, DefaultrOPS ops1) {
+        public int compare(OPS ops, OPS ops1) {
 
             // a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second.
             // s < s1 -> -1
@@ -49,7 +49,9 @@ public enum DefaultrOPS {
             if ( LITERAL == ops1 ) {
                 return 1;
             }
-            return 0; // both are ORs, should never get here
+
+            // both are ORs, should never get here
+            throw new IllegalStateException( "Someone has added an op type without changing this method." );
         }
     }
 }
