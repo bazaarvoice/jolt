@@ -268,7 +268,7 @@ public class Defaultr implements Chainable {
     private void applyDefaultrKey( Key childKey, Object subSpec, Object defaultee ) {
 
         // Find all defaultee keys that match the childKey spec.  Simple for Literal keys, more work for * and |.
-        Collection literalKeys = this.findMatchingDefaulteeKeys( childKey, defaultee );
+        Collection literalKeys = childKey.findMatchingDefaulteeKeys( defaultee );
 
         if ( childKey instanceof ArrayKey && defaultee instanceof List ) {
             for ( Object literalKey : literalKeys ) {
@@ -293,7 +293,7 @@ public class Defaultr implements Chainable {
 
         if ( subSpec instanceof Map ) {
             if ( defaulteeValue == null ) {
-                defaulteeValue = createDefaultContainerObject( dkey );
+                defaulteeValue = dkey.createDefaultContainerObject();
                 defaultee.set( literalIndex, defaulteeValue ); // push a new sub-container into this list
             }
 
@@ -315,7 +315,7 @@ public class Defaultr implements Chainable {
 
         if ( subSpec instanceof Map ) {
             if ( defaulteeValue == null ) {
-                defaulteeValue = createDefaultContainerObject( dkey );
+                defaulteeValue = dkey.createDefaultContainerObject();
                 defaultee.put( literalKey, defaulteeValue );  // push a new sub-container into this map
             }
 
@@ -325,65 +325,6 @@ public class Defaultr implements Chainable {
             if ( defaulteeValue == null ) {
                 defaultee.put( literalKey, subSpec );  // apply a default value into a map
             }
-        }
-    }
-
-
-    private Collection findMatchingDefaulteeKeys( Key key, Object defaultee ) {
-
-        if ( defaultee == null ) {
-            return Collections.emptyList();
-        }
-
-        switch ( key.getOp() ) {
-            // If the Defaultee is not null, it should get these literal values added to it
-            case LITERAL:
-                return key.getKeyValues();
-            // Identify all its keys
-            case STAR:
-                if ( key instanceof MapKey && defaultee instanceof Map ) {
-                    return ( (Map) defaultee ).keySet();
-                }
-                else if ( key instanceof ArrayKey && defaultee instanceof List ) {
-                    // this assumes the defaultee list has already been expanded to the right size
-                    List defaultList = (List) defaultee;
-                    List<Integer> allIndexes = new ArrayList<Integer>( defaultList.size() );
-                    for ( int index = 0; index < defaultList.size(); index++ ) {
-                        allIndexes.add( index );
-                    }
-
-                    return allIndexes;
-                }
-                break;
-            // Identify the intersection between its keys and the OR values
-            case OR:
-                if ( key instanceof MapKey && defaultee instanceof Map ) {
-
-                    Set<String> intersection = new HashSet<String>( ( (Map) defaultee ).keySet() );
-                    intersection.retainAll( key.getKeyValues() );
-                    return intersection;
-                }
-                else if ( key instanceof ArrayKey && defaultee instanceof List ) {
-
-                    List<Integer> indexesInRange = new ArrayList<Integer>();
-                    for ( Object orValue : key.getKeyValues() ) {
-                        if ( (Integer) orValue < ( (List) defaultee ).size() ) {
-                            indexesInRange.add( (Integer) orValue );
-                        }
-                    }
-                    return indexesInRange;
-                }
-                break;
-        }
-
-        return Collections.emptyList();
-    }
-
-    private Object createDefaultContainerObject( Key dkey ) {
-        if ( dkey.isArrayOutput() ) {
-            return new ArrayList<Object>();
-        } else {
-            return new LinkedHashMap<String, Object>();
         }
     }
 }

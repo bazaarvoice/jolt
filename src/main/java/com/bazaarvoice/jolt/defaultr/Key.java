@@ -3,6 +3,7 @@ package com.bazaarvoice.jolt.defaultr;
 import com.bazaarvoice.jolt.Defaultr;
 import static com.bazaarvoice.jolt.defaultr.OPS.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,7 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class Key {
+public abstract class Key<T> {
 
     /**
      * Factory-ish method that recursively processes a Map<String, Object> into a Map<DefaultrKey, Object>.
@@ -81,10 +82,11 @@ public abstract class Key {
     protected int maxChildrenLiteralKey = -1;
     protected List<String> keyStrings;
 
-    public abstract Collection getKeyValues();
+    protected abstract Collection<T> getKeyValues();
     public abstract int getLiteralIntKey();
+    public abstract Collection<T> findMatchingDefaulteeKeys( Object defaultee );
 
-    protected void init( String rawJsonKey ) {
+        protected void init( String rawJsonKey ) {
 
         rawKey = rawJsonKey;
         if ( rawJsonKey.endsWith( Defaultr.WildCards.ARRAY ) ) {
@@ -124,6 +126,14 @@ public abstract class Key {
 
     public int getMaxChildrenLiteralKey() {
         return maxChildrenLiteralKey;
+    }
+
+    public Object createDefaultContainerObject() {
+        if ( isArrayOutput() ) {
+            return new ArrayList<Object>();
+        } else {
+            return new LinkedHashMap<String, Object>();
+        }
     }
 
 
