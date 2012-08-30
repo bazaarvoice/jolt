@@ -12,8 +12,7 @@ public class ArrayKey extends Key<Integer, List<Object>> {
     private int keyInt = -1;
 
     public ArrayKey( String jsonKey, Object spec ) {
-
-        super.init( jsonKey, spec );
+        super( jsonKey, spec );
 
         // Handle ArrayKey specific stuff
         switch( getOp() ){

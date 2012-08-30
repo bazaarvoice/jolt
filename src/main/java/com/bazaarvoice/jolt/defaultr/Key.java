@@ -65,7 +65,7 @@ public abstract class Key<K,D> {
     protected String rawKey;
     protected List<String> keyStrings;
 
-    protected void init( String rawJsonKey, Object spec ) {
+    public Key( String rawJsonKey, Object spec ) {
 
         rawKey = rawJsonKey;
         if ( rawJsonKey.endsWith( Defaultr.WildCards.ARRAY ) ) {

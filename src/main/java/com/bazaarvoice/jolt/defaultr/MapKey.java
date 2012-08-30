@@ -9,7 +9,7 @@ import java.util.Set;
 public class MapKey extends Key<String, Map<String,Object>> {
 
     public MapKey( String jsonKey, Object spec ) {
-        super.init( jsonKey, spec );
+        super( jsonKey, spec );
     }
 
     protected Collection<String> getKeyValues() {
