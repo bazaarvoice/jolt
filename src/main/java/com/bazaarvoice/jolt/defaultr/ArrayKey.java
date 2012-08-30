@@ -5,19 +5,18 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class ArrayKey extends Key<Integer, List<Object>> {
 
     private Collection<Integer> keyInts;
     private int keyInt = -1;
 
-    public ArrayKey( String jsonKey ) {
+    public ArrayKey( String jsonKey, Object spec ) {
 
-        super.init( jsonKey );
+        super.init( jsonKey, spec );
 
-        //// FIGURE OUT WHAT THE keyValues ARE
-        switch( op ){
+        // Handle ArrayKey specific stuff
+        switch( getOp() ){
             case OR :
                 keyInts = new ArrayList<Integer>();
                 for( String orLiteral : keyStrings ) {
@@ -38,91 +37,80 @@ public class ArrayKey extends Key<Integer, List<Object>> {
     }
 
     @Override
-    public Collection<Integer> getKeyValues() {
+    protected Collection<Integer> getKeyValues() {
         return keyInts;
     }
 
     @Override
-    public int getLiteralIntKey() {
+    protected int getLiteralIntKey() {
         return keyInt;
     }
 
     @Override
-    public void applySubSpec( Object subSpec, Object defaultee ) {
+    protected void applyChild( Object container ) {
 
-        if ( defaultee instanceof List ) {
+        if ( container instanceof List ) {
+            List<Object> defaultList = (List<Object>) container;
 
             // Find all defaultee keys that match the childKey spec.  Simple for Literal keys, more work for * and |.
-            for ( Integer literalKey : findMatchingDefaulteeKeys( defaultee ) ) {
-                defaultLiteralValue( literalKey, subSpec, (List<Object>) defaultee );
+            for ( Integer literalKey : determineMatchingContainerKeys( defaultList ) ) {
+                applyLiteralKeyToContainer( literalKey, defaultList );
             }
         }
-        // Else defaultee was not a container object, the wrong type of container object, or null
-        //  net effect, we couldn't push values into it
+        // Else there is disagreement (with respect to Array vs Map) between the data in
+        //  the container vs the Defaultr Spec type for this key.  Container wins so do nothing.
     }
 
     @Override
-    public void defaultLiteralValue( Integer literalIndex, Object subSpec, List<Object> defaultee ) {
+    protected void applyLiteralKeyToContainer( Integer literalIndex, List<Object> container ) {
 
-        Object defaulteeValue = defaultee.get( literalIndex );
+        Object defaulteeValue = container.get( literalIndex );
 
-        if ( subSpec instanceof Map ) {
+        if ( children == null ) {
             if ( defaulteeValue == null ) {
-                defaulteeValue = createDefaultContainerObject();
-                defaultee.set( literalIndex, defaulteeValue ); // push a new sub-container into this list
+                container.set( literalIndex, literalValue );  // apply a default value into a List, assumes the list as already been expanded if needed.
+            }
+        }
+        else {
+            if ( defaulteeValue == null ) {
+                defaulteeValue = createOutputContainerObject();
+                container.set( literalIndex, defaulteeValue ); // push a new sub-container into this list
             }
 
-            // Re-curse into subspec
-            applySpec( (Map<Key, Object>) subSpec, defaulteeValue );
-        } else {
-            if ( defaulteeValue == null ) {
-                defaultee.set( literalIndex, subSpec );  // apply a default value into a List, assumes the list as already been expanded if needed.
-            }
+            // recurse by applying my children to this known valid container
+            applyChildren( defaulteeValue );
         }
     }
 
-
     @Override
-    public Collection<Integer> findMatchingDefaulteeKeys( Object defaultee ) {
-
-        if ( defaultee == null ) {
-            return Collections.emptyList();
-        }
+    protected Collection<Integer> determineMatchingContainerKeys( List<Object> container ) {
 
         switch ( getOp() ) {
-            // If the Defaultee is not null, it should get these literal values added to it
             case LITERAL:
+                // Container it should get these literal values added to it
                 return getKeyValues();
-            // Identify all its keys
             case STAR:
-                if ( defaultee instanceof List ) {
-                    // this assumes the defaultee list has already been expanded to the right size
-                    List defaultList = (List) defaultee;
-                    List<Integer> allIndexes = new ArrayList<Integer>( defaultList.size() );
-                    for ( int index = 0; index < defaultList.size(); index++ ) {
-                        allIndexes.add( index );
-                    }
-
-                    return allIndexes;
+                // Identify all its keys
+                // this assumes the container list has already been expanded to the right size
+                List defaultList = (List) container;
+                List<Integer> allIndexes = new ArrayList<Integer>( defaultList.size() );
+                for ( int index = 0; index < defaultList.size(); index++ ) {
+                    allIndexes.add( index );
                 }
-                break;
-            // Identify the intersection between its keys and the OR values
+
+                return allIndexes;
             case OR:
-                if ( defaultee instanceof List ) {
-                    List<Integer> indexesInRange = new ArrayList<Integer>();
+                // Identify the intersection between the container "keys" and the OR values
+                List<Integer> indexesInRange = new ArrayList<Integer>();
 
-                    for ( Integer orValue : getKeyValues() ) {
-                        if ( orValue < ((List)defaultee).size() ) {
-                            indexesInRange.add( orValue );
-                        }
+                for ( Integer orValue : getKeyValues() ) {
+                    if ( orValue < ((List) container ).size() ) {
+                        indexesInRange.add( orValue );
                     }
-                    return indexesInRange;
                 }
-                break;
+                return indexesInRange;
             default :
                 throw new IllegalStateException( "Someone has added an op type without changing this method." );
         }
-
-        return Collections.emptyList();
     }
 }

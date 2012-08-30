@@ -1,13 +1,7 @@
 package com.bazaarvoice.jolt;
 
-import com.bazaarvoice.jolt.defaultr.ArrayKey;
 import com.bazaarvoice.jolt.defaultr.Key;
-import com.bazaarvoice.jolt.defaultr.MapKey;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,7 +122,7 @@ import java.util.Set;
  * Defaultr walks its Spec in a depth first way.
  * At each level in the Spec tree, Defaultr, applies Spec from most specific to least specific :
  *   Literals key values
- *   "|"
+ *   "|", sub sorted by how many or values there are (for deterministic behavior)
  *   "*"
  *
  * At a given level in the Defaultr Spec tree, only literal keys force Defaultr to create new entries
@@ -156,6 +150,23 @@ import java.util.Set;
  * If it is a map, no problem.
  * If it is an array, we treat the "root" level of the Defaultr spec, as if it were the child of an Array type Defaultr entry.
  * To force unambiguity, Defaultr throws an Exception if the input is null.
+ *
+ * Undefined Behavior :
+ *
+ * Specificity on the "|" Defaultr specs.   If you specify the same literal key in to different OR keys of the same size,
+ * the order of applying defaults is undefined.
+ *
+ * Example
+ * {
+ *   "foo|bar" : {
+ *     "output" : "bar"
+ *   }
+ *   "foo|baz" : {
+ *     "output" : "baz"
+ *   }
+ * }
+ *
+ * You can't determine the value of "foo.output" in the output.  It could be "bar" or "baz" in an undeterministic way.
  */
 public class Defaultr implements Chainable {
 
@@ -217,11 +228,11 @@ public class Defaultr implements Chainable {
         Map<String, Object> rootedSpec = new LinkedHashMap<String, Object>();
         rootedSpec.put( rootKey, spec );
 
-        Map<Key, Object> rootedKeyedSpec = Key.parseSpec( rootedSpec );
-        Key root = rootedKeyedSpec.keySet().iterator().next();
+        Set<Key> rootedKeyedSpec = Key.parseSpec( rootedSpec );
+        Key root = rootedKeyedSpec.iterator().next();
 
-        // Defaultr works by looking one level down the tree, hence we need to pass in a root and a valid defaultee
-        root.applySpec( (Map<Key, Object>) rootedKeyedSpec.get( root ), defaultee );
+        // Have the root key apply its children to the known to be non-null defaultee
+        root.applyChildren( defaultee );
 
         return defaultee;
     }

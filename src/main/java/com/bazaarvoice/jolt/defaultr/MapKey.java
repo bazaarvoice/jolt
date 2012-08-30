@@ -8,84 +8,72 @@ import java.util.Set;
 
 public class MapKey extends Key<String, Map<String,Object>> {
 
-    public MapKey( String jsonKey ) {
-        super.init( jsonKey );
+    public MapKey( String jsonKey, Object spec ) {
+        super.init( jsonKey, spec );
     }
 
-    public Collection<String> getKeyValues() {
+    protected Collection<String> getKeyValues() {
         return Collections.unmodifiableCollection(keyStrings);
     }
 
     @Override
-    public int getLiteralIntKey() {
+    protected int getLiteralIntKey() {
         throw new IllegalStateException( "Shouldn't be be asking a MapKey for int getLiteralIntKey()."  );
     }
 
     @Override
-    public void applySubSpec( Object subSpec, Object defaultee ) {
+    protected void applyChild( Object container ) {
 
-        if ( defaultee instanceof Map ) {
+        if ( container instanceof Map ) {
+            Map<String, Object> defaulteeMap = (Map<String, Object>) container;
 
             // Find all defaultee keys that match the childKey spec.  Simple for Literal keys, more work for * and |.
-            for ( String literalKey : findMatchingDefaulteeKeys( defaultee ) ) {
-                defaultLiteralValue( literalKey, subSpec, (Map<String, Object>) defaultee );
+            for ( String literalKey : determineMatchingContainerKeys( defaulteeMap ) ) {
+                applyLiteralKeyToContainer( literalKey, defaulteeMap );
             }
         }
-        // Else defaultee was not a container object, the wrong type of container object, or null
-        //  net effect, we couldn't push values into it
+        // Else there is disagreement (with respect to Array vs Map) between the data in
+        //  the container vs the Defaultr Spec type for this key.  Container wins so do nothing.
     }
 
     @Override
-    public void defaultLiteralValue( String literalKey, Object subSpec, Map<String, Object> defaultee ) {
+    protected void applyLiteralKeyToContainer( String literalKey, Map<String, Object> container ) {
 
-        Object defaulteeValue = defaultee.get( literalKey );
+        Object defaulteeValue = container.get( literalKey );
 
-        if ( subSpec instanceof Map ) {
+        if ( children == null ) {
             if ( defaulteeValue == null ) {
-                defaulteeValue = createDefaultContainerObject();
-                defaultee.put( literalKey, defaulteeValue );  // push a new sub-container into this map
+                container.put( literalKey, literalValue );  // apply a default value into a map
+            }
+        }
+        else {
+            if ( defaulteeValue == null ) {
+                defaulteeValue = createOutputContainerObject();
+                container.put( literalKey, defaulteeValue );  // push a new sub-container into this map
             }
 
-            // Re-curse into subspec
-            applySpec( (Map<Key, Object>) subSpec, defaulteeValue );
-        } else {
-            if ( defaulteeValue == null ) {
-                defaultee.put( literalKey, subSpec );  // apply a default value into a map
-            }
+            // recurse by applying my children to this known valid container
+            applyChildren( defaulteeValue );
         }
     }
 
-
     @Override
-    public Collection<String> findMatchingDefaulteeKeys( Object defaultee ) {
-
-        if ( defaultee == null ) {
-            return Collections.emptyList();
-        }
+    protected Collection<String> determineMatchingContainerKeys( Map<String, Object> container ) {
 
         switch ( getOp() ) {
-            // If the Defaultee is not null, it should get these literal values added to it
             case LITERAL:
+                // the container should get these literal values added to it
                 return getKeyValues();
-            // Identify all its keys
             case STAR:
-                if ( defaultee instanceof Map ) {
-                    return ( (Map) defaultee ).keySet();
-                }
-                break;
-            // Identify the intersection between its keys and the OR values
+                // Identify all its keys
+                return ( (Map) container ).keySet();
             case OR:
-                if ( defaultee instanceof Map ) {
-
-                    Set<String> intersection = new HashSet<String>( ( (Map) defaultee ).keySet() );
-                    intersection.retainAll( getKeyValues() );
-                    return intersection;
-                }
-                break;
+                // Identify the intersection between its keys and the OR values
+                Set<String> intersection = new HashSet<String>( ( (Map) container ).keySet() );
+                intersection.retainAll( getKeyValues() );
+                return intersection;
             default :
                 throw new IllegalStateException( "Someone has added an op type without changing this method." );
         }
-
-        return Collections.emptyList();
     }
 }

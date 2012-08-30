@@ -8,19 +8,21 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class Key<K,D> {
 
     /**
-     * Factory-ish method that recursively processes a Map<String, Object> into a Map<DefaultrKey, Object>.
+     * Factory-ish method that recursively processes a Map<String, Object> into a Set<Key> objects.
      *
      * @param spec Simple Jackson default Map<String,Object> input
-     * @return processed spec
+     * @return Set of Keys from this level in the spec
      */
-    public static Map<Key, Object> parseSpec( Map<String, Object> spec ) {
+    public static Set<Key> parseSpec( Map<String, Object> spec ) {
         return processSpec( false, spec );
     }
 
@@ -28,38 +30,17 @@ public abstract class Key<K,D> {
      * Recursively walk the spec input tree.  Handle arrays by telling DefaultrKeys if they need to be ArrayKeys, and
      *  to find the max default array length.
      */
-    private static Map<Key, Object> processSpec( boolean parentIsArray, Map<String, Object> spec ) {
+    private static Set<Key> processSpec( boolean parentIsArray, Map<String, Object> spec ) {
 
-        Map<Key, Object> result = new LinkedHashMap<Key, Object>();
+        Set<Key> result = new HashSet<Key>();
 
-        Key dk;
         for ( String key : spec.keySet() ) {
+            Object subSpec = spec.get( key );
             if ( parentIsArray ) {
-                dk = new ArrayKey( key );
+                result.add( new ArrayKey( key, subSpec ) ); // this will recursively call processSpec if needed
             }
             else {
-                dk = new MapKey( key );
-            }
-
-            Object obj = spec.get( key );
-            // Spec is String -> Map or String -> Literal only
-            if ( obj instanceof Map ) {
-                Map<Key, Object> children = processSpec( dk.isArrayOutput(), (Map<String, Object>) obj );
-                result.put( dk, children );
-
-                if ( dk.isArrayOutput() ) {
-                    // loop over children and find the max literal value
-                    for( Key childKey : children.keySet() ) {
-                        int childValue = childKey.getLiteralIntKey();
-                        if ( childValue > dk.outputArraySize ) {
-                            dk.outputArraySize = childValue;
-                        }
-                    }
-                }
-            }
-            else {
-                // literal such as String, number, or Json array
-                result.put( dk, obj );
+                result.add( new MapKey( key, subSpec ) ); // this will recursively call processSpec if needed
             }
         }
 
@@ -67,27 +48,24 @@ public abstract class Key<K,D> {
     }
 
 
-    public static final String OR_INPUT_REGEX = "\\" + Defaultr.WildCards.OR;
-
-    private static Key.KeyPrecedenceComparator keyComparator = new Key.KeyPrecedenceComparator();
-
+    private static final String OR_INPUT_REGEX = "\\" + Defaultr.WildCards.OR;
+    private static final Key.KeyPrecedenceComparator keyComparator = new Key.KeyPrecedenceComparator();
 
     // Am I supposed to be parent of an array?  If so I need to make sure that I inform
     //  my children they need to be ArrayKeys, and I need to make sure that the output array
     //  I will write to is big enough.
-    protected boolean isArrayOutput = false;
+    private boolean isArrayOutput = false;
+    private OPS op = null;
+    private int orCount = 0;
+    private int outputArraySize = -1;
+
+    protected Set<Key> children = null;
+    protected Object literalValue = null;
 
     protected String rawKey;
-    protected OPS op = null;
-    protected int orCount = 0;
-    protected int outputArraySize = -1;
     protected List<String> keyStrings;
 
-    protected abstract Collection<K> getKeyValues();
-    public abstract int getLiteralIntKey();
-    public abstract Collection<K> findMatchingDefaulteeKeys( Object defaultee );
-
-    protected void init( String rawJsonKey ) {
+    protected void init( String rawJsonKey, Object spec ) {
 
         rawKey = rawJsonKey;
         if ( rawJsonKey.endsWith( Defaultr.WildCards.ARRAY ) ) {
@@ -111,38 +89,75 @@ public abstract class Key<K,D> {
             default :
                 throw new IllegalStateException( "Someone has added an op type without changing this method." );
         }
+
+        // Spec is String -> Map   or   String -> Literal only
+        if ( spec instanceof Map ) {
+            children = processSpec( isArrayOutput(), (Map<String, Object>) spec );
+
+            if ( isArrayOutput() ) {
+                // loop over children and find the max literal value
+                for( Key childKey : children ) {
+                    int childValue = childKey.getLiteralIntKey();
+                    if ( childValue > outputArraySize ) {
+                        outputArraySize = childValue;
+                    }
+                }
+            }
+        }
+        else {
+            // literal such as String, number, or Json array
+            literalValue = spec;
+        }
     }
 
     /**
-     * This is the main "recursive" method.   The parentKey and the spce are never null, in that we don't recurse
-     *  if spec !instanceof Map.  The only time defaultee is null, is if there is a mismatch between the data and the
-     *  spec wrt Array vs Map.
+     * This is the main "recursive" method.   The defaultee should never be null, because
+     *  the defaultee wasn't null, it was null and we created it, OR there was
+     *  a mismatch between the Defaultr Spec and the input, and we didn't recurse.
      */
-    public void applySpec( Map<Key, Object> spec, Object defaultee ) {
+    public void applyChildren( Object defaultee ) {
 
+        if ( defaultee == null ) {
+            throw new IllegalStateException( "Defaultee should never be null when " +
+                    "passed to the applyChildren method." );
+        }
+
+        // This has nothing to do with this being an ArrayKey or MapKey, instead this is about
+        //  this key being the parent of an Array in the output.
         if ( isArrayOutput() && defaultee instanceof List) {
 
             List<Object> defaultList = (List<Object>) defaultee;
 
-            // extend the defaultee list if needed
+            // Extend the defaultee list if needed
             for ( int index = defaultList.size() - 1; index < getOutputArraySize(); index++ ) {
                 defaultList.add( null );
             }
         }
 
-        // Find and sort the children DefaultrKeys : literals, |, then *
+        // Find and sort the children DefaultrKeys by precedence: literals, |, then *
         ArrayList<Key> sortedChildren = new ArrayList<Key>();
-        sortedChildren.addAll( spec.keySet() );
+        sortedChildren.addAll( children );
         Collections.sort( sortedChildren, keyComparator );
 
         for ( Key childKey : sortedChildren ) {
-            childKey.applySubSpec( spec.get( childKey ), defaultee );
+            childKey.applyChild( defaultee );
         }
     }
 
-    public abstract void applySubSpec( Object subSpec, Object defaultee );
+    protected abstract int getLiteralIntKey();
 
-    public abstract void defaultLiteralValue( K literalKey, Object subSpec, D defaultee );
+    /**
+     * Apply this Key to the defaultee.
+     *
+     * If this Key is a WildCard key, this may apply to many entries in the container.
+     */
+    protected abstract void applyChild( Object container );
+
+    protected abstract void applyLiteralKeyToContainer( K literalKey, D container );
+
+    protected abstract Collection<K> getKeyValues();
+
+    protected abstract Collection<K> determineMatchingContainerKeys( D container );
 
     public int getOrCount() {
        return orCount;
@@ -160,14 +175,13 @@ public abstract class Key<K,D> {
         return outputArraySize;
     }
 
-    public Object createDefaultContainerObject() {
+    public Object createOutputContainerObject() {
         if ( isArrayOutput() ) {
             return new ArrayList<Object>();
         } else {
             return new LinkedHashMap<String, Object>();
         }
     }
-
 
     public static class KeyPrecedenceComparator implements Comparator<Key> {
 
