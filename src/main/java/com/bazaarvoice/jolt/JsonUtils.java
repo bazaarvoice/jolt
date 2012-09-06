@@ -69,6 +69,14 @@ public class JsonUtils {
         return o;
     }
 
+    public static <T> T jsonTo(InputStream in, TypeReference<T> typeRef)
+            throws IOException {
+        JsonFactory factory = new JsonFactory();
+        ObjectMapper mapper = new ObjectMapper(factory);
+        T o = mapper.readValue(in, typeRef);
+        return o;
+    }
+
     public static String toJsonString(Object map)
             throws IOException {
         JsonFactory factory = new JsonFactory();
