@@ -43,6 +43,7 @@ public class Chainr {
         HashMap<String, Chainable> temp = new HashMap<String, Chainable>();
         temp.put( "shift", new Shiftr() );
         temp.put( "default", new Defaultr() );
+        temp.put( "remove", new Removr() );
         temp.put( "java", new Delegatr() );
         CHAINABLES = Collections.unmodifiableMap( temp );
     }
