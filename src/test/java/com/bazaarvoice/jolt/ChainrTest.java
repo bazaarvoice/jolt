@@ -22,17 +22,17 @@ public class ChainrTest {
         return activity;
     }
 
-    private Map<String, Object> newShiftrActivity(Object shiftrSpec ) {
+    private Map<String, Object> newActivity( String operation, Object spec ) {
         Map<String, Object> activity = new HashMap<String, Object>();
-        activity.put( "operation", "shift" );
-        activity.put( "spec", shiftrSpec );
+        activity.put( "operation", operation );
+        activity.put( "spec", spec );
         return activity;
     }
 
-    private Map<String, Object> newDefaultrActivity(Object defaultrSpec ) {
+    private Map<String, Object> newFailActivity( String operation, Object spec ) {
         Map<String, Object> activity = new HashMap<String, Object>();
-        activity.put( "operation", "default" );
-        activity.put( "spec", defaultrSpec );
+        activity.put( "operation", operation );
+        activity.put( "tuna", spec );
         return activity;
     }
 
@@ -45,13 +45,19 @@ public class ChainrTest {
 
     private List<Map<String,Object>> newShiftrSpec(Object shiftrSpec) {
         List<Map<String,Object>> retvalue = this.newSpec();
-        retvalue.add( newShiftrActivity( shiftrSpec ) );
+        retvalue.add( newActivity( "shift", shiftrSpec ) );
         return retvalue;
     }
 
     private List<Map<String,Object>> newDefaultrSpec(Object defaultrSpec) {
         List<Map<String,Object>> retvalue = this.newSpec();
-        retvalue.add( newDefaultrActivity( defaultrSpec ) );
+        retvalue.add( newActivity( "default", defaultrSpec ) );
+        return retvalue;
+    }
+
+    private List<Map<String,Object>> newRemovrSpec(Object removrSpec) {
+        List<Map<String,Object>> retvalue = this.newSpec();
+        retvalue.add( newActivity( "remove", removrSpec ) );
         return retvalue;
     }
 
@@ -92,6 +98,24 @@ public class ChainrTest {
     }
 
     @Test
+    public void process_itCallsRemover()
+            throws IOException, JoltException {
+        Object input = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/removr/firstSample/input.json" ) );
+        Object expected = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/removr/firstSample/output.json" ) );
+        Object removrSpec = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/removr/firstSample/spec.json" ) );
+        Object chainrSpec = this.newRemovrSpec( removrSpec );
+
+        Chainr unit = new Chainr();
+        Object actual = unit.process( input, chainrSpec );
+
+        ShiftrTest.ArrayDisorderDiffy diffy = new ShiftrTest.ArrayDisorderDiffy();
+        Diffy.Result result = diffy.diff( expected, actual );
+        if (!result.isEmpty()) {
+            AssertJUnit.fail( "failed Removr call.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString( result.expected ) + "\nactual: " + JsonUtils.toJsonString( result.actual ) );
+        }
+    }
+
+    @Test
     public void process_itCallsDelegatr()
             throws JoltException {
         List<Map<String,Object>> spec = this.newSpec();
@@ -117,10 +141,31 @@ public class ChainrTest {
     }
 
     @Test(dataProvider = "failureCases", expectedExceptions = JoltException.class)
-    private void process_itBlowsUp(Object spec)
+    public void process_itBlowsUp(Object spec)
             throws JoltException {
         Object input = new Object();
         Chainr unit = new Chainr();
         unit.process( input, spec );
+    }
+
+    @DataProvider
+    public Object[][] failureCases2() {
+        return new Object[][] {
+            { "shift" },
+            { "remove" },
+            { "default" }
+        };
+    }
+
+    @Test(dataProvider = "failureCases2", expectedExceptions = JoltException.class)
+    public void process_itBlowsUp_reachForTestCoverage(String operation)
+            throws JoltException {
+        Object input = new Object();
+        Chainr unit = new Chainr();
+
+        List<Map<String,Object>> retvalue = this.newSpec();
+        retvalue.add( this.newFailActivity( operation, new Object() ) );
+
+        unit.process( input, retvalue );
     }
 }
