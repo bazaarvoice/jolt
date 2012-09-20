@@ -6,6 +6,9 @@
             "url" : "http://default.com",
             "caption" : "Default Caption"
         },
+        "0|3" : {
+            "caption" : "Or-ed caption."
+        },
         "3" :
         {
             "url" : "http://tuna.com",
