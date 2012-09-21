@@ -1,0 +1,11 @@
+{
+    "Rating" : "rating-primary",
+    "RatingRange" : "rating-range-primary",
+
+    "SecondaryRatings" : {
+        "*" : {
+            "Value" : "rating-&1",
+            "ValueRange" : "rating-range-&1"
+        }
+    }
+}

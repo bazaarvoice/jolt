@@ -1,0 +1,13 @@
+{
+    "rating-primary":1,
+    "rating-range-primary":5,
+
+    "rating-Dimension3": 1,
+    "rating-range-Dimension3": 5,
+
+    "rating-Price": 2,
+    "rating-range-Price": 7,
+
+    "rating-Design": 4,
+    "rating-range-Design": 5
+}
