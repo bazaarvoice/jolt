@@ -30,6 +30,10 @@ public class ShiftrTest {
     @DataProvider
     public Object[][] getTestCaseNames() {
         return new Object[][] {
+            // TODO enable these tests when Shiftr is updated to support array and key mashing features
+            //{"photosArray", null, null, null},
+            //{"bucketToPrefixSoup", null, null, null},
+            //{"prefixSoupToBuckets", null, null, null},
             {"firstSample", null, null, null},
             {"singlePlacement", null, null, null},
             {"multiPlacement", null, null, null},
