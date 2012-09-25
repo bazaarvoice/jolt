@@ -3,6 +3,9 @@ package com.bazaarvoice.jolt.shiftr;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 public class PathElementTest {
 
     @Test
@@ -60,5 +63,36 @@ public class PathElementTest {
             AssertJUnit.assertEquals( 0, ref.pathIndex );
             AssertJUnit.assertEquals( 1, ref.keyGroup );
         }
+    }
+
+    @Test
+    public void calculateOutputTest() {
+
+        // this should make AAA.rating-BBB.value : CCC
+
+        PathElement pe1 = PathElement.parse( "tuna-*-marlin-*" );
+        PathElement pe2 = PathElement.parse(    "rating-*" );
+
+        PathElement leafOutput = PathElement.parse( "&1(2).&.value" );
+
+        PathElement.LiteralPathElement lpe = pe1.matchInput( "tuna-marlin", new Path<PathElement.LiteralPathElement>( Collections.<PathElement.LiteralPathElement>emptyList() ) );
+        AssertJUnit.assertNull( lpe );
+
+        lpe = pe1.matchInput( "tuna-A-marlin-AAA", new Path<PathElement.LiteralPathElement>( Collections.<PathElement.LiteralPathElement>emptyList() ) );
+        AssertJUnit.assertEquals(  "tuna-A-marlin-AAA", lpe.rawKey );
+        AssertJUnit.assertEquals(  "tuna-A-marlin-AAA", lpe.getSubKeyRef( 0 ) );
+        AssertJUnit.assertEquals( 3, lpe.getSubKeyCount() );
+        AssertJUnit.assertEquals( "A" , lpe.getSubKeyRef( 1 ) );
+        AssertJUnit.assertEquals( "AAA" , lpe.getSubKeyRef( 2 ) );
+
+        PathElement.LiteralPathElement lpe2 = pe2.matchInput( "rating-BBB", new Path<PathElement.LiteralPathElement>( Arrays.asList( lpe ) ) );
+        AssertJUnit.assertEquals(  "rating-BBB", lpe2.rawKey );
+        AssertJUnit.assertEquals(  "rating-BBB", lpe2.getSubKeyRef( 0 ) );
+        AssertJUnit.assertEquals( 2, lpe2.getSubKeyCount() );
+        AssertJUnit.assertEquals( "BBB" , lpe2.getSubKeyRef( 1 ) );
+
+        String evaledLeafOutput = leafOutput.evaluateAsOutputKey( new Path<PathElement.LiteralPathElement>( Arrays.asList( lpe, lpe2 ) ) );
+
+        AssertJUnit.assertEquals( "AAA.rating-BBB.value", evaledLeafOutput );
     }
 }
