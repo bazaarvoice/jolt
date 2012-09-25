@@ -1,25 +1,18 @@
 package com.bazaarvoice.jolt.shiftr;
 
+import com.bazaarvoice.jolt.JsonUtils;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.bazaarvoice.jolt.shiftr.OPS.OpsPrecedenceComparator;
 
 public class Key {
-
-    public interface WildCards {
-        public static final String STAR = "*";
-        public static final String OR = "|";
-        public static final String AT = "@";
-        public static final String ARRAY = "[";
-    }
-
 
     /**
      * Factory-ish method that recursively processes a Map<String, Object> into a Set<Key> objects.
@@ -48,40 +41,19 @@ public class Key {
         return result;
     }
 
-
-    private static final String OR_INPUT_REGEX = "\\" + WildCards.OR;
     private static final Key.KeyPrecedenceComparator keyComparator = new Key.KeyPrecedenceComparator();
 
-    // Am I supposed to be parent of an array?  If so I need to make sure that I inform
-    //  my children they need to be ArrayKeys, and I need to make sure that the output array
-    //  I will write to is big enough.
-    private OPS op = null;
-
+    protected PathElement pathElement;
     protected Set<Key> children = null;
-    protected Object literalValue = null;
 
     protected String rawKey;
-    protected List<String> keyStrings;
+    protected Object literalValue = null;
 
     public Key(String rawJsonKey, Object spec) {
 
         rawKey = rawJsonKey;
 
-        op = OPS.parse( rawKey );
-
-        switch( op ){
-            case OR :
-                keyStrings = Arrays.asList( rawKey.split( Key.OR_INPUT_REGEX ) );
-                break;
-            case LITERAL:
-                keyStrings = Arrays.asList( rawKey );
-                break;
-            case STAR:
-                keyStrings = Collections.emptyList();
-                break;
-            default :
-                throw new IllegalArgumentException( "Someone has added an op type without changing this method." );
-        }
+        pathElement = PathElement.parse( rawJsonKey );
 
         // Spec is String -> Map   or   String -> Literal only
         if ( spec instanceof Map ) {
@@ -116,29 +88,27 @@ public class Key {
         }
     }
 
-    public OPS getOp() {
-        return op;
-    }
-
-
     public static class KeyPrecedenceComparator implements Comparator<Key> {
 
-        private OpsPrecedenceComparator opsComparator = new OpsPrecedenceComparator();
+        private static HashMap<Class, Integer> orderMap = new HashMap<Class, Integer>();
+        static {
+            orderMap.put( PathElement.AtPathElement.class, 1 );
+            orderMap.put( PathElement.LiteralPathElement.class, 2 );
+            orderMap.put( PathElement.ReferencePathElement.class, 3 );
+            orderMap.put( PathElement.OrPathElement.class, 4 );
+            orderMap.put( PathElement.StarPathElement.class, 5 );
+        }
+
+        //private OpsPrecedenceComparator opsComparator = new OpsPrecedenceComparator();
 
         @Override
         public int compare(Key a, Key b) {
 
-            int opsEqual = opsComparator.compare(a.getOp(), b.getOp() );
+            int aa = orderMap.get( a.pathElement.getClass() );
+            int bb = orderMap.get(b.pathElement.getClass());
 
-//            if ( opsEqual == 0 && OR == a.getOp() && OR == b.getOp() )
-//            {
-//                // For deterministic behavior, sub sort on the specificity of the OR and then alphabetically on the rawKey
-//                //   For the Or, the more star like, the higher your value
-//                //   If the or count matches, fall back to alphabetical on the rawKey from the spec file
-//                return (a.getOrCount() < b.getOrCount() ? -1 : (a.getOrCount() == b.getOrCount() ? a.rawKey.compareTo( b.rawKey ) : 1 ) );
-//            }
-
-            return opsEqual;
+            // TODO more deterministic sort
+            return aa < bb ? -1 : aa == bb ? 0 : 1;
         }
     }
 
