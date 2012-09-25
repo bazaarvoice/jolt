@@ -60,12 +60,9 @@ public abstract class PathElement {
         return rawKey;
     }
 
-    public abstract String evaluateAsOutput( Path<String> realInputPath, Path<PathElement> specInputPath );
+    public abstract String evaluateAsOutput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath );
 
-    public abstract PathElement matchInput( Path<String> realInputPath, Path<PathElement> specInputPath );
-
-    // TODO only literal key should have this
-    public abstract String getSubKeyRef( int index );
+    public abstract PathElement matchInput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath );
 
     public static class LiteralPathElement extends PathElement {
 
@@ -73,7 +70,7 @@ public abstract class PathElement {
 
         public LiteralPathElement( String key ) {
             super(key);
-            subKeys.add( key );
+            subKeys.add( key ); // always add the full key to index 0
         }
 
         public LiteralPathElement( String key, List<String> subKeys ) {
@@ -82,11 +79,11 @@ public abstract class PathElement {
             this.subKeys.addAll( subKeys );
         }
 
-        public String evaluateAsOutput( Path<String> realInputPath, Path<PathElement> specInputPath ) {
+        public String evaluateAsOutput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
             return rawKey;
         }
 
-        public PathElement matchInput( Path<String> realInputPath, Path<PathElement> specInputPath ) {
+        public PathElement matchInput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
             return rawKey.equals( realInputPath.lastElement() ) ? this : null ;
         }
 
@@ -105,11 +102,11 @@ public abstract class PathElement {
             elements = PathElement.parse( split );
         }
 
-        public String evaluateAsOutput( Path<String> realInputPath, Path<PathElement> specInputPath ) {
+        public String evaluateAsOutput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
             throw new UnsupportedOperationException("Don't call evaluateAsOutput on the '|'");
         }
 
-        public PathElement matchInput( Path<String> realInputPath, Path<PathElement> specInputPath ) {
+        public PathElement matchInput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
             for ( PathElement pe : elements ) {
                 PathElement pathElement = pe.matchInput( realInputPath, specInputPath );
                 if ( pathElement != null ) {
@@ -118,11 +115,6 @@ public abstract class PathElement {
             }
             return null;
         }
-
-        public String getSubKeyRef( int index ) {
-            throw new UnsupportedOperationException("Don't call getSubKeyRef on the '|'");
-        }
-
     }
 
     public static class AtPathElement extends PathElement {
@@ -130,16 +122,12 @@ public abstract class PathElement {
             super(key);
         }
 
-        public String evaluateAsOutput( Path<String> realInputPath, Path<PathElement> specInputPath ) {
+        public String evaluateAsOutput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
             throw new UnsupportedOperationException("Don't call evaluateAsOutput on the '@'");
         }
 
-        public PathElement matchInput( Path<String> realInputPath, Path<PathElement> specInputPath ) {
+        public PathElement matchInput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
             return this;
-        }
-
-        public String getSubKeyRef( int index ) {
-            throw new UnsupportedOperationException("Don't call getSubKeyRef on the '@'");
         }
     }
 
@@ -159,11 +147,11 @@ public abstract class PathElement {
             pattern = Pattern.compile( regex );
         }
 
-        public String evaluateAsOutput( Path<String> realInputPath, Path<PathElement> specInputPath ) {
+        public String evaluateAsOutput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
             throw new UnsupportedOperationException("Don't call evaluateAsOutput on the '*'");
         }
 
-        public PathElement matchInput( Path<String> realInputPath, Path<PathElement> specInputPath ) {
+        public PathElement matchInput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
             Matcher matcher = pattern.matcher( realInputPath.lastElement() );
             if ( ! matcher.find() ) {
                 return null;
@@ -176,11 +164,6 @@ public abstract class PathElement {
             }
 
             return new LiteralPathElement(realInputPath.lastElement(), subKeys);
-        }
-
-        @Override
-        public String getSubKeyRef( int index ) {
-            throw new UnsupportedOperationException("Don't call getSubKeyRef on the '*'");
         }
     }
 
@@ -252,7 +235,7 @@ public abstract class PathElement {
             return key.length();
         }
 
-        public String evaluateAsOutput( Path<String> realInputPath, Path<PathElement> specInputPath ) {
+        public String evaluateAsOutput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
 
             StringBuffer output = new StringBuffer();
 
@@ -268,14 +251,14 @@ public abstract class PathElement {
                             output.append( "[" + ref.arrayIndex + "]");
                         }
                         else {
-                            PathElement pe = specInputPath.elementFromEnd( ref.pathIndex );
+                            LiteralPathElement pe = specInputPath.elementFromEnd( ref.pathIndex );
                             String keyPart = pe.getSubKeyRef( ref.keyGroup );
                             int index = Integer.getInteger( keyPart );
                             output.append( "[" + index + "]");
                         }
                     }
                     else {
-                        PathElement pe = specInputPath.elementFromEnd( ref.pathIndex );
+                        LiteralPathElement pe = specInputPath.elementFromEnd( ref.pathIndex );
                         String keyPart = pe.getSubKeyRef( ref.keyGroup );
                         output.append( keyPart );
                     }
@@ -286,18 +269,12 @@ public abstract class PathElement {
         }
 
         @Override
-        public PathElement matchInput( Path<String> realInputPath, Path<PathElement> specInputPath ) {
+        public PathElement matchInput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
             String evaled = evaluateAsOutput( realInputPath, specInputPath );
             if ( evaled.equals( realInputPath.lastElement() ) ) {
                 return new LiteralPathElement( evaled );
             }
             return null;
         }
-
-        @Override
-        public String getSubKeyRef( int index ) {
-            throw new UnsupportedOperationException("Don't call getSubKeyRef on the '&'");
-        }
-
     }
 }
