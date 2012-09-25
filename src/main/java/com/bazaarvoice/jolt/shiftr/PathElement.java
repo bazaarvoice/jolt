@@ -11,21 +11,21 @@ public abstract class PathElement {
 
     public static PathElement parse( String key )  {
         if ( key.contains("&") || key.contains("[") ) {
-        if ( key.contains("*") )
-        {
-            throw new IllegalArgumentException("Can't mix * and ( & or [] ) ");
+            if ( key.contains("*") )
+            {
+                throw new IllegalArgumentException("Can't mix * and ( & or [] ) ");
+            }
+            return new ReferencePathElement( key );
         }
-        return new ReferencePathElement( key );
-    }
-    if ( key.contains("*") ) {
-        return new StarPathElement( key );
-    }
-    if ( key.contains("@") ) {
-        return new AtPathElement( key );
-    }
+        if ( key.contains("*") ) {
+            return new StarPathElement( key );
+        }
+        if ( key.contains("@") ) {
+            return new AtPathElement( key );
+        }
 
-    return new LiteralPathElement( key );
-}
+        return new LiteralPathElement( key );
+    }
 
     public static List<PathElement> parse( String[] keys ) {
         ArrayList<PathElement> paths = new ArrayList<PathElement>();
@@ -272,7 +272,7 @@ public abstract class PathElement {
                         else {
                             LiteralPathElement pe = specInputPath.elementFromEnd( ref.pathIndex );
                             String keyPart = pe.getSubKeyRef( ref.keyGroup );
-                            int index = Integer.getInteger( keyPart );
+                            int index = Integer.parseInt( keyPart );
                             output.append( "[" + index + "]");
                         }
                     }

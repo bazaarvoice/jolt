@@ -5,6 +5,9 @@ import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+
+import com.bazaarvoice.jolt.shiftr.PathElement.*;
 
 public class PathElementTest {
 
@@ -66,33 +69,74 @@ public class PathElementTest {
     }
 
     @Test
-    public void calculateOutputTest() {
-
-        // this should make AAA.rating-BBB.value : CCC
+    public void calculateOutputTest_refsOnly() {
 
         PathElement pe1 = PathElement.parse( "tuna-*-marlin-*" );
         PathElement pe2 = PathElement.parse(    "rating-*" );
 
-        PathElement leafOutput = PathElement.parse( "&1(2).&.value" );
-
-        PathElement.LiteralPathElement lpe = pe1.matchInput( "tuna-marlin", new Path<PathElement.LiteralPathElement>( Collections.<PathElement.LiteralPathElement>emptyList() ) );
+        LiteralPathElement lpe = pe1.matchInput( "tuna-marlin", new Path<LiteralPathElement>( Collections.<LiteralPathElement>emptyList() ) );
         AssertJUnit.assertNull( lpe );
 
-        lpe = pe1.matchInput( "tuna-A-marlin-AAA", new Path<PathElement.LiteralPathElement>( Collections.<PathElement.LiteralPathElement>emptyList() ) );
+        lpe = pe1.matchInput( "tuna-A-marlin-AAA", new Path<LiteralPathElement>( Collections.<LiteralPathElement>emptyList() ) );
         AssertJUnit.assertEquals(  "tuna-A-marlin-AAA", lpe.rawKey );
         AssertJUnit.assertEquals(  "tuna-A-marlin-AAA", lpe.getSubKeyRef( 0 ) );
         AssertJUnit.assertEquals( 3, lpe.getSubKeyCount() );
         AssertJUnit.assertEquals( "A" , lpe.getSubKeyRef( 1 ) );
         AssertJUnit.assertEquals( "AAA" , lpe.getSubKeyRef( 2 ) );
 
-        PathElement.LiteralPathElement lpe2 = pe2.matchInput( "rating-BBB", new Path<PathElement.LiteralPathElement>( Arrays.asList( lpe ) ) );
+        LiteralPathElement lpe2 = pe2.matchInput( "rating-BBB", new Path<LiteralPathElement>( Arrays.asList( lpe ) ) );
         AssertJUnit.assertEquals(  "rating-BBB", lpe2.rawKey );
         AssertJUnit.assertEquals(  "rating-BBB", lpe2.getSubKeyRef( 0 ) );
         AssertJUnit.assertEquals( 2, lpe2.getSubKeyCount() );
         AssertJUnit.assertEquals( "BBB" , lpe2.getSubKeyRef( 1 ) );
 
-        String evaledLeafOutput = leafOutput.evaluateAsOutputKey( new Path<PathElement.LiteralPathElement>( Arrays.asList( lpe, lpe2 ) ) );
+        List<PathElement> outputPath = PathElement.parseDotNotation( "&1(2).&.value" );
+        {
+            PathElement outputElement = outputPath.get( 0 );
+            String evaledLeafOutput = outputElement.evaluateAsOutputKey( new Path<LiteralPathElement>( Arrays.asList( lpe, lpe2 ) ) );
+            AssertJUnit.assertEquals( "AAA", evaledLeafOutput );
+        }
+        {
+            PathElement outputElement = outputPath.get( 1 );
+            String evaledLeafOutput = outputElement.evaluateAsOutputKey( new Path<LiteralPathElement>( Arrays.asList( lpe, lpe2 ) ) );
+            AssertJUnit.assertEquals( "rating-BBB", evaledLeafOutput );
+        }
+        {
+            PathElement outputElement = outputPath.get( 2 );
+            String evaledLeafOutput = outputElement.evaluateAsOutputKey( new Path<LiteralPathElement>( Arrays.asList( lpe, lpe2 ) ) );
+            AssertJUnit.assertEquals( "value", evaledLeafOutput );
+        }
+    }
 
-        AssertJUnit.assertEquals( "AAA.rating-BBB.value", evaledLeafOutput );
+    @Test
+    public void calculateOutputTest_arrayIndexes() {
+
+        PathElement pe1 = PathElement.parse( "tuna-*-marlin-*" );
+        PathElement pe2 = PathElement.parse(    "rating-*" );
+
+        LiteralPathElement lpe = pe1.matchInput( "tuna-2-marlin-3", new Path<LiteralPathElement>( Collections.<LiteralPathElement>emptyList() ) );
+        AssertJUnit.assertEquals( "2" , lpe.getSubKeyRef( 1 ) );
+        AssertJUnit.assertEquals( "3" , lpe.getSubKeyRef( 2 ) );
+
+        LiteralPathElement lpe2 = pe2.matchInput( "rating-BBB", new Path<LiteralPathElement>( Arrays.asList( lpe ) ) );
+        AssertJUnit.assertEquals( 2, lpe2.getSubKeyCount() );
+        AssertJUnit.assertEquals( "BBB" , lpe2.getSubKeyRef( 1 ) );
+
+        List<PathElement> outputPath = PathElement.parseDotNotation( "tuna[&1(1)].marlin[&1(2)].&(1)" );
+        {
+            PathElement outputElement = outputPath.get( 0 );
+            String evaledLeafOutput = outputElement.evaluateAsOutputKey( new Path<LiteralPathElement>( Arrays.asList( lpe, lpe2 ) ) );
+            AssertJUnit.assertEquals( "tuna[2]", evaledLeafOutput );
+        }
+        {
+            PathElement outputElement = outputPath.get( 1 );
+            String evaledLeafOutput = outputElement.evaluateAsOutputKey( new Path<LiteralPathElement>( Arrays.asList( lpe, lpe2 ) ) );
+            AssertJUnit.assertEquals( "marlin[3]", evaledLeafOutput );
+        }
+        {
+            PathElement outputElement = outputPath.get( 2 );
+            String evaledLeafOutput = outputElement.evaluateAsOutputKey( new Path<LiteralPathElement>( Arrays.asList( lpe, lpe2 ) ) );
+            AssertJUnit.assertEquals( "BBB", evaledLeafOutput );
+        }
     }
 }
