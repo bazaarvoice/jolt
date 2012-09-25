@@ -1,6 +1,7 @@
 package com.bazaarvoice.jolt.shiftr;
 
 import com.bazaarvoice.jolt.JsonUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class Key {
@@ -112,4 +115,102 @@ public class Key {
         }
     }
 
+
+    public static Pattern arrayKeyPattern = Pattern.compile( "^(.*?)\\[(\\d)\\]$" );
+
+    public static Object[] splitArrayKey(String arrayKey) {
+
+        if ( arrayKey.contains("[")  && StringUtils.countMatches( arrayKey, "[") == 1  ) {
+
+            Matcher matcher = Key.arrayKeyPattern.matcher( "photos[2]" );
+
+            if ( matcher.find() ) {
+                Object[] retValue = new Object[2];
+                retValue[0] = matcher.group(1);
+                retValue[1] = matcher.group(2);
+                return retValue;
+            }
+        }
+        return null;
+    }
+
+    public static void putInOutput( Map<String, Object> output, Object value, Path<String> outputPath) {
+
+        // TODO defense
+
+        // we're going to drill down into the output via the path specified in the where argument
+        // current is the variable that holds our current location in the output
+        Object current = output;               // we start at the overall output
+
+        // drill down for each item in the path above the last
+        for (int index=0; index < outputPath.size() - 1; index++) {
+
+            // figure out key name from paths
+            String keyName = outputPath.elementAt( index );
+            Object[] arrayKey = splitArrayKey( keyName );
+
+            if ( arrayKey == null ) {
+
+                // make sure there's a map there and drill down
+                // TODO handle the case where next is a list/value better
+                Object next = ((Map<String, Object>)current).get( keyName );               // grab the next value in the path
+                if ((next == null) || !(next instanceof Map)) {     // we expect it to be there and a map
+                    next = new HashMap<String, Object>();           // make the missing map
+                    ((Map<String, Object>)current).put( keyName, next );                   // put it in the output
+                }
+                current = next;               // drill down the next level
+
+                // defensive clone, in case the spec points to a map or list in the input doc
+                value = JsonUtils.cloneJson( value );
+
+                // now we're at the very bottom of our path.
+                // time to insert our value
+                Object alreadyThere = ((Map<String, Object>)current).get( keyName );           // see if it's occupied
+                if (alreadyThere == null) {                             // nothing there
+                    ((Map<String, Object>)current).put( keyName, value );                      // just put the value
+                }
+                else if (alreadyThere instanceof List) {                // there's a list there
+                    ( (List) alreadyThere ).add( value );               // add the value
+                }
+                else {                                                  // there's a non-list there
+                    List toPut = new ArrayList();                       // make one to put there
+                    toPut.add( alreadyThere );                          // add what's already there
+                    toPut.add( value );                                 // add our new value
+                    ((Map<String, Object>)current).put( keyName, toPut );                      // put the list in place
+                }
+            }
+            else {
+
+                int arrayIndex = Integer.parseInt( (String) arrayKey[1] );
+
+                // make sure there's an Array there and drill down
+                // TODO handle the case where next is a list/value better
+                Object next = ((List)current).get( arrayIndex );               // grab the next value in the path
+                if ((next == null) || !(next instanceof List)) {     // we expect it to be there and a map
+                    next = new ArrayList<Object>();           // make the missing map
+                    ((List)current).set( arrayIndex, next );                   // put it in the output
+                }
+                current = (Map<String, Object>) next;               // drill down the next level
+
+                // defensive clone, in case the spec points to a map or list in the input doc
+                value = JsonUtils.cloneJson( value );
+
+                // now we're at the very bottom of our path.
+                // time to insert our value
+                Object alreadyThere = ((List)current).get( arrayIndex );           // see if it's occupied
+                if (alreadyThere == null) {                             // nothing there
+                    ((List)current).set( arrayIndex, value );                      // just put the value
+                }
+                else if (alreadyThere instanceof List) {                // there's a list there
+                    ( (List) alreadyThere ).add( value );               // add the value
+                }
+                else {                                                  // there's a non-list there
+                    List toPut = new ArrayList();                       // make one to put there
+                    toPut.add( alreadyThere );                          // add what's already there
+                    toPut.add( value );                                 // add our new value
+                    ((List)current).set( arrayIndex, toPut );                      // put the list in place
+                }
+            }
+        }
+    }
 }

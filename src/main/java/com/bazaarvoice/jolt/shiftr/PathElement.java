@@ -60,9 +60,24 @@ public abstract class PathElement {
         return rawKey;
     }
 
-    public abstract String evaluateAsOutput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath );
+    /**
+     * See if this PathElement matches the given input dataKey.  If it does not match, this method returns null.
+     *
+     * If this PathElement does match, it returns a LiteralPathElement with subKeys filled in.
+     *
+     * @param dataKey String key value from the input data
+     * @param specInputPath "up the tree" list of LiteralPathElements, that may be used by this key as it is computing its match
+     * @return null or a matched LiteralPathElement
+     */
+    public abstract LiteralPathElement matchInput( String dataKey, Path<LiteralPathElement> specInputPath );
 
-    public abstract PathElement matchInput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath );
+    /**
+     * Evaluate this key as if it is an output path element.
+     * @param specInputPath "up the tree" list of LiteralPathElements, that may be used by this key as it is computing
+     * @return String path element to use for output tree building
+     */
+    public abstract String evaluateAsOutputKey( Path<LiteralPathElement> specInputPath );
+
 
     public static class LiteralPathElement extends PathElement {
 
@@ -79,16 +94,20 @@ public abstract class PathElement {
             this.subKeys.addAll( subKeys );
         }
 
-        public String evaluateAsOutput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
+        public String evaluateAsOutputKey( Path<LiteralPathElement> specInputPath ) {
             return rawKey;
         }
 
-        public PathElement matchInput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
-            return rawKey.equals( realInputPath.lastElement() ) ? this : null ;
+        public LiteralPathElement matchInput( String dataKey, Path<LiteralPathElement> specInputPath ) {
+            return rawKey.equals( dataKey ) ? this : null ;
         }
 
         public String getSubKeyRef( int index ) {
             return subKeys.get( index );
+        }
+
+        public int getSubKeyCount(){
+            return subKeys.size();
         }
     }
 
@@ -102,13 +121,13 @@ public abstract class PathElement {
             elements = PathElement.parse( split );
         }
 
-        public String evaluateAsOutput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
-            throw new UnsupportedOperationException("Don't call evaluateAsOutput on the '|'");
+        public String evaluateAsOutputKey( Path<LiteralPathElement> specInputPath ) {
+            throw new UnsupportedOperationException("Don't call evaluateAsOutputKey on the '|'");
         }
 
-        public PathElement matchInput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
+        public LiteralPathElement matchInput( String dataKey, Path<LiteralPathElement> specInputPath ) {
             for ( PathElement pe : elements ) {
-                PathElement pathElement = pe.matchInput( realInputPath, specInputPath );
+                LiteralPathElement pathElement = pe.matchInput( dataKey, specInputPath );
                 if ( pathElement != null ) {
                     return pathElement;
                 }
@@ -122,24 +141,24 @@ public abstract class PathElement {
             super(key);
         }
 
-        public String evaluateAsOutput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
-            throw new UnsupportedOperationException("Don't call evaluateAsOutput on the '@'");
+        public String evaluateAsOutputKey( Path<LiteralPathElement> specInputPath ) {
+            throw new UnsupportedOperationException("Don't call evaluateAsOutputKey on the '@'");
         }
 
-        public PathElement matchInput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
-            return this;
+        public LiteralPathElement matchInput( String dataKey, Path<LiteralPathElement> specInputPath ) {
+            return new LiteralPathElement( dataKey );
         }
     }
 
     public static class StarPathElement extends PathElement {
 
         private Pattern pattern;
-        private int groupCount = 0;
+        private int numStars = 0;
 
         public StarPathElement( String key ) {
             super(key);
 
-            groupCount = StringUtils.countMatches( key, "*" );
+            numStars = StringUtils.countMatches( key, "*" );
 
             String regex = "^" + key.replace("*", "(.*?)")  + "$";
 
@@ -147,23 +166,23 @@ public abstract class PathElement {
             pattern = Pattern.compile( regex );
         }
 
-        public String evaluateAsOutput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
-            throw new UnsupportedOperationException("Don't call evaluateAsOutput on the '*'");
+        public String evaluateAsOutputKey( Path<LiteralPathElement> specInputPath ) {
+            throw new UnsupportedOperationException("Don't call evaluateAsOutputKey on the '*'");
         }
 
-        public PathElement matchInput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
-            Matcher matcher = pattern.matcher( realInputPath.lastElement() );
+        public LiteralPathElement matchInput( String dataKey, Path<LiteralPathElement> specInputPath ) {
+            Matcher matcher = pattern.matcher( dataKey );
             if ( ! matcher.find() ) {
                 return null;
             }
 
             List<String> subKeys = new ArrayList<String>();
             int groupCount = matcher.groupCount();
-            for ( int index = 0; index < groupCount; index++) {
+            for ( int index = 1; index <= groupCount; index++) {
                 subKeys.add( matcher.group( index ) );
             }
 
-            return new LiteralPathElement(realInputPath.lastElement(), subKeys);
+            return new LiteralPathElement(dataKey, subKeys);
         }
     }
 
@@ -235,7 +254,7 @@ public abstract class PathElement {
             return key.length();
         }
 
-        public String evaluateAsOutput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
+        public String evaluateAsOutputKey( Path<LiteralPathElement> specInputPath ) {
 
             StringBuffer output = new StringBuffer();
 
@@ -269,9 +288,9 @@ public abstract class PathElement {
         }
 
         @Override
-        public PathElement matchInput( Path<String> realInputPath, Path<LiteralPathElement> specInputPath ) {
-            String evaled = evaluateAsOutput( realInputPath, specInputPath );
-            if ( evaled.equals( realInputPath.lastElement() ) ) {
+        public LiteralPathElement matchInput( String dataKey, Path<LiteralPathElement> specInputPath ) {
+            String evaled = evaluateAsOutputKey( specInputPath );
+            if ( evaled.equals( dataKey ) ) {
                 return new LiteralPathElement( evaled );
             }
             return null;
