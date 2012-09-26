@@ -1,9 +1,8 @@
 package com.bazaarvoice.jolt.shiftr;
 
+import com.bazaarvoice.jolt.JoltTestUtil;
 import com.bazaarvoice.jolt.shiftr.Path.*;
-import com.bazaarvoice.jolt.Diffy;
 import com.bazaarvoice.jolt.JsonUtils;
-import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -15,7 +14,7 @@ import java.util.Map;
 public class PutInOutputTest {
 
     @DataProvider
-    public Object[][] getTestCaseNames() throws Exception {
+    public Object[][] putInOutputTestCases() throws Exception {
         return new Object[][] {
             {
                 Arrays.asList( "tuna" ),
@@ -50,7 +49,7 @@ public class PutInOutputTest {
         };
     }
 
-    @Test(dataProvider = "getTestCaseNames")
+    @Test(dataProvider = "putInOutputTestCases")
     public void PutInOutputTest(List<String> outputs, List<String> outputPath, Map<String, Object> expected) throws Exception
     {
         Map<String, Object> actual = new HashMap<String, Object>();
@@ -59,10 +58,6 @@ public class PutInOutputTest {
             Key.putInOutput(output, new StringPath( outputPath ), actual);
         }
 
-        Diffy diffy = new Diffy();
-        Diffy.Result result = diffy.diff( expected, actual );
-        if (!result.isEmpty()) {
-            AssertJUnit.fail( "failed case.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString( result.expected ) + "\n  actual: " + JsonUtils.toJsonString( result.actual ) );
-        }
+        JoltTestUtil.runDiffy( expected, actual, "failed");
     }
 }
