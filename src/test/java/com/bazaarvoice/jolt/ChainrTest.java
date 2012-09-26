@@ -72,11 +72,7 @@ public class ChainrTest {
         Chainr unit = new Chainr();
         Object actual = unit.process( input, chainrSpec );
 
-        ShiftrTest.ArrayDisorderDiffy diffy = new ShiftrTest.ArrayDisorderDiffy();
-        Diffy.Result result = diffy.diff( expected, actual );
-        if (!result.isEmpty()) {
-            AssertJUnit.fail( "failed shiftr call.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString( result.expected ) + "\nactual: " + JsonUtils.toJsonString( result.actual ) );
-        }
+        JoltTestUtil.runDiffy( expected, actual, "failed Shiftr call." );
     }
 
     @Test
@@ -90,11 +86,7 @@ public class ChainrTest {
         Chainr unit = new Chainr();
         Object actual = unit.process( input, chainrSpec );
 
-        ShiftrTest.ArrayDisorderDiffy diffy = new ShiftrTest.ArrayDisorderDiffy();
-        Diffy.Result result = diffy.diff( expected, actual );
-        if (!result.isEmpty()) {
-            AssertJUnit.fail( "failed Defaultr call.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString( result.expected ) + "\nactual: " + JsonUtils.toJsonString( result.actual ) );
-        }
+        JoltTestUtil.runDiffy( expected, actual, "failed Defaultr call." );
     }
 
     @Test
@@ -108,11 +100,7 @@ public class ChainrTest {
         Chainr unit = new Chainr();
         Object actual = unit.process( input, chainrSpec );
 
-        ShiftrTest.ArrayDisorderDiffy diffy = new ShiftrTest.ArrayDisorderDiffy();
-        Diffy.Result result = diffy.diff( expected, actual );
-        if (!result.isEmpty()) {
-            AssertJUnit.fail( "failed Removr call.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString( result.expected ) + "\nactual: " + JsonUtils.toJsonString( result.actual ) );
-        }
+        JoltTestUtil.runDiffy( expected, actual, "failed Removr call." );
     }
 
     @Test

@@ -2,7 +2,6 @@ package com.bazaarvoice.jolt.shiftr;
 
 import com.bazaarvoice.jolt.Chainable;
 import com.bazaarvoice.jolt.JoltException;
-import com.bazaarvoice.jolt.JsonUtils;
 import com.bazaarvoice.jolt.shiftr.Path.*;
 
 import java.util.HashMap;

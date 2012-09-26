@@ -123,6 +123,7 @@ public class Key {
             }
         }
         else if ( children != null && input instanceof List) {
+
             List inputList = (List) input;
 
             for (int index=0; index<inputList.size(); index++) {

@@ -195,6 +195,7 @@ public abstract class PathElement {
 
             StringBuffer literal = new StringBuffer();
 
+            int numArrayTokens = 0;
             int index = 0;
             while( index < key.length() ) {
 
@@ -214,6 +215,7 @@ public abstract class PathElement {
                     if ( c == '[' ) {
                         subEnd = findEndOfArrayReference( key.substring( index ) );
                         ref = Reference.newReference(true, key.substring(index + 1, index + subEnd) ); // chomp off the leading and trailing [ ]
+                        numArrayTokens++;
                     }
                     else {
                         subEnd = findEndOfReference( key.substring( index + 1 ) );
@@ -229,6 +231,10 @@ public abstract class PathElement {
             }
             if ( literal.length() > 0 ) {
                 tokens.add( literal.toString() );
+            }
+
+            if ( numArrayTokens > 1 ) {
+                throw new IllegalArgumentException( "Key " + key + " can only contain one array reference." );
             }
         }
 
@@ -283,6 +289,8 @@ public abstract class PathElement {
                     }
                 }
             }
+
+            // TODO throw error is any of the references are an array and its not the last thing in the outputString.
 
             return output.toString();
         }
