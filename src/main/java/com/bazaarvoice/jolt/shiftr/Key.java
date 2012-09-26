@@ -1,5 +1,8 @@
 package com.bazaarvoice.jolt.shiftr;
 
+import com.bazaarvoice.jolt.shiftr.Path.*;
+import com.bazaarvoice.jolt.shiftr.PathElement.*;
+
 import com.bazaarvoice.jolt.JsonUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -7,10 +10,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,7 +24,7 @@ public class Key {
      * @param spec Simple Jackson default Map<String,Object> input
      * @return Set of Keys from this level in the spec
      */
-    public static Set<Key> parseSpec( Map<String, Object> spec ) {
+    public static List<Key> parseSpec( Map<String, Object> spec ) {
         return processSpec( spec );
     }
 
@@ -31,64 +32,117 @@ public class Key {
      * Recursively walk the spec input tree.  Handle arrays by telling DefaultrKeys if they need to be ArrayKeys, and
      * to find the max default array length.
      */
-    private static Set<Key> processSpec( Map<String, Object> spec ) {
+    private static List<Key> processSpec( Map<String, Object> spec ) {
 
-        Set<Key> result = new HashSet<Key>();
+        List<Key> result = new ArrayList<Key>();
 
-        for ( String key : spec.keySet() ) {
-            Object subSpec = spec.get( key );
-
-            result.add( new Key( key, subSpec ) ); // this will recursively call processSpec if needed
+        for ( String keyStr : spec.keySet() ) {
+            Object subSpec = spec.get( keyStr );
+            result.add( new Key( keyStr, subSpec ) ); // this will recursively call processSpec if needed
         }
+
+        // Sort the children b4 returning
+        Collections.sort( result, keyComparator );
 
         return result;
     }
 
-    private static final Key.KeyPrecedenceComparator keyComparator = new Key.KeyPrecedenceComparator();
+    private static final KeyPrecedenceComparator keyComparator = new KeyPrecedenceComparator();
 
-    protected PathElement pathElement;
-    protected Set<Key> children = null;
-
+    // The key of the spec
     protected String rawKey;
-    protected Object literalValue = null;
+    protected PathElement pathElement;
+
+    // The value of the key, either children or a literal value
+    protected List<Key> children = null;
+
+    protected String rawValue = null;
+    protected OutputPath outputPath = null;
 
     public Key( String rawJsonKey, Object spec ) {
 
         rawKey = rawJsonKey;
-
         pathElement = PathElement.parse( rawJsonKey );
 
         // Spec is String -> Map   or   String -> Literal only
         if ( spec instanceof Map ) {
             children = processSpec( (Map<String, Object>) spec );
 
-        } else {
-            // literal such as String, number, or Json array
-            literalValue = spec;
         }
+        else if ( spec instanceof String ) {
+            // literal such as String, number, or Json array
+            rawValue = (String) spec;
+            outputPath = OutputPath.parseDotNotation(rawValue);
+        }
+        else {
+            throw new IllegalArgumentException( "Shiftr spec can not have non-String RHS values." );
+        }
+    }
+
+    public List<Key> getChildren() {
+        return children;
+    }
+
+    public LiteralPath apply( String inputKey, Object input, LiteralPath walkedPath ) {
+
+        LiteralPathElement lpe = pathElement.matchInput(inputKey, walkedPath);
+
+        if ( lpe != null ) {  // only output if
+            return new LiteralPath( walkedPath, lpe );
+        }
+
+        return null;
     }
 
     /**
-     * This is the main "recursive" method.   The defaultee should never be null, because
-     * the defaultee wasn't null, it was null and we created it, OR there was
-     * a mismatch between the Defaultr Spec and the input, and we didn't recurse.
+     * This is the main "recursive" method.
      */
-    public void applyChildren( Object defaultee ) {
+    public boolean applyChildren( String inputKey, Object input, LiteralPath walkedPath, Map<String,Object> output ) {
 
-        if ( defaultee == null ) {
-            throw new IllegalArgumentException( "Defaultee should never be null when " +
-                    "passed to the applyChildren method." );
+        LiteralPath newWalkedPath = apply( inputKey, input, walkedPath);
+
+        if ( newWalkedPath == null ){
+            return false;
         }
 
-        // Find and sort the children DefaultrKeys by precedence: literals, |, then *
-        ArrayList<Key> sortedChildren = new ArrayList<Key>();
-        sortedChildren.addAll( children );
-        Collections.sort( sortedChildren, keyComparator );
-
-        for ( Key childKey : sortedChildren ) {
-//            childKey.applyChild( defaultee );
+        if ( children == null && input instanceof String ) { // leaf node of spec
+            StringPath stringPath = outputPath.build( newWalkedPath );
+            putInOutput( input, stringPath, output );
+            return true;
         }
+        else if ( children != null && input instanceof Map) {
+
+            Map<String,Object> inputMap = (Map<String, Object>) input;
+
+            for( String subKeyStr : inputMap.keySet() ) {
+                for ( Key subKey : children ) {
+                    if ( subKey.applyChildren( subKeyStr, inputMap.get( subKeyStr ), newWalkedPath, output ) ) {
+                        break;
+                    }
+                }
+            }
+        }
+        else if ( children != null && input instanceof List) {
+            List inputList = (List) input;
+
+            for (int index=0; index<inputList.size(); index++) {
+                for ( Key subKey : children ) {
+                    Object subInput = inputList.get( index );
+                    String key = Integer.toString( index );
+                    if ( subKey.applyChildren( key, subInput, newWalkedPath, output ) ) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        return true;
     }
+
+
+
+
+
 
     public static class KeyPrecedenceComparator implements Comparator<Key> {
 
@@ -134,7 +188,7 @@ public class Key {
         return new Object[] {arrayKey, null};
     }
 
-    public static void putInOutput( Map<String, Object> output, Object value, Path<String> outputPath ) {
+    public static void putInOutput(Object value, StringPath outputPath, Map<String, Object> output) {
 
         // TODO defense
 

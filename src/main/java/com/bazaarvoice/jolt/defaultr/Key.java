@@ -1,13 +1,11 @@
 package com.bazaarvoice.jolt.defaultr;
 
 import com.bazaarvoice.jolt.Defaultr;
-import org.codehaus.jackson.map.util.Comparators;
 
 import static com.bazaarvoice.jolt.defaultr.OPS.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -33,6 +31,8 @@ public abstract class Key {
      *  to find the max default array length.
      */
     private static Set<Key> processSpec( boolean parentIsArray, Map<String, Object> spec ) {
+
+        // TODO switch to List<Key> and sort before returning
 
         Set<Key> result = new HashSet<Key>();
 
