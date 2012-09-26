@@ -1,4 +1,5 @@
 package com.bazaarvoice.jolt.shiftr;
+import com.bazaarvoice.jolt.shiftr.Path.*;
 
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
@@ -14,7 +15,7 @@ public class PathElementTest {
     @Test
     public void referenceTest() {
 
-        Path<PathElement> path = Path.parseDotNotation( "SecondaryRatings.tuna-&0(1)-marlin.Value" );
+        OutputPath path = OutputPath.parseDotNotation( "SecondaryRatings.tuna-&0(1)-marlin.Value" );
 
         AssertJUnit.assertEquals( "SecondaryRatings", path.elementAt(0).rawKey );
         AssertJUnit.assertEquals( "SecondaryRatings", path.elementAt(0).toString() );
@@ -38,7 +39,7 @@ public class PathElementTest {
     @Test
     public void arrayRefTest() {
 
-        Path<PathElement> path = Path.parseDotNotation( "ugc.photos-&1-[&(1)]" );
+        OutputPath path = OutputPath.parseDotNotation( "ugc.photos-&1-[&(1)]" );
 
         PathElement.ReferencePathElement refElement = (PathElement.ReferencePathElement) path.elementAt(1);
 

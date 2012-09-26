@@ -1,5 +1,6 @@
 package com.bazaarvoice.jolt.shiftr;
 
+import com.bazaarvoice.jolt.shiftr.Path.*;
 import com.bazaarvoice.jolt.Diffy;
 import com.bazaarvoice.jolt.JsonUtils;
 import org.testng.AssertJUnit;
@@ -55,7 +56,7 @@ public class PutInOutputTest {
         Map<String, Object> actual = new HashMap<String, Object>();
 
         for ( String output : outputs ) {
-            Key.putInOutput( actual, output, new Path<String>( outputPath ) );
+            Key.putInOutput(output, new StringPath( outputPath ), actual);
         }
 
         Diffy diffy = new Diffy();
