@@ -1,8 +1,5 @@
 package com.bazaarvoice.jolt.shiftr;
 
-import org.apache.commons.lang.StringUtils;
-import sun.tools.tree.IfStatement;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
