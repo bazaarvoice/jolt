@@ -17,9 +17,9 @@ public class PathElementTest {
 
         OutputPath path = OutputPath.parseDotNotation( "SecondaryRatings.tuna-&0(1)-marlin.Value" );
 
-        AssertJUnit.assertEquals( "SecondaryRatings", path.elementAt(0).rawKey );
+        AssertJUnit.assertEquals( "SecondaryRatings", path.elementAt(0).getRawKey() );
         AssertJUnit.assertEquals( "SecondaryRatings", path.elementAt(0).toString() );
-        AssertJUnit.assertEquals( "Value", path.elementFromEnd(0).rawKey );
+        AssertJUnit.assertEquals( "Value", path.elementFromEnd(0).getRawKey() );
         AssertJUnit.assertEquals( "Value", path.elementFromEnd( 0 ).toString() );
         AssertJUnit.assertEquals( "Value", path.lastElement().toString() );
 
@@ -79,14 +79,14 @@ public class PathElementTest {
         AssertJUnit.assertNull( lpe );
 
         lpe = pe1.matchInput( "tuna-A-marlin-AAA", new Path<LiteralPathElement>( Collections.<LiteralPathElement>emptyList() ) );
-        AssertJUnit.assertEquals(  "tuna-A-marlin-AAA", lpe.rawKey );
+        AssertJUnit.assertEquals(  "tuna-A-marlin-AAA", lpe.getRawKey() );
         AssertJUnit.assertEquals(  "tuna-A-marlin-AAA", lpe.getSubKeyRef( 0 ) );
         AssertJUnit.assertEquals( 3, lpe.getSubKeyCount() );
         AssertJUnit.assertEquals( "A" , lpe.getSubKeyRef( 1 ) );
         AssertJUnit.assertEquals( "AAA" , lpe.getSubKeyRef( 2 ) );
 
         LiteralPathElement lpe2 = pe2.matchInput( "rating-BBB", new Path<LiteralPathElement>( Arrays.asList( lpe ) ) );
-        AssertJUnit.assertEquals(  "rating-BBB", lpe2.rawKey );
+        AssertJUnit.assertEquals(  "rating-BBB", lpe2.getRawKey() );
         AssertJUnit.assertEquals(  "rating-BBB", lpe2.getSubKeyRef( 0 ) );
         AssertJUnit.assertEquals( 2, lpe2.getSubKeyCount() );
         AssertJUnit.assertEquals( "BBB" , lpe2.getSubKeyRef( 1 ) );

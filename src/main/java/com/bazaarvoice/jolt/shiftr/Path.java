@@ -22,12 +22,6 @@ public class Path<T> {
         this.elements.add( toAppend );
     }
 
-    public Path( T toPrepend, Path other ) {
-        this.elements = new ArrayList<T>( other.elements.size() + 1 );
-        this.elements.add( toPrepend );
-        this.elements.addAll( other.elements );
-    }
-
     public String toString() {
         return this.elements.toString();
     }
@@ -80,7 +74,7 @@ public class Path<T> {
         public StringPath build( LiteralPath walkedPath ) {
 
             List<String> strings = new ArrayList<String>();
-            strings.add( "output");
+            strings.add( "output" );
             for ( PathElement pathElement : elements ) {
                 String evaledLeafOutput = pathElement.evaluateAsOutputKey( walkedPath );
                 strings.add( evaledLeafOutput );

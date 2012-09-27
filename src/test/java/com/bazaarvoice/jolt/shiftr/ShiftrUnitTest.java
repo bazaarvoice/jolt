@@ -2,13 +2,14 @@ package com.bazaarvoice.jolt.shiftr;
 
 import com.bazaarvoice.jolt.JoltTestUtil;
 import com.bazaarvoice.jolt.JsonUtils;
+import com.bazaarvoice.jolt.Shiftr;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.Map;
 
-public class PutItAllTogetherTest {
+public class ShiftrUnitTest {
 
     @DataProvider
     public Object[][] shiftrTestCases() throws IOException {
@@ -32,6 +33,13 @@ public class PutItAllTogetherTest {
                 JsonUtils.jsonToMap("{ \"tuna-output\" : \"snapper\" }")
             },
             {
+                "KeyRef",
+                JsonUtils.jsonToMap("{ \"rating-*\" : { \"&(1)\" : { \"match\" : \"&\" } } }"),
+                JsonUtils.jsonToMap("{ \"rating-a\" : { \"a\" : { \"match\": \"a-match\" }, \"random\" : { \"match\" : \"noise\" } }," +
+                        "              \"rating-c\" : { \"c\" : { \"match\": \"c-match\" }, \"random\" : { \"match\" : \"noise\" } } }"),
+                JsonUtils.jsonToMap("{ \"match\" : [ \"a-match\", \"c-match\" ] }")
+            },
+            {
                 "Complex array output",
                 JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-*\" : \"tuna[&1(1)].marlin[&1(2)].&(1)\" } }"),
                 JsonUtils.jsonToMap("{ \"tuna-2-marlin-3\" : { \"rating-BBB\" : \"bar\" }," +
@@ -52,11 +60,5 @@ public class PutItAllTogetherTest {
         Object actual = shiftr.xform( data, spec );
 
         JoltTestUtil.runDiffy(expected, actual, testName);
-    }
-
-
-    public void shiftrKeyOrderTest() throws IOException {
-        JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-*\" : \"&1(2).&.value\" } }");
-
     }
 }

@@ -4,7 +4,6 @@ import com.bazaarvoice.jolt.shiftr.Path.*;
 import com.bazaarvoice.jolt.shiftr.PathElement.*;
 
 import com.bazaarvoice.jolt.JsonUtils;
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
@@ -31,9 +30,119 @@ public class Key {
         return processSpec( spec );
     }
 
+    private static final ComputedKeysComparator computedKeysComparator = new ComputedKeysComparator();
+
+    // The processed key from the Json config
+    protected PathElement pathElement;
+
+    // The processed output specification
+    protected List<OutputPath> outputPaths = new ArrayList<OutputPath>();
+
+    /*
+    Spec Example 1 :
+    {
+        "@" : [ "payload.original", "payload.secondCopy" ]   //  @ : specialKey      [ "payload.original", "payload.secondCopy" ] : outputPaths
+
+        "rating": {                                          //  rating : literalChild     outputPaths are empty
+            "primary": {
+                "value": "Rating",
+                "max": "RatingRange"
+            },
+            "*": {                                           // * : computedChild
+                "value": "SecondaryRatings.&1.Value",
+                "max": "SecondaryRatings.&1.Range",
+                "&": "SecondaryRatings.&1.Id"                // & with no children : specialKey
+            }
+        }
+    }
+
+    Spec Example 2 :
+    {
+        rating-*" : {                                        // rating-* : computedChild
+            "&(1)" : {                                       // &(1) has children : computedChild, aka comptute the key, and see if there are any values that match
+                "value" : "Rating-&1.value"
+            }
+        }
+    }
+    Sample Data for Spec 2 :
+    {
+        rating-primary : {
+            primary : {
+                value : 4      <-- want this value
+            },
+            randomNoise : {
+                value : 5      <-- not this one
+            }
+        }
+    }
+    */
+
+
+    // The value of the key, either children or a literal value
+    protected List<Key> specialChildren = new ArrayList<Key>(3);
+    protected Map<String, Key> literalChildren = new HashMap<String, Key>();
+    protected List<Key> computedChildren = new ArrayList<Key>();
+
+    protected boolean hasChildren = false;
+
+    public Key( String rawJsonKey, Object spec ) {
+
+        pathElement = PathElement.parse( rawJsonKey );
+
+        if ( spec instanceof Map ) {
+            List<Key> children = processSpec( (Map<String, Object>) spec );
+
+            for ( Key child : children ) {
+                if ( child.pathElement instanceof LiteralPathElement ) {
+                    literalChildren.put( child.pathElement.getRawKey(), child );
+                }
+                else if ( child.pathElement instanceof AtPathElement || (  // special if it is an "@"
+                     child.pathElement instanceof ReferencePathElement && ! child.hasChildren ) ) {   // special if it is a "&" and it has no children
+                    specialChildren.add( child );
+                }
+                else {   // star || (& with children)
+                    computedChildren.add( child );
+                }
+            }
+
+            // Only the computed children need to be sorted
+            Collections.sort( computedChildren, computedKeysComparator );
+
+            hasChildren = true;
+        }
+        else if ( spec instanceof String ) {
+            // leaf level so spec is an dot notation output path
+            outputPaths.add( parseOutputDotNotation( spec ) );
+        }
+        else if ( spec instanceof List ) {
+            // leaf level list
+            // Spec : "foo": ["a", "b"] : Shift the value of "foo" to both "a" and "b"
+            for ( Object dotNotation : (List) spec ) {
+                outputPaths.add( parseOutputDotNotation( dotNotation ) );
+            }
+        }
+        else {
+            throw new IllegalArgumentException( "Invalid Shiftr spec RHS.  Should be map, string, or array of strings.  Key in question : " + spec );
+        }
+
+        // self check
+        if ( pathElement instanceof AtPathElement && hasChildren ) {
+            throw new IllegalArgumentException( "@ Shiftr key, can not have children." );
+        }
+    }
+
+    private static OutputPath parseOutputDotNotation( Object rawObj ) {
+
+        if ( ! ( rawObj instanceof String ) ) {
+            throw new IllegalArgumentException( "Invalid Shiftr spec RHS.  Should be a string or array of Strings.   Value in question : " + rawObj );
+        }
+
+        String outputPathStr = (String) rawObj;
+        return OutputPath.parseDotNotation(outputPathStr);
+    }
+
     /**
-     * Recursively walk the spec input tree.  Handle arrays by telling DefaultrKeys if they need to be ArrayKeys, and
-     * to find the max default array length.
+     * Recursively walk the spec input tree.
      */
     private static List<Key> processSpec( Map<String, Object> spec ) {
 
@@ -61,185 +170,111 @@ public class Key {
             }
         }
 
-        // Sort the children before returning
-        Collections.sort( result, keyComparator );
-
         return result;
     }
 
-    private static final KeyPrecedenceComparator keyComparator = new KeyPrecedenceComparator();
-
-    // The key of the spec
-    protected PathElement pathElement;
-
-    // The value of the key, either children or a literal value
-    protected List<Key> children = null;
-
-    protected List<OutputPath> outputPaths = new ArrayList<OutputPath>();
-
-    public Key( String rawJsonKey, Object spec ) {
-
-        pathElement = PathElement.parse( rawJsonKey );
-
-        // Spec is String -> Map   or   String -> Literal only
-        if ( spec instanceof Map ) {
-            children = processSpec( (Map<String, Object>) spec );
-        }
-        else if ( spec instanceof String ) {
-            // literal such as String, number, or Json array
-            String rawValue = (String) spec;
-            outputPaths.add(OutputPath.parseDotNotation(rawValue));
-        }
-        // Spec : "foo": ["a", "b"] : Shift the value of "foo" to both "a" and "b"
-        else if ( spec instanceof List ) {
-            try {
-                List<String> outputs = (List<String>) spec;
-                for ( String outputPathStr : outputs ) {
-                    outputPaths.add(OutputPath.parseDotNotation(outputPathStr));
-                }
-            }
-            catch ( ClassCastException cce ) {
-                throw new IllegalArgumentException( "Invalid Shiftr spec RHS.  Should be array of strings.  Key in question : " + spec );
-            }
-        }
-        else {
-            throw new IllegalArgumentException( "Invalid Shiftr spec RHS.  Should be map, string, or array of strings.  Key in question : " + spec );
-        }
-
-        if ( pathElement instanceof AtPathElement && children != null ) {
-            throw new IllegalArgumentException( "@ Shiftr key, can not have children." );
-        }
-    }
-
-    public List<Key> getChildren() {
-        return Collections.unmodifiableList( children );
-    }
-
-
-    public LiteralPath apply( String inputKey, LiteralPath walkedPath ) {
-
-        LiteralPathElement lpe = pathElement.matchInput(inputKey, walkedPath);
-
-        if ( lpe != null ) {  // only output if
-            return new LiteralPath( walkedPath, lpe );
-        }
-
-        return null;
-    }
 
     /**
      * This is the main "recursive" method.
-     *
-     *
-     "rating": {
-         "primary": {
-             "value": "Rating",
-             "max": "RatingRange"
-         },
-         "*": {
-             "value": "SecondaryRatings.&1.Value",
-             "max": "SecondaryRatings.&1.Range",
-             "&": "SecondaryRatings.&1.Id"
-         }
-     }
      */
+    public boolean applyChildren( String inputKey, Object input, LiteralPath parentWalkedPath, Map<String,Object> output ) {
 
-
-    public boolean applyChildren( String inputKey, Object input, LiteralPath walkedPath, Map<String,Object> output ) {
-
-        if ( pathElement instanceof AtPathElement ) {
-            return false;
-        }
-
-        LiteralPathElement thisLevel = pathElement.matchInput(inputKey, walkedPath);
+        LiteralPathElement thisLevel = pathElement.matchInput(inputKey, parentWalkedPath);
         if ( thisLevel == null ) {
             return false;
         }
 
-        LiteralPath newWalkedPath = new LiteralPath( walkedPath, thisLevel );
+        LiteralPath walkedPath = new LiteralPath( parentWalkedPath, thisLevel );
 
-        // make sure any output-only reference path children get a chance to output
-        if ( children != null ) {
-            for ( Key subKey : children ) {
-                if ( subKey.pathElement instanceof ReferencePathElement && subKey.children == null ) {
-                    ReferencePathElement subRef = (ReferencePathElement) subKey.pathElement;
-                    String refOutputData = subRef.evaluateAsOutputKey( newWalkedPath );
+        //// 1. If I have no children, just output
+        if ( ! hasChildren ) {
 
-                    subKey.applyChildren( refOutputData, refOutputData, newWalkedPath, output );
-                }
-                if ( subKey.pathElement instanceof AtPathElement && subKey.children == null ) {
-                    for ( OutputPath outputPath : subKey.outputPaths) {
-                        StringPath stringPath = outputPath.build( newWalkedPath );
-                        putInOutput( input, stringPath, output );
-                    }
-                }
-            }
-        }
-
-        if ( children == null ) { // leaf node of spec
             for ( OutputPath outputPath : outputPaths) {
-                StringPath stringPath = outputPath.build( newWalkedPath );
+                StringPath stringPath = outputPath.build( walkedPath );
                 putInOutput( input, stringPath, output );
-            }
-            // the whole job of the @ key is to copy a whole subtree of input data to the output
-            //  and allow other targeted shifts to occur by _not_ stopping the shiftr logic
-            if ( pathElement instanceof AtPathElement ) {
-                return false;
             }
             return true;
         }
 
-        else if ( children != null && input instanceof Map) {
+        //// 2. Handle any special / key based children first, but don't have them block anything
+        for( Key subKey : specialChildren ) {
+            if ( subKey.pathElement instanceof ReferencePathElement ) {
+                ReferencePathElement subRef = (ReferencePathElement) subKey.pathElement;
+                String refOutputData = subRef.evaluateAsOutputKey( walkedPath );
+
+                // Use the comptued key as the input data
+                subKey.applyChildren( refOutputData, refOutputData, walkedPath, output );
+            }
+            if ( subKey.pathElement instanceof AtPathElement ) {
+                for ( OutputPath outputPath : subKey.outputPaths) {
+                    StringPath stringPath = outputPath.build( walkedPath );
+
+                    // put this potentially large input tree of data, into the output
+                    putInOutput( input, stringPath, output );
+                }
+            }
+        }
+
+        //// 3. For each input key value, see if it matches any literal Keys or Computed keys, in that order
+        if ( input instanceof Map) {
 
             Map<String,Object> inputMap = (Map<String, Object>) input;
 
             for( String subKeyStr : inputMap.keySet() ) {
-                for ( Key subKey : children ) {
-                    if ( subKey.applyChildren( subKeyStr, inputMap.get( subKeyStr ), newWalkedPath, output ) ) {
-                        break;
-                    }
-                }
+                Object subInput = inputMap.get( subKeyStr );
+
+                applyToLiteralAndComputedChildren( subKeyStr, subInput, walkedPath, output );
             }
         }
-        else if ( children != null && input instanceof List) {
+        else if ( input instanceof List) {
 
             List inputList = (List) input;
 
             for (int index = 0; index < inputList.size(); index++) {
-                for ( Key subKey : children ) {
-                    Object subInput = inputList.get( index );
-                    String key = Integer.toString( index );
-                    if ( subKey.applyChildren( key, subInput, newWalkedPath, output ) ) {
-                        break;
-                    }
-                }
+                Object subInput = inputList.get( index );
+                String subKeyStr = Integer.toString( index );
+
+                applyToLiteralAndComputedChildren( subKeyStr, subInput, walkedPath, output );
             }
         }
 
         return true;
     }
 
+    private void applyToLiteralAndComputedChildren( String subKeyStr, Object subInput, LiteralPath walkedPath, Map<String, Object> output ) {
+
+        Key literalChild = literalChildren.get( subKeyStr );
+        if ( literalChild != null ) {
+            literalChild.applyChildren( subKeyStr, subInput, walkedPath, output );
+        }
+        else {
+            for ( Key computedChild : computedChildren ) {
+                // if the computed key does not match it will quickly return false
+                if ( computedChild.applyChildren( subKeyStr, subInput, walkedPath, output ) ) {
+                    break;
+                }
+            }
+        }
+    }
 
 
-
-
-
-    public static class KeyPrecedenceComparator implements Comparator<Key> {
+    public static class ComputedKeysComparator implements Comparator<Key> {
 
         private static HashMap<Class, Integer> orderMap = new HashMap<Class, Integer>();
 
         static {
-            orderMap.put( PathElement.AtPathElement.class, 1 );
-            orderMap.put( PathElement.LiteralPathElement.class, 2 );
-            orderMap.put( PathElement.ReferencePathElement.class, 3 );
-            orderMap.put( PathElement.StarPathElement.class, 4 );
+            orderMap.put( PathElement.ReferencePathElement.class, 1 );
+            orderMap.put( PathElement.StarPathElement.class, 2 );
         }
 
         @Override
         public int compare( Key a, Key b ) {
 
-            int aa = orderMap.get( a.pathElement.getClass() );
-            int bb = orderMap.get( b.pathElement.getClass() );
+            PathElement ape = a.pathElement;
+            PathElement bpe = b.pathElement;
+
+            int aa = orderMap.get( ape.getClass() );
+            int bb = orderMap.get( bpe.getClass() );
 
             int elementsEqual =  aa < bb ? -1 : aa == bb ? 0 : 1;
 
@@ -247,15 +282,17 @@ public class Key {
                 return elementsEqual;
             }
 
-            // Sort the star elements by lenght with the longest (most specific) being first
-            //  aka rating-range-* needs to be evaled before rating-*, or else rating-* will catch too much
-            if ( a.pathElement instanceof StarPathElement ) {
-                int alen = a.pathElement.rawKey.length();
-                int blen = b.pathElement.rawKey.length();
+            // At this point we have two PathElements of the same type.
+            String acf = ape.getCanonicalForm();
+            String bcf = bpe.getCanonicalForm();
 
-                return alen > blen ? -1 : alen == blen ? 0 : 1;
-            }
-            return elementsEqual;
+            int alen = acf.length();
+            int blen = bcf.length();
+
+            // Sort them by length, with the longest (most specific) being first
+            //  aka rating-range-* needs to be evaled before rating-*, or else rating-* will catch too much
+            // If the lengths are equal, sort alphabetically as the last deterministic behavior
+            return alen > blen ? -1 : alen == blen ? acf.compareTo( bcf ) : 1;
         }
     }
 
@@ -282,95 +319,94 @@ public class Key {
 
         // TODO defense
 
+        // defensive clone, in case the spec points to a map or list in the input doc
+        value = JsonUtils.cloneJson( value );
+
         // we're going to drill down into the output via the path specified in the where argument
         // current is the variable that holds our current location in the output
         Map<String, Object> current = output;               // we start at the overall output
 
-        // drill down for each item in the path above the last
-        for ( int index = 0; index < outputPath.size() - 1; index++ ) {
+        boolean atBottom = false;
+        for ( int index = 0; index < outputPath.size(); index++ ) {
+
+            if ( index == outputPath.size() -1 ) {
+                atBottom = true;
+            }
 
             // figure out key name from paths
             Object[] arrayKey = splitArrayKey( outputPath.elementAt( index ) );
             String keyName = (String) arrayKey[0];
             Integer arrayIndex = (Integer) arrayKey[1];
 
-            Object next;
-            if ( arrayIndex == null ) {
+            Object next = current.get( keyName );               // grab the next value in the path
 
-                // make sure there's a map there and drill down
-                // TODO handle the case where next is a list/value better
-                next = current.get( keyName );               // grab the next value in the path
-                if ( ( next == null ) || !( next instanceof Map ) ) {     // we expect it to be there and a map
-                    next = new HashMap<String, Object>();           // make the missing map
-                    current.put( keyName, next );                   // put it in the output
+            if ( arrayIndex == null ) { // MAP
+
+                if ( atBottom ){
+
+                    if ( next == null ) {                             // nothing there
+                        current.put( keyName, value );                      // just put the value
+                    } else if ( next instanceof List ) {                // there's a list there
+                        ( (List) next ).add( value );               // add the value
+                    } else {                                                  // there's a non-list there
+                        List toPut = new ArrayList();                       // make one to put there
+                        toPut.add( next );                          // add what's already there
+                        toPut.add( value );                                 // add our new value
+                        current.put( keyName, toPut );                      // put the list in place
+                    }
                 }
-            } else {
+                else {
+                    // make sure there's a map there and drill down
+                    // TODO handle the case where next is a list/value better
+                    if ( ( next == null ) || !( next instanceof Map ) ) {     // we expect it to be there and a map
+                        next = new HashMap<String, Object>();           // make the missing map
+                        current.put( keyName, next );                   // put it in the output
+                    }
 
-                // make sure there's an Array there and drill down
-                // TODO handle the case where next is a list/value better
-                next = current.get( keyName );               // grab the next value in the path
-                if ( ( next == null ) || !( next instanceof List ) ) {     // we expect it to be there and a map
-                    next = new ArrayList<Object>();           // make the missing list
-                    current.put( keyName, next );                   // put it in the output
+                    current = (Map<String, Object>) next;               // drill down the next level
                 }
+            } else {  // LIST
 
-                ensureArraySize( arrayIndex, (List) next );
-                HashMap<String, Object> nextNext = (HashMap<String, Object>) ((List) next).get( arrayIndex );
-                if ( nextNext == null ) {
-                    nextNext = new HashMap<String, Object>();
-                    ( (List) next ).set( arrayIndex, nextNext );
+                if ( atBottom ) {
+
+                    if ( next == null || !(next instanceof List)) {        // nothing or wrong thing there
+                        next = new ArrayList();
+                        current.put( keyName, next );                      // just put the value
+                    }
+
+                    ensureArraySize( arrayIndex, (List) next );
+
+                    Object nextNext = ((List) next).get( arrayIndex );
+                    if ( nextNext == null ) {                             // nothing there
+                        ((List) next).set( arrayIndex, value );                      // just put the value
+                    } else if ( nextNext instanceof List ) {                // there's a list there
+                        ( (List) nextNext ).add( value );               // add the value
+                    } else {                                                  // there's a non-list there
+                        List toPut = new ArrayList();                       // make one to put there
+                        toPut.add( nextNext );                          // add what's already there
+                        toPut.add( value );                                 // add our new value
+                        ((List) next).set( arrayIndex, toPut );                      // put the list in place
+                    }
+
                 }
+                else {
 
-                next = nextNext;
-            }
+                    // make sure there's an Array there and drill down
+                    // TODO handle the case where next is a list/value better
+                    if ( ( next == null ) || !( next instanceof List ) ) {     // we expect it to be there and a map
+                        next = new ArrayList<Object>();           // make the missing list
+                        current.put( keyName, next );                   // put it in the output
+                    }
 
-            current = (Map<String, Object>) next;               // drill down the next level
-        }
+                    ensureArraySize( arrayIndex, (List) next );
+                    HashMap<String, Object> nextNext = (HashMap<String, Object>) ((List) next).get( arrayIndex );
+                    if ( nextNext == null ) {
+                        nextNext = new HashMap<String, Object>();
+                        ( (List) next ).set( arrayIndex, nextNext );
+                    }
 
-        // defensive clone, in case the spec points to a map or list in the input doc
-        value = JsonUtils.cloneJson( value );
-
-        // now we're at the very bottom of our path.
-        // time to insert our value
-
-        // figure out the last keyname
-        Object[] arrayKey = splitArrayKey( outputPath.lastElement() );
-        String keyName = (String) arrayKey[0];
-        Integer arrayIndex = (Integer) arrayKey[1];
-
-        Object alreadyThere = current.get( keyName );           // see if it's occupied
-
-        if ( arrayIndex == null ) {
-            if ( alreadyThere == null ) {                             // nothing there
-                current.put( keyName, value );                      // just put the value
-            } else if ( alreadyThere instanceof List ) {                // there's a list there
-                ( (List) alreadyThere ).add( value );               // add the value
-            } else {                                                  // there's a non-list there
-                List toPut = new ArrayList();                       // make one to put there
-                toPut.add( alreadyThere );                          // add what's already there
-                toPut.add( value );                                 // add our new value
-                current.put( keyName, toPut );                      // put the list in place
-            }
-        } else {
-
-            if ( alreadyThere == null || !(alreadyThere instanceof List)) {                             // nothing or wrong thing there
-                alreadyThere = new ArrayList();
-                current.put( keyName, alreadyThere );                      // just put the value
-            }
-
-            ensureArraySize( arrayIndex, (List) alreadyThere );
-
-
-            Object nextNext = ((List) alreadyThere).get( arrayIndex );
-            if ( nextNext == null ) {                             // nothing there
-                ((List) alreadyThere).set( arrayIndex, value );                      // just put the value
-            } else if ( nextNext instanceof List ) {                // there's a list there
-                ( (List) nextNext ).add( value );               // add the value
-            } else {                                                  // there's a non-list there
-                List toPut = new ArrayList();                       // make one to put there
-                toPut.add( nextNext );                          // add what's already there
-                toPut.add( value );                                 // add our new value
-                ((List) alreadyThere).set( arrayIndex, toPut );                      // put the list in place
+                    current = nextNext;
+                }
             }
         }
     }

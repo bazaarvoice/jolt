@@ -51,14 +51,18 @@ public abstract class PathElement {
         }
     }
 
-    protected String rawKey;
+    private String rawKey;
 
     public PathElement( String key ) {
         this.rawKey = key;
     }
 
-    public String toString() {
+    protected String getRawKey() {
         return rawKey;
+    }
+
+    public String toString() {
+        return getCanonicalForm();
     }
 
     /**
@@ -79,6 +83,11 @@ public abstract class PathElement {
      */
     public abstract String evaluateAsOutputKey( Path<LiteralPathElement> specInputPath );
 
+    /**
+     * Get the canonical form of this PathElement.  Really only interesting for the Reference Path element, where
+     *  it will expand "&" to "&0(0)".
+     * @return
+     */
     public abstract String getCanonicalForm();
 
 
@@ -97,12 +106,19 @@ public abstract class PathElement {
             this.subKeys.addAll( subKeys );
         }
 
+        @Override
         public String evaluateAsOutputKey( Path<LiteralPathElement> specInputPath ) {
-            return rawKey;
+            return getRawKey();
         }
 
+        @Override
         public LiteralPathElement matchInput( String dataKey, Path<LiteralPathElement> specInputPath ) {
-            return rawKey.equals( dataKey ) ? this : null ;
+            return getRawKey().equals( dataKey ) ? this : null ;
+        }
+
+        @Override
+        public String getCanonicalForm() {
+            return getRawKey();
         }
 
         public String getSubKeyRef( int index ) {
@@ -111,11 +127,6 @@ public abstract class PathElement {
 
         public int getSubKeyCount(){
             return subKeys.size();
-        }
-
-        @Override
-        public String getCanonicalForm() {
-            return rawKey;
         }
     }
 
@@ -145,16 +156,13 @@ public abstract class PathElement {
     public static class StarPathElement extends PathElement {
 
         private Pattern pattern;
-        private int numStars = 0;
 
         public StarPathElement( String key ) {
             super(key);
 
-            numStars = StringUtils.countMatches( key, "*" );
-
+            // "rating-*-*"  ->  "^rating-(.*?)-(.*?)$"
             String regex = "^" + key.replace("*", "(.*?)")  + "$";
 
-            // "rating-*-*"  ->  "^rating-(.*?)-(.*?)$"
             pattern = Pattern.compile( regex );
         }
 
@@ -179,18 +187,20 @@ public abstract class PathElement {
 
         @Override
         public String getCanonicalForm() {
-            return rawKey;
+            return getRawKey();
         }
     }
 
     public static class ReferencePathElement extends PathElement {
 
-        List tokens = new ArrayList();
+        protected List tokens = new ArrayList();
+        protected String canonicalForm;
 
         public ReferencePathElement( String key ) {
             super(key);
 
-            StringBuffer literal = new StringBuffer();
+            StringBuilder literal = new StringBuilder();
+            StringBuilder canonicalBuilder = new StringBuilder();
 
             int numArrayTokens = 0;
             int index = 0;
@@ -204,22 +214,30 @@ public abstract class PathElement {
                     // store off any literal text captured thus far
                     if ( literal.length() > 0 ) {
                         tokens.add( literal.toString() );
-                        literal = new StringBuffer();
+                        canonicalBuilder.append( literal );
+                        literal = new StringBuilder();
                     }
-                    int subEnd = 0;
+                    int refEnd = 0;
                     Reference ref = null;
 
                     if ( c == '[' ) {
-                        subEnd = findEndOfArrayReference( key.substring( index ) );
-                        ref = Reference.newReference(true, key.substring(index + 1, index + subEnd) ); // chomp off the leading and trailing [ ]
+                        refEnd = findEndOfArrayReference( key.substring( index ) );  // look ahead and find the closing ']'
+                        ref = Reference.newReference(true, key.substring(index + 1, index + refEnd) ); // chomp off the leading and trailing [ ]
                         numArrayTokens++;
+
+                        canonicalBuilder.append( "[" );
+                        canonicalBuilder.append( "&" ).append( ref.pathIndex );
+                        canonicalBuilder.append( "(" ).append( ref.keyGroup ).append( ")" );
+                        canonicalBuilder.append( "]" );
                     }
                     else {
-                        subEnd = findEndOfReference( key.substring( index + 1 ) );
-                        ref = Reference.newReference(false, key.substring(index, index + subEnd + 1) );
+                        refEnd = findEndOfReference( key.substring( index + 1 ) );
+                        ref = Reference.newReference(false, key.substring(index, index + refEnd + 1) );
+                        canonicalBuilder.append( "&" ).append( ref.pathIndex );
+                        canonicalBuilder.append( "(" ).append( ref.keyGroup ).append( ")" );
                     }
                     tokens.add( ref );
-                    index += subEnd;
+                    index += refEnd;
                 }
                 else {
                     literal.append( c );
@@ -230,6 +248,9 @@ public abstract class PathElement {
                 tokens.add( literal.toString() );
             }
 
+            this.canonicalForm = canonicalBuilder.toString();
+
+            // Checks
             if ( numArrayTokens > 1 ) {
                 throw new IllegalArgumentException( "Key " + key + " can only contain one array reference." );
             }
@@ -248,7 +269,7 @@ public abstract class PathElement {
         private static int findEndOfArrayReference( String key ) {
             int endOfArray = key.indexOf( ']' );
             if ( endOfArray <= 0 ) {
-                throw new IllegalArgumentException( "invalid array reference of " + key + "' " );
+                throw new IllegalArgumentException( "Invalid Key array reference of '" + key + "'.  Missing ']'." );
             }
             return endOfArray;
         }
@@ -260,6 +281,7 @@ public abstract class PathElement {
 
             for( int index = 0; index < key.length(); index++ ){
                 char c = key.charAt( index );
+                // keep going till we see something other than a digit or parens
                 if( ! Character.isDigit( c ) && c != '(' && c != ')' ) {
                     return index;
                 }
@@ -269,33 +291,14 @@ public abstract class PathElement {
 
         @Override
         public String getCanonicalForm() {
-            StringBuffer canonical = new StringBuffer();
-
-            for ( Object token : tokens ) {
-                if ( token instanceof String ) {
-                    canonical.append(token);
-                }
-                else {
-                    Reference ref = (Reference) token;
-
-                    if ( ref.isArray ) {
-                        canonical.append( "[" );
-                    }
-
-                    canonical.append( "&" ).append( ref.pathIndex );
-                    canonical.append( "(" ).append( ref.keyGroup ).append( ")" );
-
-                    if ( ref.isArray ) {
-                        canonical.append( "]");
-                    }
-                }
-            }
-
-            return canonical.toString();
+            return canonicalForm;
         }
 
+        @Override
         public String evaluateAsOutputKey( Path<LiteralPathElement> specInputPath ) {
 
+            // Walk thru our tokens and build up a string
+            // Use the supplied Path to fill in our token References
             StringBuffer output = new StringBuffer();
 
             for ( Object token : tokens ) {
