@@ -4,14 +4,17 @@ import com.bazaarvoice.jolt.shiftr.Path.*;
 import com.bazaarvoice.jolt.shiftr.PathElement.*;
 
 import com.bazaarvoice.jolt.JsonUtils;
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,13 +38,30 @@ public class Key {
     private static List<Key> processSpec( Map<String, Object> spec ) {
 
         List<Key> result = new ArrayList<Key>();
+        Set<String> actualKeys = new HashSet<String>();
 
-        for ( String keyStr : spec.keySet() ) {
-            Object subSpec = spec.get( keyStr );
-            result.add( new Key( keyStr, subSpec ) ); // this will recursively call processSpec if needed
+        for ( String rawKeyStr : spec.keySet() ) {
+
+            String[] keyStrings = rawKeyStr.split( "\\|" ); // unwrap the syntactic sugar of the OR
+            for ( String keyString : keyStrings ) {
+
+                // Duplicate the "spec" for each key in the "|"
+                // this will recursively call processSpec if needed
+                Key key = new Key(keyString, spec.get(rawKeyStr));
+
+                String canonicalString = key.pathElement.getCanonicalForm();
+
+                if ( actualKeys.contains( canonicalString ) ) {
+                    throw new IllegalArgumentException( "Duplicate canonical Shiftr key found : " + canonicalString );
+                }
+
+                actualKeys.add( canonicalString );
+
+                result.add(key);
+            }
         }
 
-        // Sort the children b4 returning
+        // Sort the children before returning
         Collections.sort( result, keyComparator );
 
         return result;
@@ -50,40 +70,53 @@ public class Key {
     private static final KeyPrecedenceComparator keyComparator = new KeyPrecedenceComparator();
 
     // The key of the spec
-    protected String rawKey;
     protected PathElement pathElement;
 
     // The value of the key, either children or a literal value
     protected List<Key> children = null;
 
-    protected String rawValue = null;
-    protected OutputPath outputPath = null;
+    protected List<OutputPath> outputPaths = new ArrayList<OutputPath>();
 
     public Key( String rawJsonKey, Object spec ) {
 
-        rawKey = rawJsonKey;
         pathElement = PathElement.parse( rawJsonKey );
 
         // Spec is String -> Map   or   String -> Literal only
         if ( spec instanceof Map ) {
             children = processSpec( (Map<String, Object>) spec );
-
         }
         else if ( spec instanceof String ) {
             // literal such as String, number, or Json array
-            rawValue = (String) spec;
-            outputPath = OutputPath.parseDotNotation(rawValue);
+            String rawValue = (String) spec;
+            outputPaths.add(OutputPath.parseDotNotation(rawValue));
+        }
+        // Spec : "foo": ["a", "b"] : Shift the value of "foo" to both "a" and "b"
+        else if ( spec instanceof List ) {
+            try {
+                List<String> outputs = (List<String>) spec;
+                for ( String outputPathStr : outputs ) {
+                    outputPaths.add(OutputPath.parseDotNotation(outputPathStr));
+                }
+            }
+            catch ( ClassCastException cce ) {
+                throw new IllegalArgumentException( "Invalid Shiftr spec RHS.  Should be array of strings.  Key in question : " + spec );
+            }
         }
         else {
-            throw new IllegalArgumentException( "Shiftr spec can not have non-String RHS values." );
+            throw new IllegalArgumentException( "Invalid Shiftr spec RHS.  Should be map, string, or array of strings.  Key in question : " + spec );
+        }
+
+        if ( pathElement instanceof AtPathElement && children != null ) {
+            throw new IllegalArgumentException( "@ Shiftr key, can not have children." );
         }
     }
 
     public List<Key> getChildren() {
-        return children;
+        return Collections.unmodifiableList( children );
     }
 
-    public LiteralPath apply( String inputKey, Object input, LiteralPath walkedPath ) {
+
+    public LiteralPath apply( String inputKey, LiteralPath walkedPath ) {
 
         LiteralPathElement lpe = pathElement.matchInput(inputKey, walkedPath);
 
@@ -96,20 +129,66 @@ public class Key {
 
     /**
      * This is the main "recursive" method.
+     *
+     *
+     "rating": {
+         "primary": {
+             "value": "Rating",
+             "max": "RatingRange"
+         },
+         "*": {
+             "value": "SecondaryRatings.&1.Value",
+             "max": "SecondaryRatings.&1.Range",
+             "&": "SecondaryRatings.&1.Id"
+         }
+     }
      */
+
+
     public boolean applyChildren( String inputKey, Object input, LiteralPath walkedPath, Map<String,Object> output ) {
 
-        LiteralPath newWalkedPath = apply( inputKey, input, walkedPath);
-
-        if ( newWalkedPath == null ){
+        if ( pathElement instanceof AtPathElement ) {
             return false;
         }
 
-        if ( children == null && input instanceof String ) { // leaf node of spec
-            StringPath stringPath = outputPath.build( newWalkedPath );
-            putInOutput( input, stringPath, output );
+        LiteralPathElement thisLevel = pathElement.matchInput(inputKey, walkedPath);
+        if ( thisLevel == null ) {
+            return false;
+        }
+
+        LiteralPath newWalkedPath = new LiteralPath( walkedPath, thisLevel );
+
+        // make sure any output-only reference path children get a chance to output
+        if ( children != null ) {
+            for ( Key subKey : children ) {
+                if ( subKey.pathElement instanceof ReferencePathElement && subKey.children == null ) {
+                    ReferencePathElement subRef = (ReferencePathElement) subKey.pathElement;
+                    String refOutputData = subRef.evaluateAsOutputKey( newWalkedPath );
+
+                    subKey.applyChildren( refOutputData, refOutputData, newWalkedPath, output );
+                }
+                if ( subKey.pathElement instanceof AtPathElement && subKey.children == null ) {
+                    for ( OutputPath outputPath : subKey.outputPaths) {
+                        StringPath stringPath = outputPath.build( newWalkedPath );
+                        putInOutput( input, stringPath, output );
+                    }
+                }
+            }
+        }
+
+        if ( children == null ) { // leaf node of spec
+            for ( OutputPath outputPath : outputPaths) {
+                StringPath stringPath = outputPath.build( newWalkedPath );
+                putInOutput( input, stringPath, output );
+            }
+            // the whole job of the @ key is to copy a whole subtree of input data to the output
+            //  and allow other targeted shifts to occur by _not_ stopping the shiftr logic
+            if ( pathElement instanceof AtPathElement ) {
+                return false;
+            }
             return true;
         }
+
         else if ( children != null && input instanceof Map) {
 
             Map<String,Object> inputMap = (Map<String, Object>) input;
@@ -126,7 +205,7 @@ public class Key {
 
             List inputList = (List) input;
 
-            for (int index=0; index<inputList.size(); index++) {
+            for (int index = 0; index < inputList.size(); index++) {
                 for ( Key subKey : children ) {
                     Object subInput = inputList.get( index );
                     String key = Integer.toString( index );
@@ -153,11 +232,8 @@ public class Key {
             orderMap.put( PathElement.AtPathElement.class, 1 );
             orderMap.put( PathElement.LiteralPathElement.class, 2 );
             orderMap.put( PathElement.ReferencePathElement.class, 3 );
-            orderMap.put( PathElement.OrPathElement.class, 4 );
-            orderMap.put( PathElement.StarPathElement.class, 5 );
+            orderMap.put( PathElement.StarPathElement.class, 4 );
         }
-
-        //private OpsPrecedenceComparator opsComparator = new OpsPrecedenceComparator();
 
         @Override
         public int compare( Key a, Key b ) {
@@ -165,8 +241,21 @@ public class Key {
             int aa = orderMap.get( a.pathElement.getClass() );
             int bb = orderMap.get( b.pathElement.getClass() );
 
-            // TODO more deterministic sort
-            return aa < bb ? -1 : aa == bb ? 0 : 1;
+            int elementsEqual =  aa < bb ? -1 : aa == bb ? 0 : 1;
+
+            if ( elementsEqual != 0 ) {
+                return elementsEqual;
+            }
+
+            // Sort the star elements by lenght with the longest (most specific) being first
+            //  aka rating-range-* needs to be evaled before rating-*, or else rating-* will catch too much
+            if ( a.pathElement instanceof StarPathElement ) {
+                int alen = a.pathElement.rawKey.length();
+                int blen = b.pathElement.rawKey.length();
+
+                return alen > blen ? -1 : alen == blen ? 0 : 1;
+            }
+            return elementsEqual;
         }
     }
 

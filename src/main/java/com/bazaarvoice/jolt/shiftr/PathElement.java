@@ -1,6 +1,7 @@
 package com.bazaarvoice.jolt.shiftr;
 
 import org.apache.commons.lang.StringUtils;
+import sun.tools.tree.IfStatement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +79,8 @@ public abstract class PathElement {
      */
     public abstract String evaluateAsOutputKey( Path<LiteralPathElement> specInputPath );
 
+    public abstract String getCanonicalForm();
+
 
     public static class LiteralPathElement extends PathElement {
 
@@ -109,36 +112,20 @@ public abstract class PathElement {
         public int getSubKeyCount(){
             return subKeys.size();
         }
-    }
 
-    public static class OrPathElement extends PathElement {
-
-        List<PathElement> elements;
-        public OrPathElement( String key ) {
-            super(key);
-
-            String[] split = key.split( "|" );
-            elements = PathElement.parse( split );
-        }
-
-        public String evaluateAsOutputKey( Path<LiteralPathElement> specInputPath ) {
-            throw new UnsupportedOperationException("Don't call evaluateAsOutputKey on the '|'");
-        }
-
-        public LiteralPathElement matchInput( String dataKey, Path<LiteralPathElement> specInputPath ) {
-            for ( PathElement pe : elements ) {
-                LiteralPathElement pathElement = pe.matchInput( dataKey, specInputPath );
-                if ( pathElement != null ) {
-                    return pathElement;
-                }
-            }
-            return null;
+        @Override
+        public String getCanonicalForm() {
+            return rawKey;
         }
     }
 
     public static class AtPathElement extends PathElement {
         public AtPathElement( String key ) {
             super(key);
+
+            if ( ! "@".equals( key ) ) {
+                throw new IllegalArgumentException( "'References Input' key '@', can only be a single '@'.  Offending key : " + key );
+            }
         }
 
         public String evaluateAsOutputKey( Path<LiteralPathElement> specInputPath ) {
@@ -147,6 +134,11 @@ public abstract class PathElement {
 
         public LiteralPathElement matchInput( String dataKey, Path<LiteralPathElement> specInputPath ) {
             return new LiteralPathElement( dataKey );
+        }
+
+        @Override
+        public String getCanonicalForm() {
+            return "@";
         }
     }
 
@@ -183,6 +175,11 @@ public abstract class PathElement {
             }
 
             return new LiteralPathElement(dataKey, subKeys);
+        }
+
+        @Override
+        public String getCanonicalForm() {
+            return rawKey;
         }
     }
 
@@ -236,6 +233,16 @@ public abstract class PathElement {
             if ( numArrayTokens > 1 ) {
                 throw new IllegalArgumentException( "Key " + key + " can only contain one array reference." );
             }
+            if ( numArrayTokens == 1 ) {
+                Object lastToken = tokens.get( tokens.size() -1 );
+                if (lastToken instanceof String ) {
+                    throw new IllegalArgumentException( "Error in Key " + key + " : Array Reference has to be the last component of the key." );
+                }
+                Reference ref = (Reference) lastToken;
+                if ( ! ref.isArray ) {
+                    throw new IllegalArgumentException( "Error in Key " + key + " : Array Reference has to be the last component of the key." );
+                }
+            }
         }
 
         private static int findEndOfArrayReference( String key ) {
@@ -258,6 +265,33 @@ public abstract class PathElement {
                 }
             }
             return key.length();
+        }
+
+        @Override
+        public String getCanonicalForm() {
+            StringBuffer canonical = new StringBuffer();
+
+            for ( Object token : tokens ) {
+                if ( token instanceof String ) {
+                    canonical.append(token);
+                }
+                else {
+                    Reference ref = (Reference) token;
+
+                    if ( ref.isArray ) {
+                        canonical.append( "[" );
+                    }
+
+                    canonical.append( "&" ).append( ref.pathIndex );
+                    canonical.append( "(" ).append( ref.keyGroup ).append( ")" );
+
+                    if ( ref.isArray ) {
+                        canonical.append( "]");
+                    }
+                }
+            }
+
+            return canonical.toString();
         }
 
         public String evaluateAsOutputKey( Path<LiteralPathElement> specInputPath ) {
@@ -289,8 +323,6 @@ public abstract class PathElement {
                     }
                 }
             }
-
-            // TODO throw error is any of the references are an array and its not the last thing in the outputString.
 
             return output.toString();
         }

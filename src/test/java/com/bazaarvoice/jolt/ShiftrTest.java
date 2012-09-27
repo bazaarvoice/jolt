@@ -1,12 +1,10 @@
 package com.bazaarvoice.jolt;
 
-import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ShiftrTest {
@@ -53,6 +51,8 @@ public class ShiftrTest {
         Object spec = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( specPath == null ? testPath + "/spec.json" : specPath ) );
         Object expected = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( outputPath == null ? testPath + "/output.json" : outputPath ) );
 
+        // new shiftr
+        //com.bazaarvoice.jolt.shiftr.Shiftr jolt = new com.bazaarvoice.jolt.shiftr.Shiftr();
         Shiftr jolt = new Shiftr();
         Object actual = jolt.xform( input, spec );
 

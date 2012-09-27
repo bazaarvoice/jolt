@@ -80,6 +80,7 @@ public class Path<T> {
         public StringPath build( LiteralPath walkedPath ) {
 
             List<String> strings = new ArrayList<String>();
+            strings.add( "output");
             for ( PathElement pathElement : elements ) {
                 String evaledLeafOutput = pathElement.evaluateAsOutputKey( walkedPath );
                 strings.add( evaledLeafOutput );
