@@ -78,15 +78,6 @@ import java.util.Map;
  */
 public class Shiftr implements Chainable {
 
-    private static final String SPEC_KEY_REFERENCES_INPUT_KEY = "&";
-    private static final String SPEC_KEY_REFERENCES_INPUT_VALUE = "@";
-
-//    private static final String OUTPUT_PATH_PREFIX = "output";
-
-    // TODO construction option that takes a warning/info listener
-
-    // TODO support for lists in mappings
-
     /**
      * Applies a Shiftr transform for Chainr
      *
@@ -119,9 +110,9 @@ public class Shiftr implements Chainable {
         Key root = rootedKeyedSpec.get(0);
 
         // Have the root key apply its children to the known to be non-null defaultee
-        Map<String,Object> output = new HashMap<String,Object>();
+        Map<String,Object> output = new LinkedHashMap<String,Object>();
         root.applyChildren( "root", input, new LiteralPath(), output );
 
-        return output;
+        return output.get( "output" );
     }
 }
