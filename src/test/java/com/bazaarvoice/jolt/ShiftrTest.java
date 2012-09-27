@@ -21,10 +21,9 @@ public class ShiftrTest {
     @DataProvider
     public Object[][] getTestCaseNames() {
         return new Object[][] {
-            // TODO enable these tests when Shiftr is updated to support array and key mashing features
-            //{"photosArray", null, null, null},
-            //{"bucketToPrefixSoup", null, null, null},
-            //{"prefixSoupToBuckets", null, null, null},
+            {"photosArray", null, null, null},
+            {"bucketToPrefixSoup", null, null, null},
+            {"prefixSoupToBuckets", null, null, null},
             {"firstSample", null, null, null},
             {"singlePlacement", null, null, null},
             {"multiPlacement", null, null, null},
@@ -51,10 +50,8 @@ public class ShiftrTest {
         Object spec = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( specPath == null ? testPath + "/spec.json" : specPath ) );
         Object expected = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( outputPath == null ? testPath + "/output.json" : outputPath ) );
 
-        // new shiftr
-        //com.bazaarvoice.jolt.shiftr.Shiftr jolt = new com.bazaarvoice.jolt.shiftr.Shiftr();
-        Shiftr jolt = new Shiftr();
-        Object actual = jolt.xform( input, spec );
+        Shiftr shiftr = new Shiftr();
+        Object actual = shiftr.xform( input, spec );
 
         JoltTestUtil.runDiffy( expected, actual, "failed case " + testPath );
     }
