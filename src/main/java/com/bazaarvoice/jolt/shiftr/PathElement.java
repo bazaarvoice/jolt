@@ -34,20 +34,6 @@ public abstract class PathElement {
         return paths;
     }
 
-    public static List<PathElement> parseDotNotation( String dotNotation ) {
-
-        if ( dotNotation.contains("@") || dotNotation.contains("*") ) {
-            throw new IllegalArgumentException("DotNotation parse (output key) can not contain '@' or '*'.");
-        }
-
-        if ( ( dotNotation == null ) || ( "".equals( dotNotation ) ) ) {   // TODO blank?
-            return new ArrayList<PathElement>();
-        } else {
-            String[] split = dotNotation.split( "\\." );
-            return PathElement.parse( split );
-        }
-    }
-
     private String rawKey;
 
     public PathElement( String key ) {
@@ -63,7 +49,7 @@ public abstract class PathElement {
     }
 
     /**
-     * See if this PathElement matches the given input dataKey.  If it does not match, this method returns null.
+     * See if this PathElement matches the given dataKey.  If it does not match, this method returns null.
      *
      * If this PathElement does match, it returns a LiteralPathElement with subKeys filled in.
      *
@@ -71,14 +57,14 @@ public abstract class PathElement {
      * @param specInputPath "up the tree" list of LiteralPathElements, that may be used by this key as it is computing its match
      * @return null or a matched LiteralPathElement
      */
-    public abstract LiteralPathElement matchInput( String dataKey, Path<LiteralPathElement> specInputPath );
+    public abstract LiteralPathElement match( String dataKey, Path<LiteralPathElement> specInputPath );
 
     /**
      * Evaluate this key as if it is an output path element.
      * @param specInputPath "up the tree" list of LiteralPathElements, that may be used by this key as it is computing
      * @return String path element to use for output tree building
      */
-    public abstract String evaluateAsOutputKey( Path<LiteralPathElement> specInputPath );
+    public abstract String evaluate( Path<LiteralPathElement> specInputPath );
 
     /**
      * Get the canonical form of this PathElement.  Really only interesting for the Reference Path element, where
@@ -86,6 +72,8 @@ public abstract class PathElement {
      * @return
      */
     public abstract String getCanonicalForm();
+
+
 
 
     public static class LiteralPathElement extends PathElement {
@@ -104,12 +92,12 @@ public abstract class PathElement {
         }
 
         @Override
-        public String evaluateAsOutputKey( Path<LiteralPathElement> specInputPath ) {
+        public String evaluate( Path<LiteralPathElement> specInputPath ) {
             return getRawKey();
         }
 
         @Override
-        public LiteralPathElement matchInput( String dataKey, Path<LiteralPathElement> specInputPath ) {
+        public LiteralPathElement match( String dataKey, Path<LiteralPathElement> specInputPath ) {
             return getRawKey().equals( dataKey ) ? this : null ;
         }
 
@@ -136,11 +124,11 @@ public abstract class PathElement {
             }
         }
 
-        public String evaluateAsOutputKey( Path<LiteralPathElement> specInputPath ) {
-            throw new UnsupportedOperationException("Don't call evaluateAsOutputKey on the '@'");
+        public String evaluate( Path<LiteralPathElement> specInputPath ) {
+            throw new UnsupportedOperationException("Don't call evaluate on the '@'");
         }
 
-        public LiteralPathElement matchInput( String dataKey, Path<LiteralPathElement> specInputPath ) {
+        public LiteralPathElement match( String dataKey, Path<LiteralPathElement> specInputPath ) {
             return new LiteralPathElement( dataKey );
         }
 
@@ -150,6 +138,9 @@ public abstract class PathElement {
         }
     }
 
+    /**
+     * Non-greed * based Path Element.
+     */
     public static class StarPathElement extends PathElement {
 
         private Pattern pattern;
@@ -163,11 +154,11 @@ public abstract class PathElement {
             pattern = Pattern.compile( regex );
         }
 
-        public String evaluateAsOutputKey( Path<LiteralPathElement> specInputPath ) {
-            throw new UnsupportedOperationException("Don't call evaluateAsOutputKey on the '*'");
+        public String evaluate( Path<LiteralPathElement> specInputPath ) {
+            throw new UnsupportedOperationException("Don't call evaluate on the '*'");
         }
 
-        public LiteralPathElement matchInput( String dataKey, Path<LiteralPathElement> specInputPath ) {
+        public LiteralPathElement match( String dataKey, Path<LiteralPathElement> specInputPath ) {
             Matcher matcher = pattern.matcher( dataKey );
             if ( ! matcher.find() ) {
                 return null;
@@ -188,6 +179,12 @@ public abstract class PathElement {
         }
     }
 
+    /**
+     * PathElement class that handles keys with & and [] values, like input: "photos-&1(1)" and output : "photos[&1(1)]"
+     * It breaks down the string into a series of String or Reference tokens, that can be used to
+     * 1) match input like "photos-5" where "&1(1)" evaluated to 5
+     * 2) compute an output stringKey like "photos[5]"
+     */
     public static class ReferencePathElement extends PathElement {
 
         protected List tokens = new ArrayList();
@@ -292,7 +289,7 @@ public abstract class PathElement {
         }
 
         @Override
-        public String evaluateAsOutputKey( Path<LiteralPathElement> specInputPath ) {
+        public String evaluate( Path<LiteralPathElement> specInputPath ) {
 
             // Walk thru our tokens and build up a string
             // Use the supplied Path to fill in our token References
@@ -328,8 +325,8 @@ public abstract class PathElement {
         }
 
         @Override
-        public LiteralPathElement matchInput( String dataKey, Path<LiteralPathElement> specInputPath ) {
-            String evaled = evaluateAsOutputKey( specInputPath );
+        public LiteralPathElement match( String dataKey, Path<LiteralPathElement> specInputPath ) {
+            String evaled = evaluate( specInputPath );
             if ( evaled.equals( dataKey ) ) {
                 return new LiteralPathElement( evaled );
             }

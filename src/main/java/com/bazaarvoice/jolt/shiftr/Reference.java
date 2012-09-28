@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public class Reference {
 
-    public static Pattern refPattern = Pattern.compile( "\\&(\\d)?(\\((\\d)\\))?" );
+    public static Pattern refPattern = Pattern.compile( "\\&(\\d)?(\\((\\d)\\))?" );  // &  &1  &(1)  &1(1)
 
     boolean isArray = false;
     int arrayIndex = -1;

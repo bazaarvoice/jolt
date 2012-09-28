@@ -59,6 +59,6 @@ public class ShiftrUnitTest {
         Shiftr shiftr = new Shiftr();
         Object actual = shiftr.xform( data, spec );
 
-        JoltTestUtil.runDiffy(expected, actual, testName);
+        JoltTestUtil.runDiffy( testName, expected, actual );
     }
 }

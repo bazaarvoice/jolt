@@ -1,5 +1,6 @@
 package com.bazaarvoice.jolt.shiftr;
 
+import com.bazaarvoice.jolt.common.Placr;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
@@ -24,25 +25,6 @@ public class RegexTest {
         if ( matcher.find() ) {
             AssertJUnit.assertEquals( "tuna", matcher.group(1) );
             AssertJUnit.assertEquals( "marlin", matcher.group(2) );
-        }
-    }
-
-    @Test
-    public void arrayOutputKeyTest() {
-
-        Pattern pattern = Key.arrayKeyPattern;
-
-        {
-            Matcher matcher = pattern.matcher( "photos[2]" );
-
-            AssertJUnit.assertTrue( matcher.find() );
-            AssertJUnit.assertEquals( "photos", matcher.group(1) );
-            AssertJUnit.assertEquals( "2", matcher.group(2) );
-        }
-        {
-            Matcher matcher = pattern.matcher( "photos" );
-
-            AssertJUnit.assertFalse( matcher.find() );
         }
     }
 
