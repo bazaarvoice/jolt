@@ -6,7 +6,6 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 public class DefaultrTest {
 
@@ -39,7 +38,7 @@ public class DefaultrTest {
         Defaultr defaultr = new Defaultr();
         Object actual = defaultr.defaultr( spec, input );
 
-        JoltTestUtil.runDiffy( expected, actual, "failed case " + testPath );
+        JoltTestUtil.runDiffy( "failed case " + testPath, expected, actual );
     }
 
     @Test

@@ -53,6 +53,6 @@ public class ShiftrTest {
         Shiftr shiftr = new Shiftr();
         Object actual = shiftr.xform( input, spec );
 
-        JoltTestUtil.runDiffy( expected, actual, "failed case " + testPath );
+        JoltTestUtil.runDiffy( "failed case " + testPath, expected, actual );
     }
 }

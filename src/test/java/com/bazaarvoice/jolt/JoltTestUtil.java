@@ -9,12 +9,16 @@ public class JoltTestUtil {
 
     private static ArrayDisorderDiffy diffy = new ArrayDisorderDiffy();
 
-    public static void runDiffy( Object expected, Object actual, String failureMessage ) throws IOException {
+    public static void runDiffy( String failureMessage, Object expected, Object actual ) throws IOException {
 
         Diffy.Result result = diffy.diff( expected, actual );
         if (!result.isEmpty()) {
             AssertJUnit.fail( failureMessage + ".\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
         }
+    }
+
+    public static void runDiffy( Object expected, Object actual ) throws IOException {
+        runDiffy( "Failed", expected, actual );
     }
 
     static class ArrayDisorderDiffy extends Diffy {

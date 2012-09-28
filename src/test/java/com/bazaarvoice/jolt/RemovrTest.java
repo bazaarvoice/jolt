@@ -1,12 +1,9 @@
 package com.bazaarvoice.jolt;
 
-import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.List;
 
 public class RemovrTest {
 
@@ -31,6 +28,6 @@ public class RemovrTest {
         Removr removr = new Removr();
         Object actual = removr.removr( spec, input );
 
-        JoltTestUtil.runDiffy( expected, actual, "failed case " + testPath );
+        JoltTestUtil.runDiffy( "failed case " + testPath, expected, actual );
     }
 }

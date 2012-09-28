@@ -1,5 +1,6 @@
 package com.bazaarvoice.jolt;
 
+import com.bazaarvoice.jolt.common.Placr;
 import com.bazaarvoice.jolt.shiftr.Key;
 import com.bazaarvoice.jolt.shiftr.Path;
 
@@ -96,22 +97,21 @@ public class Shiftr implements Chainable {
         return this.xform( input, spec );
     }
 
-    public Object xform( Object input, Object spec ) {
+    private static String ROOT_KEY = "root";
 
-        String rootKey = "root";
+    public Object xform( Object input, Object spec ) {
 
         // Setup to call the recursive method
         Map<String, Object> rootedSpec = new LinkedHashMap<String, Object>();
-        rootedSpec.put( rootKey, spec );
+        rootedSpec.put( ROOT_KEY, spec );
 
         List<Key> rootedKeyedSpec = Key.parseSpec(rootedSpec);
         Key root = rootedKeyedSpec.get(0);
 
-        // Have the root key apply its children to the known to be non-null defaultee
         Map<String,Object> output = new LinkedHashMap<String,Object>();
-        root.applyChildren( "root", input, new Path.LiteralPath(), output );
+        root.applyChildren( ROOT_KEY, input, new Path.LiteralPath(), output );
 
-        return output.get( "output" );
+        return output.get( Placr.OUTPUT_PREFIX_KEY );
     }
 
 }

@@ -72,7 +72,7 @@ public class ChainrTest {
         Chainr unit = new Chainr();
         Object actual = unit.process( input, chainrSpec );
 
-        JoltTestUtil.runDiffy( expected, actual, "failed Shiftr call." );
+        JoltTestUtil.runDiffy( "failed Shiftr call.", expected, actual );
     }
 
     @Test
@@ -86,7 +86,7 @@ public class ChainrTest {
         Chainr unit = new Chainr();
         Object actual = unit.process( input, chainrSpec );
 
-        JoltTestUtil.runDiffy( expected, actual, "failed Defaultr call." );
+        JoltTestUtil.runDiffy( "failed Defaultr call.", expected, actual );
     }
 
     @Test
@@ -100,7 +100,7 @@ public class ChainrTest {
         Chainr unit = new Chainr();
         Object actual = unit.process( input, chainrSpec );
 
-        JoltTestUtil.runDiffy( expected, actual, "failed Removr call." );
+        JoltTestUtil.runDiffy( "failed Removr call.", expected, actual );
     }
 
     @Test
