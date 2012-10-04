@@ -33,10 +33,6 @@ public class Path<T> {
         return newElements;
     }
 
-    public String toString() {
-        return this.elements.toString();
-    }
-
     public int size() {
         return this.elements.size();
     }
