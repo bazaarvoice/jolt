@@ -3,10 +3,12 @@ package com.bazaarvoice.jolt.shiftr;
 import com.bazaarvoice.jolt.JoltTestUtil;
 import com.bazaarvoice.jolt.JsonUtils;
 import com.bazaarvoice.jolt.Shiftr;
+import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ShiftrUnitTest {
@@ -60,5 +62,39 @@ public class ShiftrUnitTest {
         Object actual = shiftr.xform( data, spec );
 
         JoltTestUtil.runDiffy( testName, expected, actual );
+    }
+
+
+    @DataProvider
+    public Object[][] failureTestCases() throws IOException {
+        return new Object[][] {
+                {
+                        "Bad @",
+                        JsonUtils.jsonToMap( "{ \"tuna-*-marlin-*\" : { \"rating-@\" : \"&1(2).&.value\" } }" ),
+                },
+                {
+                        "Two Arrays",
+                        JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-*\" : [ \"&1(2).photos[&0(1)]-subArray[&1(2)].value\", \"foo\"] } }"),
+                },
+                {
+                        "Can't mix * and & in the same key",
+                        JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-&1(2)-*\" : [ \"&1(2).value\", \"foo\"] } }"),
+                }
+        };
+    }
+
+    @Test(dataProvider = "failureTestCases")
+    public void failureUnitTest(String testName, Map<String, Object> spec) throws Exception {
+
+        Shiftr shiftr = new Shiftr();
+        try {
+            Object actual = shiftr.xform( new HashMap(), spec );
+            AssertJUnit.fail( "TestCase : " + testName + " expected illegal argument exception" );
+        }
+        catch (IllegalArgumentException iae) {
+        }
+        catch( Exception e ){
+            AssertJUnit.fail("TestCase : " + testName + " expected illegal argument exception, but got something else");
+        }
     }
 }
