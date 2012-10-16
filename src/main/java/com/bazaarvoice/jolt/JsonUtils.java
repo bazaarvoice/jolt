@@ -52,6 +52,11 @@ public class JsonUtils {
         return jsonToMap( new ByteArrayInputStream( json.getBytes() ) );
     }
 
+    public static Object jsonToObject(String json)
+            throws IOException {
+        return jsonToObject( new ByteArrayInputStream( json.getBytes() ) );
+    }
+
     public static Object jsonToObject(InputStream in)
             throws IOException {
         JsonFactory factory = new JsonFactory();
