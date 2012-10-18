@@ -1,5 +1,7 @@
 package com.bazaarvoice.jolt.shiftr;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -107,6 +109,9 @@ public abstract class PathElement {
         }
 
         public String getSubKeyRef( int index ) {
+            if ((index < 0) || (index >= this.subKeys.size())) {
+                throw new IndexOutOfBoundsException( "LiteralPathElement "+ StringUtils.join( this.subKeys.toArray() ) +" cannot be indexed with index "+index );
+            }
             return subKeys.get( index );
         }
 
