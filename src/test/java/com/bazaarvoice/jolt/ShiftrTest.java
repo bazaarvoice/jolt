@@ -33,6 +33,14 @@ public class ShiftrTest {
             {"objectToArray", null, null, null},
             {"keyref", null, null, null},
             {"queryMappingXform", null, null, null},
+
+            // TODO NF: the test case below is commented out because it does not work as expected
+                //      - the behavior of keys "@" and "&" do different things with respect to reference &0(1)
+                //          - "@" the walked path in the source doc is [ root, tag-Pro ] with the correct references
+                //          - "&" the walked path in the source doc is [ root, tag-Pro, tag-Pro ] where the last element has incorrect references
+                //          - expected behavior: both should behave like "@' above
+//            {"wildcardSelfAndRef", null, null, null},
+
             {"", null, null, null}
         };
     }

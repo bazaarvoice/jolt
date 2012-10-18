@@ -1,0 +1,6 @@
+{
+    "tag-*": {
+        "@": "TagDimensions.&0(1).Value",
+        "&": "TagDimensions.&0(1).Id"
+    }
+}
