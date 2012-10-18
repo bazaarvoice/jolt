@@ -1,0 +1,18 @@
+{
+    "TagDimensions": {
+        "Pro": {
+            "Values": [
+                "Beautiful",
+                "easy to apply",
+                "conveinent"
+            ],
+            "Id": "Pro"
+        },
+        "Con": {
+            "Values": [
+                "none"
+            ],
+            "Id": "Con"
+        }
+    }
+}
