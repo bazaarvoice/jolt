@@ -7,7 +7,7 @@ import java.util.List;
 
 public class JoltTestUtil {
 
-    private static ArrayDisorderDiffy diffy = new ArrayDisorderDiffy();
+    private static Diffy diffy = new Diffy();
 
     public static void runDiffy( String failureMessage, Object expected, Object actual ) throws IOException {
 
@@ -19,25 +19,5 @@ public class JoltTestUtil {
 
     public static void runDiffy( Object expected, Object actual ) throws IOException {
         runDiffy( "Failed", expected, actual );
-    }
-
-    static class ArrayDisorderDiffy extends Diffy {
-        protected Result diffList(List expected, List actual) {
-            Result result = super.diffList( expected, actual );
-            if (result.isEmpty()) {
-                return result;
-            }
-            for (int i=expected.size()-1; i>=0; i--) {
-                int idx = actual.indexOf( expected.get( i ) );
-                if (idx >= 0) {
-                    expected.remove( i );
-                    actual.remove( idx );
-                }
-            }
-            if (expected.isEmpty() && actual.isEmpty()) {
-                return new Result();
-            }
-            return new Result( expected, actual );
-        }
     }
 }
