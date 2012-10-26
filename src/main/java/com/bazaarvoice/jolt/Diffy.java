@@ -4,11 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by IntelliJ IDEA.
- * User: nate.forman
- * Date: 8/3/12
- * Time: 11:02 PM
- * To change this template use File | Settings | File Templates.
+ * Json Diff tool that will walk two "Json" objects simultaneously and identify mismatches.
+ *
+ * Algorithm :
+ *   1) make a copy of both input objects
+ *   2) walk both objects and _remove_ items that match
+ *   3) return what is left of the two objects in the Result
+ *
+ * In the case a full / "sucessful" match, Diffy returns a Result object with isEmpty() == true.
  */
 public class Diffy {
 
@@ -79,6 +82,11 @@ public class Diffy {
         return new Result( expected, actual );          // non-equivalent, full diff
     }
 
+    /**
+     * Contains the unmatched fields from the Diffy operation.
+     *
+     * A sucessful/identical match returns isEmpty() == true.
+     */
     public static class Result {
         public Object expected;
         public Object actual;
