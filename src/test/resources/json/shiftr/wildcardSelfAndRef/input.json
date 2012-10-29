@@ -1,10 +1,7 @@
 {
-    "tag-Pro": [
-        "Beautiful",
-        "easy to apply",
-        "conveinent"
-    ],
-    "tag-Con": [
-        "none"
-    ]
+    "tag-Pro": [ "Beautiful", "easy to apply" ],
+    "tag-Con": [ "none" ],
+
+    "cdv-Fafa" : "Groundhog",
+    "cdv-Mario": "Red American"
 }
