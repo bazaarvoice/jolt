@@ -134,7 +134,7 @@ public abstract class PathElement {
         }
 
         public LiteralPathElement match( String dataKey, Path<LiteralPathElement> specInputPath ) {
-            return new LiteralPathElement( dataKey );
+            return specInputPath.lastElement();  // copy what our parent was so that output keys of &0 and &1 both work.
         }
 
         @Override

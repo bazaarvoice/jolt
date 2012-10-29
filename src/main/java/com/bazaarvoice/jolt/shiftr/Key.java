@@ -203,12 +203,9 @@ public class Key {
                 subKey.applyChildren( refOutputData, refOutputData, walkedPath, output );
             }
             if ( subKey.pathElement instanceof AtPathElement ) {
-                for ( DotNotationPath outputPath : subKey.outputPaths) {
-                    StringPath stringPath = outputPath.evaluate( walkedPath );
 
-                    // put this potentially large input tree of data, into the output
-                    Placr.placeInOutput( input, stringPath, output );
-                }
+                // Pass down our input directly into our At child
+                subKey.applyChildren( inputKey, input, walkedPath, output );
             }
         }
 

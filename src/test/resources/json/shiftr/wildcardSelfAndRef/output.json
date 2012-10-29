@@ -1,18 +1,35 @@
 {
     "TagDimensions": {
         "Pro": {
-            "Values": [
-                "Beautiful",
-                "easy to apply",
-                "conveinent"
-            ],
-            "Id": "Pro"
+            "Values":  [ "Beautiful", "easy to apply" ],
+            "Values-sugar0":  [ "Beautiful", "easy to apply" ],
+            "Values-canonical1":  [ "Beautiful", "easy to apply" ],
+
+            "Id": "Pro",
+            "Id-canonical0": "Pro",
+            "Id-sugar0": "Pro",
+            "Id-upref": "Pro"
         },
         "Con": {
-            "Values": [
-                "none"
-            ],
-            "Id": "Con"
+            "Values": [ "none" ],
+            "Values-sugar0": [ "none" ],
+            "Values-canonical1": [ "none" ],
+
+            "Id": "Con",
+            "Id-canonical0": "Con",
+            "Id-sugar0": "Con",
+            "Id-upref": "Con"
+        }
+    },
+
+    "ContextDataValues" : {
+        "Fafa" : {
+            "Value" : "Groundhog",
+            "Value-sugar" : "Groundhog"
+        },
+        "Mario" : {
+            "Value" : "Red American",
+            "Value-sugar" : "Red American"
         }
     }
 }
