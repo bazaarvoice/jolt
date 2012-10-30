@@ -24,11 +24,10 @@ public class DeepCopy {
             return new ObjectInputStream(bais).readObject();
         }
         catch ( IOException ioe ) {
-
+            throw new RuntimeException( "DeepCopy IOException" );
         }
         catch ( ClassNotFoundException cnf ) {
-
+            throw new RuntimeException( "DeepCopy ClassNotFoundException" );
         }
-        return null;
     }
 }

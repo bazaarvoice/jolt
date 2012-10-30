@@ -1,5 +1,7 @@
 package com.bazaarvoice.jolt.defaultr;
 
+import com.bazaarvoice.jolt.common.DeepCopy;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -61,7 +63,7 @@ public class ArrayKey extends Key {
 
         if ( children == null ) {
             if ( defaulteeValue == null ) {
-                container.set( literalIndex, literalValue );  // apply a default value into a List, assumes the list as already been expanded if needed.
+                container.set( literalIndex, DeepCopy.simpleDeepCopy( literalValue ) );  // apply a copy of the default value into a List, assumes the list as already been expanded if needed.
             }
         }
         else {
