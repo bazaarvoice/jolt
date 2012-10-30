@@ -6,6 +6,8 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DefaultrTest {
 
@@ -39,6 +41,31 @@ public class DefaultrTest {
         Object actual = defaultr.defaultr( spec, input );
 
         JoltTestUtil.runDiffy( "failed case " + testPath, expected, actual );
+    }
+
+    @Test
+    public void deepCopyTest() throws IOException {
+
+        Object spec = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( "/json/defaultr/deepCopy/spec.json" ) );
+        Defaultr defaultr = new Defaultr();
+
+        {
+            Object input = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( "/json/defaultr/deepCopy/input.json" ) );
+            Map<String, Object> fiddle = (Map<String, Object>) defaultr.defaultr( spec, input );
+
+            List array = (List) fiddle.get( "array" );
+            array.add("a");
+
+            Map<String,Object> subMap = (Map<String,Object>) fiddle.get( "map" );
+            subMap.put("c", "c");
+        }
+        {
+            Object input = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( "/json/defaultr/deepCopy/input.json" ) );
+            Object expected = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( "/json/defaultr/deepCopy/output.json" ) );
+
+            Object actual = defaultr.defaultr( spec, input );
+            JoltTestUtil.runDiffy( "Same spec deepcopy fail.", expected, actual );
+        }
     }
 
     @Test

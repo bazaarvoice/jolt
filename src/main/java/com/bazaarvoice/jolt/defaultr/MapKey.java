@@ -1,5 +1,7 @@
 package com.bazaarvoice.jolt.defaultr;
 
+import com.bazaarvoice.jolt.common.DeepCopy;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -38,7 +40,7 @@ public class MapKey extends Key {
 
         if ( children == null ) {
             if ( defaulteeValue == null ) {
-                container.put( literalKey, literalValue );  // apply a default value into a map
+                container.put( literalKey, DeepCopy.simpleDeepCopy( literalValue ) );  // apply a copy of the default value into a map
             }
         }
         else {
