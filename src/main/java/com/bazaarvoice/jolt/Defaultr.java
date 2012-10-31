@@ -159,8 +159,6 @@ public class Defaultr implements Chainable {
         public static final String ARRAY = "[]";
     }
 
-    private Key.KeyPrecedenceComparator keyComparator = new Key.KeyPrecedenceComparator();
-
     /**
      * Applies a Defaultr transform for Chainr
      *
