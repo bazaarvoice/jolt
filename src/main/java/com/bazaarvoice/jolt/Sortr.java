@@ -8,19 +8,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Recursively sorts all maps within a JSON object to sorted LinkedHashMaps so that the toString()
+ * Recursively sorts all maps within a JSON object into sorted LinkedHashMaps so that serialized
  * representations are deterministic.  Useful for debugging and making test fixtures.
  *
- * The sort or is standard alphabetical, with a special case for "~" prefixed keys to be sorted to the top.
+ * The sort order is standard alphabetical ascending, with a special case for "~" prefixed keys to be bumped to the top.
  */
-public class Sortr implements Chainable {
+public class Sortr {
 
-    @Override
-    public Object process( Object input, Map<String, Object> operationEntry ) throws JoltException {
-        return sortJson( input );
-    }
-
-    public Object sort( Object input, Object operationEntry ) throws JoltException {
+    public Object sort( Object input ) throws JoltException {
         return sortJson( input );
     }
 

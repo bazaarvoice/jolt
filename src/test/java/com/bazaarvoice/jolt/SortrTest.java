@@ -29,14 +29,14 @@ public class SortrTest {
 
         String testPath = "/json/sortr/"+testCaseName;
         Map<String, Object> input = (Map<String, Object>) JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( inputPath == null ? testPath + "/input.json" : inputPath ) );
-        Object spec = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( specPath == null ? testPath + "/spec.json" : specPath ) );
         Map<String, Object> expected = (Map<String, Object>) JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( outputPath == null ? testPath + "/output.json" : outputPath ) );
 
         Sortr sortr = new Sortr();
-        Map<String, Object> actual = (Map<String, Object>) sortr.sort( input, spec );
+        Map<String, Object> actual = (Map<String, Object>) sortr.sort( input );
 
         JoltTestUtil.runDiffy( "Make sure it is still the same object : " + testPath, expected, actual );
 
+        // Make sure the sort actually worked.
         String orderErrorMessage = verifyOrder( actual, expected );
         AssertJUnit.assertNull( orderErrorMessage, orderErrorMessage );
     }
