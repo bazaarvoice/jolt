@@ -46,9 +46,10 @@ public class Sortr implements Chainable {
     }
 
     private static List<Object> ordered( List<Object> list ) {
-        // don't sort the list because that would change intent.  only maps and sets get sorted.
-        for ( Object value : list ) {
-            sortJson( value );
+        // don't sort the list because that would change intent, but sort its components
+        for ( int index = 0; index < list.size(); index++ ) {
+            Object obj = list.get( index );
+            list.set( index, sortJson( obj ) );
         }
         return list;
     }

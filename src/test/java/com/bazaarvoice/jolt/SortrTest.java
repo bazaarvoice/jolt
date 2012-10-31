@@ -64,18 +64,24 @@ public class SortrTest {
                 return "Found out of order keys '" + actualKey + "' and '" + expectedKey + "'";
             }
 
-            verifyOrder( actual.get( actualKey), expected.get(expectedKey) );
+            String result = verifyOrder( actual.get( actualKey), expected.get(expectedKey) );
+            if ( result != null ) {
+                return result;
+            }
         }
 
-        return null;
+        return null; // success
     }
 
     private static String verifyListOrder( List<Object> actual, List<Object> expected ) {
 
         for( int index = 0; index < actual.size(); index++ ) {
-            verifyOrder( actual.get( index ), expected.get(index) );
+            String result = verifyOrder( actual.get( index ), expected.get(index) );
+            if ( result != null ) {
+                return result;
+            }
         }
 
-        return null;
+        return null; // success
     }
 }
