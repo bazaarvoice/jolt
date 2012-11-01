@@ -6,6 +6,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -15,12 +16,12 @@ public class SortrTest {
     @DataProvider
     public Object[][] getTestCaseNames() {
         return new Object[][] {
-            {"simple", null, null, null}
+            {"simple" }
         };
     }
 
     @Test(dataProvider = "getTestCaseNames")
-    public void runTestCases(String testCaseName, String inputPath, String specPath, String outputPath)
+    public void runTestCases(String testCaseName)
             throws IOException, JoltException {
 
         if ("".equals( testCaseName )) {
@@ -28,8 +29,8 @@ public class SortrTest {
         }
 
         String testPath = "/json/sortr/"+testCaseName;
-        Map<String, Object> input = (Map<String, Object>) JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( inputPath == null ? testPath + "/input.json" : inputPath ) );
-        Map<String, Object> expected = (Map<String, Object>) JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( outputPath == null ? testPath + "/output.json" : outputPath ) );
+        Map<String, Object> input = (Map<String, Object>) JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/input.json") );
+        Map<String, Object> expected = (Map<String, Object>) JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/output.json" ) );
 
         Sortr sortr = new Sortr();
         Map<String, Object> actual = (Map<String, Object>) sortr.sort( input );

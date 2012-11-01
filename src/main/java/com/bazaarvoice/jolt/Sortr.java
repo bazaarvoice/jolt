@@ -13,7 +13,16 @@ import java.util.Map;
  *
  * The sort order is standard alphabetical ascending, with a special case for "~" prefixed keys to be bumped to the top.
  */
-public class Sortr {
+public class Sortr implements Chainable {
+
+    @Override
+    public Object process( Object input, Map<String, Object> operationEntry ) throws JoltException {
+        Object spec = operationEntry.get( "spec" );
+        if (spec == null) {
+            throw new JoltException( "JOLT Sortr expected a spec in its operation entry, but instead got: " + operationEntry.toString() );
+        }
+        return sort( input );
+    }
 
     public Object sort( Object input ) throws JoltException {
         return sortJson( input );

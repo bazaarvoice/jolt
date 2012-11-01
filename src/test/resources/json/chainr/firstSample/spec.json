@@ -1,0 +1,38 @@
+[
+    {
+        "operation": "shift",
+        "spec": {
+            "rating": {
+                "primary": {
+                    "value": "Rating",
+                    "max": "RatingRange"
+                },
+                "*": {
+                    "value": "SecondaryRatings.&1.Value",
+                    "max": "SecondaryRatings.&1.Range",
+                    "&": "SecondaryRatings.&1.Id"
+                }
+            }
+        }
+    },
+    {
+        "operation": "default",
+        "spec": {
+            "~z": "zz",
+            "~a": "aa",
+            "~id": "id",
+            "zz" : "zz",
+            "~deleteme" : "deleteme"
+        }
+    },
+    {
+        "operation": "remove",
+        "spec": {
+            "~deleteme" : ""
+        }
+    },
+    {
+        "operation": "sort",
+        "spec": { }
+    }
+]
