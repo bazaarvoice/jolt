@@ -61,6 +61,12 @@ public class ChainrTest {
         return retvalue;
     }
 
+    private List<Map<String,Object>> newSortrSpec(Object sortrSpec) {
+        List<Map<String,Object>> retvalue = this.newSpec();
+        retvalue.add( newActivity( "sort", sortrSpec ) );
+        return retvalue;
+    }
+
     @Test
     public void process_itCallsShiftr()
             throws IOException, JoltException {
@@ -104,6 +110,23 @@ public class ChainrTest {
     }
 
     @Test
+    public void process_itCallsSortr()
+            throws IOException, JoltException {
+        Object input = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/sortr/simple/input.json" ) );
+        Object expected = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/sortr/simple/output.json" ) );
+        Object sortrSpec = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/sortr/simple/spec.json" ) );
+        Object chainrSpec = this.newSortrSpec( sortrSpec );
+
+        Chainr unit = new Chainr();
+        Object actual = unit.process( input, chainrSpec );
+
+        JoltTestUtil.runDiffy( "failed Sortr call.", expected, actual );
+
+        String orderErrorMessage = SortrTest.verifyOrder( actual, expected );
+        AssertJUnit.assertNull( orderErrorMessage, orderErrorMessage );
+    }
+
+    @Test
     public void process_itCallsDelegatr()
             throws JoltException {
         List<Map<String,Object>> spec = this.newSpec();
@@ -141,7 +164,8 @@ public class ChainrTest {
         return new Object[][] {
             { "shift" },
             { "remove" },
-            { "default" }
+            { "default" },
+            { "sort" }
         };
     }
 
@@ -155,5 +179,32 @@ public class ChainrTest {
         retvalue.add( this.newFailActivity( operation, new Object() ) );
 
         unit.process( input, retvalue );
+    }
+
+    @DataProvider
+    public Object[][] getTestCaseNames() {
+        return new Object[][] {
+            {"firstSample", true},
+        };
+    }
+
+    @Test(dataProvider = "getTestCaseNames")
+    public void runTestCases(String testCaseName, boolean sorted ) throws IOException, JoltException {
+
+        String testPath = "/json/chainr/"+testCaseName;
+        Object input = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/input.json" ) );
+        Object spec = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/spec.json" ) );
+        Object expected = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/output.json" ) );
+
+        Chainr chainr = new Chainr();
+        Object actual = chainr.process( input, spec );
+
+        JoltTestUtil.runDiffy( "failed case " + testPath, expected, actual );
+
+        if ( sorted ) {
+            // Make sure the sort actually worked.
+            String orderErrorMessage = SortrTest.verifyOrder( actual, expected );
+            AssertJUnit.assertNull( orderErrorMessage, orderErrorMessage );
+        }
     }
 }

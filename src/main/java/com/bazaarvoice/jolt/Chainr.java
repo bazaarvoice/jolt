@@ -44,6 +44,7 @@ public class Chainr {
         temp.put( "shift", new Shiftr() );
         temp.put( "default", new Defaultr() );
         temp.put( "remove", new Removr() );
+        temp.put( "sort", new Sortr() );
         temp.put( "java", new Delegatr() );
         CHAINABLES = Collections.unmodifiableMap( temp );
     }
