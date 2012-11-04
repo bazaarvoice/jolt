@@ -18,22 +18,22 @@ public class KeyOrderingTest {
             {
                 "Simple * and &",
                 JsonUtils.jsonToMap( "{ \"root\" : { \"*\" : { \"a\" : \"b\" }, \"&\" : { \"a\" : \"b\" } } }" ),
-                Arrays.asList( "&0(0)", "*" )
+                Arrays.asList( "&(0,0)", "*" )
             },
             {
                 "2* and 2&",
                 JsonUtils.jsonToMap( "{ \"root\" : { \"rating-*\" : { \"a\" : \"b\" }, \"rating-range-*\" : { \"a\" : \"b\" }, \"&\" : { \"a\" : \"b\" }, \"tuna-&(0)\" : { \"a\" : \"b\" } } }" ),
-                Arrays.asList( "tuna-&0(0)", "&0(0)", "rating-range-*", "rating-*" )
+                Arrays.asList( "tuna-&(0,0)", "&(0,0)", "rating-range-*", "rating-*" )
             },
             {
                 "2& alpha-number based fallback",
-                JsonUtils.jsonToMap( "{ \"root\" : { \"&\" : { \"a\" : \"b\" }, \"&(1)\" : { \"a\" : \"b\" } } }" ),
-                Arrays.asList( "&0(0)", "&0(1)" )
+                JsonUtils.jsonToMap( "{ \"root\" : { \"&\" : { \"a\" : \"b\" }, \"&(0,1)\" : { \"a\" : \"b\" } } }" ),
+                Arrays.asList( "&(0,0)", "&(0,1)" )
             },
             {
                 "2* and 2& alpha fallback",
                 JsonUtils.jsonToMap( "{ \"root\" : { \"aaaa-*\" : { \"a\" : \"b\" }, \"bbbb-*\" : { \"a\" : \"b\" }, \"aaaa-&\" : { \"a\" : \"b\" }, \"bbbb-&(0)\" : { \"a\" : \"b\" } } }" ),
-                Arrays.asList( "aaaa-&0(0)", "bbbb-&0(0)", "aaaa-*", "bbbb-*" )
+                Arrays.asList( "aaaa-&(0,0)", "bbbb-&(0,0)", "aaaa-*", "bbbb-*" )
             }
         };
     }

@@ -225,15 +225,15 @@ public abstract class PathElement {
                         numArrayTokens++;
 
                         canonicalBuilder.append( "[" );
-                        canonicalBuilder.append( "&" ).append( ref.pathIndex );
-                        canonicalBuilder.append( "(" ).append( ref.keyGroup ).append( ")" );
+                        canonicalBuilder.append( "&(" ).append( ref.pathIndex );
+                        canonicalBuilder.append( "," ).append( ref.keyGroup ).append( ")" );
                         canonicalBuilder.append( "]" );
                     }
                     else {
                         refEnd = findEndOfReference( key.substring( index + 1 ) );
                         ref = Reference.newReference(false, key.substring(index, index + refEnd + 1) );
-                        canonicalBuilder.append( "&" ).append( ref.pathIndex );
-                        canonicalBuilder.append( "(" ).append( ref.keyGroup ).append( ")" );
+                        canonicalBuilder.append( "&(" ).append( ref.pathIndex );
+                        canonicalBuilder.append( "," ).append( ref.keyGroup ).append( ")" );
                     }
                     tokens.add( ref );
                     index += refEnd;
@@ -280,8 +280,8 @@ public abstract class PathElement {
 
             for( int index = 0; index < key.length(); index++ ){
                 char c = key.charAt( index );
-                // keep going till we see something other than a digit or parens
-                if( ! Character.isDigit( c ) && c != '(' && c != ')' ) {
+                // keep going till we see something other than a digit, parens, or comma
+                if( ! Character.isDigit( c ) && c != '(' && c != ')' && c != ',') {
                     return index;
                 }
             }
