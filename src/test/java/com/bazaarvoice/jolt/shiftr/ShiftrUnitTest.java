@@ -18,13 +18,13 @@ public class ShiftrUnitTest {
         return new Object[][] {
             {
                 "Simple * and Reference",
-                JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-*\" : \"&1(2).&.value\" } }"),
+                JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-*\" : \"&(1,2).&.value\" } }"),
                 JsonUtils.jsonToMap("{ \"tuna-A-marlin-AAA\" : { \"rating-BBB\" : \"bar\" } }"),
                 JsonUtils.jsonToMap("{ \"AAA\" : { \"rating-BBB\" : { \"value\" : \"bar\" } } }")
             },
             {
                 "Shift to two places",
-                JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-*\" : [ \"&1(2).&.value\", \"foo\"] } }"),
+                JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-*\" : [ \"&(1,2).&.value\", \"foo\"] } }"),
                 JsonUtils.jsonToMap("{ \"tuna-A-marlin-AAA\" : { \"rating-BBB\" : \"bar\" } }"),
                 JsonUtils.jsonToMap("{ \"foo\" : \"bar\", \"AAA\" : { \"rating-BBB\" : { \"value\" : \"bar\" } } }")
             },
@@ -36,14 +36,14 @@ public class ShiftrUnitTest {
             },
             {
                 "KeyRef",
-                JsonUtils.jsonToMap("{ \"rating-*\" : { \"&(1)\" : { \"match\" : \"&\" } } }"),
+                JsonUtils.jsonToMap("{ \"rating-*\" : { \"&(0,1)\" : { \"match\" : \"&\" } } }"),
                 JsonUtils.jsonToMap("{ \"rating-a\" : { \"a\" : { \"match\": \"a-match\" }, \"random\" : { \"match\" : \"noise\" } }," +
                         "              \"rating-c\" : { \"c\" : { \"match\": \"c-match\" }, \"random\" : { \"match\" : \"noise\" } } }"),
                 JsonUtils.jsonToMap("{ \"match\" : [ \"a-match\", \"c-match\" ] }")
             },
             {
                 "Complex array output",
-                JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-*\" : \"tuna[&1(1)].marlin[&1(2)].&(1)\" } }"),
+                JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-*\" : \"tuna[&(1,1)].marlin[&(1,2)].&(0,1)\" } }"),
                 JsonUtils.jsonToMap("{ \"tuna-2-marlin-3\" : { \"rating-BBB\" : \"bar\" }," +
                                       "\"tuna-1-marlin-0\" : { \"rating-AAA\" : \"mahi\" } }"),
                 JsonUtils.jsonToMap("{ \"tuna\" : [ null, " +
@@ -70,15 +70,15 @@ public class ShiftrUnitTest {
         return new Object[][] {
                 {
                         "Bad @",
-                        JsonUtils.jsonToMap( "{ \"tuna-*-marlin-*\" : { \"rating-@\" : \"&1(2).&.value\" } }" ),
+                        JsonUtils.jsonToMap( "{ \"tuna-*-marlin-*\" : { \"rating-@\" : \"&(1,2).&.value\" } }" ),
                 },
                 {
                         "Two Arrays",
-                        JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-*\" : [ \"&1(2).photos[&0(1)]-subArray[&1(2)].value\", \"foo\"] } }"),
+                        JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-*\" : [ \"&(1,2).photos[&(0,1)]-subArray[&(1,2)].value\", \"foo\"] } }"),
                 },
                 {
                         "Can't mix * and & in the same key",
-                        JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-&1(2)-*\" : [ \"&1(2).value\", \"foo\"] } }"),
+                        JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-&(1,2)-*\" : [ \"&(1,2).value\", \"foo\"] } }"),
                 }
         };
     }

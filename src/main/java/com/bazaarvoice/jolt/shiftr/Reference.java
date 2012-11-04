@@ -5,7 +5,9 @@ import java.util.regex.Pattern;
 
 public class Reference {
 
-    public static Pattern refPattern = Pattern.compile( "\\&(\\d)?(\\((\\d)\\))?" );  // &  &1  &(1)  &1(1)
+    // Original Syntax   &  &1  &(1)  &1(1)    "\\&(\\d)?(\\((\\d)\\))?"
+    // New Syntax        &  &1  &(1)  &(1,1)
+    public static Pattern refPattern = Pattern.compile( "\\&(\\d)?(\\((\\d)(,(\\d))?\\)?)?" );
 
     boolean isArray = false;
     int arrayIndex = -1;
@@ -24,14 +26,18 @@ public class Reference {
             Matcher matcher = refPattern.matcher( refStr );
 
             if ( matcher.find() ) {
-                String pathRef = matcher.group( 1 );
-                String keyRef = matcher.group( 3 );
+                String pathRefSugar = matcher.group( 1 );
+                String pathRefCanonical = matcher.group( 3 );
+                String keyRef = matcher.group( 5 );
 
-                if ( pathRef != null ) {
-                    ref.pathIndex = Integer.parseInt( pathRef );
+                if ( pathRefSugar != null ) {
+                    ref.pathIndex = Integer.parseInt( pathRefSugar );
                 }
-                if ( keyRef != null ) {
-                    ref.keyGroup = Integer.parseInt( keyRef );
+                else if ( pathRefCanonical != null ) {
+                    ref.pathIndex = Integer.parseInt( pathRefCanonical );
+                    if ( keyRef != null ) {
+                        ref.keyGroup = Integer.parseInt( keyRef );
+                    }
                 }
             } else {
                 throw new IllegalArgumentException( "Unable to parse reference key " + refStr );

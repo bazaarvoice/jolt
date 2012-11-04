@@ -15,7 +15,7 @@ public class PathElementTest {
     @Test
     public void referenceTest() {
 
-        DotNotationPath path = DotNotationPath.parseDotNotation( "SecondaryRatings.tuna-&0(1)-marlin.Value" );
+        DotNotationPath path = DotNotationPath.parseDotNotation( "SecondaryRatings.tuna-&(0,1)-marlin.Value" );
 
         AssertJUnit.assertEquals( "SecondaryRatings", path.elementAt(0).getRawKey() );
         AssertJUnit.assertEquals( "SecondaryRatings", path.elementAt(0).toString() );
@@ -39,7 +39,7 @@ public class PathElementTest {
     @Test
     public void arrayRefTest() {
 
-        DotNotationPath path = DotNotationPath.parseDotNotation( "ugc.photos-&1-[&(1)]" );
+        DotNotationPath path = DotNotationPath.parseDotNotation( "ugc.photos-&1-[&(0,1)]" );
 
         PathElement.ReferencePathElement refElement = (PathElement.ReferencePathElement) path.elementAt(1);
 
@@ -91,7 +91,7 @@ public class PathElementTest {
         AssertJUnit.assertEquals( 2, lpe2.getSubKeyCount() );
         AssertJUnit.assertEquals( "BBB" , lpe2.getSubKeyRef( 1 ) );
 
-        DotNotationPath outputPath = DotNotationPath.parseDotNotation( "&1(2).&.value" );
+        DotNotationPath outputPath = DotNotationPath.parseDotNotation( "&(1,2).&.value" );
         {
             PathElement outputElement = outputPath.elementAt( 0 );
             String evaledLeafOutput = outputElement.evaluate( new Path<LiteralPathElement>( Arrays.asList( lpe, lpe2 ) ) );
@@ -123,7 +123,7 @@ public class PathElementTest {
         AssertJUnit.assertEquals( 2, lpe2.getSubKeyCount() );
         AssertJUnit.assertEquals( "BBB" , lpe2.getSubKeyRef( 1 ) );
 
-        DotNotationPath outputPath = DotNotationPath.parseDotNotation( "tuna[&1(1)].marlin[&1(2)].&(1)" );
+        DotNotationPath outputPath = DotNotationPath.parseDotNotation( "tuna[&(1,1)].marlin[&(1,2)].&(0,1)" );
         {
             PathElement outputElement = outputPath.elementAt( 0 );
             String evaledLeafOutput = outputElement.evaluate( new Path<LiteralPathElement>( Arrays.asList( lpe, lpe2 ) ) );

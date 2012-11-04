@@ -32,40 +32,73 @@ public class RegexTest {
     public void referencePatternTest() {
         Pattern pattern = Reference.refPattern;
 
-        Matcher matcher = pattern.matcher( "&3" );
-
-        if ( matcher.find() ) {
-            String pathRef = matcher.group(1);
-            String keyRef = matcher.group(3);
-            AssertJUnit.assertEquals( "3", pathRef );
-            AssertJUnit.assertNull( keyRef );
+        {
+            Matcher matcher = pattern.matcher( "&3" );
+            if ( matcher.find() ) {
+                AssertJUnit.assertEquals( "3", matcher.group(1) );
+                AssertJUnit.assertNull( matcher.group(2) );
+                AssertJUnit.assertNull( matcher.group(3) );
+                AssertJUnit.assertNull( matcher.group(4) );
+                AssertJUnit.assertNull( matcher.group(5) );
+            }
+            else {
+                AssertJUnit.fail("should have found a match");
+            }
         }
-        else {
-            AssertJUnit.fail("should have found a match");
+        {
+            Matcher matcher = pattern.matcher( "&(3)" );
+            if ( matcher.find() ) {
+                AssertJUnit.assertNull( matcher.group(1) );
+                AssertJUnit.assertEquals( "(3)", matcher.group(2) );
+                AssertJUnit.assertEquals( "3", matcher.group(3) );
+                AssertJUnit.assertNull( matcher.group(4) );
+                AssertJUnit.assertNull( matcher.group(5) );
+            }
+            else {
+                AssertJUnit.fail("should have found a match");
+            }
         }
 
-        matcher = pattern.matcher( "&1(2)" );
-
-        if ( matcher.find()) {
-            String pathRef = matcher.group(1);
-            String keyRef = matcher.group(3);
-            AssertJUnit.assertEquals( "1", pathRef );
-            AssertJUnit.assertEquals( "2", keyRef );
+        {
+            Matcher matcher = pattern.matcher( "&(1,2)" );
+            if ( matcher.find()) {
+                AssertJUnit.assertNull( matcher.group(1) );
+                AssertJUnit.assertEquals( "(1,2)", matcher.group(2) );
+                AssertJUnit.assertEquals( "1", matcher.group(3) );
+                AssertJUnit.assertEquals( ",2", matcher.group(4) );
+                AssertJUnit.assertEquals( "2", matcher.group(5) );
+            }
+            else {
+                AssertJUnit.fail("should have found a match");
+            }
         }
-        else {
-            AssertJUnit.fail("should have found a match");
+
+        {
+            Matcher matcher = pattern.matcher( "&(1,2)" );
+            if ( matcher.find()) {
+                AssertJUnit.assertNull( matcher.group(1) );
+                AssertJUnit.assertEquals( "(1,2)", matcher.group(2) );
+                AssertJUnit.assertEquals( "1", matcher.group(3) );
+                AssertJUnit.assertEquals( ",2", matcher.group(4) );
+                AssertJUnit.assertEquals( "2", matcher.group(5) );
+            }
+            else {
+                AssertJUnit.fail("should have found a match");
+            }
         }
 
-        matcher = pattern.matcher( "&" );
-
-        if ( matcher.find()) {
-            String pathRef = matcher.group(1);
-            String keyRef = matcher.group(3);
-            AssertJUnit.assertNull( pathRef );
-            AssertJUnit.assertNull( keyRef );
-        }
-        else {
-            AssertJUnit.fail("should have found a match");
+        {
+            Matcher matcher = pattern.matcher( "&" );
+            if ( matcher.find()) {
+                AssertJUnit.assertNull( matcher.group(1) );
+                AssertJUnit.assertNull( matcher.group(2) );
+                AssertJUnit.assertNull( matcher.group(3) );
+                AssertJUnit.assertNull( matcher.group(4) );
+                AssertJUnit.assertNull( matcher.group(5) );
+            }
+            else {
+                AssertJUnit.fail("should have found a match");
+            }
         }
     }
 }
