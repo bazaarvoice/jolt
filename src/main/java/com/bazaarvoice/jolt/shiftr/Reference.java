@@ -46,4 +46,21 @@ public class Reference {
 
         return ref;
     }
+
+    public String getCanonicalForm() {
+
+        String innerRef;
+
+        if ( arrayIndex != -1 ) {
+            innerRef = Integer.toString( arrayIndex );
+        }
+        else {
+            innerRef = "&(" + pathIndex + "," + keyGroup + ")";
+        }
+
+        if ( isArray ) {
+            return "[" + innerRef + "]";
+        }
+        return innerRef;
+    }
 }

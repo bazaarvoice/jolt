@@ -93,7 +93,7 @@ public class Key {
                     literalChildren.put( child.pathElement.getRawKey(), child );
                 }
                 else if ( child.pathElement instanceof AtPathElement || (  // special if it is an "@"
-                     child.pathElement instanceof ReferencePathElement && ! child.hasChildren ) ) {   // special if it is a "&" and it has no children
+                          child.pathElement instanceof DollarReferencePathElement ) ) {   // special if it is a "&" and it has no children
                     specialChildren.add( child );
                 }
                 else {   // star || (& with children)
@@ -194,8 +194,8 @@ public class Key {
 
         //// 2. Handle any special / key based children first, but don't have them block anything
         for( Key subKey : specialChildren ) {
-            if ( subKey.pathElement instanceof ReferencePathElement ) {
-                ReferencePathElement subRef = (ReferencePathElement) subKey.pathElement;
+            if ( subKey.pathElement instanceof DollarReferencePathElement ) {
+                DollarReferencePathElement subRef = (DollarReferencePathElement) subKey.pathElement;
                 String refOutputData = subRef.evaluate( walkedPath );
 
                 // Use the computed key as the input data
