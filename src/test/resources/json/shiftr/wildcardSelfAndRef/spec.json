@@ -1,7 +1,7 @@
 {
     "tag-*": {
         "@": [ "TagDimensions.&(0,1).Values", "TagDimensions.&(1,1).Values-canonical1" ],
-        "&(0,1)": [ "TagDimensions.&.Id", "TagDimensions.&(0,0).Id-canonical0", "TagDimensions.&0.Id-sugar0", "TagDimensions.&(1,1).Id-upref" ]
+        "$(0,1)": [ "TagDimensions.&.Id", "TagDimensions.&(0,0).Id-canonical0", "TagDimensions.&0.Id-sugar0", "TagDimensions.&(1,1).Id-upref" ]
     },
 
     "cdv-*" : [ "ContextDataValues.&(0,1).Value", "ContextDataValues.&(0,1).Value-sugar" ]

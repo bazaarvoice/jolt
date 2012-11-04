@@ -23,6 +23,9 @@ public abstract class PathElement {
         if ( key.contains("@") ) {
             return new AtPathElement( key );
         }
+        if ( key.contains("$") ) {
+            return new DollarReferencePathElement( key );
+        }
 
         return new LiteralPathElement( key );
     }
@@ -224,16 +227,12 @@ public abstract class PathElement {
                         ref = Reference.newReference(true, key.substring(index + 1, index + refEnd) ); // chomp off the leading and trailing [ ]
                         numArrayTokens++;
 
-                        canonicalBuilder.append( "[" );
-                        canonicalBuilder.append( "&(" ).append( ref.pathIndex );
-                        canonicalBuilder.append( "," ).append( ref.keyGroup ).append( ")" );
-                        canonicalBuilder.append( "]" );
+                        canonicalBuilder.append( ref.getCanonicalForm() );
                     }
                     else {
                         refEnd = findEndOfReference( key.substring( index + 1 ) );
                         ref = Reference.newReference(false, key.substring(index, index + refEnd + 1) );
-                        canonicalBuilder.append( "&(" ).append( ref.pathIndex );
-                        canonicalBuilder.append( "," ).append( ref.keyGroup ).append( ")" );
+                        canonicalBuilder.append( ref.getCanonicalForm() );
                     }
                     tokens.add( ref );
                     index += refEnd;
@@ -323,6 +322,58 @@ public abstract class PathElement {
                         String keyPart = pe.getSubKeyRef( ref.keyGroup );
                         output.append( keyPart );
                     }
+                }
+            }
+
+            return output.toString();
+        }
+
+        @Override
+        public LiteralPathElement match( String dataKey, Path<LiteralPathElement> specInputPath ) {
+            String evaled = evaluate( specInputPath );
+            if ( evaled.equals( dataKey ) ) {
+                return new LiteralPathElement( evaled );
+            }
+            return null;
+        }
+    }
+
+
+    public static class DollarReferencePathElement extends PathElement {
+
+        protected List tokens = new ArrayList();
+        protected String canonicalForm;
+
+        public DollarReferencePathElement(String key) {
+            super(key);
+
+            DollarReference dRef = DollarReference.newReference( key );
+            tokens.add( dRef );
+            canonicalForm = dRef.getCanonicalForm();
+        }
+
+        @Override
+        public String getCanonicalForm() {
+            return canonicalForm;
+        }
+
+        @Override
+        public String evaluate( Path<LiteralPathElement> specInputPath ) {
+
+            // Walk thru our tokens and build up a string
+            // Use the supplied Path to fill in our token References
+            StringBuffer output = new StringBuffer();
+
+            for ( Object token : tokens ) {
+                if ( token instanceof String ) {
+                    output.append( token );
+                }
+                else {
+                    DollarReference ref = (DollarReference) token;
+
+                    LiteralPathElement pe = specInputPath.elementFromEnd( ref.pathIndex );
+                    String keyPart = pe.getSubKeyRef( ref.keyGroup );
+                    output.append( keyPart );
                 }
             }
 
