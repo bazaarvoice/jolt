@@ -192,9 +192,9 @@ public class ChainrTest {
     public void runTestCases(String testCaseName, boolean sorted ) throws IOException, JoltException {
 
         String testPath = "/json/chainr/"+testCaseName;
-        Object input = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/input.json" ) );
-        Object spec = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/spec.json" ) );
-        Object expected = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/output.json" ) );
+        Object input = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( testPath + "/input.json" ) );
+        Object spec = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( testPath + "/spec.json" ) );
+        Object expected = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( testPath + "/output.json" ) );
 
         Chainr chainr = new Chainr();
         Object actual = chainr.process( input, spec );

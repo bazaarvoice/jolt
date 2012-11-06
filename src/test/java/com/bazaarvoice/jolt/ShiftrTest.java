@@ -21,35 +21,37 @@ public class ShiftrTest {
     @DataProvider
     public Object[][] getTestCaseNames() {
         return new Object[][] {
-            {"photosArray", null, null, null},
-            {"bucketToPrefixSoup", null, null, null},
-            {"prefixSoupToBuckets", null, null, null},
-            {"firstSample", null, null, null},
-            {"singlePlacement", null, null, null},
-            {"multiPlacement", null, null, null},
-            {"wildcards", null, null, null},
-            {"specialKeys", null, null, null},
-            {"identity", null, null, null},
-            {"objectToArray", null, null, null},
-            {"keyref", null, null, null},
-            {"queryMappingXform", null, null, null},
-            {"wildcardSelfAndRef", null, null, null},
-            {"", null, null, null}
+            {"photosArray"},
+            {"inputArrayToPrefix"},
+            {"prefixDataToArray"},
+            {"bucketToPrefixSoup"},
+            {"prefixSoupToBuckets"},
+            {"firstSample"},
+            {"singlePlacement"},
+            {"multiPlacement"},
+            {"wildcards"},
+            {"specialKeys"},
+            {"identity"},
+            {"objectToArray"},
+            {"keyref"},
+            {"queryMappingXform"},
+            {"wildcardSelfAndRef"},
+            {""}
         };
     }
 
     // TODO: test arrays better (wildcards test array could be in reverse order)
 
     @Test(dataProvider = "getTestCaseNames")
-    public void runTestCases(String testCaseName, String inputPath, String specPath, String outputPath)
+    public void runTestCases(String testCaseName)
             throws IOException {
         if ("".equals( testCaseName )) {
             return;
         }
         String testPath = "/json/shiftr/"+testCaseName;
-        Object input = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( inputPath == null ? testPath + "/input.json" : inputPath ) );
-        Object spec = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( specPath == null ? testPath + "/spec.json" : specPath ) );
-        Object expected = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( outputPath == null ? testPath + "/output.json" : outputPath ) );
+        Object input = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/input.json" ) );
+        Object spec = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/spec.json" ) );
+        Object expected = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/output.json" ) );
 
         Shiftr shiftr = new Shiftr();
         Object actual = shiftr.xform( input, spec );
