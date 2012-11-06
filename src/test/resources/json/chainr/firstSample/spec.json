@@ -10,7 +10,7 @@
                 "*": {
                     "value": "SecondaryRatings.&1.Value",
                     "max": "SecondaryRatings.&1.Range",
-                    "&": "SecondaryRatings.&1.Id"
+                    "$": "SecondaryRatings.&.Id"
                 }
             }
         }

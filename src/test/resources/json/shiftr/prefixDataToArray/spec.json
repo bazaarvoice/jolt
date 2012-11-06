@@ -1,0 +1,5 @@
+{
+    "photo-*-id":"Photos[&(0,1)].Id",
+    "photo-*-caption":"Photos[&(0,1)].Caption",
+    "photo-*-url":"Photos[&(0,1)].Url"
+}
