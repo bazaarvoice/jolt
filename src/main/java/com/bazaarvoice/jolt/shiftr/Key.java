@@ -125,6 +125,9 @@ public class Key {
         if ( pathElement instanceof AtPathElement && hasChildren ) {
             throw new IllegalArgumentException( "@ Shiftr key, can not have children." );
         }
+        if ( pathElement instanceof DollarReferencePathElement && hasChildren ) {
+            throw new IllegalArgumentException( "$ Shiftr key, can not have children." );
+        }
     }
 
     private static DotNotationPath parseOutputDotNotation( Object rawObj ) {

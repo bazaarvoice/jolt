@@ -35,6 +35,8 @@ public class ShiftrTest {
             {"identity"},
             {"objectToArray"},
             {"keyref"},
+            {"listKeys"},
+            {"lhsAmpMatch"},
             {"queryMappingXform"},
             {"wildcardSelfAndRef"},
             {""}

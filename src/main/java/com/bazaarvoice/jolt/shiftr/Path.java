@@ -95,8 +95,8 @@ public class Path<T> {
 
         public static DotNotationPath parseDotNotation( String dotNotation ) {
 
-            if ( dotNotation.contains("@") || dotNotation.contains("*") ) {
-                throw new IllegalArgumentException("DotNotation parse (output key) can not contain '@' or '*'.");
+            if ( dotNotation.contains("@") || dotNotation.contains("*") || dotNotation.contains("$")) {
+                throw new IllegalArgumentException("DotNotation (output key) can not contain '@', '*', or '$'.");
             }
 
             if ( StringUtils.isNotBlank( dotNotation ) ) {
