@@ -87,13 +87,15 @@ import java.util.Map;
  *     },
  *     "*": {                                       // match input data like "rating.[anything-other-than-primary]"
  *         "value": "SecondaryRatings.&1.Value",    // the data at "rating.*.value" goes to "SecondaryRatings.*.Value"
+ *                                                  // the "&1" means use the value one level up the tree ( "quality" or "sharpness" )
  *                                                  // output -> "SecondaryRatings.quality.Value" : 3 AND
  *                                                  //           "SecondaryRatings.sharpness.Value" : 7
-
+ *
  *         "max": "SecondaryRatings.&1.Range",      // the data at "rating.*.max" goes to "SecondaryRatings.*.Range"
+ *                                                  // the "&1" means use the value one level up the tree ( "quality" or "sharpness" )
  *                                                  // output -> "SecondaryRatings.quality.Range" : 5 AND
  *                                                  //           "SecondaryRatings.sharpness.Range" : 10
-
+ *
  *         "$": "SecondaryRatings.&1.Id"            // Special operator $ means, use the value of the input key itself as the data
  *                                                  // output -> "SecondaryRatings.quality.Id" : "quality"
  *                                                  // output -> "SecondaryRatings.sharpness.Id" : "sharpness"
@@ -126,35 +128,119 @@ import java.util.Map;
  *
  * '*' Wildcard
  *   Valid only on the LHS ( input JSON keys ) side of a Shiftr Spec
- *   The '*' wildcard can be used by itself or to match part of a key.  This is useful for working with input JSON with keys that are "prefixed".
- *   Ex : if you had an input document like
- *   <pre>
+ *   The '*' wildcard can be used by itself or to match part of a key.
+ *
+ *   '*' wildcard by itself :
+ *    As illustrated in the example above, the '*' wildcard by itself is useful for "templating" JSON maps,
+ *      where each key / value has the same "format".
+ *    <pre>
+ *    // example input
+ *    {
+ *      "rating" : {
+ *        "quality": {
+ *          "value": 3,
+ *          "max": 5
+ *        },
+ *        "sharpness" : {
+ *          "value" : 7,
+ *          "max" : 10
+ *        }
+ *    }
+ *    </pre>
+ *    In this example, "rating.quality" and "rating.sharpness" both have the same structure/format, and thus we can use the '*'
+ *     to allow use to write more compact rules and avoid having to to explicitly write very similar rules for both "quality" and "sharpness".
+ *
+ *   '*' wildcard as part of a key :
+ *    This is useful for working with input JSON with keys that are "prefixed".
+ *    Ex : if you had an input document like
+ *    <pre>
+ *    {
  *       "tag-Pro" : "Awesome",
  *       "tag-Con" : "Bogus"
- *   </pre>
- *   A 'tag-*' would match both keys, and make the whole key and "*" part of the key available.
- *   Ex, input / "tag-Pro" with LHS spec "tag-*", would "tag-Pro" and "Pro" available to reference.
- *   Note the '*' wildcard is as non-greedy as possible, hence you can use more than one '*' in a key.
- *   Example, "tag-*-*" would match "tag-Foo-Bar", where
+ *    }
+ *    </pre>
+ *    A 'tag-*' would match both keys, and make the whole key and "matched" part of the key available.
+ *    Ex, input key of "tag-Pro" with LHS spec "tag-*", would "tag-Pro" and "Pro" available to reference.
+ *    Note the '*' wildcard is as non-greedy as possible, hence you can use more than one '*' in a key.
+ *    For example, "tag-*-*" would match "tag-Foo-Bar", making "tag-Foo-Bar", "Foo", and "Bar" all available to reference.
+ *
+ * '&' Wildcard
+ *   Valid on the LHS (left hand side - input JSON keys) and RHS (output data path)
+ *   Means, dereference against a "path" to get a value and use that value as if were a literal key.
+ *   The canonical form of the wildcard is "&(0,0)".
+ *   The first parameter is where in the input path to look for a value, and the second parameter is which part of the key to use (used with * key).
+ *   There are syntactic sugar versions of the wildcard, all of the following mean the same thing.
+ *     Sugar : '&' = '&0' = '&(0)' = '&(0,0)
+ *   The syntactic sugar versions are nice, as there are a set of data transforms that do not need to use the canonical form,
+ *    eg if your input data does not have any "prefixed" keys.
+ *
+ *   '&' Path lookup
+ *    As Shiftr processes data and walks down the spec, it maintains a data structure describing the path it has walked.
+ *    The '&' wildcard can access data from that path in a 0 major, upward oriented way.
+ *    Example :
+ *    <pre>
+ *    {
+ *        "foo" : {
+ *            "bar" : {
+ *                "baz" :  // &0 = baz, &1 = bar, &2 = foo
+ *            }
+ *        }
+ *    }
+ *    </pre>
+ *
+ *   '&' Subkey lookup
+ *    '&' subkey lookup allows us to referece the values captured by the '*' wildcard.
+ *   Example, "tag-*-*" would match "tag-Foo-Bar", making
  *     &(0,0) = "tag-Foo-Bar"
  *     &(0,1) = "Foo"
  *     &(0,2) = "Bar"
  *
- * '&' Wildcard
- *   Valid on the LHS (left hand side - input JSON keys) and RHS (output data path)
- *   Means, dereference to get a value and use that value as if were a literal key.
- *   The canonical form of the wildcard is "&(0,0)".
- *   The first parameter is where in the input path to look for a value, and the second parameter is which part of the key to use (used with * key).
- *   There are syntactic sugar versions of the wildcard, all of the following mean the same thing.
- *   '&' = '&0' = '&(0)' = '&(0,0)
- *
  * '$' Wildcard
  *   Valid only on the LHS of the spec.
- *   Specifies that we want to use an input key, or input key derived value, as the data to be placed in the output JSON.
- *   The existence of this wildcard is a reflection of the fact that the "data" of the input Json, can be both in the
- *    "value", but also can be encoded in the "keys" of the input JSON (particularly with key prefix encoded scheme, like
- *     aka "tag-Pro" and "tag-Con").
+ *   The existence of this wildcard is a reflection of the fact that the "data" of the input Json, can be both in the "values",
+ *    but also can be encoded in the "keys" of the input JSON
+ *
+ *   The base case operation of Shiftr is to operate on input JSON "values", thus we need a way to specify that we want to operate on the input JSON "key".
+ *
+ *   Thus '$' specifies that we want to use an input key, or input key derived value, as the data to be placed in the output JSON.
  *   '$' has the same syntax as the '&' wildcard, and can be read as, dereference to get a value, and then use that value as the data to be output.
+ *
+ *   There are two cases where this is useful
+ *     1) when a "key" in the input JSON needs to be a "id" value in the output JSON, see the ' "$": "SecondaryRatings.&1.Id" ' example above.
+ *     2) you want to make a list of all the input keys.
+ *
+ *   Example of "a list of the input keys" :
+ *   <pre>
+ *   // input
+ *   {
+ *     "rating": {
+ *       "primary": {
+ *         "value": 3,
+ *         "max": 5
+ *       },
+ *       "quality": {
+ *         "value": 3,
+ *         "max": 7
+ *       }
+ *     }
+ *   }
+ *
+ *   // desired output
+ *   {
+ *     "ratings" : [ "primary", "quality" ]    // Aside : this is an example of implicit JSON array creation in the output which is detailed further down.
+ *                                             // For now just observe that the input keys "primary" and "quality" have both made it to the output.
+ *   }
+ *
+ *   // spec
+ *   {
+ *     "rating": {
+ *       "*": {               // match all keys below "rating"
+ *         "$": "ratings"     // output each of the "keys" to "ratings" in the output
+ *       }
+ *     }
+ *   }
+ *   </pre>
+ *
  *
  * '|' Wildcard
  *   Valid only on the LHS of the spec.
@@ -165,41 +251,29 @@ import java.util.Map;
  *     "rating|Rating" : "rating-primary"   // match "rating" or "Rating" copy the data to "rating-primary"
  *   }
  *   </pre>
+ *   This is really just syntactic sugar, as the implementation really just treats the key "rating|Rating" as two keys when processing.
+ *
  *
  * '@' Wildcard
  *   Valid only on the LHS of the spec.
- *   For the Shiftr spec to be valid Json, it can not have two keys with the exact same value.
- *   This is problematic if you want to to both
- *     Copy/Shift an entire subobject of data to the output AND
- *     Navigate down into the subobject for other Shiftr operations.
+ *   This wildcard is necessary if you want to do put both the input value and the input key somewhere in the output JSON.
  *
- *  Example of the problem the '@' wildcard solves
+ *  Example '@' wildcard usage :
  *  <pre>
+ *  // Say we have a spec that just operates on the value of the input key "rating"
  *  {
- *     // invalid Json, two keys with the same value of "rating"
- *     "rating" : "original.payload.ratings",     // copy the whole rating sub-object to "original.payload.ratings"
- *     "rating" : {
- *       "*" : {
- *         "value": "SecondaryRatings.&1.Value",
- *         "max": "SecondaryRatings.&1.Range"
- *       }
+ *     "foo" : "place.to.put.value",  // leveraging the implicit operation of Shiftr which is to operate on input JSON values
+ *  }
+ *
+ *  // if we want to do something with the "key" as well as the value
+ *  {
+ *     "foo" : {
+ *       "$" : "place.to.put.key",
+ *       "@" : "place.to.put.value"    // '@' explicitly tell Shiftr to operate on the input JSON value of the parent key "foo"
  *     }
  *  }
  *  </pre>
- *  To address this, the spec looks like :
- *  <pre>
- *  {
- *     "rating" : {
- *       "@" : "original.payload.ratings",        // copy the whole rating sub-object to "original.payload.ratings"
- *
- *       "*" : {                                  // continue down into the subobject for matches
- *         "value": "SecondaryRatings.&1.Value",
- *         "max": "SecondaryRatings.&1.Range"
- *       }
- *     }
- *  }
- *  </pre>
- *  Thus the '@' wildcard is "copy the value of the data at this level in the tree, to the output".
+ *  Thus the '@' wildcard is the mean "copy the value of the data at this level in the tree, to the output".
  *
  *
  * JSON Arrays :
@@ -245,7 +319,7 @@ import java.util.Map;
  *    // spec
  *    {
  *      "photo-1-id": "Photos[1].Id",   // Declare the "Photos" in the output to be an array,
- *      "photo-1-url": "Photos[1].Url"  // that the 1-th array location shoudl have data
+ *      "photo-1-url": "Photos[1].Url"  // that the 1-th array location should have data
  *
  *      // same as above but more powerful
  *      // note '&' logic can be used inside the '[ ]' notation
@@ -284,7 +358,7 @@ import java.util.Map;
  *
  *
  * 4) Implicit Array creation in the output JSON
- *  If a spec file is configured to output multiple peices of data to the same output location, the
+ *  If a spec file is configured to output multiple pieces of data to the same output location, the
  *  output location will be turned into a JSON array.
  *  Example :
  *  <pre>
@@ -317,6 +391,8 @@ import java.util.Map;
  * Algorithm Low Level
  * - Simultaneously walk of the spec and input JSon, and maintain a walked "input" path data structure.
  * - Determine a match between input JSON key and LHS spec, by matching LHS spec keys in the following order :
+ * -- Note that '|' keys are are split into their subkeys, eg "literal", '*', or '&' LHS keys
+ *
  * 1) Try to match the input key with "literal" spec key values
  * 2) If no literal match is found, try to match against LHS '&' computed values.
  * 2.1) For deterministic behavior, if there is more than one '&' LHS key, they are applied/matched in alphabetical order,

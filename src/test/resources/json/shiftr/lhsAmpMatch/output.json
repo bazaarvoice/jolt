@@ -1,0 +1,14 @@
+{
+    "ratings" : {
+        "primary" : {
+            "value": 3,
+            "max": 5,
+            "label" : "Display Label for primary (yes bad input schema)"
+        },
+        "quality" : {
+            "value": 3,
+            "max": 7,
+            "label" : "Display Label for primary (yes bad input schema)"
+        }
+    }
+}
