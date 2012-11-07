@@ -23,6 +23,7 @@ public class ShiftrTest {
         return new Object[][] {
             {"photosArray"},
             {"inputArrayToPrefix"},
+            {"explicitArrayKey"},
             {"prefixDataToArray"},
             {"bucketToPrefixSoup"},
             {"prefixSoupToBuckets"},

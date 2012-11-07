@@ -5,8 +5,10 @@ import java.util.regex.Pattern;
 
 public class Reference {
 
-    // Original Syntax   &  &1  &(1)  &1(1)    "\\&(\\d)?(\\((\\d)\\))?"
-    // New Syntax        &  &1  &(1)  &(1,1)
+    // Original Syntax            &   &1   &(1)   &1(1)    "\\&(\\d)?(\\((\\d)\\))?"
+    // New Syntax                 &   &1   &(1)   &(1,1)
+    // Note that this class handles array wrapped references as well
+    //  aka these are all valid  [&] [&1] [&(1)] [&(1,1)]
     public static Pattern refPattern = Pattern.compile( "\\&(\\d)?(\\((\\d)(,(\\d))?\\)?)?" );
 
     boolean isArray = false;
@@ -19,7 +21,7 @@ public class Reference {
         ref.isArray = isArray;
 
         if ( isArray && refStr.charAt(0) != '&' ) {
-            ref.arrayIndex = Integer.parseInt( refStr.substring(1) );
+            ref.arrayIndex = Integer.parseInt( refStr );
         }
         else{
 
