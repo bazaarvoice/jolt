@@ -156,6 +156,16 @@ import java.util.Map;
  *     aka "tag-Pro" and "tag-Con").
  *   '$' has the same syntax as the '&' wildcard, and can be read as, dereference to get a value, and then use that value as the data to be output.
  *
+ * '|' Wildcard
+ *   Valid only on the LHS of the spec.
+ *   This 'or' wildcard allows you to match multiple input keys.   Useful if you don't always know exactly what your input data will be.
+ *   Example Spec :
+ *   <pre>
+ *   {
+ *     "rating|Rating" : "rating-primary"   // match "rating" or "Rating" copy the data to "rating-primary"
+ *   }
+ *   </pre>
+ *
  * '@' Wildcard
  *   Valid only on the LHS of the spec.
  *   For the Shiftr spec to be valid Json, it can not have two keys with the exact same value.

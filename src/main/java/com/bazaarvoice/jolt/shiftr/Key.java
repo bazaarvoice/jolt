@@ -93,7 +93,7 @@ public class Key {
                     literalChildren.put( child.pathElement.getRawKey(), child );
                 }
                 else if ( child.pathElement instanceof AtPathElement || (  // special if it is an "@"
-                          child.pathElement instanceof DollarReferencePathElement ) ) {   // special if it is a "&" and it has no children
+                          child.pathElement instanceof DollarReferencePathElement ) ) {   // special if it is a "$"
                     specialChildren.add( child );
                 }
                 else {   // star || (& with children)
