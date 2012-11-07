@@ -25,7 +25,7 @@ import java.util.Map;
  *  * <pre>
  * {
  *   "rating": {
- *       "primary": {
+ *       "quality": {
  *           "value": 3,
  *           "max": 5
  *       }
@@ -36,21 +36,25 @@ import java.util.Map;
  * <pre>
  * {
  *   "rating": {
- *     "primary": {
- *         "value": "Rating",    // the data at input path of "rating.primary.value", 3, goes to output path of "Rating"
- *         "max": "RatingRange"  // the data at input path of "rating.primary.max", 5,  goes to output path "RatingRange"
+ *     "quality": {
+ *         "value": "SecondaryRatings.quality.Value",     // copy 3 to "SecondaryRatings.quality.Value"
+ *         "max": "SecondaryRatings.quality.RatingRange"  // copy 5 to "SecondaryRatings.quality.RatingRange"
  *     }
  * }
  * </pre>
  * would product the following output Json :
  * <pre>
  * {
- *   "Rating" : 3,
- *   "RatingRange" : 5
+ *   "SecondaryRatings" : {
+ *     "quality" : {
+ *       "Value" : 3,
+ *       "RatingRange" : 5
+ *     }
+ *   }
  * }
  * </pre>
  *
- * As show above, Shiftr specs can be entirely made up of literal string values, but it's real power comes from its wildcards.
+ * As shown above, Shiftr specs can be entirely made up of literal string values, but it's real power comes from its wildcards.
  * Using wildcards, you can leverage the fact that you know, not just the data and it's immediate key, but the whole input
  *  path to that data.
  *
@@ -187,10 +191,114 @@ import java.util.Map;
  *  </pre>
  *  Thus the '@' wildcard is "copy the value of the data at this level in the tree, to the output".
  *
- * Handling JSON arrays
  *
- *  Doc Todo
- *  See / include a simplifed version of the photosArray unit test, as it deals with JSON arrays in both input and output.
+ * JSON Arrays :
+ *
+ *  Reading from (input) and writing to (output) JSON Arrays is fully supported.
+ *
+ * 1) Handling Arrays in the input JSON
+ *  Shiftr treats JSON arrays in the input data as Maps with numeric keys.
+ *  Example :
+ *  <pre>
+ *    // input
+ *    {
+ *       "Photos": [ "AAA.jpg", "BBB.jpg" ]
+ *    }
+ *
+ *    // spec
+ *    {
+ *       "Photos" :
+ *       {
+ *         "1" : "photo-&-url"      // Specify that we only want to operate on the 1-th index of the "Photos" input array
+ *       }
+ *    }
+ *
+ *   // output
+ *   {
+ *       "photo-1-url": "BBB.jpg"
+ *   }
+ *  </pre>
+ *
+ *
+ * 2) Handling Arrays in the output JSON
+ *  Traditional array brackets, [ ], are used to specify array index in the output JSON.
+ *  []'s are only valid on the RHS of the Shiftr spec.
+ *
+ *  Example :
+ *  <pre>
+ *    // input
+ *    {
+ *      "photo-1-id": "327704",
+ *      "photo-1-url": "http://bob.com/0001/327704/photo.jpg"
+ *    }
+ *
+ *    // spec
+ *    {
+ *      "photo-1-id": "Photos[1].Id",   // Declare the "Photos" in the output to be an array,
+ *      "photo-1-url": "Photos[1].Url"  // that the 1-th array location shoudl have data
+ *
+ *      // same as above but more powerful
+ *      // note '&' logic can be used inside the '[ ]' notation
+ *      "photo-*-url": "Photos[&(0,1)].Url"
+ *    }
+ *
+ *    // output
+ *    {
+ *      "Photos": [
+ *        null ,                // note Photos[0] is null, because no data was pushed to it
+ *        {
+ *          "Id":"327704",
+ *          "Url":"http://bob.com/0001/327704/photo.jpg"
+ *        }
+ *      ]
+ *    }
+ *  </pre>
+ *
+ *
+ * 3) JSON arrays in the spec file
+ * Json Arrays in Shiftr spec are used to to specify that piece of input data should be copied to two places in the output JSON.
+ * Example :
+ * <pre>
+ *   // input
+ *   { "foo" : 3 }
+ *
+ *   // spec
+ *   { "foo" : [ "bar", "baz" ] }    // push the 3, to both the of the output paths
+ *
+ *   // output
+ *   {
+ *     "bar" : 3,
+ *     "baz" : 3
+ *   }
+ * </pre>
+ *
+ *
+ * 4) Implicit Array creation in the output JSON
+ *  If a spec file is configured to output multiple peices of data to the same output location, the
+ *  output location will be turned into a JSON array.
+ *  Example :
+ *  <pre>
+ *    // input
+ *    {
+ *        "foo" : "bar",
+ *        "tuna" : "marlin"
+ *    }
+ *
+ *    // spec
+ *    {
+ *        "foo"  : "baz",
+ *        "tuna" : "baz"
+ *    }
+ *
+ *    // output
+ *    {
+ *        "baz" : [ "bar", "marlin" ]     // Note the order of this Array should not be relied upon
+ *    }
+ *  </pre>
+ *
+ *
+ *
+ *
  *
  * Algorithm High Level
  *  Walk the input data, and Shiftr spec simultaneously, and execute the Shiftr command/mapping each time
@@ -209,20 +317,10 @@ import java.util.Map;
  * Note, processing of the '@' and '$' LHS keys always occur if their parent's match, and do not block any other matching.
  *
  *
- * Implmentation
+ * Implementation
  *
  * Instances of this class execute Shiftr transformations given a transform spec of Jackson-style maps of maps
  * and a Jackson-style map-of-maps input.
- *
- *
- * OLD
- *
- * - if the transform has a scalar attribute for the input attribute, that scalar contains the path for putting it in the output
- * - paths contained at the scalar transform attributes are in dot-notation for referencing JSON
- * - "*" as a key matches any key that does not have its own entry
- * - "&" as a key within an object evaluates to the key that references the object
- * - "&[index]" within a path is a zero-major reference to the keys in the input document starting with current. thus &0 evaluates to the key
- *   for the current attribute, &1 evaluates to the key for the parent attribute, and so on.
  */
 public class Shiftr implements Chainable {
 
