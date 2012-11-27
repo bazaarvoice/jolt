@@ -3,12 +3,12 @@ package com.bazaarvoice.jolt.shiftr;
 import com.bazaarvoice.jolt.JoltTestUtil;
 import com.bazaarvoice.jolt.JsonUtils;
 import com.bazaarvoice.jolt.Shiftr;
+import com.bazaarvoice.jolt.exception.SpecException;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ShiftrUnitTest {
@@ -58,15 +58,15 @@ public class ShiftrUnitTest {
     @Test(dataProvider = "shiftrTestCases")
     public void shiftrUnitTest(String testName, Map<String, Object> spec, Map<String, Object> data, Map<String, Object> expected) throws Exception {
 
-        Shiftr shiftr = new Shiftr();
-        Object actual = shiftr.xform( data, spec );
+        Shiftr shiftr = new Shiftr( spec );
+        Object actual = shiftr.transform( data );
 
         JoltTestUtil.runDiffy( testName, expected, actual );
     }
 
 
     @DataProvider
-    public Object[][] failureTestCases() throws IOException {
+    public Object[][] badSpecs() throws IOException {
         return new Object[][] {
                 {
                         "Bad @",
@@ -95,18 +95,8 @@ public class ShiftrUnitTest {
         };
     }
 
-    @Test(dataProvider = "failureTestCases")
-    public void failureUnitTest(String testName, Map<String, Object> spec) throws Exception {
-
-        Shiftr shiftr = new Shiftr();
-        try {
-            Object actual = shiftr.xform( new HashMap(), spec );
-            AssertJUnit.fail( "TestCase : " + testName + " expected illegal argument exception" );
-        }
-        catch (IllegalArgumentException iae) {
-        }
-        catch( Exception e ){
-            AssertJUnit.fail("TestCase : " + testName + " expected illegal argument exception, but got something else");
-        }
+    @Test(dataProvider = "badSpecs", expectedExceptions = SpecException.class)
+    public void failureUnitTest(String testName, Map<String, Object> spec) {
+        new Shiftr( spec );
     }
 }

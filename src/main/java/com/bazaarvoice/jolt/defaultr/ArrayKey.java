@@ -33,7 +33,7 @@ public class ArrayKey extends Key {
                 keyInts = Collections.emptyList();
                 break;
             default :
-                throw new IllegalArgumentException( "Someone has added an op type without changing this method." );
+                throw new IllegalStateException( "Someone has added an op type without changing this method." );
         }
     }
 

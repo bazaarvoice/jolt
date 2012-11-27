@@ -1,0 +1,9 @@
+[
+    {
+        "operation" : "java",
+        "className": "com.bazaarvoice.jolt.GoodDelegate",
+        "spec" : {
+            "a" : "b"
+        }
+    }
+]

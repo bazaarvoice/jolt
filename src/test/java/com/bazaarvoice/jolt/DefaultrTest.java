@@ -1,5 +1,6 @@
 package com.bazaarvoice.jolt;
 
+import com.bazaarvoice.jolt.exception.SpecException;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -38,8 +39,8 @@ public class DefaultrTest {
         Object spec = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( testPath + "/spec.json" ) );
         Object expected = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( testPath + "/output.json" ) );
 
-        Defaultr defaultr = new Defaultr();
-        Object actual = defaultr.defaultr( spec, input );
+        Defaultr defaultr = new Defaultr(spec);
+        Object actual = defaultr.transform( input );
 
         JoltTestUtil.runDiffy( "failed case " + testPath, expected, actual );
     }
@@ -48,11 +49,11 @@ public class DefaultrTest {
     public void deepCopyTest() throws IOException {
 
         Object spec = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( "/json/defaultr/deepCopy/spec.json" ) );
-        Defaultr defaultr = new Defaultr();
+        Defaultr defaultr = new Defaultr(spec);
 
         {
             Object input = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( "/json/defaultr/deepCopy/input.json" ) );
-            Map<String, Object> fiddle = (Map<String, Object>) defaultr.defaultr( spec, input );
+            Map<String, Object> fiddle = (Map<String, Object>) defaultr.transform( input );
 
             List array = (List) fiddle.get( "array" );
             array.add("a");
@@ -64,40 +65,22 @@ public class DefaultrTest {
             Object input = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( "/json/defaultr/deepCopy/input.json" ) );
             Object expected = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( "/json/defaultr/deepCopy/output.json" ) );
 
-            Object actual = defaultr.defaultr( spec, input );
+            Object actual = defaultr.transform( input );
             JoltTestUtil.runDiffy( "Same spec deepcopy fail.", expected, actual );
         }
     }
 
-    @Test
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void throwExceptionOnNullDefaultee() throws IOException {
         Object spec = JsonUtils.jsonToMap( "{ \"tuna\": \"marlin\" }" );
 
-        Defaultr defaultr = new Defaultr();
-        try {
-            defaultr.defaultr( spec, null );
-            AssertJUnit.fail("expected illegal argument exception");
-        }
-        catch( IllegalArgumentException iae )
-        { }
-        catch( Exception e ){
-            AssertJUnit.fail("expected illegal argument exception, but got something else");
-        }
+        Defaultr defaultr = new Defaultr( spec );
+        defaultr.transform( null );
     }
 
-    @Test
+    @Test(expectedExceptions = SpecException.class)
     public void throwExceptionOnBadSpec() throws IOException {
         Object spec = JsonUtils.jsonToMap( "{ \"tuna*\": \"marlin\" }" );
-
-        Defaultr defaultr = new Defaultr();
-        try {
-            defaultr.defaultr( spec, new LinkedHashMap() );
-            AssertJUnit.fail("expected illegal argument exception");
-        }
-        catch( IllegalArgumentException iae )
-        { }
-        catch( Exception e ){
-            AssertJUnit.fail("expected illegal argument exception, but got something else");
-        }
+        new Defaultr( spec );
     }
 }

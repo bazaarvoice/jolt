@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.shiftr.PathElement.*;
 import org.apache.commons.lang.StringUtils;
 
@@ -96,7 +97,7 @@ public class Path<T> {
         public static DotNotationPath parseDotNotation( String dotNotation ) {
 
             if ( dotNotation.contains("@") || dotNotation.contains("*") || dotNotation.contains("$")) {
-                throw new IllegalArgumentException("DotNotation (output key) can not contain '@', '*', or '$'.");
+                throw new SpecException("DotNotation (output key) can not contain '@', '*', or '$'.");
             }
 
             if ( StringUtils.isNotBlank( dotNotation ) ) {

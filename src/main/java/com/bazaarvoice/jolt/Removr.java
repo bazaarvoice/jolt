@@ -1,5 +1,8 @@
 package com.bazaarvoice.jolt;
 
+import com.bazaarvoice.jolt.exception.SpecException;
+import com.bazaarvoice.jolt.exception.TransformException;
+
 import java.util.Map;
 
 /**
@@ -54,37 +57,32 @@ import java.util.Map;
  *  in which case Removr will recursively walk down the tree.
  * <p/>
  */
-public class Removr implements Chainable {
+public class Removr implements SpecTransform {
 
-    /**
-     * Chainable bindings for Removr.
-     */
+    private final Map<String, Object> spec;
+
+
+    public Removr( Object spec ) {
+        this.spec = (Map<String, Object>) spec;
+    }
+
     @Override
-    public Object process( Object input, Map<String, Object> operationEntry )
-            throws JoltException {
-        Object spec = operationEntry.get( "spec" );
-        if ( spec == null ) {
-            throw new JoltException( "JOLT Removr expected a spec in its operation entry, but instead got: " + operationEntry.toString() );
-        }
-        try {
-            return removr( spec, input );
-        } catch ( Exception e ) {
-            throw new JoltException( e );
-        }
+    public Object transform( Object input ) {
+        return removr( spec, input );
     }
 
     /**
      * Recursively walk the spec and remove keys from the data.
      */
-    public Object removr( Object specObj, Object removeeObj ) {
+    private static Object removr( Object specObj, Object removeeObj ) {
 
         if ( specObj != null && removeeObj != null && specObj instanceof Map && removeeObj instanceof Map ) {
-            Map<String, Object> spec = (Map<String, Object>) specObj;
+            Map<String, Object> localSpec = (Map<String, Object>) specObj;
             Map<String, Object> removee = (Map<String, Object>) removeeObj;
 
-            for ( String nukeKey : spec.keySet() ) {
+            for ( String nukeKey : localSpec.keySet() ) {
 
-                Object subNuke = spec.get( nukeKey );
+                Object subNuke = localSpec.get( nukeKey );
                 if ( subNuke != null && subNuke instanceof Map ) {
                     removr( subNuke, removee.get( nukeKey ) );
                 } else {

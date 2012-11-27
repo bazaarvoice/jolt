@@ -1,5 +1,8 @@
 package com.bazaarvoice.jolt;
 
+import com.bazaarvoice.jolt.exception.SpecException;
+import com.bazaarvoice.jolt.exception.TransformException;
+import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -9,13 +12,9 @@ import java.util.Map;
 
 public class ShiftrTest {
 
-    @Test(expectedExceptions = JoltException.class)
-    public void process_itBlowsUpForNoSpec()
-            throws JoltException {
-        Map<String, Object> opEntry = new HashMap<String, Object>();
-        Object input = new Object();
-        Shiftr unit = new Shiftr();
-        unit.process( input, opEntry );
+    @Test(expectedExceptions = SpecException.class)
+    public void process_itBlowsUpForNoSpec() {
+        new Shiftr( null );
     }
 
     @DataProvider
@@ -57,8 +56,8 @@ public class ShiftrTest {
         Object spec = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/spec.json" ) );
         Object expected = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/output.json" ) );
 
-        Shiftr shiftr = new Shiftr();
-        Object actual = shiftr.xform( input, spec );
+        Shiftr shiftr = new Shiftr( spec );
+        Object actual = shiftr.transform( input );
 
         JoltTestUtil.runDiffy( "failed case " + testPath, expected, actual );
     }

@@ -408,43 +408,41 @@ import java.util.Map;
  * Instances of this class execute Shiftr transformations given a transform spec of Jackson-style maps of maps
  * and a Jackson-style map-of-maps input.
  */
-public class Shiftr implements Chainable {
-
-    /**
-     * Applies a Shiftr transform for Chainr
-     *
-     * @param input the JSON object to transform
-     * @param operationEntry the JSON object from the Chainr spec containing
-     *  the rest of the details necessary to carry out the transform (specifically,
-     *  in this case, a shiftr spec)
-     * @return the output object with data shifted to it
-     * @throws JoltException for a malformed spec or if there are issues during
-     * the transform
-     */
-    @Override
-    public Object process( Object input, Map<String, Object> operationEntry ) throws JoltException {
-        Object spec = operationEntry.get( "spec" );
-        if (spec == null) {
-            throw new JoltException( "JOLT Shiftr expected a spec in its operation entry, but instead got: "+operationEntry.toString() );
-        }
-        return this.xform( input, spec );
-    }
+public class Shiftr implements SpecTransform {
 
     private static String ROOT_KEY = "root";
+    private Key rootKey = null;
 
-    public Object xform( Object input, Object spec ) {
+    /**
+     * Initialize a Shiftr transform with a Spec.
+     *
+     * @throws com.bazaarvoice.jolt.exception.SpecException for a malformed spec
+     */
+    public Shiftr( Object spec ) {
 
         // Setup to call the recursive method
         Map<String, Object> rootedSpec = new LinkedHashMap<String, Object>();
         rootedSpec.put( ROOT_KEY, spec );
 
         List<Key> rootedKeyedSpec = Key.parseSpec(rootedSpec);
-        Key root = rootedKeyedSpec.get(0);
+        rootKey = rootedKeyedSpec.get(0);
+    }
+
+
+    /**
+     * Applies the Shiftr transform.
+     *
+     * @param input the JSON object to transform
+     * @return the output object with data shifted to it
+     * @throws com.bazaarvoice.jolt.exception.TransformException for a malformed spec or if there are issues during
+     * the transform
+     */
+    @Override
+    public Object transform( Object input ) {
 
         Map<String,Object> output = new LinkedHashMap<String,Object>();
-        root.applyChildren( ROOT_KEY, input, new Path.LiteralPath(), output );
+        rootKey.applyChildren( ROOT_KEY, input, new Path.LiteralPath(), output );
 
         return output.get( Placr.OUTPUT_PREFIX_KEY );
     }
-
 }
