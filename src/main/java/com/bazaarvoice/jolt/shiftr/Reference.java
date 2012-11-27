@@ -2,6 +2,7 @@ package com.bazaarvoice.jolt.shiftr;
 
 import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang.StringUtils;
+import com.bazaarvoice.jolt.exception.SpecException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -75,7 +76,7 @@ public class Reference {
                     }
                 }
             } else {
-                throw new IllegalArgumentException( "Unable to parse reference key " + refStr );
+                throw new SpecException( "Unable to parse reference key " + refStr );
             }
         }
 

@@ -1,5 +1,6 @@
 package com.bazaarvoice.jolt.shiftr;
 
+import com.bazaarvoice.jolt.exception.SpecException;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public abstract class PathElement {
         if ( key.contains("&") || key.contains("[") ) {
             if ( key.contains("*") )
             {
-                throw new IllegalArgumentException("Can't mix * and ( & or [] ) ");
+                throw new SpecException("Can't mix * and ( & or [] ) ");
             }
             return new ReferencePathElement( key );
         }
@@ -128,7 +129,7 @@ public abstract class PathElement {
             super(key);
 
             if ( ! "@".equals( key ) ) {
-                throw new IllegalArgumentException( "'References Input' key '@', can only be a single '@'.  Offending key : " + key );
+                throw new SpecException( "'References Input' key '@', can only be a single '@'.  Offending key : " + key );
             }
         }
 
@@ -250,12 +251,12 @@ public abstract class PathElement {
 
             // Checks
             if ( numArrayTokens > 1 ) {
-                throw new IllegalArgumentException( "Key " + key + " can only contain one array reference." );
+                throw new SpecException( "Key " + key + " can only contain one array reference." );
             }
             if ( numArrayTokens == 1 ) {
                 Object lastToken = tokens.get( tokens.size() -1 );
                 if (lastToken instanceof String ) {
-                    throw new IllegalArgumentException( "Error in Key " + key + " : Array Reference has to be the last component of the key." );
+                    throw new SpecException( "Error in Key " + key + " : Array Reference has to be the last component of the key." );
                 }
             }
         }

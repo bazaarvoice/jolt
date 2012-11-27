@@ -32,7 +32,6 @@
         }
     },
     {
-        "operation": "sort",
-        "spec": { }
+        "operation": "sort"
     }
 ]

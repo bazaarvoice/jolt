@@ -1,5 +1,7 @@
 package com.bazaarvoice.jolt;
 
+import com.bazaarvoice.jolt.exception.SpecException;
+import com.bazaarvoice.jolt.exception.TransformException;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -10,115 +12,125 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.bazaarvoice.jolt.Chainr.*;
+
 public class ChainrTest {
 
-    private List<Map<String,Object>> newSpec() {
+    private List<Map<String,Object>> newChainrSpec() {
         return new ArrayList<Map<String, Object>>();
     }
 
     private Map<String, Object> newActivity( String opname ) {
         Map<String, Object> activity = new HashMap<String, Object>();
-        activity.put( "operation", opname );
+        activity.put( OPERATION_KEY, opname );
         return activity;
     }
 
     private Map<String, Object> newActivity( String operation, Object spec ) {
         Map<String, Object> activity = new HashMap<String, Object>();
-        activity.put( "operation", operation );
-        activity.put( "spec", spec );
+        activity.put( OPERATION_KEY, operation );
+        if ( spec != null ) {
+            activity.put( SPEC_KEY, spec );
+        }
         return activity;
     }
 
     private Map<String, Object> newFailActivity( String operation, Object spec ) {
         Map<String, Object> activity = new HashMap<String, Object>();
-        activity.put( "operation", operation );
+        activity.put( OPERATION_KEY, operation );
         activity.put( "tuna", spec );
         return activity;
     }
 
-    private Map<String, Object> newDelegatrActivity(Class cls) {
+    private Map<String, Object> newDelegatrActivity(Class cls, Object spec ) {
         Map<String, Object> activity = new HashMap<String, Object>();
-        activity.put( "operation", "java" );
-        activity.put( "className", cls.getName() );
+        activity.put( OPERATION_KEY, "java" );
+        activity.put( CLASSNAME_KEY, cls.getName() );
+        if ( spec != null ) {
+            activity.put( SPEC_KEY, spec );
+        }
+
         return activity;
     }
 
-    private List<Map<String,Object>> newShiftrSpec(Object shiftrSpec) {
-        List<Map<String,Object>> retvalue = this.newSpec();
+    private List<Map<String,Object>> newShiftrDelegatrSpec( Class cls, Object delegateSpec  )
+    {
+        List<Map<String,Object>> retvalue = this.newChainrSpec();
+        retvalue.add( newDelegatrActivity( cls, delegateSpec ));
+        return retvalue;
+    }
+
+    private List<Map<String,Object>> newShiftrChainrSpec( Object shiftrSpec ) {
+        List<Map<String,Object>> retvalue = this.newChainrSpec();
         retvalue.add( newActivity( "shift", shiftrSpec ) );
         return retvalue;
     }
 
-    private List<Map<String,Object>> newDefaultrSpec(Object defaultrSpec) {
-        List<Map<String,Object>> retvalue = this.newSpec();
+    private List<Map<String,Object>> newShiftrDefaultrSpec( Object defaultrSpec ) {
+        List<Map<String,Object>> retvalue = this.newChainrSpec();
         retvalue.add( newActivity( "default", defaultrSpec ) );
         return retvalue;
     }
 
-    private List<Map<String,Object>> newRemovrSpec(Object removrSpec) {
-        List<Map<String,Object>> retvalue = this.newSpec();
+    private List<Map<String,Object>> newShiftrRemovrSpec( Object removrSpec ) {
+        List<Map<String,Object>> retvalue = this.newChainrSpec();
         retvalue.add( newActivity( "remove", removrSpec ) );
         return retvalue;
     }
 
-    private List<Map<String,Object>> newSortrSpec(Object sortrSpec) {
-        List<Map<String,Object>> retvalue = this.newSpec();
+    private List<Map<String,Object>> newShiftrSortrSpec( Object sortrSpec ) {
+        List<Map<String,Object>> retvalue = this.newChainrSpec();
         retvalue.add( newActivity( "sort", sortrSpec ) );
         return retvalue;
     }
 
     @Test
-    public void process_itCallsShiftr()
-            throws IOException, JoltException {
+    public void process_itCallsShiftr() throws IOException {
         Object input = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/shiftr/queryMappingXform/input.json" ) );
         Object expected = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/shiftr/queryMappingXform/output.json" ) );
         Object shiftrSpec = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/shiftr/queryMappingXform/spec.json" ) );
-        Object chainrSpec = this.newShiftrSpec( shiftrSpec );
+        Object chainrSpec = this.newShiftrChainrSpec( shiftrSpec );
 
-        Chainr unit = new Chainr();
-        Object actual = unit.process( input, chainrSpec );
+        Chainr unit = new Chainr( chainrSpec );
+        Object actual = unit.transform( input );
 
         JoltTestUtil.runDiffy( "failed Shiftr call.", expected, actual );
     }
 
     @Test
-    public void process_itCallsDefaultr()
-            throws IOException, JoltException {
+    public void process_itCallsDefaultr() throws IOException {
         Object input = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/defaultr/firstSample/input.json" ) );
         Object expected = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/defaultr/firstSample/output.json" ) );
         Object defaultrSpec = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/defaultr/firstSample/spec.json" ) );
-        Object chainrSpec = this.newDefaultrSpec( defaultrSpec );
+        Object chainrSpec = this.newShiftrDefaultrSpec( defaultrSpec );
 
-        Chainr unit = new Chainr();
-        Object actual = unit.process( input, chainrSpec );
+        Chainr unit = new Chainr( chainrSpec );
+        Object actual = unit.transform( input );
 
         JoltTestUtil.runDiffy( "failed Defaultr call.", expected, actual );
     }
 
     @Test
-    public void process_itCallsRemover()
-            throws IOException, JoltException {
+    public void process_itCallsRemover() throws IOException {
         Object input = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/removr/firstSample/input.json" ) );
         Object expected = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/removr/firstSample/output.json" ) );
         Object removrSpec = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/removr/firstSample/spec.json" ) );
-        Object chainrSpec = this.newRemovrSpec( removrSpec );
+        Object chainrSpec = this.newShiftrRemovrSpec( removrSpec );
 
-        Chainr unit = new Chainr();
-        Object actual = unit.process( input, chainrSpec );
+        Chainr unit = new Chainr( chainrSpec );
+        Object actual = unit.transform( input );
 
         JoltTestUtil.runDiffy( "failed Removr call.", expected, actual );
     }
 
     @Test
-    public void process_itCallsSortr()
-            throws IOException, JoltException {
+    public void process_itCallsSortr() throws IOException {
         Object input = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/sortr/simple/input.json" ) );
         Object expected = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/sortr/simple/output.json" ) );
-        Object sortrSpec = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/sortr/simple/spec.json" ) );
-        Object chainrSpec = this.newSortrSpec( sortrSpec );
+        Object chainrSpec = this.newShiftrSortrSpec( null );
 
-        Chainr unit = new Chainr();
-        Object actual = unit.process( input, chainrSpec );
+        Chainr unit = new Chainr( chainrSpec );
+        Object actual = unit.transform( input );
 
         JoltTestUtil.runDiffy( "failed Sortr call.", expected, actual );
 
@@ -127,59 +139,51 @@ public class ChainrTest {
     }
 
     @Test
-    public void process_itCallsDelegatr()
-            throws JoltException {
-        List<Map<String,Object>> spec = this.newSpec();
-        spec.add( this.newDelegatrActivity( GoodDelegate.class ) );
+    public void process_itCallsDelegatr() {
+        List<Map<String,Object>> spec = this.newChainrSpec();
+        Object delegateSpec = new HashMap();
+        spec.add( this.newDelegatrActivity( GoodDelegate.class, delegateSpec ) );
         Object input = new Object();
 
-        Chainr unit = new Chainr();
-        DelegationResult actual = (DelegationResult) unit.process( input, spec );
+        Chainr unit = new Chainr( spec );
+        DelegationResult actual = (DelegationResult) unit.transform( input );
 
         AssertJUnit.assertEquals( input, actual.input );
-        AssertJUnit.assertEquals( spec.get( 0 ), actual.pipelineEntry );
+        AssertJUnit.assertEquals( delegateSpec, actual.spec );
     }
 
     @DataProvider
-    public Object[][] failureCases() {
+    public Object[][] failureSpecCases() {
         return new Object[][] {
                 { null },
                 { "foo" },
                 { this.newActivity( null ) },
                 { this.newActivity( "pants" ) },
-                { this.newDelegatrActivity( ExplodingDelegate.class ) },
         };
     }
 
-    @Test(dataProvider = "failureCases", expectedExceptions = JoltException.class)
-    public void process_itBlowsUp(Object spec)
-            throws JoltException {
-        Object input = new Object();
-        Chainr unit = new Chainr();
-        unit.process( input, spec );
+    @Test(dataProvider = "failureSpecCases", expectedExceptions = SpecException.class)
+    public void process_itBlowsUp_fromSpec(Object spec) {
+        new Chainr( spec );
+        AssertJUnit.fail("Should have failed during spec initialization.");
     }
 
     @DataProvider
-    public Object[][] failureCases2() {
+    public Object[][] failureTransformCases() {
         return new Object[][] {
-            { "shift" },
-            { "remove" },
-            { "default" },
-            { "sort" }
+            { this.newShiftrDelegatrSpec( ExplodingDelegate.class, null ) }
         };
     }
 
-    @Test(dataProvider = "failureCases2", expectedExceptions = JoltException.class)
-    public void process_itBlowsUp_reachForTestCoverage(String operation)
-            throws JoltException {
-        Object input = new Object();
-        Chainr unit = new Chainr();
-
-        List<Map<String,Object>> retvalue = this.newSpec();
-        retvalue.add( this.newFailActivity( operation, new Object() ) );
-
-        unit.process( input, retvalue );
+    @Test(dataProvider = "failureTransformCases", expectedExceptions = TransformException.class)
+    public void process_itBlowsUp_fromTransorm(Object spec) {
+        Chainr unit = new Chainr( spec );
+        unit.transform( new HashMap() );
+        AssertJUnit.fail("Should have failed during transform.");
     }
+
+
+
 
     @DataProvider
     public Object[][] getTestCaseNames() {
@@ -189,15 +193,15 @@ public class ChainrTest {
     }
 
     @Test(dataProvider = "getTestCaseNames")
-    public void runTestCases(String testCaseName, boolean sorted ) throws IOException, JoltException {
+    public void runTestCases(String testCaseName, boolean sorted ) throws IOException {
 
         String testPath = "/json/chainr/"+testCaseName;
         Object input = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( testPath + "/input.json" ) );
         Object spec = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( testPath + "/spec.json" ) );
         Object expected = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( testPath + "/output.json" ) );
 
-        Chainr chainr = new Chainr();
-        Object actual = chainr.process( input, spec );
+        Chainr unit = new Chainr( spec );
+        Object actual = unit.transform( input );
 
         JoltTestUtil.runDiffy( "failed case " + testPath, expected, actual );
 

@@ -1,6 +1,7 @@
 package com.bazaarvoice.jolt.defaultr;
 
 import com.bazaarvoice.jolt.Defaultr;
+import com.bazaarvoice.jolt.exception.SpecException;
 
 import java.util.Comparator;
 
@@ -12,7 +13,7 @@ public enum OPS {
         if ( key.contains( Defaultr.WildCards.STAR ) ){
 
             if ( ! Defaultr.WildCards.STAR.equals( key ) ) {
-                throw new IllegalArgumentException("Defaultr key " + key + " is invalid.  * keys can only contain *, and no other characters." );
+                throw new SpecException("Defaultr key " + key + " is invalid.  * keys can only contain *, and no other characters." );
             }
 
             return STAR;
@@ -56,7 +57,7 @@ public enum OPS {
             }
 
             // both are ORs, should never get here
-            throw new IllegalArgumentException( "Someone has added an op type without changing this method." );
+            throw new IllegalStateException( "Someone has added an op type without changing this method." );
         }
     }
 }

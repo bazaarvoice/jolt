@@ -1,11 +1,12 @@
 package com.bazaarvoice.jolt;
 
 import com.bazaarvoice.jolt.defaultr.Key;
+import com.bazaarvoice.jolt.exception.SpecException;
+import com.bazaarvoice.jolt.exception.TransformException;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Defaultr is a kind of JOLT transform that applies default values in a non-destructive way.
@@ -151,7 +152,7 @@ import java.util.Set;
  * If it is an array, we treat the "root" level of the Defaultr spec, as if it were the child of an Array type Defaultr entry.
  * To force unambiguity, Defaultr throws an Exception if the input is null.
  */
-public class Defaultr implements Chainable {
+public class Defaultr implements SpecTransform {
 
     public interface WildCards {
         public static final String STAR = "*";
@@ -159,62 +160,67 @@ public class Defaultr implements Chainable {
         public static final String ARRAY = "[]";
     }
 
+    private Key mapRoot;
+    private Key arrayRoot;
+
     /**
-     * Applies a Defaultr transform for Chainr
+     * Configure an instance of Defaultr with a spec.
      *
-     * @param input the JSON object to transform
-     * @param operationEntry the JSON object from the Chainr spec containing
-     *  the rest of the details necessary to carry out the transform (specifically,
-     *  in this case, a defaultr spec)
-     * @return the output object with defaults applied to it
-     * @throws JoltException for a malformed spec or if there are issues
+     * @throws SpecException for a malformed spec or if there are issues
      */
-    @Override
-    public Object process( Object input, Map<String, Object> operationEntry ) throws JoltException {
-        Object spec = operationEntry.get( "spec" );
-        if (spec == null) {
-            throw new JoltException( "JOLT Defaultr expected a spec in its operation entry, but instead got: " + operationEntry.toString() );
+    public Defaultr( Object spec ) {
+
+        String rootKey = "root";
+
+        // Due to defaultr's array syntax, we can't actually express that we expect the top level of the defaultee to be an array, until we see the input.
+        //  Thus, in order to have parsed the spec so that we can perform many transforms, we create to specs, one where the root of the input
+        //   is a map, and the other where the root of the input is an array.
+        // TODO : Handle arrays better, maybe by having a parent reference in the keys, or ditch the feature of having input that is at top level an array
+
+        {
+            Map<String, Object> rootSpec = new LinkedHashMap<String, Object>();
+            rootSpec.put( rootKey, spec );
+            mapRoot = Key.parseSpec( rootSpec ).iterator().next();
         }
-        try {
-            return defaultr( spec, input);
-        }
-        catch( Exception e) {
-            throw new JoltException( e );
+
+        //  Thus we check the top level type of the input.
+        {
+            Map<String, Object> rootSpec = new LinkedHashMap<String, Object>();
+            rootSpec.put( rootKey + WildCards.ARRAY, spec );
+            try {
+                arrayRoot = Key.parseSpec( rootSpec ).iterator().next();
+            }
+            catch ( NumberFormatException nfe ) {
+                // this is fine, it means the top level spec has non numeric keys
+                //  if someone passes a top level array as input later we will error then
+            }
         }
     }
 
     /**
      * Top level standalone Defaultr method.
      *
-     * @param spec Defaultr spec
-     * @param defaultee Json object to have defaults applied to.  This will be modifed.
-     * @return the modifed defaultee
+     * @param input Json object to have defaults applied to.  This will be modifed.
+     * @return the modified input
      */
-    public Object defaultr( Object spec, Object defaultee ) {
+    @Override
+    public Object transform( Object input ) {
 
-        if ( defaultee == null ) {
+        if ( input == null ) {
             throw new IllegalArgumentException( "Defaultr needs to be passed a non-null input data to apply defaults to." );
         }
-        // TODO : Make copy of the defaultee?
 
-        // Due to defaultr's array syntax, we can't actually express that we expect the top level of the defaultee to be an
-        //  array.   Thus we check the top level type of the defaultee, and if null throw an exception (done above).
-        String rootKey = "root";
-        if ( defaultee instanceof List ) {
-            // Create a fake root string entry as an Array, so that proper array sizing logic will happen during the DefaultrKey.parseSpec method.
-            rootKey += WildCards.ARRAY;
+        // TODO : Make copy of the defaultee or like shiftr create a new output object
+        if ( input instanceof List ) {
+            if  ( arrayRoot == null ) {
+                throw new TransformException( "The Spec provided can not handle input that is a top level Json Array." );
+            }
+            arrayRoot.applyChildren( input );
+        }
+        else if( input instanceof Map ) {
+            mapRoot.applyChildren( input );
         }
 
-        // Setup to call the recursive method
-        Map<String, Object> rootedSpec = new LinkedHashMap<String, Object>();
-        rootedSpec.put( rootKey, spec );
-
-        Set<Key> rootedKeyedSpec = Key.parseSpec( rootedSpec );
-        Key root = rootedKeyedSpec.iterator().next();
-
-        // Have the root key apply its children to the known to be non-null defaultee
-        root.applyChildren( defaultee );
-
-        return defaultee;
+        return input;
     }
 }

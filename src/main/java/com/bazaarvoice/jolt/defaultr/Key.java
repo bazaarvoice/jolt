@@ -1,6 +1,7 @@
 package com.bazaarvoice.jolt.defaultr;
 
 import com.bazaarvoice.jolt.Defaultr;
+import com.bazaarvoice.jolt.exception.TransformException;
 
 import static com.bazaarvoice.jolt.defaultr.OPS.*;
 
@@ -89,7 +90,7 @@ public abstract class Key {
                 keyStrings = Collections.emptyList();
                 break;
             default :
-                throw new IllegalArgumentException( "Someone has added an op type without changing this method." );
+                throw new IllegalStateException( "Someone has added an op type without changing this method." );
         }
 
         // Spec is String -> Map   or   String -> Literal only
@@ -120,7 +121,7 @@ public abstract class Key {
     public void applyChildren( Object defaultee ) {
 
         if ( defaultee == null ) {
-            throw new IllegalArgumentException( "Defaultee should never be null when " +
+            throw new TransformException( "Defaultee should never be null when " +
                     "passed to the applyChildren method." );
         }
 

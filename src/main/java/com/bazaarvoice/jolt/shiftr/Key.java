@@ -1,6 +1,7 @@
 package com.bazaarvoice.jolt.shiftr;
 
 import com.bazaarvoice.jolt.common.Placr;
+import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.shiftr.Path.*;
 import com.bazaarvoice.jolt.shiftr.PathElement.*;
 
@@ -118,22 +119,22 @@ public class Key {
             }
         }
         else {
-            throw new IllegalArgumentException( "Invalid Shiftr spec RHS.  Should be map, string, or array of strings.  Key in question : " + spec );
+            throw new SpecException( "Invalid Shiftr spec RHS.  Should be map, string, or array of strings.  Key in question : " + spec );
         }
 
         // self check
         if ( pathElement instanceof AtPathElement && hasChildren ) {
-            throw new IllegalArgumentException( "@ Shiftr key, can not have children." );
+            throw new SpecException( "@ Shiftr key, can not have children." );
         }
         if ( pathElement instanceof DollarReferencePathElement && hasChildren ) {
-            throw new IllegalArgumentException( "$ Shiftr key, can not have children." );
+            throw new SpecException( "$ Shiftr key, can not have children." );
         }
     }
 
     private static DotNotationPath parseOutputDotNotation( Object rawObj ) {
 
         if ( ! ( rawObj instanceof String ) ) {
-            throw new IllegalArgumentException( "Invalid Shiftr spec RHS.  Should be a string or array of Strings.   Value in question : " + rawObj );
+            throw new SpecException( "Invalid Shiftr spec RHS.  Should be a string or array of Strings.   Value in question : " + rawObj );
         }
 
         String outputPathStr = (String) rawObj;
@@ -160,7 +161,7 @@ public class Key {
                 String canonicalString = key.pathElement.getCanonicalForm();
 
                 if ( actualKeys.contains( canonicalString ) ) {
-                    throw new IllegalArgumentException( "Duplicate canonical Shiftr key found : " + canonicalString );
+                    throw new SpecException( "Duplicate canonical Shiftr key found : " + canonicalString );
                 }
 
                 actualKeys.add( canonicalString );

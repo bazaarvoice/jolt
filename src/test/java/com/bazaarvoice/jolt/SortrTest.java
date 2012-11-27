@@ -6,7 +6,6 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +20,7 @@ public class SortrTest {
     }
 
     @Test(dataProvider = "getTestCaseNames")
-    public void runTestCases(String testCaseName)
-            throws IOException, JoltException {
+    public void runTestCases(String testCaseName) throws IOException {
 
         if ("".equals( testCaseName )) {
             return;
@@ -33,7 +31,7 @@ public class SortrTest {
         Map<String, Object> expected = (Map<String, Object>) JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/output.json" ) );
 
         Sortr sortr = new Sortr();
-        Map<String, Object> actual = (Map<String, Object>) sortr.sort( input );
+        Map<String, Object> actual = (Map<String, Object>) sortr.transform( input );
 
         JoltTestUtil.runDiffy( "Make sure it is still the same object : " + testPath, expected, actual );
 

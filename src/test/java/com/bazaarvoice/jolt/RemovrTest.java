@@ -25,8 +25,8 @@ public class RemovrTest {
         Object spec = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( testPath + "/spec.json" ) );
         Object expected = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( testPath + "/output.json" ) );
 
-        Removr removr = new Removr();
-        Object actual = removr.removr( spec, input );
+        Removr removr = new Removr( spec );
+        Object actual = removr.transform( input );
 
         JoltTestUtil.runDiffy( "failed case " + testPath, expected, actual );
     }
