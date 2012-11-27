@@ -47,6 +47,33 @@ public class JsonUtils {
         return json;
     }
 
+    /**
+     * Removes a key recursively from anywhere in a JSON document.
+     * NOTE: mutates its input.
+     *
+     * @param json the Jackson Object version of the JSON document
+     *              (contents changed by this call)
+     * @param keyToRemove the key to remove from the document
+     */
+    public static void removeRecursive(Object json, String keyToRemove) {
+        if ((json == null) || (keyToRemove == null)) {
+            return;
+        }
+        if (json instanceof Map) {
+            Map<String, Object> jsonMap = (Map<String, Object>) json;
+            jsonMap.remove( keyToRemove );
+            for (String subkey: jsonMap.keySet()) {
+                Object value = jsonMap.get( subkey );
+                removeRecursive( value, keyToRemove );
+            }
+        }
+        if (json instanceof List) {
+            for (Object value: (List) json) {
+                removeRecursive( value, keyToRemove );
+            }
+        }
+    }
+
     public static Map<String, Object> jsonToMap(String json)
             throws IOException {
         return jsonToMap( new ByteArrayInputStream( json.getBytes() ) );
