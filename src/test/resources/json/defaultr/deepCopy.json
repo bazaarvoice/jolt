@@ -1,0 +1,14 @@
+{
+    "input": {
+    },
+
+    "spec": {
+        "array": [],
+        "map": {}
+    },
+
+    "expected": {
+        "array": [],
+        "map": {}
+    }
+}

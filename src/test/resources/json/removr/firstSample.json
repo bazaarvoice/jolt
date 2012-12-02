@@ -1,0 +1,46 @@
+{
+    "input": {
+        "~emVersion": "2",
+        "authorId": "1234",
+        "campaignId": "1213123",
+        "contentLocale": "en_US",
+        "id": "123124",
+        "productId": "31231231",
+
+        "ipAddress": "192.168.1.100",
+        "lastModificationTime": "yesterday",
+        "submissionId": "34343",
+
+        "this": "stays",
+
+        "configured": {
+            "a": "b",
+            "c": "d"
+        }
+    },
+
+    "spec": {
+        "~emVersion": "",
+        "authorId": "",
+        "campaignId": "",
+        "contentLocale": "",
+        "id": "",
+        "productId": "",
+
+        "ipAddress": "",
+        "lastModificationTime": "",
+        "submissionId": "",
+
+        "configured": {
+            "c": ""
+        }
+    },
+
+    "expected": {
+        "this": "stays",
+
+        "configured": {
+            "a": "b"
+        }
+    }
+}

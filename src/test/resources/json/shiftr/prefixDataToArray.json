@@ -1,0 +1,22 @@
+{
+    "input": {
+        "photo-1-id": "327704",
+        "photo-1-url": "http://bob.com/0001/327704/photo.jpg"
+    },
+
+    "spec": {
+        "photo-1-id": "Photos[1].Id",
+        "photo-1-url": "Photos[1].Url"
+    },
+
+    "expected": {
+        "Photos": [
+            null ,
+            {
+                "Id": "327704",
+                "Url": "http://bob.com/0001/327704/photo.jpg"
+            }
+        ]
+    }
+
+}

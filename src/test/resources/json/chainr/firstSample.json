@@ -1,0 +1,77 @@
+{
+    "input": {
+        "rating": {
+            "primary": {
+                "value": 3,
+                "max": 5
+            },
+            "sharpness": {
+                "value": 5,
+                "max": 5
+            },
+            "quality": {
+                "value": 3,
+                "max": 7
+            }
+        }
+    },
+
+    "spec": [
+        {
+            "operation": "shift",
+            "spec": {
+                "rating": {
+                    "primary": {
+                        "value": "Rating",
+                        "max": "RatingRange"
+                    },
+                    "*": {
+                        "value": "SecondaryRatings.&1.Value",
+                        "max": "SecondaryRatings.&1.Range",
+                        "$": "SecondaryRatings.&.Id"
+                    }
+                }
+            }
+        },
+        {
+            "operation": "default",
+            "spec": {
+                "~z": "zz",
+                "~a": "aa",
+                "~id": "id",
+                "zz": "zz",
+                "~deleteme": "deleteme"
+            }
+        },
+        {
+            "operation": "remove",
+            "spec": {
+                "~deleteme": ""
+            }
+        },
+        {
+            "operation": "sort"
+        }
+    ],
+
+    "expected": {
+        "~a": "aa",
+        "~id": "id",
+        "~z": "zz",
+        "Rating": 3,
+        "RatingRange": 5,
+        "SecondaryRatings": {
+            "quality": {
+                "Id": "quality",
+                "Range": 7,
+                "Value": 3
+            },
+            "sharpness": {
+                "Id": "sharpness",
+                "Range": 5,
+                "Value": 5
+            }
+        },
+        "zz": "zz"
+    }
+}

@@ -3,9 +3,9 @@ package com.bazaarvoice.jolt;
 import com.bazaarvoice.jolt.exception.SpecException;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -92,9 +92,9 @@ public class Chainr implements SpecTransform {
             throw new SpecException(  "JOLT Chainr expects a JSON array of objects - Malformed spec." );
         }
 
-        transforms = new LinkedList<Transform>();
-
         List<Object> operations = (List<Object>) chainrSpec;
+        List<Transform> tf = new ArrayList<Transform>(operations.size());
+
         for ( int index = 0; index < operations.size(); index++ ) {
 
             Object chainrEntryObj = operations.get( index );
@@ -102,14 +102,14 @@ public class Chainr implements SpecTransform {
                 throw new SpecException( "JOLT Chainr expects a JSON array of objects - Malformed spec at index:" + index );
             }
 
-            Transform transform = getTransform( (Map<String,Object>) chainrEntryObj, index );
-
-            transforms.add( transform );
+            tf.add ( getTransform( (Map<String,Object>) chainrEntryObj, index ) );
         }
 
-        if ( transforms.isEmpty() ) {
+        if ( tf.isEmpty() ) {
             throw new SpecException( "JOLT Chainr passed an empty JSON array.");
         }
+
+        transforms = Collections.unmodifiableList( tf );
     }
 
     private Transform getTransform( Map<String,Object> chainrEntry, int chainrIndex ) {

@@ -1,0 +1,267 @@
+{
+    "input": {
+        "review": {
+            "id": [ "ref.self.id", "text" ],
+            "authorid": [ "ref.author.id", "text" ],
+            "campaignid": [ "wholeText.campaignId", "text" ],
+
+            "categoryancestorid": [ "wholeText.BANANA", "text" ],
+
+            "contentlocale": [ "wholeText.contentLocale", "text" ],
+            "hascomments": [  "boolean.hasComments", "boolean" ],
+            "hasphotos": [  "boolean.hasPhotos", "boolean" ],
+            "hastags": [ "boolean.hasTags", "boolean" ],
+            "hasvideos": [  "boolean.hasVideos", "boolean" ],
+            "helpfulness": [  "double.helpfulness", "double" ],
+            "isfeatured": [ "boolean.featured", "boolean" ],
+            "isratingsonly": [ "boolean.ratingsOnly", "boolean" ],
+            "isrecommended": [ "boolean.recommended", "boolean" ],
+            "issubjectactive": [ "boolean.subjectActive", "boolean" ],
+            "issyndicated": [ "boolean.syndicated", "boolean" ],
+            "lastmoderatedtime": [  "datetime.lastmoderatedtime", "datetime" ],
+            "lastmodificationtime": [ "datetime.lastModificationTime", "datetime" ],
+
+            "moderatorcode": [ "BANANA.BANANA", "text" ],
+
+            "productid": [ "wholeText.subjectExternalId", "text" ],
+            "rating": [ "rating.primary", "integer" ],
+            "submissionid": [ "wholeText.submissionId", "text" ],
+            "submissiontime": [ "datetime.submissionTime", "datetime" ],
+            "totalcommentcount": [ "integer.totalCommentCount", "integer" ],
+            "totalfeedbackcount": [ "integer.totalFeedbackCount", "integer" ],
+            "totalnegativefeedbackcount": [ "integer.totalNegativeFeedbackCount", "integer" ],
+            "totalpositivefeedbackcount": [ "integer.totalPositiveFeedbackCount", "integer" ],
+
+            "userlocation": [ "wholeText.geographicOrigin", "text" ],
+
+            "additionalfield": [ "field.&", "text" ],
+            "contextdatavalue": [ "cdv.&", "text" ],
+            "tag": [ "tag.&", "text" ],
+            "secondaryrating": [ "rating.&", "integer" ]
+        },
+        "product": {
+            "id": [ "wholeText.externalId", "text" ],
+            "averageoverallrating": [ "double.averagePrimaryRating", "double" ],
+            "categoryancestorid": [ "BANANA", "BANANA" ],
+            "categoryid": [ "wholeText.categoryExternalId", "text" ],
+            "isactive": [ "boolean.active", "boolean" ],
+            "isdisabled": [ "boolean.disabled", "boolean" ],
+            "lastanswertime": [ "datetime.lastAnswerTime", "datetime" ],
+            "lastquestiontime": [ "datetime.lastQuestionTime", "datetime" ],
+            "lastreviewtime": [ "datetime.lastReviewTime", "datetime" ],
+            "laststorytime": [ "datetime.lastReviewTime", "datetime" ],
+            "name": [ "wholeText.name", "text" ],
+            "ratingsonlyreviewcount": [ "integer.ratingsOnlyReviewCount", "integer" ],
+            "totalanswercount": [ "integer.totalAnswerCount", "integer" ],
+            "totalquestioncount": [ "integer.totalQuestionCount", "integer" ],
+            "totalreviewcount": [ "integer.totalReviewCount", "integer" ],
+            "totalstorycount": [ "integer.totalStoryCount", "integer" ]
+        }
+    },
+
+
+    "spec": {
+        "*": {
+            "*": {
+                "0": "&2.&1.bucketFieldName",
+                "1": "&2.&1.searchType"
+            }
+        }
+    },
+
+
+    "expected": {
+        "product": {
+            "totalquestioncount": {
+                "bucketFieldName": "integer.totalQuestionCount",
+                "searchType": "integer"
+            },
+            "isdisabled": {
+                "bucketFieldName": "boolean.disabled",
+                "searchType": "boolean"
+            },
+            "ratingsonlyreviewcount": {
+                "bucketFieldName": "integer.ratingsOnlyReviewCount",
+                "searchType": "integer"
+            },
+            "lastreviewtime": {
+                "bucketFieldName": "datetime.lastReviewTime",
+                "searchType": "datetime"
+            },
+            "categoryancestorid": {
+                "bucketFieldName": "BANANA",
+                "searchType": "BANANA"
+            },
+            "id": {
+                "bucketFieldName": "wholeText.externalId",
+                "searchType": "text"
+            },
+            "categoryid": {
+                "bucketFieldName": "wholeText.categoryExternalId",
+                "searchType": "text"
+            },
+            "isactive": {
+                "bucketFieldName": "boolean.active",
+                "searchType": "boolean"
+            },
+            "name": {
+                "bucketFieldName": "wholeText.name",
+                "searchType": "text"
+            },
+            "totalstorycount": {
+                "bucketFieldName": "integer.totalStoryCount",
+                "searchType": "integer"
+            },
+            "totalreviewcount": {
+                "bucketFieldName": "integer.totalReviewCount",
+                "searchType": "integer"
+            },
+            "averageoverallrating": {
+                "bucketFieldName": "double.averagePrimaryRating",
+                "searchType": "double"
+            },
+            "lastanswertime": {
+                "bucketFieldName": "datetime.lastAnswerTime",
+                "searchType": "datetime"
+            },
+            "lastquestiontime": {
+                "bucketFieldName": "datetime.lastQuestionTime",
+                "searchType": "datetime"
+            },
+            "laststorytime": {
+                "bucketFieldName": "datetime.lastReviewTime",
+                "searchType": "datetime"
+            },
+            "totalanswercount": {
+                "bucketFieldName": "integer.totalAnswerCount",
+                "searchType": "integer"
+            }
+        },
+        "review": {
+            "moderatorcode": {
+                "bucketFieldName": "BANANA.BANANA",
+                "searchType": "text"
+            },
+            "totalnegativefeedbackcount": {
+                "bucketFieldName": "integer.totalNegativeFeedbackCount",
+                "searchType": "integer"
+            },
+            "tag": {
+                "bucketFieldName": "tag.&",
+                "searchType": "text"
+            },
+            "isratingsonly": {
+                "bucketFieldName": "boolean.ratingsOnly",
+                "searchType": "boolean"
+            },
+            "userlocation": {
+                "bucketFieldName": "wholeText.geographicOrigin",
+                "searchType": "text"
+            },
+            "totalfeedbackcount": {
+                "bucketFieldName": "integer.totalFeedbackCount",
+                "searchType": "integer"
+            },
+            "lastmodificationtime": {
+                "bucketFieldName": "datetime.lastModificationTime",
+                "searchType": "datetime"
+            },
+            "totalpositivefeedbackcount": {
+                "bucketFieldName": "integer.totalPositiveFeedbackCount",
+                "searchType": "integer"
+            },
+            "helpfulness": {
+                "bucketFieldName": "double.helpfulness",
+                "searchType": "double"
+            },
+            "isrecommended": {
+                "bucketFieldName": "boolean.recommended",
+                "searchType": "boolean"
+            },
+            "id": {
+                "bucketFieldName": "ref.self.id",
+                "searchType": "text"
+            },
+            "secondaryrating": {
+                "bucketFieldName": "rating.&",
+                "searchType": "integer"
+            },
+            "contentlocale": {
+                "bucketFieldName": "wholeText.contentLocale",
+                "searchType": "text"
+            },
+            "hasvideos": {
+                "bucketFieldName": "boolean.hasVideos",
+                "searchType": "boolean"
+            },
+            "productid": {
+                "bucketFieldName": "wholeText.subjectExternalId",
+                "searchType": "text"
+            },
+            "authorid": {
+                "bucketFieldName": "ref.author.id",
+                "searchType": "text"
+            },
+            "contextdatavalue": {
+                "bucketFieldName": "cdv.&",
+                "searchType": "text"
+            },
+            "issyndicated": {
+                "bucketFieldName": "boolean.syndicated",
+                "searchType": "boolean"
+            },
+            "hascomments": {
+                "bucketFieldName": "boolean.hasComments",
+                "searchType": "boolean"
+            },
+            "additionalfield": {
+                "bucketFieldName": "field.&",
+                "searchType": "text"
+            },
+            "submissionid": {
+                "bucketFieldName": "wholeText.submissionId",
+                "searchType": "text"
+            },
+            "hastags": {
+                "bucketFieldName": "boolean.hasTags",
+                "searchType": "boolean"
+            },
+            "totalcommentcount": {
+                "bucketFieldName": "integer.totalCommentCount",
+                "searchType": "integer"
+            },
+            "isfeatured": {
+                "bucketFieldName": "boolean.featured",
+                "searchType": "boolean"
+            },
+            "categoryancestorid": {
+                "bucketFieldName": "wholeText.BANANA",
+                "searchType": "text"
+            },
+            "issubjectactive": {
+                "bucketFieldName": "boolean.subjectActive",
+                "searchType": "boolean"
+            },
+            "submissiontime": {
+                "bucketFieldName": "datetime.submissionTime",
+                "searchType": "datetime"
+            },
+            "hasphotos": {
+                "bucketFieldName": "boolean.hasPhotos",
+                "searchType": "boolean"
+            },
+            "rating": {
+                "bucketFieldName": "rating.primary",
+                "searchType": "integer"
+            },
+            "campaignid": {
+                "bucketFieldName": "wholeText.campaignId",
+                "searchType": "text"
+            },
+            "lastmoderatedtime": {
+                "bucketFieldName": "datetime.lastmoderatedtime",
+                "searchType": "datetime"
+            }
+        }
+    }
+}

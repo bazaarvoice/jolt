@@ -1,7 +1,0 @@
-{
-    "rating-primary": "Rating",
-    "rating-range-primary": "RatingRange",
-
-    "rating-*" : "SecondaryRatings.&(0,1).Value",
-    "rating-range-*" : "SecondaryRatings.&(0,1).ValueRange"
-}

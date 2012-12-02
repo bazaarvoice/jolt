@@ -1,0 +1,51 @@
+{
+    "input": {
+        "photos": [
+            {
+                "url": "http://slashdot.org"
+            },
+            {
+                "url": "http://bazaarvoice.com",
+                "caption": "Review all the things."
+            }
+        ]
+    },
+
+    "spec": {
+        "photos[]": {
+            "*": {
+                "url": "http://default.com",
+                "caption": "Default Caption"
+            },
+            "0|3": {
+                "caption": "Or-ed caption."
+            },
+            "3": {
+                "url": "http://tuna.com",
+                "caption": "The Best"
+            }
+        }
+    },
+
+    "expected": {
+        "photos": [
+            {
+                "url": "http://slashdot.org",
+                "caption": "Or-ed caption."
+            },
+            {
+                "url": "http://bazaarvoice.com",
+                "caption": "Review all the things."
+            },
+            {
+                "url": "http://default.com",
+                "caption": "Default Caption"
+            },
+            {
+                "url": "http://tuna.com",
+                "caption": "The Best"
+            }
+        ]
+    }
+
+}

@@ -1,8 +1,0 @@
-{
-    "rating": {
-        "*": {
-           "*" : "ratings.&1.&0",
-           "&0" : "ratings.&1.label"
-        }
-    }
-}

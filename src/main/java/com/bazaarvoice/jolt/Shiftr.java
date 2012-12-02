@@ -1,11 +1,10 @@
 package com.bazaarvoice.jolt;
 
-import com.bazaarvoice.jolt.common.Placr;
-import com.bazaarvoice.jolt.shiftr.Key;
-import com.bazaarvoice.jolt.shiftr.Path;
+import com.bazaarvoice.jolt.exception.SpecException;
+import com.bazaarvoice.jolt.shiftr.WalkedPath;
+import com.bazaarvoice.jolt.shiftr.spec.CompositeSpec;
 
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -410,8 +409,8 @@ import java.util.Map;
  */
 public class Shiftr implements SpecTransform {
 
-    private static String ROOT_KEY = "root";
-    private Key rootKey = null;
+    public static final String ROOT_KEY = "root";
+    private final CompositeSpec rootSpec;
 
     /**
      * Initialize a Shiftr transform with a Spec.
@@ -420,12 +419,14 @@ public class Shiftr implements SpecTransform {
      */
     public Shiftr( Object spec ) {
 
-        // Setup to call the recursive method
-        Map<String, Object> rootedSpec = new LinkedHashMap<String, Object>();
-        rootedSpec.put( ROOT_KEY, spec );
+        if ( spec == null ){
+            throw new SpecException( "Shiftr expected a spec of Map type, got 'null'." );
+        }
+        if ( ! ( spec instanceof Map ) ) {
+            throw new SpecException( "Shiftr expected a spec of Map type, got " + spec.getClass().getSimpleName() );
+        }
 
-        List<Key> rootedKeyedSpec = Key.parseSpec(rootedSpec);
-        rootKey = rootedKeyedSpec.get(0);
+        rootSpec = new CompositeSpec( ROOT_KEY, (Map<String, Object>) spec );
     }
 
 
@@ -440,9 +441,9 @@ public class Shiftr implements SpecTransform {
     @Override
     public Object transform( Object input ) {
 
-        Map<String,Object> output = new LinkedHashMap<String,Object>();
-        rootKey.applyChildren( ROOT_KEY, input, new Path.LiteralPath(), output );
+        Map<String,Object> output = new HashMap<String,Object>();
+        rootSpec.apply( ROOT_KEY, input, new WalkedPath(), output );
 
-        return output.get( Placr.OUTPUT_PREFIX_KEY );
+        return output.get( ROOT_KEY );
     }
 }

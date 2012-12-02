@@ -4,6 +4,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class RemovrTest {
 
@@ -15,15 +16,14 @@ public class RemovrTest {
     }
 
     @Test(dataProvider = "getTestCaseNames")
-    public void runTestCases(String testCaseName)
-            throws IOException {
-        if ("".equals( testCaseName )) {
-            return;
-        }
+    public void runTestCases(String testCaseName) throws IOException {
+
         String testPath = "/json/removr/" + testCaseName;
-        Object input = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( testPath + "/input.json" ) );
-        Object spec = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( testPath + "/spec.json" ) );
-        Object expected = JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( testPath + "/output.json" ) );
+        Map<String, Object> testUnit = (Map<String, Object>) JsonUtils.jsonToObject( Removr.class.getResourceAsStream( testPath + ".json" ) );
+
+        Object input = testUnit.get( "input" );
+        Object spec = testUnit.get( "spec" );
+        Object expected = testUnit.get( "expected" );
 
         Removr removr = new Removr( spec );
         Object actual = removr.transform( input );

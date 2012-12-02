@@ -1,0 +1,15 @@
+{
+    "input": {
+        "Photos": [ "AAA.jpg", "BBB.jpg" ]
+    },
+
+    "spec": {
+        "Photos": {
+            "1": "photo-&-url"
+        }
+    },
+
+    "expected": {
+        "photo-1-url": "BBB.jpg"
+    }
+}
