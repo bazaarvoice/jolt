@@ -1,0 +1,27 @@
+package com.bazaarvoice.jolt.shiftr.pathelement;
+
+import com.bazaarvoice.jolt.exception.SpecException;
+import com.bazaarvoice.jolt.shiftr.WalkedPath;
+
+public class AtPathElement extends PathElement {
+    public AtPathElement( String key ) {
+        super(key);
+
+        if ( ! "@".equals( key ) ) {
+            throw new SpecException( "'References Input' key '@', can only be a single '@'.  Offending key : " + key );
+        }
+    }
+
+    public String evaluate( WalkedPath walkedPath ) {
+        throw new UnsupportedOperationException("Don't call evaluate on the '@'");
+    }
+
+    public LiteralPathElement match( String dataKey, WalkedPath walkedPath ) {
+        return walkedPath.lastElement();  // copy what our parent was so that write keys of &0 and &1 both work.
+    }
+
+    @Override
+    public String getCanonicalForm() {
+        return "@";
+    }
+}

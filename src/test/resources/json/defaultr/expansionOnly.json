@@ -1,0 +1,93 @@
+{
+    "input": {
+    },
+
+    "spec": {
+        "Rating": 3,
+        "RatingRange": 5,
+        "SecondaryRatings": {
+            "quality": {
+                "Range": 10,
+                "Value": 6,
+                "Id": "quality",
+                "DisplayType": "SLIDER"
+            },
+            "sharpness": {
+                "Value": 4,
+                "Id": "sharpness",
+                "DisplayType": "PIXELS"
+            },
+            "value": {
+                "Id": "value",
+                "Value": 4
+            },
+            "totallyDefault": {
+                "Id": "totallyDefault",
+                "Range": 3,
+                "Value": 2
+            },
+
+            "quality|value": {
+                "Range": 7,
+                "MaxLabel": "Great",
+                "MinLabel": "Terrible",
+                "DisplayType": "NORMAL"
+            },
+            "*": {
+                "Range": 5,
+                "ValueLabel": null,
+                "Label": null,
+                "MaxLabel": "High",
+                "MinLabel": "Low",
+                "DisplayType": "DEFAULT"
+            }
+        }
+    },
+
+    "expected": {
+        "Rating": 3,
+        "RatingRange": 5,
+        "SecondaryRatings": {
+            "quality": {
+                "Range": 10,
+                "Value": 6,
+                "Id": "quality",
+                "ValueLabel": null,
+                "Label": null,
+                "MaxLabel": "Great",
+                "MinLabel": "Terrible",
+                "DisplayType": "SLIDER"
+            },
+            "sharpness": {
+                "Range": 5,
+                "Value": 4,
+                "Id": "sharpness",
+                "ValueLabel": null,
+                "Label": null,
+                "MaxLabel": "High",
+                "MinLabel": "Low",
+                "DisplayType": "PIXELS"
+            },
+            "value": {
+                "Range": 7,
+                "Value": 4,
+                "Id": "value",
+                "ValueLabel": null,
+                "Label": null,
+                "MaxLabel": "Great",
+                "MinLabel": "Terrible",
+                "DisplayType": "NORMAL"
+            },
+            "totallyDefault": {
+                "Range": 3,
+                "Value": 2,
+                "Id": "totallyDefault",
+                "ValueLabel": null,
+                "Label": null,
+                "MaxLabel": "High",
+                "MinLabel": "Low",
+                "DisplayType": "DEFAULT"
+            }
+        }
+    }
+}

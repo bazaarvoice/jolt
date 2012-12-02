@@ -1,0 +1,40 @@
+{
+    "input": {
+        "rating": {
+            "primary": {
+                "value": 3,
+                "max": 5
+            },
+            "quality": {
+                "value": 3,
+                "max": 7
+            }
+        }
+    },
+
+    "spec": {
+        "*": {
+            "*": {
+                "label[]": {
+                    "1": "defaultLabel",
+                    "2": [ 1, "tuna", 3, "marlin" ]
+                }
+            }
+        }
+    },
+
+    "expected": {
+        "rating": {
+            "primary": {
+                "value": 3,
+                "max": 5,
+                "label": [ null, "defaultLabel", [ 1, "tuna", 3, "marlin" ] ]
+            },
+            "quality": {
+                "value": 3,
+                "max": 7,
+                "label": [ null, "defaultLabel", [ 1, "tuna", 3, "marlin" ] ]
+            }
+        }
+    }
+}

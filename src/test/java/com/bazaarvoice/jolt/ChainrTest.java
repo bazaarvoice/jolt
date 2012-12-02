@@ -86,9 +86,12 @@ public class ChainrTest {
 
     @Test
     public void process_itCallsShiftr() throws IOException {
-        Object input = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/shiftr/queryMappingXform/input.json" ) );
-        Object expected = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/shiftr/queryMappingXform/output.json" ) );
-        Object shiftrSpec = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/shiftr/queryMappingXform/spec.json" ) );
+        Map<String, Object> testUnit = (Map<String, Object>) JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/shiftr/queryMappingXform.json" ) );
+
+        Object input = testUnit.get( "input" );
+        Object shiftrSpec = testUnit.get( "spec" );
+        Object expected = testUnit.get( "expected" );
+
         Object chainrSpec = this.newShiftrChainrSpec( shiftrSpec );
 
         Chainr unit = new Chainr( chainrSpec );
@@ -99,9 +102,12 @@ public class ChainrTest {
 
     @Test
     public void process_itCallsDefaultr() throws IOException {
-        Object input = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/defaultr/firstSample/input.json" ) );
-        Object expected = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/defaultr/firstSample/output.json" ) );
-        Object defaultrSpec = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/defaultr/firstSample/spec.json" ) );
+        Map<String, Object> testUnit = (Map<String, Object>) JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/defaultr/firstSample.json" ) );
+
+        Object input = testUnit.get( "input" );
+        Object defaultrSpec = testUnit.get( "spec" );
+        Object expected = testUnit.get( "expected" );
+
         Object chainrSpec = this.newShiftrDefaultrSpec( defaultrSpec );
 
         Chainr unit = new Chainr( chainrSpec );
@@ -112,9 +118,12 @@ public class ChainrTest {
 
     @Test
     public void process_itCallsRemover() throws IOException {
-        Object input = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/removr/firstSample/input.json" ) );
-        Object expected = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/removr/firstSample/output.json" ) );
-        Object removrSpec = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/removr/firstSample/spec.json" ) );
+        Map<String, Object> testUnit = (Map<String, Object>) JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/removr/firstSample.json" ) );
+
+        Object input = testUnit.get( "input" );
+        Object removrSpec = testUnit.get( "spec" );
+        Object expected = testUnit.get( "expected" );
+
         Object chainrSpec = this.newShiftrRemovrSpec( removrSpec );
 
         Chainr unit = new Chainr( chainrSpec );
@@ -194,11 +203,12 @@ public class ChainrTest {
 
     @Test(dataProvider = "getTestCaseNames")
     public void runTestCases(String testCaseName, boolean sorted ) throws IOException {
+        String testPath = "/json/chainr/" + testCaseName;
+        Map<String, Object> testUnit = (Map<String, Object>) JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( testPath + ".json" ) );
 
-        String testPath = "/json/chainr/"+testCaseName;
-        Object input = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( testPath + "/input.json" ) );
-        Object spec = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( testPath + "/spec.json" ) );
-        Object expected = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( testPath + "/output.json" ) );
+        Object input = testUnit.get( "input" );
+        Object spec = testUnit.get( "spec" );
+        Object expected = testUnit.get( "expected" );
 
         Chainr unit = new Chainr( spec );
         Object actual = unit.transform( input );

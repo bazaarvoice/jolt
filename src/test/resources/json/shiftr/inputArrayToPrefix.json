@@ -1,0 +1,36 @@
+{
+    "input": {
+        "Photos": [
+            {
+                "Id": "327703",
+                "Caption": "TEST>> photo 1",
+                "Url": "http://bob.com/0001/327703/photo.jpg"
+            },
+            {
+                "Id": "327704",
+                "Caption": "TEST>> photo 2",
+                "Url": "http://bob.com/0001/327704/photo.jpg"
+            }
+        ]
+    },
+
+    "spec": {
+        "Photos": {
+            "*": {
+                "Id": "photo-&1-id",
+                "Caption": "photo-&1-caption",
+                "Url": "photo-&1-url"
+            }
+        }
+    },
+
+    "expected": {
+        "photo-0-id": "327703",
+        "photo-0-caption": "TEST>> photo 1",
+        "photo-0-url": "http://bob.com/0001/327703/photo.jpg",
+
+        "photo-1-id": "327704",
+        "photo-1-caption": "TEST>> photo 2",
+        "photo-1-url": "http://bob.com/0001/327704/photo.jpg"
+    }
+}

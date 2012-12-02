@@ -1,7 +1,0 @@
-{
-    "foo|z" : "loses due to z being after x alphabetically",
-    "foo|x" : "foo|x wins",
-
-    "x|bar|y" : "loses",
-    "z|bar" : "z|bar wins cause it is more specific"
-}

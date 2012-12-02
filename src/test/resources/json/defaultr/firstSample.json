@@ -1,0 +1,64 @@
+{
+    "input": {
+        "Rating": 3,
+        "SecondaryRatings": {
+            "quality": {
+                "Range": 7,
+                "Value": 3,
+                "Id": "quality"
+            },
+            "sharpness": {
+                "Value": 4,
+                "Id": "sharpness"
+            }
+        }
+    },
+
+    "spec": {
+        "RatingRange": 5,
+        "SecondaryRatings": {
+            "quality|value": {
+                "ValueLabel": null,
+                "Label": null,
+                "MaxLabel": "Great",
+                "MinLabel": "Terrible",
+                "DisplayType": "NORMAL"
+            },
+            "*": {
+                "Range": 5,
+                "ValueLabel": null,
+                "Label": null,
+                "MaxLabel": "High",
+                "MinLabel": "Low",
+                "DisplayType": "NORMAL"
+            }
+        }
+    },
+
+    "expected": {
+        "Rating": 3,
+        "RatingRange": 5,
+        "SecondaryRatings": {
+            "quality": {
+                "Range": 7,
+                "Value": 3,
+                "Id": "quality",
+                "ValueLabel": null,
+                "Label": null,
+                "MaxLabel": "Great",
+                "MinLabel": "Terrible",
+                "DisplayType": "NORMAL"
+            },
+            "sharpness": {
+                "Range": 5,
+                "Value": 4,
+                "Id": "sharpness",
+                "ValueLabel": null,
+                "Label": null,
+                "MaxLabel": "High",
+                "MinLabel": "Low",
+                "DisplayType": "NORMAL"
+            }
+        }
+    }
+}

@@ -1,0 +1,36 @@
+{
+    "input": {
+        "photos": [
+            {
+                "url": "http://slashdot.org"
+            },
+            {
+                "url": "http://bazaarvoice.com"
+            }
+        ]
+    },
+
+    "spec": {
+        "photos": {
+            "*": {
+                "url": "http://default.com",
+                "caption": "Default Caption"
+            },
+            "3": {
+                "url": "http://tuna.com",
+                "caption": "The Best"
+            }
+        }
+    },
+
+    "expected": {
+        "photos": [
+            {
+                "url": "http://slashdot.org"
+            },
+            {
+                "url": "http://bazaarvoice.com"
+            }
+        ]
+    }
+}

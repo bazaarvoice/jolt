@@ -1,0 +1,64 @@
+{
+    "input" : {
+        "Rating":1,
+        "RatingRange":5,
+        "SecondaryRatings":{
+            "RatingDimension3":{
+                "Value":1,
+                "ValueLabel":null,
+                "MaxLabel":null,
+                "Label":"Example of a wordy dimension label",
+                "Id":"RatingDimension3",
+                "ValueRange":5,
+                "MinLabel":null,
+                "DisplayType":"NORMAL"
+            },
+            "Price":{
+                "Value":2,
+                "ValueLabel":"Fair",
+                "MaxLabel":"Best price",
+                "Label":"Price",
+                "Id":"Price",
+                "ValueRange":7,
+                "MinLabel":"Price is too high",
+                "DisplayType":"SLIDER"
+            },
+            "Design":{
+                "Value":4,
+                "ValueLabel":null,
+                "MaxLabel":null,
+                "Label":"Design",
+                "Id":"Design",
+                "ValueRange":5,
+                "MinLabel":null,
+                "DisplayType":"NORMAL"
+            }
+        }
+    },
+
+    "spec" : {
+        "Rating" : "rating-primary",
+        "RatingRange" : "rating-range-primary",
+
+        "SecondaryRatings" : {
+            "*" : {
+                "Value" : "rating-&1",
+                "ValueRange" : "rating-range-&1"
+            }
+        }
+    },
+
+    "expected" : {
+        "rating-primary":1,
+        "rating-range-primary":5,
+
+        "rating-RatingDimension3": 1,
+        "rating-range-RatingDimension3": 5,
+
+        "rating-Price": 2,
+        "rating-range-Price": 7,
+
+        "rating-Design": 4,
+        "rating-range-Design": 5
+    }
+}

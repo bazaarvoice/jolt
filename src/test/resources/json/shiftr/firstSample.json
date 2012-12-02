@@ -1,0 +1,40 @@
+{
+    "input": {
+        "rating": {
+            "primary": {
+                "value": 3,
+                "max": 5
+            },
+            "quality": {
+                "value": 3,
+                "max": 7
+            }
+        }
+    },
+
+    "spec": {
+        "rating": {
+            "primary": {
+                "value": "Rating",
+                "max": "RatingRange"
+            },
+            "*": {
+                "value": "SecondaryRatings.&1.Value",
+                "max": "SecondaryRatings.&1.Range",
+                "$": "SecondaryRatings.&1.Id"
+            }
+        }
+    },
+
+    "expected": {
+        "Rating": 3,
+        "RatingRange": 5,
+        "SecondaryRatings": {
+            "quality": {
+                "Id": "quality",
+                "Value": 3,
+                "Range": 7
+            }
+        }
+    }
+}

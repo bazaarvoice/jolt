@@ -4,11 +4,11 @@ import com.bazaarvoice.jolt.JoltTestUtil;
 import com.bazaarvoice.jolt.JsonUtils;
 import com.bazaarvoice.jolt.Shiftr;
 import com.bazaarvoice.jolt.exception.SpecException;
-import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 public class ShiftrUnitTest {
@@ -30,9 +30,9 @@ public class ShiftrUnitTest {
             },
             {
                 "Or",
-                JsonUtils.jsonToMap("{ \"tuna|marlin\" : \"&-output\" }"),
+                JsonUtils.jsonToMap("{ \"tuna|marlin\" : \"&-write\" }"),
                 JsonUtils.jsonToMap("{ \"tuna\" : \"snapper\" }"),
-                JsonUtils.jsonToMap("{ \"tuna-output\" : \"snapper\" }")
+                JsonUtils.jsonToMap("{ \"tuna-write\" : \"snapper\" }")
             },
             {
                 "KeyRef",
@@ -42,7 +42,7 @@ public class ShiftrUnitTest {
                 JsonUtils.jsonToMap("{ \"match\" : [ \"a-match\", \"c-match\" ] }")
             },
             {
-                "Complex array output",
+                "Complex array write",
                 JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-*\" : \"tuna[&(1,1)].marlin[&(1,2)].&(0,1)\" } }"),
                 JsonUtils.jsonToMap("{ \"tuna-2-marlin-3\" : { \"rating-BBB\" : \"bar\" }," +
                                       "\"tuna-1-marlin-0\" : { \"rating-AAA\" : \"mahi\" } }"),
@@ -68,35 +68,51 @@ public class ShiftrUnitTest {
     @DataProvider
     public Object[][] badSpecs() throws IOException {
         return new Object[][] {
-                {
-                        "Bad @",
-                        JsonUtils.jsonToMap( "{ \"tuna-*-marlin-*\" : { \"rating-@\" : \"&(1,2).&.value\" } }" ),
-                },
-                {
-                        "RHS @",
-                        JsonUtils.jsonToMap( "{ \"tuna-*-marlin-*\" : { \"rating-*\" : \"&(1,2).@.value\" } }" ),
-                },
-                {
-                        "RHS *",
-                        JsonUtils.jsonToMap( "{ \"tuna-*-marlin-*\" : { \"rating-*\" : \"&(1,2).*.value\" } }" ),
-                },
-                {
-                        "RHS $",
-                        JsonUtils.jsonToMap( "{ \"tuna-*-marlin-*\" : { \"rating-*\" : \"&(1,2).$.value\" } }" ),
-                },
-                {
-                        "Two Arrays",
-                        JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-*\" : [ \"&(1,2).photos[&(0,1)]-subArray[&(1,2)].value\", \"foo\"] } }"),
-                },
-                {
-                        "Can't mix * and & in the same key",
-                        JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-&(1,2)-*\" : [ \"&(1,2).value\", \"foo\"] } }"),
-                }
+            {
+                    "Null Spec",
+                    null,
+            },
+            {
+                    "List Spec",
+                    new ArrayList<Object>(),
+            },
+            {
+                    "Empty spec",
+                    JsonUtils.jsonToMap( "{ }" ),
+            },
+            {
+                    "Empty sub-spec",
+                    JsonUtils.jsonToMap( "{ \"tuna\" : {} }" ),
+            },
+            {
+                    "Bad @",
+                    JsonUtils.jsonToMap( "{ \"tuna-*-marlin-*\" : { \"rating-@\" : \"&(1,2).&.value\" } }" ),
+            },
+            {
+                    "RHS @",
+                    JsonUtils.jsonToMap( "{ \"tuna-*-marlin-*\" : { \"rating-*\" : \"&(1,2).@.value\" } }" ),
+            },
+            {
+                    "RHS *",
+                    JsonUtils.jsonToMap( "{ \"tuna-*-marlin-*\" : { \"rating-*\" : \"&(1,2).*.value\" } }" ),
+            },
+            {
+                    "RHS $",
+                    JsonUtils.jsonToMap( "{ \"tuna-*-marlin-*\" : { \"rating-*\" : \"&(1,2).$.value\" } }" ),
+            },
+            {
+                    "Two Arrays",
+                    JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-*\" : [ \"&(1,2).photos[&(0,1)]-subArray[&(1,2)].value\", \"foo\"] } }"),
+            },
+            {
+                    "Can't mix * and & in the same key",
+                    JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-&(1,2)-*\" : [ \"&(1,2).value\", \"foo\"] } }"),
+            }
         };
     }
 
     @Test(dataProvider = "badSpecs", expectedExceptions = SpecException.class)
-    public void failureUnitTest(String testName, Map<String, Object> spec) {
+    public void failureUnitTest(String testName, Object spec) {
         new Shiftr( spec );
     }
 }

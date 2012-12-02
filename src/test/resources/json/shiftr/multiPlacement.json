@@ -1,0 +1,14 @@
+{
+    "input": {
+        "foo": "bar"
+    },
+
+    "spec": {
+        "foo": ["a", "b"]
+    },
+
+    "expected": {
+        "a": "bar",
+        "b": "bar"
+    }
+}

@@ -1,60 +1,50 @@
 package com.bazaarvoice.jolt;
 
-import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.exception.TransformException;
-import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ShiftrTest {
 
-    @Test(expectedExceptions = SpecException.class)
-    public void process_itBlowsUpForNoSpec() {
-        new Shiftr( null );
-    }
-
+    // TODO: test arrays better (wildcards test array could be in reverse order)
     @DataProvider
-    public Object[][] getTestCaseNames() {
+    public Object[][] getTestCaseUnits() {
         return new Object[][] {
-            {"declaredOutputArray"},
-            {"photosArray"},
-            {"inputArrayToPrefix"},
-            {"explicitArrayKey"},
-            {"prefixDataToArray"},
             {"bucketToPrefixSoup"},
-            {"prefixSoupToBuckets"},
+            {"declaredOutputArray"},
+            {"explicitArrayKey"},
             {"firstSample"},
-            {"singlePlacement"},
-            {"multiPlacement"},
-            {"wildcards"},
-            {"specialKeys"},
             {"identity"},
-            {"objectToArray"},
+            {"inputArrayToPrefix"},
             {"keyref"},
-            {"listKeys"},
             {"lhsAmpMatch"},
+            {"listKeys"},
+            {"multiPlacement"},
+            {"objectToArray"},
+            {"photosArray"},
+            {"prefixDataToArray"},
+            {"prefixSoupToBuckets"},
             {"queryMappingXform"},
+            {"singlePlacement"},
+            {"specialKeys"},
+            {"wildcards"},
             {"wildcardSelfAndRef"},
-            {""}
         };
     }
 
     // TODO: test arrays better (wildcards test array could be in reverse order)
 
-    @Test(dataProvider = "getTestCaseNames")
-    public void runTestCases(String testCaseName)
-            throws IOException {
-        if ("".equals( testCaseName )) {
-            return;
-        }
-        String testPath = "/json/shiftr/"+testCaseName;
-        Object input = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/input.json" ) );
-        Object spec = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/spec.json" ) );
-        Object expected = JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/output.json" ) );
+    @Test(dataProvider = "getTestCaseUnits")
+    public void runTestUnits(String testCaseName) throws IOException {
+
+        String testPath = "/json/shiftr/" + testCaseName;
+        Map<String, Object> testUnit = (Map<String, Object>) JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + ".json" ) );
+
+        Object input = testUnit.get( "input" );
+        Object spec = testUnit.get( "spec" );
+        Object expected = testUnit.get( "expected" );
 
         Shiftr shiftr = new Shiftr( spec );
         Object actual = shiftr.transform( input );

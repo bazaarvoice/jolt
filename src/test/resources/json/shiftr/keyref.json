@@ -1,0 +1,27 @@
+{
+    "input": {
+        "rating": {
+            "primary": {
+                "value": 3,
+                "max": 5
+            },
+            "quality": {
+                "value": 3,
+                "max": 7
+            }
+        }
+    },
+
+    "spec": {
+        "rating": {
+            "primary": {
+                "*": "&"
+            }
+        }
+    },
+
+    "expected": {
+        "value": 3,
+        "max": 5
+    }
+}
