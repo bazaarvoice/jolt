@@ -1,29 +1,62 @@
 package com.bazaarvoice.jolt.shiftr;
 
+import com.google.common.annotations.VisibleForTesting;
+import org.apache.commons.lang.StringUtils;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This class parses the & and Array syntax into useful programmatic constructs.
+ *
+ * Valid Syntax is :
+ *
+ *   Reference Syntax           &   &1   &(1)   &(1,1)
+ *   Array Wrapped References  [&] [&1] [&(1)] [&(1,1)]
+ *   Array only                 []
+ */
 public class Reference {
 
-    // Original Syntax            &   &1   &(1)   &1(1)    "\\&(\\d)?(\\((\\d)\\))?"
-    // New Syntax                 &   &1   &(1)   &(1,1)
-    // Note that this class handles array wrapped references as well
-    //  aka these are all valid  [&] [&1] [&(1)] [&(1,1)]
+    @VisibleForTesting
     public static Pattern refPattern = Pattern.compile( "\\&(\\d)?(\\((\\d)(,(\\d))?\\)?)?" );
 
-    boolean isArray = false;
-    int arrayIndex = -1;
-    int pathIndex = 0;
-    int keyGroup = 0;
+    public enum ReferenceType {
+        NOT_ARRAY, // Not an array; just an '&' ref
+        LITERAL_ARRAY_VALUE, // Array with literal array index value : 0 to infinity; no '&' ref
+        AUTO_EXPAND_ARRAY, // Array; no '&'
+                           // means we were told "[]" which means, just make sure there is an array there, and everytime it is accessed, just add to the array
+        CONTAINS_REF // Array and contains an '&' reference : &  &1  &(1)  &(1,1)
+    }
 
-    public static Reference newReference( boolean isArray, String refStr ) {
-        Reference ref = new Reference();
-        ref.isArray = isArray;
+    private final ReferenceType referenceType;
+    private final int arrayIndex;
 
-        if ( isArray && refStr.charAt(0) != '&' ) {
-            ref.arrayIndex = Integer.parseInt( refStr );
+    // these members track the "&" reference values if they exist
+    private final int pathIndex;
+    private final int keyGroup;
+
+    public Reference( boolean isArray, String refStr ) {
+
+        ReferenceType aT;
+        int aI = -1;
+        int pI = 0;
+        int kG = 0;
+
+        if ( isArray && StringUtils.isBlank( refStr ) ) {
+            aT = ReferenceType.AUTO_EXPAND_ARRAY;
+        }
+        else if ( isArray && StringUtils.isNotBlank( refStr ) && refStr.charAt(0) != '&' ) {
+            aT = ReferenceType.LITERAL_ARRAY_VALUE;
+            aI = Integer.parseInt( refStr );
         }
         else{
+
+            if ( isArray ) {
+                aT = ReferenceType.CONTAINS_REF;
+            }
+            else {
+                aT = ReferenceType.NOT_ARRAY;
+            }
 
             Matcher matcher = refPattern.matcher( refStr );
 
@@ -33,12 +66,12 @@ public class Reference {
                 String keyRef = matcher.group( 5 );
 
                 if ( pathRefSugar != null ) {
-                    ref.pathIndex = Integer.parseInt( pathRefSugar );
+                    pI = Integer.parseInt( pathRefSugar );
                 }
                 else if ( pathRefCanonical != null ) {
-                    ref.pathIndex = Integer.parseInt( pathRefCanonical );
+                    pI = Integer.parseInt( pathRefCanonical );
                     if ( keyRef != null ) {
-                        ref.keyGroup = Integer.parseInt( keyRef );
+                        kG = Integer.parseInt( keyRef );
                     }
                 }
             } else {
@@ -46,23 +79,62 @@ public class Reference {
             }
         }
 
-        return ref;
+        referenceType = aT;
+        arrayIndex = aI;
+        pathIndex = pI;
+        keyGroup = kG;
     }
 
+    public ReferenceType getReferenceType() {
+        return referenceType;
+    }
+
+    public int getArrayIndex() {
+        return arrayIndex;
+    }
+
+    public int getPathIndex() {
+        return pathIndex;
+    }
+
+    public int getKeyGroup() {
+        return keyGroup;
+    }
+
+    public boolean isArray() {
+        return referenceType != ReferenceType.NOT_ARRAY;
+    }
+
+    /**
+     * Builds the non-syntactic sugar / maximally expanded and unique form of this reference.
+     * @return canonical form : aka "&" -> "&(0,0)
+     */
     public String getCanonicalForm() {
 
         String innerRef;
 
-        if ( arrayIndex != -1 ) {
-            innerRef = Integer.toString( arrayIndex );
-        }
-        else {
-            innerRef = "&(" + pathIndex + "," + keyGroup + ")";
+        switch( referenceType ) {
+            case LITERAL_ARRAY_VALUE:
+                innerRef = Integer.toString( arrayIndex );
+                break;
+            case CONTAINS_REF:
+            case NOT_ARRAY:
+                innerRef = "&(" + pathIndex + "," + keyGroup + ")";
+                break;
+            case AUTO_EXPAND_ARRAY:
+                innerRef = "";
+                break;
+            default :
+                throw new IllegalStateException( "Reference.ReferenceType enum was expanded, without updating this logic." );
+                // break;  // no break here as it is unreachable
         }
 
-        if ( isArray ) {
+        if ( referenceType != ReferenceType.NOT_ARRAY ) {
             return "[" + innerRef + "]";
         }
         return innerRef;
     }
+
+
+
 }

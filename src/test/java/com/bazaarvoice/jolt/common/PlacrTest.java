@@ -29,6 +29,13 @@ public class PlacrTest {
             AssertJUnit.assertEquals( "2", matcher.group(2) );
         }
         {
+            Matcher matcher = pattern.matcher( "photos[]" );
+
+            AssertJUnit.assertTrue( matcher.find() );
+            AssertJUnit.assertEquals( "photos", matcher.group(1) );
+            AssertJUnit.assertNull( matcher.group(2) );
+        }
+        {
             Matcher matcher = pattern.matcher( "photos" );
 
             AssertJUnit.assertFalse( matcher.find() );
@@ -43,6 +50,18 @@ public class PlacrTest {
                 Arrays.asList( "tuna" ),
                 Arrays.asList( "a", "b" ),
                 JsonUtils.jsonToMap( "{ \"a\" : { \"b\" : \"tuna\" } }" )
+            },
+            {
+                "simple explicit array place",
+                Arrays.asList( "tuna" ),
+                Arrays.asList( "a", "b[]" ),
+                JsonUtils.jsonToMap( "{ \"a\" : { \"b\" : [ \"tuna\" ] } }" )
+            },
+            {
+                "simple explicit array place with sub",
+                Arrays.asList( "tuna" ),
+                Arrays.asList( "a", "b[]", "c" ),
+                JsonUtils.jsonToMap( "{ \"a\" : { \"b\" : [ { \"c\" : \"tuna\" } ] } }" )
             },
             {
                 "simple array place",

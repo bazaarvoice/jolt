@@ -1,0 +1,11 @@
+{
+   "listOfFooValues" : [ "bar" ],
+
+   "listOfTunaValues" : [ "A", "B" ],
+   "listOfTunaIds"    : [ "a", "b" ],
+
+   "sillyListOfTunaIds" : [ { "id" : "a" }, { "id" : "b" } ],
+
+   "listOfAxisValues" : [ "horizontal" ],
+   "listOfAxisIds"    : [ "x" ]
+}
