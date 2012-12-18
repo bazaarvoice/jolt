@@ -224,14 +224,14 @@ public abstract class PathElement {
 
                     if ( c == '[' ) {
                         refEnd = findEndOfArrayReference( key.substring( index ) );  // look ahead and find the closing ']'
-                        ref = Reference.newReference(true, key.substring(index + 1, index + refEnd) ); // chomp off the leading and trailing [ ]
+                        ref = new Reference(true, key.substring(index + 1, index + refEnd) ); // chomp off the leading and trailing [ ]
                         numArrayTokens++;
 
                         canonicalBuilder.append( ref.getCanonicalForm() );
                     }
                     else {
                         refEnd = findEndOfReference( key.substring( index + 1 ) );
-                        ref = Reference.newReference(false, key.substring(index, index + refEnd + 1) );
+                        ref = new Reference(false, key.substring(index, index + refEnd + 1) );
                         canonicalBuilder.append( ref.getCanonicalForm() );
                     }
                     tokens.add( ref );
@@ -255,10 +255,6 @@ public abstract class PathElement {
             if ( numArrayTokens == 1 ) {
                 Object lastToken = tokens.get( tokens.size() -1 );
                 if (lastToken instanceof String ) {
-                    throw new IllegalArgumentException( "Error in Key " + key + " : Array Reference has to be the last component of the key." );
-                }
-                Reference ref = (Reference) lastToken;
-                if ( ! ref.isArray ) {
                     throw new IllegalArgumentException( "Error in Key " + key + " : Array Reference has to be the last component of the key." );
                 }
             }
@@ -305,23 +301,41 @@ public abstract class PathElement {
                 }
                 else {
                     Reference ref = (Reference) token;
+                    String value;
 
-                    if ( ref.isArray ) {
-                        if ( ref.arrayIndex != -1 ) {
-                            output.append( "[" + ref.arrayIndex + "]");
-                        }
-                        else {
-                            LiteralPathElement pe = specInputPath.elementFromEnd( ref.pathIndex );
-                            String keyPart = pe.getSubKeyRef( ref.keyGroup );
-                            int index = Integer.parseInt( keyPart );
-                            output.append( "[" + index + "]");
-                        }
+                    switch( ref.getReferenceType() ) {
+                        case LITERAL_ARRAY_VALUE:
+                            value = Integer.toString( ref.getArrayIndex() );
+                            break;
+                        case CONTAINS_REF:
+                            LiteralPathElement lpe = specInputPath.elementFromEnd( ref.getPathIndex() );
+                            String keyPart = lpe.getSubKeyRef( ref.getKeyGroup() );
+                            try
+                            {
+                                int arrayIndex = Integer.parseInt( keyPart );
+                                value = keyPart;
+                            }
+                            catch ( NumberFormatException nfe ) {
+                                throw new RuntimeException( " Evaluating canonical ReferencePathElement:" + this.getCanonicalForm() + ", and got a non integer result for refernce:" + ref.getCanonicalForm() );
+                            }
+                            break;
+                        case NOT_ARRAY:
+                            LiteralPathElement literalPathElement = specInputPath.elementFromEnd( ref.getPathIndex() );
+                            value = literalPathElement.getSubKeyRef( ref.getKeyGroup() );
+                            break;
+                        case AUTO_EXPAND_ARRAY:
+                            value = "";
+                            break;
+                        default :
+                            throw new IllegalStateException( "Reference.ReferenceType enum was expanded, without updating this logic." );
+                            // break;  // no break here as it is unreachable
                     }
-                    else {
-                        LiteralPathElement pe = specInputPath.elementFromEnd( ref.pathIndex );
-                        String keyPart = pe.getSubKeyRef( ref.keyGroup );
-                        output.append( keyPart );
+
+                    if ( ref.isArray() ) {
+                        value = "[" + value + "]";
                     }
+
+                    output.append( value );
                 }
             }
 
@@ -360,7 +374,7 @@ public abstract class PathElement {
         @Override
         public String evaluate( Path<LiteralPathElement> specInputPath ) {
 
-            // Walk thru our tokens and build up a string
+            // Walk through our tokens and build up a string
             // Use the supplied Path to fill in our token References
             StringBuffer output = new StringBuffer();
 

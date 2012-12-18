@@ -1,0 +1,13 @@
+{
+    "foo-*": "listOfFooValues[]",
+
+    "tuna-*" : {
+        "@" : "listOfTunaValues[]",
+        "$(0,1)" : [ "listOfTunaIds[]", "sillyListOfTunaIds[].id" ]
+    },
+
+    "axis-*" : {
+        "@" : "listOfAxisValues[]",
+        "$(0,1)" : "listOfAxisIds[]"
+    }
+}

@@ -31,9 +31,9 @@ public class PathElementTest {
 
         AssertJUnit.assertTrue( refElement.tokens.get(1) instanceof Reference );
         Reference ref = (Reference) refElement.tokens.get(1);
-        AssertJUnit.assertFalse( ref.isArray );
-        AssertJUnit.assertEquals( 0, ref.pathIndex );
-        AssertJUnit.assertEquals( 1, ref.keyGroup );
+        AssertJUnit.assertFalse( ref.isArray() );
+        AssertJUnit.assertEquals( 0, ref.getPathIndex() );
+        AssertJUnit.assertEquals( 1, ref.getKeyGroup() );
     }
 
     @Test
@@ -52,9 +52,9 @@ public class PathElementTest {
         {
             AssertJUnit.assertTrue( refElement.tokens.get(1) instanceof Reference );
             Reference ref = (Reference) refElement.tokens.get(1);
-            AssertJUnit.assertFalse( ref.isArray );
-            AssertJUnit.assertEquals( 1, ref.pathIndex );
-            AssertJUnit.assertEquals( 0, ref.keyGroup );
+            AssertJUnit.assertFalse( ref.isArray() );
+            AssertJUnit.assertEquals( 1, ref.getPathIndex() );
+            AssertJUnit.assertEquals( 0, ref.getKeyGroup() );
         }
         {
             AssertJUnit.assertTrue( refElement.tokens.get(2) instanceof String );
@@ -63,9 +63,9 @@ public class PathElementTest {
         {
             AssertJUnit.assertTrue( refElement.tokens.get(3) instanceof Reference );
             Reference ref = (Reference) refElement.tokens.get(3);
-            AssertJUnit.assertTrue( ref.isArray );
-            AssertJUnit.assertEquals( 0, ref.pathIndex );
-            AssertJUnit.assertEquals( 1, ref.keyGroup );
+            AssertJUnit.assertTrue( ref.isArray() );
+            AssertJUnit.assertEquals( 0, ref.getPathIndex() );
+            AssertJUnit.assertEquals( 1, ref.getKeyGroup() );
         }
     }
 

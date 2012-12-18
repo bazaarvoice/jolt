@@ -21,6 +21,7 @@ public class ShiftrTest {
     @DataProvider
     public Object[][] getTestCaseNames() {
         return new Object[][] {
+            {"declaredOutputArray"},
             {"photosArray"},
             {"inputArrayToPrefix"},
             {"explicitArrayKey"},
