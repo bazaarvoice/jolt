@@ -14,6 +14,7 @@ public class DefaultrTest {
     @DataProvider
     public Object[][] getTestCaseNames() {
         return new Object[][] {
+            {"defaultNulls"},
             {"firstSample"},
             {"identity"},
             {"expansionOnly"},

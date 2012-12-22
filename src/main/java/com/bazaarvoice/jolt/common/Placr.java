@@ -6,7 +6,7 @@ import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -101,7 +101,7 @@ public class Placr {
                     // make sure there's a map there and drill down
                     // TODO Warn or Fail if next != Map
                     if ( ( next == null ) || !( next instanceof Map ) ) {  // we expect it to be there and a map
-                        next = new HashMap<String, Object>();              // make the missing map
+                        next = new LinkedHashMap<String, Object>();              // make the missing map
                         current.put( keyName, next );                      // put it in the output
                     }
 
@@ -154,12 +154,12 @@ public class Placr {
 
                     Map<String, Object> arrayNext = null;
                     if ( arrayIndex != -1 ) {
-                        arrayNext = (HashMap<String, Object>) ( (List<Object>) next ).get( arrayIndex );
+                        arrayNext = (Map<String, Object>) ( (List<Object>) next ).get( arrayIndex );
                     }
 
                     // See if there is any data in our target spot
                     if ( arrayNext == null ) {                              // nothing there
-                        arrayNext = new HashMap<String, Object>();          // make a new map
+                        arrayNext = new LinkedHashMap<String, Object>();          // make a new map
                         if ( arrayIndex != -1 ) {
                             ( (List<Object>) next ).set( arrayIndex, arrayNext );   // put it in the output at the explicit array index
                         }
