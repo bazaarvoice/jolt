@@ -1,7 +1,7 @@
 package com.bazaarvoice.jolt.shiftr;
 
-import com.bazaarvoice.jolt.common.Placr;
 import org.testng.AssertJUnit;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.regex.Matcher;
@@ -9,22 +9,25 @@ import java.util.regex.Pattern;
 
 public class RegexTest {
 
-    @Test
-    public void starPatternTest() {
+    @DataProvider
+    public Object[][] getStarPatternTests() {
+        return new Object[][] {
+            { "easy star test", "rating-*-*", "rating-tuna-marlin", "tuna", "marlin" },
 
-        // rating-*-* -> rating-tuna-marlin should be [tuna, marlin]
+            { "easy facet usage"             ,"terms--config--*--*--cdv", "terms--config--Expertise--12345--cdv",       "Expertise", "12345" },
+            { "degenerate ProductId in facet","terms--config--*--*--cdv", "terms--config--Expertise--12345--6789--cdv", "Expertise", "12345--6789" },
+        };
+    }
 
-        String start = "rating-*-*";
-        String regex = "^" + start.replace("*", "(.*?)")  + "$";
+    @Test( dataProvider = "getStarPatternTests")
+    public void starPatternTest( String testName, String spec, String dataKey, String expected1, String expected2 ) {
 
-        //Pattern pattern = Pattern.compile( "^rating-(.*?)-(.*?)$" );
-        Pattern pattern = Pattern.compile( regex );
-
-        Matcher matcher = pattern.matcher( "rating-tuna-marlin" );
+        Pattern pattern = PathElement.StarPathElement.makePattern( spec );
+        Matcher matcher = pattern.matcher( dataKey );
 
         if ( matcher.find() ) {
-            AssertJUnit.assertEquals( "tuna", matcher.group(1) );
-            AssertJUnit.assertEquals( "marlin", matcher.group(2) );
+            AssertJUnit.assertEquals( testName + " - 1st star", expected1, matcher.group(1) );
+            AssertJUnit.assertEquals( testName + " - 2nd star", expected2, matcher.group(2) );
         }
     }
 

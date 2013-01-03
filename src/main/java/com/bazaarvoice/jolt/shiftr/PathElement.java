@@ -152,15 +152,21 @@ public abstract class PathElement {
      */
     public static class StarPathElement extends PathElement {
 
-        private Pattern pattern;
+        private final Pattern pattern;
 
         public StarPathElement( String key ) {
             super(key);
 
+            pattern = makePattern( key );
+        }
+
+        // Visible for testing
+        public static Pattern makePattern( String key ) {
+
             // "rating-*-*"  ->  "^rating-(.*?)-(.*?)$"
             String regex = "^" + key.replace("*", "(.*?)")  + "$";
 
-            pattern = Pattern.compile( regex );
+            return Pattern.compile( regex );
         }
 
         public String evaluate( Path<LiteralPathElement> specInputPath ) {
