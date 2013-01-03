@@ -76,10 +76,18 @@ public class Diffy {
         if (actual == null) {
             return new Result( expected, actual );      // one is null, full diff
         }
-        if (expected.equals( actual )) {
+        if (scalarEquals( expected, actual ) ) {
             return new Result();                        // equivalent, isEmpty diff
         }
         return new Result( expected, actual );          // non-equivalent, full diff
+    }
+
+    /**
+     * Allow subclasses to handle things like Long 0 versus Int 0.  They should be the same,
+     *  but the .equals doesn't handle it.
+     */
+    protected boolean scalarEquals( Object expected, Object actual ) {
+        return expected.equals( actual );
     }
 
     /**
