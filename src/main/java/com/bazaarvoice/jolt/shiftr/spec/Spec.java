@@ -2,8 +2,20 @@ package com.bazaarvoice.jolt.shiftr.spec;
 
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.shiftr.WalkedPath;
+import com.bazaarvoice.jolt.shiftr.pathelement.AmpPathElement;
+import com.bazaarvoice.jolt.shiftr.pathelement.ArrayPathElement;
+import com.bazaarvoice.jolt.shiftr.pathelement.AtPathElement;
+import com.bazaarvoice.jolt.shiftr.pathelement.DollarPathElement;
+import com.bazaarvoice.jolt.shiftr.pathelement.LiteralPathElement;
+import com.bazaarvoice.jolt.shiftr.pathelement.MatchablePathElement;
 import com.bazaarvoice.jolt.shiftr.pathelement.PathElement;
+import com.bazaarvoice.jolt.shiftr.pathelement.StarAllPathElement;
+import com.bazaarvoice.jolt.shiftr.pathelement.StarRegexPathElement;
+import com.bazaarvoice.jolt.shiftr.pathelement.StarSinglePathElement;
+import org.apache.commons.lang.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -38,16 +50,93 @@ import java.util.Map;
 public abstract class Spec {
 
     // The processed key from the Json config
-    protected final PathElement pathElement;
+    protected final MatchablePathElement pathElement;
 
     public Spec(String rawJsonKey) {
-        List<PathElement> pathElements = PathElement.parse( rawJsonKey );
+        List<PathElement> pathElements = parse( rawJsonKey );
 
         if ( pathElements.size() != 1 ){
             throw new SpecException( "Shiftr invalid LHS:" + rawJsonKey + " can not contain '.'" );
         }
 
-        this.pathElement = pathElements.get( 0 );
+        PathElement pe =  pathElements.get( 0 );
+        if ( ! ( pe instanceof MatchablePathElement ) ) {
+            throw new SpecException( "Spec LHS key=" + rawJsonKey + " is not a valid LHS key." );
+        }
+
+        this.pathElement = (MatchablePathElement) pe;
+    }
+
+    // TODO clean this up and then move PathElement and its subclasses up to a common package
+    //  once all the shiftr specific logic is extracted.
+    public static List<PathElement> parse( String key )  {
+
+        if ( key.contains("@") ) {
+            return Arrays.<PathElement>asList( new AtPathElement( key ) );
+        }
+        else if ( key.contains("$") ) {
+            return Arrays.<PathElement>asList( new DollarPathElement( key ) );
+        }
+        else if ( key.contains("[") ) {
+
+            if ( StringUtils.countMatches( key, "[" ) != 1 || StringUtils.countMatches( key, "]" ) != 1 ) {
+                throw new SpecException( "Invalid key:" + key + " has too many [] references.");
+            }
+
+            // is canonical array?
+            if ( key.charAt( 0 ) == '[' && key.charAt( key.length() - 1 ) == ']') {
+                return Arrays.<PathElement>asList( new ArrayPathElement( key ) );
+            }
+
+            // Split syntactic sugar of "photos[]" --> [ "photos", "[]" ]
+            //  or                      "bob-&(3,1)-smith[&0]" --> [ "bob-&(3,1)-smith", "[&(0,0)]" ]
+
+            String canonicalKey = key.replace( "[", ".[" );
+            String[] subkeys = canonicalKey.split( "\\." );
+
+            List<PathElement> subElements = parse(  subkeys ); // at this point each sub key should be a valid key, so just recall parse
+
+            for ( int index = 0; index < subElements.size() - 1; index++ ) {
+                PathElement v = subElements.get( index );
+                if ( v instanceof ArrayPathElement ) {
+                    throw new SpecException( "Array [..] must be the last thing in the key, was:" + key );
+                }
+            }
+
+            return subElements;
+        }
+        else if ( key.contains("&") ) {
+            if ( key.contains("*") )
+            {
+                throw new SpecException("Can't mix * with & ) ");
+            }
+            return Arrays.<PathElement>asList( new AmpPathElement( key ) );
+        }
+        else if ( "*".equals( key ) ) {
+            return Arrays.<PathElement>asList( new StarAllPathElement( key ) );
+        }
+        else if ( StringUtils.countMatches( key, "*" ) == 1 ) {
+            return Arrays.<PathElement>asList( new StarSinglePathElement( key ) );
+        }
+        else if ( key.contains("*") ) {
+            return Arrays.<PathElement>asList( new StarRegexPathElement( key ) );
+        }
+        else {
+            return Arrays.<PathElement>asList( new LiteralPathElement( key ) );
+        }
+    }
+
+    public static List<PathElement> parse( String[] keys ) {
+        ArrayList<PathElement> paths = new ArrayList<PathElement>();
+
+        for( String key: keys ) {
+            List<PathElement> subPaths = parse( key );
+            for ( PathElement path : subPaths ) {
+                paths.add( path );
+            }
+        }
+
+        return paths;
     }
 
     /**

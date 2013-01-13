@@ -4,7 +4,7 @@ import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.shiftr.reference.AmpReference;
 import com.bazaarvoice.jolt.shiftr.WalkedPath;
 
-public class ArrayPathElement extends PathElement {
+public class ArrayPathElement extends BasePathElement implements MatchablePathElement, EvaluatablePathElement {
 
     public enum ArrayPathType { AUTO_EXPAND, REFERENCE, EXPLICIT_INDEX }
 

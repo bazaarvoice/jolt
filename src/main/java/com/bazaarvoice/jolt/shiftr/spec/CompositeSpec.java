@@ -7,7 +7,10 @@ import com.bazaarvoice.jolt.shiftr.pathelement.AtPathElement;
 import com.bazaarvoice.jolt.shiftr.pathelement.DollarPathElement;
 import com.bazaarvoice.jolt.shiftr.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.shiftr.pathelement.PathElement;
+import com.bazaarvoice.jolt.shiftr.pathelement.StarAllPathElement;
 import com.bazaarvoice.jolt.shiftr.pathelement.StarPathElement;
+import com.bazaarvoice.jolt.shiftr.pathelement.StarRegexPathElement;
+import com.bazaarvoice.jolt.shiftr.pathelement.StarSinglePathElement;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +26,7 @@ import java.util.Set;
  */
 public class CompositeSpec extends Spec {
 
-  /*
+    /*
     Example of how a Spec gets parsed into Composite and LeafSpec objects :
 
     {                                                        //  "implicit" root CompositeSpec, with one specialChild ("@") and one literalChild ("rating")
@@ -43,19 +46,22 @@ public class CompositeSpec extends Spec {
     }
     */
 
+
     private static final ComputedKeysComparator computedKeysComparator = new ComputedKeysComparator();
 
     // Three different buckets for the children of this CompositeSpec
-    protected final List<Spec> specialChildren;         // children that aren't actually triggered off the input data
-    protected final Map<String, Spec> literalChildren;  // children that are simple exact matches against the input data
-    protected final List<Spec> computedChildren;        // children that are regex matches against the input data
+    private final List<Spec> specialChildren;         // children that aren't actually triggered off the input data
+    private final Map<String, Spec> literalChildren;  // children that are simple exact matches against the input data
+    private final List<Spec> computedChildren;        // children that are regex matches against the input data
+
+    private final ExecutionStrategy executionStrategy;
 
     public CompositeSpec(String rawKey, Map<String, Object> spec ) {
         super( rawKey );
 
-        ArrayList<Spec> sC = new ArrayList<Spec>();
-        Map<String, Spec> lC = new HashMap<String, Spec>();
-        ArrayList<Spec> cC = new ArrayList<Spec>();
+        ArrayList<Spec> special = new ArrayList<Spec>();
+        Map<String, Spec> literals = new HashMap<String, Spec>();
+        ArrayList<Spec> computed = new ArrayList<Spec>();
 
         // self check
         if ( pathElement instanceof AtPathElement ) {
@@ -73,28 +79,31 @@ public class CompositeSpec extends Spec {
 
         for ( Spec child : children ) {
             if ( child.pathElement instanceof LiteralPathElement ) {
-                lC.put( child.pathElement.getRawKey(), child );
+                literals.put( child.pathElement.getRawKey(), child );
             }
             // special is it is "@" or "$"
             else if ( child.pathElement instanceof AtPathElement || (
                       child.pathElement instanceof DollarPathElement ) ) {
-                sC.add( child );
+                special.add( child );
             }
             else {   // star || (& with children)
-                cC.add( child );
+                computed.add( child );
             }
         }
 
         // Only the computed children need to be sorted
-        Collections.sort(cC, computedKeysComparator);
+        Collections.sort(computed, computedKeysComparator);
 
-        sC.trimToSize();
-        cC.trimToSize();
+        special.trimToSize();
+        computed.trimToSize();
 
-        specialChildren = Collections.unmodifiableList( sC );
-        literalChildren = Collections.unmodifiableMap( lC );
-        computedChildren = Collections.unmodifiableList( cC );
+        specialChildren = Collections.unmodifiableList( special );
+        literalChildren = Collections.unmodifiableMap( literals );
+        computedChildren = Collections.unmodifiableList( computed );
+
+        executionStrategy = ExecutionStrategy.determineStrategy( literalChildren, computedChildren );
     }
+
 
     /**
      * Recursively walk the spec input tree.
@@ -133,6 +142,11 @@ public class CompositeSpec extends Spec {
         return result;
     }
 
+    // visible for test
+    List<Spec> getComputedChildren() {
+        return computedChildren;
+    }
+
     /**
      * If this Spec matches the inputkey, then perform one step in the Shiftr parallel treewalk.
      *
@@ -144,6 +158,7 @@ public class CompositeSpec extends Spec {
      *
      * @return true if this this spec "handles" the inputkey such that no sibling specs need to see it
      */
+    @Override
     public boolean apply( String inputKey, Object input, WalkedPath walkedPath, Map<String,Object> output )
     {
         LiteralPathElement thisLevel = pathElement.match( inputKey, walkedPath );
@@ -153,54 +168,195 @@ public class CompositeSpec extends Spec {
 
         walkedPath.add( thisLevel );
 
-        //// 1. Handle any special / key based children first, but don't have them block anything
+        // Handle any special / key based children first, but don't have them block anything
         for( Spec subSpec : specialChildren ) {
             subSpec.apply( inputKey, input, walkedPath, output );
         }
 
-        //// 2. For each input key value, see if it matches any literal Keys or Computed keys, in that order
-        // Numeric Array indexes are used / matched as Strings, here we handle the special casing between
-        //  Map and List here to get a String "subKeyStr" and subInput
-        if ( input instanceof Map) {
-
-            Map<String,Object> inputMap = (Map<String, Object>) input;
-
-            for( String subKeyStr : inputMap.keySet() ) {
-                Object subInput = inputMap.get( subKeyStr );
-
-                applyToLiteralAndComputedChildren( subKeyStr, subInput, walkedPath, output );
-            }
-        }
-        else if ( input instanceof List) {
-
-            List<Object> inputList = (List<Object>) input;
-
-            for (int index = 0; index < inputList.size(); index++) {
-                Object subInput = inputList.get( index );
-                String subKeyStr = Integer.toString( index );
-
-                applyToLiteralAndComputedChildren( subKeyStr, subInput, walkedPath, output );
-            }
-        }
+        // Handle the rest of the children
+        executionStrategy.process( this, input, walkedPath, output );
 
         walkedPath.removeLast();
-
         return true;
     }
 
-    private void applyToLiteralAndComputedChildren( String subKeyStr, Object subInput, WalkedPath walkedPath, Map<String, Object> output ) {
+    private enum ExecutionStrategy {
 
-        // TODO : Perf Improvement
-        //  If there are no computedChildren, we could iterate across the literalChildren key set, instead of the input keyset, which is potentially large
-        //  At spec parse time, determine a execution strategy, so we don't have to do n number of .get calls to an emptySet.
+        /**
+         * The performance assumption built into this code is that the literal values in the spec, are generally smaller
+         *  than the number of potential keys to check in the input.
+         *
+         *  More specifically, the assumption here is that the set of literalChildren is smaller than the input "keyset".
+         */
+        LITERALS_ONLY {
+            @Override
+            void processMap( CompositeSpec spec, Map<String, Object> inputMap, WalkedPath walkedPath, Map<String, Object> output ) {
 
-        Spec literalChild = literalChildren.get( subKeyStr );
-        if ( literalChild != null ) {
-            // Quickly match a literal spec key if possible
-            literalChild.apply( subKeyStr, subInput, walkedPath, output );
+                for( String key : spec.literalChildren.keySet() ) {
+                    Object subInput = inputMap.get( key );
+
+                    if ( subInput != null ) {
+                        // we know the .get(key) will not return null
+                        spec.literalChildren.get( key ).apply( key, subInput, walkedPath, output );
+                    }
+                }
+            }
+
+            @Override
+            void processList( CompositeSpec spec, List<Object> inputList, WalkedPath walkedPath, Map<String, Object> output ) {
+
+                for( String key : spec.literalChildren.keySet() ) {
+                    int keyInt = Integer.parseInt( key );
+                    if ( keyInt < inputList.size() ) {
+
+                        Object subInput = inputList.get( keyInt );
+
+                        // we know the .get(key) will not return null, because we are iterating over its keys
+                        spec.literalChildren.get( key ).apply( key, subInput, walkedPath, output );
+                    }
+                }
+            }
+            @Override
+            void processScalar( CompositeSpec spec, String scalarInput, WalkedPath walkedPath, Map<String, Object> output ) {
+
+                Spec literalChild = spec.literalChildren.get( scalarInput );
+                if ( literalChild != null ) {
+                    literalChild.apply( scalarInput, null, walkedPath, output );
+                }
+            }
+        },
+
+        /**
+         * If the CompositeSpec only has computed children, we can avoid checking the literalChildren altogether, and
+         *  we can do a slightly better iteration (HashSet.entrySet) across the input.
+         */
+        COMPUTED_ONLY {
+            @Override
+            void processMap( CompositeSpec spec, Map<String, Object> inputMap, WalkedPath walkedPath, Map<String, Object> output ) {
+
+                // Iterate over the whole entrySet rather than the keyset with follow on gets of the values
+                for( Map.Entry<String, Object> inputEntry : inputMap.entrySet() ) {
+                    applyKeyToComputed( spec.computedChildren, walkedPath, output, inputEntry.getKey(), inputEntry.getValue() );
+                }
+            }
+
+            @Override
+            void processList( CompositeSpec spec, List<Object> inputList, WalkedPath walkedPath, Map<String, Object> output ) {
+
+                for (int index = 0; index < inputList.size(); index++) {
+                    Object subInput = inputList.get( index );
+                    String subKeyStr = Integer.toString( index );
+
+                    applyKeyToComputed( spec.computedChildren, walkedPath, output, subKeyStr, subInput );
+                }
+            }
+
+            @Override
+            void processScalar( CompositeSpec spec, String scalarInput, WalkedPath walkedPath, Map<String, Object> output ) {
+                applyKeyToComputed( spec.computedChildren, walkedPath, output, scalarInput, null );
+            }
+        },
+
+        /**
+         * In order to implement the Shiftr key precedence order, we have to process each input "key", first to
+         *  see if it matches any literals, and if it does not, check against each of the computed
+         */
+        CONFLICT {
+            @Override
+            void processMap( CompositeSpec spec, Map<String, Object> inputMap, WalkedPath walkedPath, Map<String, Object> output ) {
+
+                // Iterate over the whole entrySet rather than the keyset with follow on gets of the values
+                for( Map.Entry<String, Object> inputEntry : inputMap.entrySet() ) {
+                    applyKeyToLiteralAndComputed( spec, inputEntry.getKey(), inputEntry.getValue(), walkedPath, output );
+                }
+            }
+
+            @Override
+            void processList( CompositeSpec spec, List<Object> inputList, WalkedPath walkedPath, Map<String, Object> output ) {
+
+                for (int index = 0; index < inputList.size(); index++) {
+                    Object subInput = inputList.get( index );
+                    String subKeyStr = Integer.toString( index );
+
+                    applyKeyToLiteralAndComputed( spec, subKeyStr, subInput, walkedPath, output );
+                }
+            }
+
+            @Override
+            void processScalar( CompositeSpec spec, String scalarInput, WalkedPath walkedPath, Map<String, Object> output ) {
+                applyKeyToLiteralAndComputed( spec, scalarInput, null, walkedPath, output );
+            }
+        },
+
+        /**
+         * We have both literal and computed children, but we have determined that there is no way an input key
+         *  could match one of our literal and computed children.  Hence we can safely run each one.
+         */
+        NO_CONFLICT {
+            @Override
+            void processMap( CompositeSpec spec, Map<String, Object> inputMap, WalkedPath walkedPath, Map<String, Object> output ) {
+                LITERALS_ONLY.processMap( spec, inputMap, walkedPath, output );
+                COMPUTED_ONLY.processMap( spec, inputMap, walkedPath, output );
+            }
+
+            @Override
+            void processList( CompositeSpec spec, List<Object> inputList, WalkedPath walkedPath, Map<String, Object> output ) {
+                LITERALS_ONLY.processList( spec, inputList, walkedPath, output );
+                COMPUTED_ONLY.processList( spec, inputList, walkedPath, output );
+            }
+
+            @Override
+            void processScalar( CompositeSpec spec, String scalarInput, WalkedPath walkedPath, Map<String, Object> output ) {
+                LITERALS_ONLY.processScalar( spec, scalarInput, walkedPath, output );
+                COMPUTED_ONLY.processScalar( spec, scalarInput, walkedPath, output  );
+            }
+        };
+
+        public void process( CompositeSpec spec, Object input, WalkedPath walkedPath, Map<String,Object> output ) {
+            if ( input instanceof Map) {
+                processMap( spec, (Map<String, Object>) input, walkedPath, output );
+            }
+            else if ( input instanceof List ) {
+                processList( spec, (List<Object>) input, walkedPath, output );
+            }
+            else if ( input != null ) {
+                // if not a map or list, must be a scalar
+                processScalar( spec, input.toString(), walkedPath, output );
+            }
         }
-        else {
-            // If no literal spec key matched, iterate thru the computedChildren until we find a match
+
+        abstract void processMap   ( CompositeSpec spec, Map<String, Object> inputMap, WalkedPath walkedPath, Map<String,Object> output );
+        abstract void processList  ( CompositeSpec spec, List<Object> inputList      , WalkedPath walkedPath, Map<String,Object> output );
+        abstract void processScalar( CompositeSpec spec, String scalarInput          , WalkedPath walkedPath, Map<String,Object> output );
+
+
+        /**
+         * This is the method we are trying to avoid calling.  It implements the Shiftr matching behavior
+         *  when we have both literal and computed children.
+         *
+         * For each input key, we see if it matches a literal, and it not, try to match the key with every computed child.
+         *
+         * Worse case : n + n * c, where
+         *   n is number of input keys
+         *   c is number of computed children
+         */
+        private static void applyKeyToLiteralAndComputed( CompositeSpec spec, String subKeyStr, Object subInput, WalkedPath walkedPath, Map<String, Object> output ) {
+
+            Spec literalChild = spec.literalChildren.get( subKeyStr );
+
+            // if the subKeyStr found a literalChild, then we do not have to try to match any of the computed ones
+            if ( literalChild != null ) {
+                literalChild.apply( subKeyStr, subInput, walkedPath, output );
+            }
+            else {
+                // If no literal spec key matched, iterate through all the computedChildren
+                applyKeyToComputed( spec.computedChildren, walkedPath, output, subKeyStr, subInput );
+            }
+        }
+
+        private static void applyKeyToComputed( List<Spec> computedChildren, WalkedPath walkedPath, Map<String, Object> output, String subKeyStr, Object subInput ) {
+
+            // Iterate through all the computedChildren until we find a match
             // This relies upon the computedChildren having already been sorted in priority order
             for ( Spec computedChild : computedChildren ) {
                 // if the computed key does not match it will quickly return false
@@ -209,8 +365,33 @@ public class CompositeSpec extends Spec {
                 }
             }
         }
-    }
 
+        public static ExecutionStrategy determineStrategy( Map<String, Spec> literalChildren, List<Spec> computedChildren ) {
+
+            if ( computedChildren.isEmpty() ) {
+                return ExecutionStrategy.LITERALS_ONLY;
+            }
+            else if ( literalChildren.isEmpty() ) {
+                return ExecutionStrategy.COMPUTED_ONLY;
+            }
+
+            for ( Spec computed : computedChildren ) {
+                if ( ! ( computed.pathElement instanceof StarPathElement ) ) {
+                    return ExecutionStrategy.CONFLICT;
+                }
+
+                StarPathElement starPathElement = (StarPathElement) computed.pathElement;
+
+                for ( String literal : literalChildren.keySet() ) {
+                    if ( starPathElement.stringMatch( literal ) ) {
+                        return ExecutionStrategy.CONFLICT;
+                    }
+                }
+            }
+
+            return ExecutionStrategy.NO_CONFLICT;
+        }
+    }
 
     public static class ComputedKeysComparator implements Comparator<Spec> {
 
@@ -218,7 +399,11 @@ public class CompositeSpec extends Spec {
 
         static {
             orderMap.put( AmpPathElement.class, 1 );
+            // TODO this feels weird, but it works
             orderMap.put( StarPathElement.class, 2 );
+            orderMap.put( StarAllPathElement.class, 2 );
+            orderMap.put( StarRegexPathElement.class, 2 );
+            orderMap.put( StarSinglePathElement.class, 2 );
         }
 
         @Override

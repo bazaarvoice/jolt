@@ -3,7 +3,7 @@ package com.bazaarvoice.jolt.shiftr.pathelement;
 import com.bazaarvoice.jolt.shiftr.reference.DollarReference;
 import com.bazaarvoice.jolt.shiftr.WalkedPath;
 
-public class DollarPathElement extends PathElement {
+public class DollarPathElement extends BasePathElement implements MatchablePathElement, EvaluatablePathElement {
 
     private final DollarReference dRef;
 

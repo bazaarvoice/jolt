@@ -1,7 +1,9 @@
 package com.bazaarvoice.jolt.shiftr;
 
 import com.bazaarvoice.jolt.exception.SpecException;
+import com.bazaarvoice.jolt.shiftr.pathelement.EvaluatablePathElement;
 import com.bazaarvoice.jolt.shiftr.pathelement.PathElement;
+import com.bazaarvoice.jolt.shiftr.spec.Spec;
 import com.bazaarvoice.jolt.traversr.Traversr;
 import org.apache.commons.lang.StringUtils;
 
@@ -14,32 +16,41 @@ import java.util.Map;
  * Convenience class for path based off a single dot notation String,
  *  like "rating.&1(2).&.value".
  */
-public class OutputWriter {
+public class ShiftrWriter {
 
-    private final List<PathElement> elements;
+    private final List<EvaluatablePathElement> elements;
     private final Traversr traversr;
 
-    public OutputWriter( String dotNotation ) {
+    public ShiftrWriter( String dotNotation ) {
 
         if ( dotNotation.contains("@") || dotNotation.contains("*") || dotNotation.contains("$")) {
             throw new SpecException("DotNotation (write key) can not contain '@', '*', or '$'.");
         }
 
-        List<PathElement> el;
+        List<PathElement> paths;
         Traversr trav;
 
         if ( StringUtils.isNotBlank( dotNotation ) ) {
             String[] split = dotNotation.split( "\\." );
 
-            el = PathElement.parse( split );
+            paths = Spec.parse( split );
             trav = new ShiftrTraversr( dotNotation );
         }
         else {
-            el = Collections.emptyList();
+            paths = Collections.emptyList();
             trav = new ShiftrTraversr( "" );
         }
 
-        this.elements = Collections.unmodifiableList( el );
+        List<EvaluatablePathElement> evalPaths = new ArrayList<EvaluatablePathElement>( paths.size() );
+        for( PathElement pe : paths ) {
+            if ( ! ( pe instanceof EvaluatablePathElement ) ) {
+                throw new SpecException( "RHS key=" + pe.getRawKey() + " is not a valid RHS key." );
+            }
+
+            evalPaths.add( (EvaluatablePathElement) pe );
+        }
+
+        this.elements = Collections.unmodifiableList( evalPaths );
         this.traversr = trav;
     }
 
@@ -65,7 +76,7 @@ public class OutputWriter {
     List<String> evaluate( WalkedPath walkedPath ) {
 
         List<String> strings = new ArrayList<String>(elements.size());
-        for ( PathElement pathElement : elements ) {
+        for ( EvaluatablePathElement pathElement : elements ) {
             String evaledLeafOutput = pathElement.evaluate( walkedPath );
             strings.add( evaledLeafOutput );
         }

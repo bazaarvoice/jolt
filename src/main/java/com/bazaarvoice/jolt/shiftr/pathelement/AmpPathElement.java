@@ -12,7 +12,7 @@ import java.util.List;
  * It breaks down the string into a series of String or Reference tokens, that can be used to
  * 1) match input like "photos-5" where "&(1,1)" evaluated to 5
  */
-public class AmpPathElement extends PathElement {
+public class AmpPathElement extends BasePathElement implements MatchablePathElement, EvaluatablePathElement {
 
     private final List<Object> tokens;
     private final String canonicalForm;
