@@ -1,9 +1,9 @@
 package com.bazaarvoice.jolt.shiftr.spec;
 
 import com.bazaarvoice.jolt.Shiftr;
+import com.bazaarvoice.jolt.shiftr.ShiftrWriter;
 import org.apache.commons.lang.StringUtils;
 import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.shiftr.OutputWriter;
 import com.bazaarvoice.jolt.shiftr.WalkedPath;
 import com.bazaarvoice.jolt.shiftr.pathelement.AtPathElement;
 import com.bazaarvoice.jolt.shiftr.pathelement.DollarPathElement;
@@ -24,33 +24,33 @@ import java.util.Map;
 public class LeafSpec extends Spec {
 
     // List of the processed version of the "write specifications"
-    protected final List<OutputWriter> outputWriters;
+    private final List<ShiftrWriter> shiftrWriters;
 
     public LeafSpec( String rawKey, Object rhs ) {
         super( rawKey );
 
-        List<OutputWriter> oP;
+        List<ShiftrWriter> writers;
         if ( rhs instanceof String ) {
             // leaf level so spec is an dot notation write path
-            oP = Arrays.asList( parseOutputDotNotation( rhs ) );
+            writers = Arrays.asList( parseOutputDotNotation( rhs ) );
         }
         else if ( rhs instanceof List ) {
             // leaf level list
             // Spec : "foo": ["a", "b"] : Shift the value of "foo" to both "a" and "b"
             List<Object> rhsList = (List<Object>) rhs;
-            oP = new ArrayList<OutputWriter>( rhsList.size() );
+            writers = new ArrayList<ShiftrWriter>( rhsList.size() );
             for ( Object dotNotation : rhsList ) {
-                oP.add( parseOutputDotNotation( dotNotation ) );
+                writers.add( parseOutputDotNotation( dotNotation ) );
             }
         }
         else {
             throw new SpecException( "Invalid Shiftr spec RHS.  Should be map, string, or array of strings.  Spec in question : " + rhs );
         }
 
-        outputWriters = Collections.unmodifiableList( oP );
+        shiftrWriters = Collections.unmodifiableList( writers );
     }
 
-    private static OutputWriter parseOutputDotNotation( Object rawObj ) {
+    private static ShiftrWriter parseOutputDotNotation( Object rawObj ) {
 
         if ( ! ( rawObj instanceof String ) ) {
             throw new SpecException( "Invalid Shiftr spec RHS.  Should be a string or array of Strings.   Value in question : " + rawObj );
@@ -63,12 +63,11 @@ public class LeafSpec extends Spec {
         if ( StringUtils.isBlank( outputPathStr ) ) {
             outputPathStr = Shiftr.ROOT_KEY;
         }
-        else
-        {
+        else {
             outputPathStr = Shiftr.ROOT_KEY + "." + outputPathStr;
         }
 
-        return new OutputWriter(outputPathStr);
+        return new ShiftrWriter(outputPathStr);
     }
 
     /**
@@ -76,6 +75,7 @@ public class LeafSpec extends Spec {
      *
      * @return true if this this spec "handles" the inputkey such that no sibling specs need to see it
      */
+    @Override
     public boolean apply( String inputKey, Object input, WalkedPath walkedPath, Map<String,Object> output ){
 
         LiteralPathElement thisLevel = pathElement.match( inputKey, walkedPath );
@@ -110,7 +110,7 @@ public class LeafSpec extends Spec {
         walkedPath.add( thisLevel );
 
         // Place the data in the write
-        for ( OutputWriter outputPath : outputWriters ) {
+        for ( ShiftrWriter outputPath : shiftrWriters ) {
             outputPath.write( data, output, walkedPath );
         }
 

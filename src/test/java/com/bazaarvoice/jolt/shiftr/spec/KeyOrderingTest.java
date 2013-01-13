@@ -46,7 +46,7 @@ public class KeyOrderingTest {
 
         for ( int index = 0; index < expectedOrder.size(); index++) {
             String expected = expectedOrder.get( index );
-            AssertJUnit.assertEquals( testName, expected, root.computedChildren.get( index ).pathElement.getCanonicalForm() );
+            AssertJUnit.assertEquals( testName, expected, root.getComputedChildren().get( index ).pathElement.getCanonicalForm() );
         }
     }
 }

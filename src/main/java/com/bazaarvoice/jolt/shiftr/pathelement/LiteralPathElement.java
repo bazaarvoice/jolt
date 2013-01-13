@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class LiteralPathElement extends PathElement {
+public class LiteralPathElement extends BasePathElement implements MatchablePathElement, EvaluatablePathElement {
 
     private final List<String> subKeys;
 

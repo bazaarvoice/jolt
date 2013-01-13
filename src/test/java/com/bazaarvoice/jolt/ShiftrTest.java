@@ -25,6 +25,7 @@ public class ShiftrTest {
             {"objectToArray"},
             {"photosArray"},
             {"prefixDataToArray"},
+            {"prefixedData"},
             {"prefixSoupToBuckets"},
             {"queryMappingXform"},
             {"singlePlacement"},
