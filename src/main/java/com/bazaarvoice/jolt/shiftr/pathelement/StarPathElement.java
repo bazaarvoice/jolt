@@ -5,7 +5,7 @@ package com.bazaarvoice.jolt.shiftr.pathelement;
  *
  * Three subclasses were created for performance reasons.
  */
-public interface StarPathElement extends PathElement, MatchablePathElement {
+public interface StarPathElement extends MatchablePathElement {
 
     /**
      * Method to see if a candidate key would match this PathElement.

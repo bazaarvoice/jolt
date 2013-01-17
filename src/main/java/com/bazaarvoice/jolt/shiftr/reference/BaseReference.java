@@ -2,6 +2,18 @@ package com.bazaarvoice.jolt.shiftr.reference;
 
 import com.bazaarvoice.jolt.exception.SpecException;
 
+/**
+ * All "References" extend this class and support three level of syntactic sugar
+ * Example with the AmpReference
+ *  1   "&"
+ *  2   "&0"
+ *  3   "&(0,0)"
+ *  all three mean the same thing.
+ *
+ *  References are used to look up values in a WalkedPath.
+ *  In the CanonicalForm the first entry is how far up the WalkedPath to look for a LiteralPathElement,
+ *   and the second entry is which part of that LiteralPathElement to ask for.
+ */
 public abstract class BaseReference implements Reference {
 
     private final int pathIndex;    // equals 0 for "&"  "&0"  and  "&(0,x)"

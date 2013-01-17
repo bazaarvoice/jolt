@@ -14,6 +14,8 @@ import org.testng.annotations.Test;
 import java.util.Arrays;
 import java.util.List;
 
+// Todo Now that the PathElement classes have been split out (no longer inner classes)
+//  each class should get a test
 public class PathElementTest {
 
     @Test

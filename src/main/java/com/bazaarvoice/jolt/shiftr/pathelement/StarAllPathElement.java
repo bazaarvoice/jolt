@@ -8,7 +8,7 @@ import java.util.Collections;
  * PathElement for the lone "*" wildcard.   In this case we can avoid doing any
  *  regex or string comparison work at all.
  */
-public class StarAllPathElement implements PathElement,StarPathElement {
+public class StarAllPathElement implements StarPathElement {
 
     public StarAllPathElement( String key ) {
         if ( ! "*".equals( key ) ) {
