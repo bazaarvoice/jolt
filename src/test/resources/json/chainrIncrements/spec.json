@@ -1,0 +1,26 @@
+[
+    {
+        "operation": "default",
+        "spec": {
+            "0": "0"
+        }
+    },
+    {
+        "operation": "default",
+        "spec": {
+            "1": "1"
+        }
+    },
+    {
+        "operation": "default",
+        "spec": {
+            "2": "2"
+        }
+    },
+    {
+        "operation": "default",
+        "spec": {
+            "3": "3"
+        }
+    }
+]

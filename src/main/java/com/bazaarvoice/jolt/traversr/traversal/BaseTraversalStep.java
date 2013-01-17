@@ -6,17 +6,17 @@ import com.bazaarvoice.jolt.traversr.TraversrException;
 import java.util.Iterator;
 
 
-public abstract class BaseTraversal<T> implements Traversal {
+public abstract class BaseTraversalStep<T> implements TraversalStep {
 
-    protected final Traversal child;
+    protected final TraversalStep child;
     protected final Traversr traversr;
 
-    public BaseTraversal(Traversr traversr, Traversal child) {
+    public BaseTraversalStep( Traversr traversr, TraversalStep child ) {
         this.traversr = traversr;
         this.child = child;
     }
 
-    public Traversal getChild() {
+    public TraversalStep getChild() {
         return child;
     }
 

@@ -87,7 +87,52 @@ public class Chainr implements SpecTransform {
 
     private final List<Transform> transforms;
 
+    /**
+     * Initialize a Chainr to run a list of Transforms.
+     *
+     * @param chainrSpec List of transforms to run
+     */
     public Chainr( Object chainrSpec ) {
+        this( chainrSpec, /* ignored */ -1 , /* ignored */ -1, true );
+    }
+
+
+    /**
+     * Initialize a Chainr to run only a subset of the transforms in it's spec.
+     *
+     * Useful for testing and debugging.
+     *
+     * @param chainrSpec List of transforms to run
+     * @param to transform from the chainrSpec to start with: 0 based index inclusive
+     */
+    public Chainr( Object chainrSpec, int to ) {
+        this( chainrSpec, 0, to, false);
+    }
+
+    /**
+     * Initialize a Chainr to run only a subset of the transforms in it's spec.
+     *
+     * Useful for testing and debugging.
+     *
+     * @param chainrSpec List of transforms to run
+     * @param from transform from the chainrSpec to start with: 0 based index
+     * @param to transform from the chainrSpec to start with: 0 based index inclusive
+     */
+    public Chainr( Object chainrSpec, int from, int to ) {
+        this( chainrSpec, from, to, false);
+    }
+
+
+    /**
+     * Private constructor.
+     *
+     * @param chainrSpec List of transforms to run
+     * @param from transform from the chainrSpec to start with: 0 based index
+     * @param to transform from the chainrSpec to start with: 0 based index inclusive
+     * @param all if true, "from" and "to" parameters are ignored, instead from=0 and to=chainrSpec.size()
+     */
+    private Chainr( Object chainrSpec, int from, int to, boolean all ) {
+
         if ( !( chainrSpec instanceof List ) ) {
             throw new SpecException(  "JOLT Chainr expects a JSON array of objects - Malformed spec." );
         }
@@ -95,7 +140,22 @@ public class Chainr implements SpecTransform {
         List<Object> operations = (List<Object>) chainrSpec;
         List<Transform> tf = new ArrayList<Transform>(operations.size());
 
-        for ( int index = 0; index < operations.size(); index++ ) {
+        int start, end;
+        if ( all ) {
+            start = 0;
+            end = operations.size();
+        }
+        else
+        {
+            start = from;
+            end = to + 1;
+        }
+
+        if ( (start < 0 ) || (end > operations.size() ) ) {
+            throw new SpecException(  "JOLT Chainr : invalid from and to parameters.  from=" + from + " to=" + to );
+        }
+
+        for ( int index = start; index < end; index++ ) {
 
             Object chainrEntryObj = operations.get( index );
             if ( ! (chainrEntryObj instanceof Map) ) {

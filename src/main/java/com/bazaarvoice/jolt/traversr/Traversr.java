@@ -1,10 +1,10 @@
 package com.bazaarvoice.jolt.traversr;
 
-import com.bazaarvoice.jolt.traversr.traversal.ArrayTraversal;
-import com.bazaarvoice.jolt.traversr.traversal.AutoExpandArrayTraversal;
-import com.bazaarvoice.jolt.traversr.traversal.MapTraversal;
-import com.bazaarvoice.jolt.traversr.traversal.Traversal;
-import com.bazaarvoice.jolt.traversr.traversal.Traversal.Operation;
+import com.bazaarvoice.jolt.traversr.traversal.ArrayTraversalStep;
+import com.bazaarvoice.jolt.traversr.traversal.AutoExpandArrayTraversalStep;
+import com.bazaarvoice.jolt.traversr.traversal.MapTraversalStep;
+import com.bazaarvoice.jolt.traversr.traversal.TraversalStep;
+import com.bazaarvoice.jolt.traversr.traversal.TraversalStep.Operation;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ import java.util.List;
  */
 public abstract class Traversr {
 
-    private final Traversal root;
+    private final TraversalStep root;
     private final int traversalLength;
 
     public Traversr ( String humanPath ) {
@@ -54,7 +54,7 @@ public abstract class Traversr {
 
         String[] paths = intermediatePath.split( "\\." );
 
-        Traversal rooty = null;
+        TraversalStep rooty = null;
         for ( int index = paths.length -1 ; index >= 0; index--) {
             rooty = makePathElement( paths[index], rooty );
         }
@@ -62,21 +62,21 @@ public abstract class Traversr {
         root = rooty;
     }
 
-    private Traversal makePathElement(String path, Traversal child) {
+    private TraversalStep makePathElement(String path, TraversalStep child) {
 
         if ( "[]".equals( path ) ) {
-            return new AutoExpandArrayTraversal( this, child );
+            return new AutoExpandArrayTraversalStep( this, child );
         }
         else if ( path.startsWith( "[" ) && path.endsWith( "]" ) ) {
-            return new ArrayTraversal( this, child );
+            return new ArrayTraversalStep( this, child );
         }
         else {
-            return new MapTraversal( this, child );
+            return new MapTraversalStep( this, child );
         }
     }
 
     /**
-     * Note : Calling this method may modify the tree object by adding new Maps and Lists as needed
+     * Note : Calling this method MAY modify the tree object by adding new Maps and Lists as needed
      *  for the traversal.  This is determined by the behavior of the implementations of the
      *  abstract methods of this class.
      *
@@ -88,16 +88,21 @@ public abstract class Traversr {
             throw new TraversrException( "Traversal Path and number of keys mismatch, traversalLength:" + traversalLength + " numKeys:" + keys.size() );
         }
 
-        return root.traverse( tree, Traversal.Operation.GET, keys.iterator(), null );
+        return root.traverse( tree, TraversalStep.Operation.GET, keys.iterator(), null );
     }
 
-    public void set( Object tree, List<String> keys, Object data ) {
+    /**
+     * @param tree tree of Map and List JSON structure to navigate
+     * @param data JSON style data object you want to set
+     * @return returns the data object if successfully set, otherwise null if there was a problem walking the path
+     */
+    public Object set( Object tree, List<String> keys, Object data ) {
 
         if ( keys.size() != traversalLength ) {
             throw new TraversrException( "Traversal Path and number of keys mismatch, traversalLength:" + traversalLength + " numKeys:" + keys.size() );
         }
 
-        root.traverse( tree, Traversal.Operation.SET, keys.iterator(), data );
+        return root.traverse( tree, TraversalStep.Operation.SET, keys.iterator(), data );
     }
 
     // TODO extract these methods to an interface, and then sublasses of Traverser like ShiftrTraversr can do the
@@ -111,7 +116,7 @@ public abstract class Traversr {
      *
      * @return the data object if the set was successful, or null if not
      */
-    public abstract Object handleFinalSet( Traversal traversal, Object tree, String key, Object data );
+    public abstract Object handleFinalSet( TraversalStep traversalStep, Object tree, String key, Object data );
 
     /**
      * Allow subclasses to control how gets are handled for intermediate traversals.
@@ -124,5 +129,5 @@ public abstract class Traversr {
      *
      * @return null or a container object (Map/List) for our child Traversal to use
      */
-    public abstract Object handleIntermediateGet( Traversal traversal, Object tree, String key, Operation op );
+    public abstract Object handleIntermediateGet( TraversalStep traversalStep, Object tree, String key, Operation op );
 }

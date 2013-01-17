@@ -5,9 +5,9 @@ import com.bazaarvoice.jolt.traversr.Traversr;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class MapTraversal extends BaseTraversal<Map<String,Object>> {
+public class MapTraversalStep extends BaseTraversalStep<Map<String,Object>> {
 
-    public MapTraversal( Traversr traversr, Traversal child ) {
+    public MapTraversalStep( Traversr traversr, TraversalStep child ) {
         super( traversr, child );
     }
 

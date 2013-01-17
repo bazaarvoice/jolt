@@ -3,11 +3,10 @@ package com.bazaarvoice.jolt.shiftr;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.bazaarvoice.jolt.traversr.Traversr;
-import com.bazaarvoice.jolt.traversr.traversal.Traversal;
-import com.bazaarvoice.jolt.traversr.traversal.Traversal.Operation;
+import com.bazaarvoice.jolt.traversr.SimpleTraversr;
+import com.bazaarvoice.jolt.traversr.traversal.TraversalStep;
 
-public class ShiftrTraversr extends Traversr {
+public class ShiftrTraversr extends SimpleTraversr {
 
     public ShiftrTraversr( String humanPath ) {
         super( humanPath );
@@ -20,13 +19,13 @@ public class ShiftrTraversr extends Traversr {
      *  3) if there something other than a list there, grab it and stuff it and the data into a list
      *     and overwrite what is there with a list.
      */
-    public Object handleFinalSet( Traversal traversal, Object tree, String key, Object data ) {
+    public Object handleFinalSet( TraversalStep traversalStep, Object tree, String key, Object data ) {
 
-        Object sub = traversal.get( tree, key );
+        Object sub = traversalStep.get( tree, key );
 
         if ( sub == null ) {
             // nothing is here so just set the data
-            traversal.overwriteSet( tree, key, data );
+            traversalStep.overwriteSet( tree, key, data );
         }
         else if ( sub instanceof List ) {
             // there is a list here, so we just add to it
@@ -38,31 +37,9 @@ public class ShiftrTraversr extends Traversr {
             temp.add( sub );
             temp.add( data );
 
-            traversal.overwriteSet( tree, key, temp );
+            traversalStep.overwriteSet( tree, key, temp );
         }
 
         return data;
-    }
-
-
-    /**
-     * Shiftr style intermediate step.
-     *
-     * Only make a new instance of a container object for SET, if there is nothing "there".
-     */
-    @Override
-    public Object handleIntermediateGet( Traversal traversal, Object tree,
-                                         String key, Operation op ) {
-
-        Object sub = traversal.get( tree, key );
-
-        if ( sub == null && op == Operation.SET ) {
-
-            // get our child to make the container object, so it will be happy with it
-            sub = traversal.getChild().newContainer();
-            traversal.overwriteSet( tree, key, sub );
-        }
-
-        return sub;
     }
 }
