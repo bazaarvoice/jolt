@@ -5,7 +5,7 @@ import java.util.Iterator;
 /**
  * A step in a JSON tree traversal.
  */
-public interface Traversal {
+public interface TraversalStep {
 
     /**
      * The two things you can do with a Traversal.
@@ -29,7 +29,7 @@ public interface Traversal {
     /**
      * @return the child Traversal or null if this Traversal has no child
      */
-    public Traversal getChild();
+    public TraversalStep getChild();
 
     /**
      * Create a new mutable Map or List, suitable for this PathElement to traverse.

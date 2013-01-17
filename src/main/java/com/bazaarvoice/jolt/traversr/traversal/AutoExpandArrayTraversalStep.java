@@ -5,9 +5,9 @@ import com.bazaarvoice.jolt.traversr.TraversrException;
 
 import java.util.List;
 
-public class AutoExpandArrayTraversal extends ArrayTraversal {
+public class AutoExpandArrayTraversalStep extends ArrayTraversalStep {
 
-    public AutoExpandArrayTraversal(Traversr traversr, Traversal child ) {
+    public AutoExpandArrayTraversalStep( Traversr traversr, TraversalStep child ) {
         super( traversr, child );
     }
 

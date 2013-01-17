@@ -5,9 +5,9 @@ import com.bazaarvoice.jolt.traversr.Traversr;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArrayTraversal extends BaseTraversal<List<Object>> {
+public class ArrayTraversalStep extends BaseTraversalStep<List<Object>> {
 
-    public ArrayTraversal( Traversr traversr, Traversal child ) {
+    public ArrayTraversalStep( Traversr traversr, TraversalStep child ) {
         super( traversr, child );
     }
 
