@@ -116,7 +116,7 @@ public class Chainr implements SpecTransform {
      *
      * @param chainrSpec List of transforms to run
      * @param from transform from the chainrSpec to start with: 0 based index
-     * @param to transform from the chainrSpec to start with: 0 based index inclusive
+     * @param to transform from the chainrSpec to end with: 0 based index inclusive
      */
     public Chainr( Object chainrSpec, int from, int to ) {
         this( chainrSpec, from, to, false);
@@ -128,7 +128,7 @@ public class Chainr implements SpecTransform {
      *
      * @param chainrSpec List of transforms to run
      * @param from transform from the chainrSpec to start with: 0 based index
-     * @param to transform from the chainrSpec to start with: 0 based index inclusive
+     * @param to transform from the chainrSpec to end with: 0 based index inclusive
      * @param all if true, "from" and "to" parameters are ignored, instead from=0 and to=chainrSpec.size()
      */
     private Chainr( Object chainrSpec, int from, int to, boolean all ) {
@@ -151,7 +151,7 @@ public class Chainr implements SpecTransform {
             end = to + 1;
         }
 
-        if ( (start < 0 ) || (end > operations.size() ) ) {
+        if ( (start < 0 ) || (end > operations.size() ||  end <= start ) ) {
             throw new SpecException(  "JOLT Chainr : invalid from and to parameters.  from=" + from + " to=" + to );
         }
 
