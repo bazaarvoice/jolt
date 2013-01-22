@@ -1,5 +1,6 @@
 package com.bazaarvoice.jolt;
 
+import com.bazaarvoice.jolt.exception.SpecException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -9,7 +10,7 @@ import java.util.HashMap;
 public class ChainrIncrementTest {
 
     @DataProvider
-    public Object[][] getFromToTests() throws IOException {
+    public Object[][] fromToTests() throws IOException {
 
         Object chainrSpec = JsonUtils.jsonToObject( ChainrIncrementTest.class.getResourceAsStream( "/json/chainrIncrements/spec.json" ) );
 
@@ -21,7 +22,7 @@ public class ChainrIncrementTest {
         };
     }
 
-    @Test( dataProvider = "getFromToTests" )
+    @Test( dataProvider = "fromToTests")
     public void testChainrIncrementsFromTo( Object chainrSpec, int start, int end ) throws IOException {
         Chainr chainr = new Chainr( chainrSpec, start, end );
 
@@ -34,7 +35,7 @@ public class ChainrIncrementTest {
 
 
     @DataProvider
-    public Object[][] geToTests() throws IOException {
+    public Object[][] toTests() throws IOException {
 
         Object chainrSpec = JsonUtils.jsonToObject( ChainrIncrementTest.class.getResourceAsStream( "/json/chainrIncrements/spec.json" ) );
 
@@ -44,7 +45,7 @@ public class ChainrIncrementTest {
         };
     }
 
-    @Test( dataProvider = "geToTests" )
+    @Test( dataProvider = "toTests")
     public void testChainrIncrementsTo( Object chainrSpec, int end  ) throws IOException {
 
         Chainr chainr = new Chainr( chainrSpec, end );
@@ -54,5 +55,22 @@ public class ChainrIncrementTest {
         Object actual = chainr.transform( new HashMap() );
 
         JoltTestUtil.runDiffy( "failed incremental To Chainr", expected, actual );
+    }
+
+    @DataProvider
+    public Object[][] failTests() throws IOException {
+
+        Object chainrSpec = JsonUtils.jsonToObject( ChainrIncrementTest.class.getResourceAsStream( "/json/chainrIncrements/spec.json" ) );
+
+        return new Object[][] {
+                {chainrSpec, -2, 2},
+                {chainrSpec, 0, -2},
+                {chainrSpec, 1, 10000}
+        };
+    }
+
+    @Test( dataProvider = "failTests", expectedExceptions = SpecException.class)
+    public void testFails( Object chainrSpec, int start, int end  ) throws IOException {
+        new Chainr( chainrSpec, start, end );
     }
 }
