@@ -12,13 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by IntelliJ IDEA.
- * User: nate.forman
- * Date: 8/4/12
- * Time: 12:38 AM
- * To change this template use File | Settings | File Templates.
- */
 public class JsonUtils {
 
     public static Object cloneJson(Object json) {
@@ -84,35 +77,33 @@ public class JsonUtils {
         return jsonToObject( new ByteArrayInputStream( json.getBytes() ) );
     }
 
+    // thread safe: http://wiki.fasterxml.com/JacksonFAQThreadSafety
+    private static final ObjectMapper OBJECT_MAPPER;
+    static {
+        JsonFactory factory = new JsonFactory();
+        OBJECT_MAPPER = new ObjectMapper(factory);
+    }
+
     public static Object jsonToObject(InputStream in)
             throws IOException {
-        JsonFactory factory = new JsonFactory();
-        ObjectMapper mapper = new ObjectMapper(factory);
-        return mapper.readValue(in, Object.class);
+        return OBJECT_MAPPER.readValue(in, Object.class);
     }
 
     public static Map<String, Object> jsonToMap(InputStream in)
             throws IOException {
-        JsonFactory factory = new JsonFactory();
-        ObjectMapper mapper = new ObjectMapper(factory);
         TypeReference<HashMap<String,Object>> typeRef
                 = new TypeReference<HashMap<String,Object>>() {};
-        HashMap<String,Object> o = mapper.readValue(in, typeRef);
+        HashMap<String,Object> o = OBJECT_MAPPER.readValue(in, typeRef);
         return o;
     }
 
     public static <T> T jsonTo(InputStream in, TypeReference<T> typeRef)
             throws IOException {
-        JsonFactory factory = new JsonFactory();
-        ObjectMapper mapper = new ObjectMapper(factory);
-        T o = mapper.readValue(in, typeRef);
-        return o;
+        return OBJECT_MAPPER.readValue(in, typeRef);
     }
 
     public static String toJsonString(Object map)
             throws IOException {
-        JsonFactory factory = new JsonFactory();
-        ObjectMapper mapper = new ObjectMapper(factory);
-        return mapper.writeValueAsString( map );
+        return OBJECT_MAPPER.writeValueAsString( map );
     }
 }
