@@ -4,6 +4,7 @@ import com.bazaarvoice.jolt.defaultr.Key;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.exception.TransformException;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -207,7 +208,8 @@ public class Defaultr implements SpecTransform {
     public Object transform( Object input ) {
 
         if ( input == null ) {
-            throw new IllegalArgumentException( "Defaultr needs to be passed a non-null input data to apply defaults to." );
+            // if null, assume HashMap
+            input = new HashMap();
         }
 
         // TODO : Make copy of the defaultee or like shiftr create a new output object
@@ -217,7 +219,7 @@ public class Defaultr implements SpecTransform {
             }
             arrayRoot.applyChildren( input );
         }
-        else if( input instanceof Map ) {
+        else {
             mapRoot.applyChildren( input );
         }
 

@@ -5,14 +5,17 @@ import com.bazaarvoice.jolt.traversr.Traversr;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * TraversalStep that expects to handle Map objects.
+ */
 public class MapTraversalStep extends BaseTraversalStep<Map<String,Object>> {
 
     public MapTraversalStep( Traversr traversr, TraversalStep child ) {
         super( traversr, child );
     }
 
-    public boolean typeOk( Object tree ) {
-        return tree instanceof Map;
+    public Class getStepType() {
+        return Map.class;
     }
 
     public Object newContainer() {
@@ -20,12 +23,17 @@ public class MapTraversalStep extends BaseTraversalStep<Map<String,Object>> {
     }
 
     @Override
-    public Object doGet( Map<String, Object> map, String key ) {
+    public Object get( Map<String, Object> map, String key ) {
         return map.get( key );
     }
 
     @Override
-    public Object doOverwriteSet( Map<String, Object> map, String key, Object data ) {
+    public Object remove( Map<String, Object> map, String key ) {
+        return map.remove( key );
+    }
+
+    @Override
+    public Object overwriteSet( Map<String, Object> map, String key, Object data ) {
         map.put(  key, data );
         return data;
     }

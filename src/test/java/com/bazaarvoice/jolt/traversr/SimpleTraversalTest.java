@@ -7,7 +7,10 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SimpleTraversalTest {
 
@@ -90,11 +93,111 @@ public class SimpleTraversalTest {
 
         AssertJUnit.assertEquals( "tuna", traversal.get( actual ) );
 
-        // Add two things and validate the Auto Expand array
+        // Set twice and verify that the sets did in fact overwrite
         AssertJUnit.assertEquals( "one", traversal.set( actual, "one" ) );
         JoltTestUtil.runDiffy( expectedOne, actual );
 
         AssertJUnit.assertEquals( "two", traversal.set( actual, "two" ) );
         JoltTestUtil.runDiffy( expectedTwo, actual );
+    }
+
+    @DataProvider
+    public Object[][] removeTestCases() throws Exception {
+        return new Object[][] {
+            {
+                "Inception Map Test",
+                SimpleTraversal.newTraversal( "__queryContext" ),
+                JsonUtils.javason( "{ 'Id' : '1234', '__queryContext' : { 'catalogLin' : [ 'a', 'b' ] } }" ),
+                JsonUtils.javason( "{ 'Id' : '1234' }" ),
+                JsonUtils.javason( "{ 'catalogLin' : [ 'a', 'b' ] }" )
+            },
+            {
+                "List Test",
+                SimpleTraversal.newTraversal( "a.list.[1]" ),
+                JsonUtils.javason( "{ 'a' : { 'list' : [ 'a', 'b', 'c' ] } }" ),
+                JsonUtils.javason( "{ 'a' : { 'list' : [ 'a', 'c' ] } }" ),
+                "b"
+            },
+            {
+                "Map leave empty Map",
+                SimpleTraversal.newTraversal( "a.list" ),
+                JsonUtils.javason( "{ 'a' : { 'list' : [ 'a', 'b', 'c' ] } }" ),
+                JsonUtils.javason( "{ 'a' : { } }" ),
+                Arrays.asList( "a","b","c" )
+            },
+            {
+                "Map leave empty List",
+                SimpleTraversal.newTraversal( "a.list.[0]" ),
+                JsonUtils.javason( "{ 'a' : { 'list' : [ 'a' ] } }" ),
+                JsonUtils.javason( "{ 'a' : { 'list' : [ ] } }" ),
+                "a"
+            }
+        };
+    }
+
+    @Test( dataProvider = "removeTestCases")
+    public void removeTests( String testDescription, SimpleTraversal simpleTraversal,
+                             Object start, Object expectedLeft, Object expectedReturn )
+                             throws Exception
+    {
+
+        Object actualRemove = simpleTraversal.remove( start );
+        JoltTestUtil.runDiffy( testDescription, expectedReturn, actualRemove );
+
+        JoltTestUtil.runDiffy( testDescription, expectedLeft, start );
+    }
+
+    @Test(expectedExceptions = ClassCastException.class)
+    public void exceptionTestListIsMap() throws Exception
+    {
+        Object tree = JsonUtils.javason( "{ 'Id' : '1234', '__queryContext' : { 'catalogLin' : [ 'a', 'b' ] } }" );
+
+        SimpleTraversal<List> trav = SimpleTraversal.newTraversal( "__queryContext" );
+        // barfs here, needs the 'List list =' part to trigger it
+        List list = trav.get( tree );
+    }
+
+    @Test(expectedExceptions = ClassCastException.class)
+    public void exceptionTestMapIsList() throws Exception
+    {
+        Object tree = JsonUtils.javason( "{ 'Id' : '1234', '__queryContext' : { 'catalogLin' : [ 'a', 'b' ] } }" );
+
+        SimpleTraversal<Map> trav = SimpleTraversal.newTraversal( "__queryContext.catalogLin" );
+        // barfs here, needs the 'Map map =' part to trigger it
+        Map map = trav.get( tree );
+    }
+
+    @Test()
+    public void exceptionTestListIsMapErasure() throws Exception
+    {
+        Object tree = JsonUtils.javason( "{ 'Id' : '1234', '__queryContext' : { 'catalogLin' : [ 'a', 'b' ] } }" );
+
+        SimpleTraversal<Map<String,Map>> trav = SimpleTraversal.newTraversal( "__queryContext" );
+        // this works
+        Map<String,Map> queryContext = trav.get( tree );
+
+        try {
+            // this does not
+            Map catalogLin = queryContext.get( "catalogLin" );
+            AssertJUnit.fail( "Expected ClassCast Exception");
+        }
+        catch( ClassCastException cce ) { }
+    }
+
+    @Test()
+    public void exceptionTestLMapIsListErasure() throws Exception
+    {
+        Object tree = JsonUtils.javason( "{ 'Id' : '1234', '__queryContext' : { 'catalogLin' : { 'a' : 'b' } } }" );
+
+        SimpleTraversal<Map<String,List>> trav = SimpleTraversal.newTraversal( "__queryContext" );
+        // this works
+        Map<String,List> queryContext = trav.get( tree );
+
+        try {
+            // this does not
+            List catalogLin = queryContext.get( "catalogLin" );
+            AssertJUnit.fail( "Expected ClassCast Exception");
+        }
+        catch( ClassCastException cce ) { }
     }
 }
