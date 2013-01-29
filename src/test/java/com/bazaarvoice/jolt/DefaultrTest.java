@@ -70,14 +70,6 @@ public class DefaultrTest {
         }
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void throwExceptionOnNullDefaultee() throws IOException {
-        Object spec = JsonUtils.jsonToMap( "{ \"tuna\": \"marlin\" }" );
-
-        Defaultr defaultr = new Defaultr( spec );
-        defaultr.transform( null );
-    }
-
     @Test(expectedExceptions = SpecException.class)
     public void throwExceptionOnBadSpec() throws IOException {
         Object spec = JsonUtils.jsonToMap( "{ \"tuna*\": \"marlin\" }" );

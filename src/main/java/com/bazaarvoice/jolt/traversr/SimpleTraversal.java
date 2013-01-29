@@ -63,4 +63,12 @@ public class SimpleTraversal<K> {
     public K set( Object tree, K data ) {
         return (K) traversr.set( tree, keys, data );
     }
+
+    /**
+     * @param tree tree of Map and List JSON structure to navigate
+     * @return removes and returns the data object if it was able to successfully navigate to it and remove it.
+     */
+    public K remove( Object tree ) {
+        return (K) traversr.remove( tree, keys );
+    }
 }

@@ -88,6 +88,10 @@ public abstract class Traversr {
             throw new TraversrException( "Traversal Path and number of keys mismatch, traversalLength:" + traversalLength + " numKeys:" + keys.size() );
         }
 
+        if ( tree == null ) {
+            return null;
+        }
+
         return root.traverse( tree, TraversalStep.Operation.GET, keys.iterator(), null );
     }
 
@@ -102,7 +106,38 @@ public abstract class Traversr {
             throw new TraversrException( "Traversal Path and number of keys mismatch, traversalLength:" + traversalLength + " numKeys:" + keys.size() );
         }
 
+        /*
+           This may seem counterintuitive.
+           Aka, 'set' is going to create maps and lists as it walks, so why not take null input,
+            and make the top level map or list as needed'
+           The problem is that, we have no way to return our newly created top level container.
+           All we return is a reference to the data, if we were successful in our set.
+        */
+        if ( tree == null ) {
+            return null;
+        }
+
         return root.traverse( tree, TraversalStep.Operation.SET, keys.iterator(), data );
+    }
+
+    /**
+     * Note : Calling this method MAY modify the tree object by adding new Maps and Lists as needed
+     *  for the traversal.  This is determined by the behavior of the implementations of the
+     *  abstract methods of this class.
+     *
+     * @return null or data
+     */
+    public Object remove( Object tree, List<String> keys ) {
+
+        if ( keys.size() != traversalLength ) {
+            throw new TraversrException( "Traversal Path and number of keys mismatch, traversalLength:" + traversalLength + " numKeys:" + keys.size() );
+        }
+
+        if ( tree == null ) {
+            return null;
+        }
+
+        return root.traverse( tree, TraversalStep.Operation.REMOVE, keys.iterator(), null );
     }
 
     // TODO extract these methods to an interface, and then sublasses of Traverser like ShiftrTraversr can do the

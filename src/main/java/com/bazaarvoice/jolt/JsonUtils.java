@@ -67,6 +67,28 @@ public class JsonUtils {
         }
     }
 
+    /**
+     * Utility for test classes, so that they can inline json in a test class.
+     * Does a character level replacement of apostrophe (') with double quote (").
+     *
+     * This means you can express a snippit of Json without having to forward
+     *  slash escape everything.
+     *
+     * This is character based, so don't have any apostrophes (') in your test
+     *  data.
+     *
+     * @param javason Json-ish string you want to turn into Maps-of-Maps
+     * @return Maps-of-Maps
+     * @throws IOException
+     */
+    public static Map<String, Object> javason( String javason )
+            throws IOException {
+
+        String json = javason.replace( '\'', '"' );
+
+        return jsonToMap( new ByteArrayInputStream( json.getBytes() ) );
+    }
+
     public static Map<String, Object> jsonToMap(String json)
             throws IOException {
         return jsonToMap( new ByteArrayInputStream( json.getBytes() ) );

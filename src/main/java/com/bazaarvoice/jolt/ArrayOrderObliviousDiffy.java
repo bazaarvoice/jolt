@@ -28,5 +28,4 @@ public class ArrayOrderObliviousDiffy extends Diffy {
         }
         return new Result( expected, actual );
     }
-
 }

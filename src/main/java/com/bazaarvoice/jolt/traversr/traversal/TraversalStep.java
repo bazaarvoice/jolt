@@ -5,26 +5,33 @@ import java.util.Iterator;
 /**
  * A step in a JSON tree traversal.
  */
-public interface TraversalStep {
+public interface TraversalStep<T> {
 
     /**
-     * The two things you can do with a Traversal.
+     * The three things you can do with a Traversal.
      */
-    public enum Operation { SET, GET }
+    public enum Operation { SET, GET, REMOVE }
 
     /**
      * Return the data for the key from the provided tree object.
      *
      * @return data object if available, or null.
      */
-    public Object get( Object tree, String key );
+    public Object get( T tree, String key );
+
+    /**
+     * Remove and return the data for the key from the provided tree object.
+     *
+     * @return data object if available, or null.
+     */
+    public Object remove( T tree, String key );
 
     /**
      * Insert the data into the tree, overwriting any data that is there.
      *
      * @return returns the data object if successful or null if it could not
      */
-    public Object overwriteSet( Object tree, String key, Object data );
+    public Object overwriteSet( T tree, String key, Object data );
 
     /**
      * @return the child Traversal or null if this Traversal has no child
@@ -39,9 +46,12 @@ public interface TraversalStep {
     public Object newContainer();
 
     /**
-     * @return true if the supplied object is of the right type
+     * Return the Class of the Generic T, so that it can be used in an
+     *  "instanceof" style check.
+     *
+     * @return Class that matches Generic parameter T
      */
-    public boolean typeOk( Object tree );
+    public Class<?> getStepType();
 
     /**
      * The meat of the Traversal.

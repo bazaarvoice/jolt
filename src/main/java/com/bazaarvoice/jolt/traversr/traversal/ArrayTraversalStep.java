@@ -5,14 +5,17 @@ import com.bazaarvoice.jolt.traversr.Traversr;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * TraversalStep that expects to handle List objects.
+ */
 public class ArrayTraversalStep extends BaseTraversalStep<List<Object>> {
 
     public ArrayTraversalStep( Traversr traversr, TraversalStep child ) {
         super( traversr, child );
     }
 
-    public boolean typeOk( Object tree ) {
-        return tree instanceof List;
+    public Class getStepType() {
+        return List.class;
     }
 
     public Object newContainer() {
@@ -20,7 +23,7 @@ public class ArrayTraversalStep extends BaseTraversalStep<List<Object>> {
     }
 
     @Override
-    public Object doGet( List<Object> list, String key ) {
+    public Object get( List<Object> list, String key ) {
 
         int arrayIndex = Integer.parseInt( key );
         if ( arrayIndex < list.size() ) {
@@ -31,7 +34,18 @@ public class ArrayTraversalStep extends BaseTraversalStep<List<Object>> {
     }
 
     @Override
-    public Object doOverwriteSet( List<Object> list, String key, Object data ) {
+    public Object remove( List<Object> list, String key ) {
+
+        int arrayIndex = Integer.parseInt( key );
+        if ( arrayIndex < list.size() ) {
+            return list.remove( arrayIndex );
+        }
+
+        return null;
+    }
+
+    @Override
+    public Object overwriteSet( List<Object> list, String key, Object data ) {
 
         int arrayIndex = Integer.parseInt( key );
         ensureArraySize( list, arrayIndex );            // make sure it is big enough

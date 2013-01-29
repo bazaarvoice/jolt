@@ -6,7 +6,7 @@ import com.bazaarvoice.jolt.traversr.TraversrException;
 import java.util.Iterator;
 
 
-public abstract class BaseTraversalStep<T> implements TraversalStep {
+public abstract class BaseTraversalStep<T> implements TraversalStep<T> {
 
     protected final TraversalStep child;
     protected final Traversr traversr;
@@ -26,7 +26,7 @@ public abstract class BaseTraversalStep<T> implements TraversalStep {
             return null;
         }
 
-        if ( typeOk( tree ) ) {
+        if ( getStepType().isAssignableFrom( tree.getClass() ) ) {
 
             String key = keys.next();
 
@@ -34,9 +34,11 @@ public abstract class BaseTraversalStep<T> implements TraversalStep {
                 // End of the Traversal so do the set or get
                 switch (op) {
                     case GET :
-                        return this.get( tree, key );
+                        return this.get( (T) tree, key );
                     case SET :
                         return traversr.handleFinalSet( this, tree, key, data );
+                    case REMOVE:
+                        return this.remove( (T) tree, key );
                     default :
                         throw new IllegalStateException( "Invalid op:" + op.toString() );
                 }
@@ -59,17 +61,4 @@ public abstract class BaseTraversalStep<T> implements TraversalStep {
             throw new TraversrException( "Type mismatch on parent." );
         }
     }
-
-    public Object get( Object tree, String key ) {
-        return doGet( (T) tree, key );
-    }
-
-    public abstract Object doGet( T tree, String key );
-
-
-    public Object overwriteSet( Object tree, String key, Object data ) {
-        return doOverwriteSet( (T) tree, key, data );
-    }
-
-    public abstract Object doOverwriteSet( T tree, String key, Object data );
 }
