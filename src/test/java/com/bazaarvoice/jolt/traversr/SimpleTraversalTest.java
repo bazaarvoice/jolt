@@ -32,6 +32,13 @@ public class SimpleTraversalTest {
                 "tuna"
             },
             {
+                "Leading Array test",
+                SimpleTraversal.newTraversal( "[0].a" ),
+                JsonUtils.jsonToObject( "[ ]" ),
+                JsonUtils.jsonToObject( "[ { \"a\" : \"b\" } ]" ),
+                "b"
+            },
+            {
                 "Auto expand array test",
                 SimpleTraversal.newTraversal( "a.[].b" ),
                 JsonUtils.jsonToMap( "{ \"a\" : null }" ),
