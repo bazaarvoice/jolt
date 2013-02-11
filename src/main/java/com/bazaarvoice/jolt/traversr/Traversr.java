@@ -52,6 +52,11 @@ public abstract class Traversr {
         // so remove any ".."  ;)
         intermediatePath = intermediatePath.replace( "..", "." );
 
+        if ( intermediatePath.charAt( 0 ) == '.') {
+            // if the path started with an array, aka "[0].tuna", remove the leading .
+            intermediatePath = intermediatePath.substring( 1 );
+        }
+
         String[] paths = intermediatePath.split( "\\." );
 
         TraversalStep rooty = null;
