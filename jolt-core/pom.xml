@@ -6,12 +6,12 @@
     <parent>
         <groupId>com.bazaarvoice.jolt</groupId>
         <artifactId>jolt-parent</artifactId>
-        <version>0.0.3-SNAPSHOT</version>
+        <version>0.0.3</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>jolt-core</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.3</version>
     <name>Jolt Core</name>
     <packaging>jar</packaging>
 
