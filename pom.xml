@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.bazaarvoice.jolt</groupId>
+        <artifactId>jolt-parent</artifactId>
+        <version>0.0.3-SNAPSHOT</version>
+        <relativePath>parent/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>jolt</artifactId>
+    <packaging>pom</packaging>
+    <name>Jolt</name>
+
+    <scm>
+        <connection>scm:git:git@github.com:bazaarvoice/jolt.git</connection>
+    </scm>
+
+    <modules>
+        <module>parent</module>
+        <module>jolt-core</module>
+    </modules>
+
+</project>
