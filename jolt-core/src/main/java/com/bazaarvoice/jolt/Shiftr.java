@@ -21,7 +21,7 @@ import java.util.Map;
  *  supplying a "dot notation" output path for each piece of data that you care about.
  *
  * For example, given this simple input Json :
- *  * <pre>
+ * <pre>
  * {
  *   "rating": {
  *       "quality": {
