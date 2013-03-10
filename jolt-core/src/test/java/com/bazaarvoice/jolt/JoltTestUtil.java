@@ -3,7 +3,6 @@ package com.bazaarvoice.jolt;
 import org.testng.AssertJUnit;
 
 import java.io.IOException;
-import java.util.List;
 
 public class JoltTestUtil {
 
