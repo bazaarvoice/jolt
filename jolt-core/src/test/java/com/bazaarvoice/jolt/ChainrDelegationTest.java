@@ -1,5 +1,6 @@
 package com.bazaarvoice.jolt;
 
+import com.bazaarvoice.jolt.JsonUtils;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.exception.TransformException;
 import org.testng.AssertJUnit;
@@ -8,8 +9,6 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ChainrDelegationTest {
 
