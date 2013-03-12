@@ -11,7 +11,7 @@
 
     <groupId>com.bazaarvoice.jolt</groupId>
     <artifactId>jolt-parent</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Jolt Parent</name>
