@@ -7,8 +7,8 @@ Transform specification is itself a JSON document.
 
 Useful For
 -------
-1. Taking Json data from ElasticSearch, MonogoDb, Cassandra, etc and transforming it before sending it off to the world.
-1. Extracting data from a large Json document for your component's consumption.
+1. Taking JSON data from ElasticSearch, MonogoDb, Cassandra, etc and transforming it before sending it off to the world.
+1. Extracting data from a large JSON document for your component's consumption.
 
 Overview
 ------------
@@ -19,7 +19,7 @@ Jolt lets Jackson serialize and deserialize the JSON text which offloads the wor
 
 Jolt provides a set transform components, that can be "chained" together to form the overall JSON to JSON transform.
 
-Each transform component covers a specific transform task with a unique Json format DSL for that task.
+Each transform component covers a specific transform task with a unique JSON format DSL for that task.
 
 The provided transform components are:
 
@@ -40,12 +40,13 @@ This project produces two maven artifacts.
 2. `json-utils` : Jackson and testing utilities.   Used by jolt-core as a test dependency.
 
 Maven Dependency
-    <dependency>
-        <groupId>com.bazaarvoice.jolt</groupId>
-        <artifactId>jolt-core</artifactId>
-        <version>${jolt.version}</version>
-    </dependency>
-
+```
+<dependency>
+    <groupId>com.bazaarvoice.jolt</groupId>
+    <artifactId>jolt-core</artifactId>
+    <version>${jolt.version}</version>
+</dependency>
+```
 
 Documentation
 --------------
@@ -78,7 +79,7 @@ return output;
 Transfrom DSL Syntax
 ---------------
 
-Please look our tests, ([shiftr tests](https://github.com/bazaarvoice/jolt/tree/master/jolt-core/src/test/resources/json/shiftr)), for nice bite sized transform examples.
+Please look at our tests, ([shiftr tests](https://github.com/bazaarvoice/jolt/tree/master/jolt-core/src/test/resources/json/shiftr)), for nice bite sized transform examples.
 They all follow the pattern :
 ```
 {
