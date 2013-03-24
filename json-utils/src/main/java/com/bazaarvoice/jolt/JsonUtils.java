@@ -1,6 +1,7 @@
 package com.bazaarvoice.jolt;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -103,6 +104,7 @@ public class JsonUtils {
     private static final ObjectMapper OBJECT_MAPPER;
     static {
         JsonFactory factory = new JsonFactory();
+        factory.enable( JsonParser.Feature.ALLOW_COMMENTS );
         OBJECT_MAPPER = new ObjectMapper(factory);
     }
 
