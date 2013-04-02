@@ -12,7 +12,7 @@ import java.util.Map;
  * Shiftr is a kind of JOLT transform that specifies where "data" from the input JSON should be placed in the
  * output JSON, aka how the input Json/data should be shifted around to make the output Json/data.
  *
- * At a base level, a single Shiftr "command" is a data mapping from an input path to an output path,
+ * At a base level, a single Shiftr "command" is a mapping from an input path to an output path,
  *  similar to the "mv" command in Unix, "mv /var/data/mysql/data /media/backup/mysql".
  *
  * In Shiftr, the input path is a Json tree structure, and the output path is flattend "dot notation" path notation.

@@ -1,42 +1,30 @@
 {
     "input": {
+        // Given input data the is prefixed
         "rating-primary": 1,
-        "rating-range-primary": 5,
-
-        "rating-RatingDimension3": 1,
-        "rating-range-RatingDimension3": 5,
-
         "rating-Price": 2,
-        "rating-range-Price": 7,
-
         "rating-Design": 4,
-        "rating-range-Design": 5
+        "rating-RatingDimension3": 1
     },
 
     "spec": {
+        // match one explicitly
         "rating-primary": "Rating",
-        "rating-range-primary": "RatingRange",
 
-        "rating-*": "SecondaryRatings.&(0,1).Value",
-        "rating-range-*": "SecondaryRatings.&(0,1).ValueRange"
+        // match the rest using the * wildcard.
+        "rating-*": "SecondaryRatings.&(0,1)"
+        // Assuming "rating-Price" :
+        // "SecondaryRatings.&" = "rating-Price"   // the whole key, syntatic sugar version
+        // "SecondaryRatings.&0" = "rating-Price"  // the whole key, explict about how far up the tree to look, aka 0
+        // "SecondaryRatings.&(0,1)" = "Price"     // the first * in the key &0 levels up the intput tree
     },
 
     "expected": {
         "Rating": 1,
-        "RatingRange": 5,
         "SecondaryRatings": {
-            "RatingDimension3": {
-                "Value": 1,
-                "ValueRange": 5
-            },
-            "Price": {
-                "Value": 2,
-                "ValueRange": 7
-            },
-            "Design": {
-                "Value": 4,
-                "ValueRange": 5
-            }
+            "Price": 2,
+            "Design": 4,
+            "RatingDimension3": 1
         }
     }
 }
