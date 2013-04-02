@@ -65,7 +65,9 @@ Javadoc explaining each transform DSL :
 
 Running a Jolt transform means instantiating an instance of the `Chainr` class with its [Json specification](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Chainr.java) file that lists the transform steps to perform.
 
-Looks something like this :
+JSON Spec side look like : example from Chainr [unit test](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/test/resources/json/chainr/firstSample.json).
+
+The Java side looks like :
 ```
 Chainr chainr = new Chainr( ...getResourceAsStream( "/path/to/chainr/spec.json" ) );
 
@@ -75,6 +77,7 @@ Object output = chainr.transform( input );
 
 return output;
 ```
+
 
 Transfrom DSL Syntax
 ---------------
@@ -123,5 +126,3 @@ Cobertura
     open jolt-core/target/site/cobertura/index.html
 
 Currently code coverage is at 89% line, and 83% branch.
-
-

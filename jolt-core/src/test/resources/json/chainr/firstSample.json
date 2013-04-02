@@ -1,4 +1,5 @@
 {
+    // Input data for the unit test
     "input": {
         "rating": {
             "primary": {
@@ -16,8 +17,10 @@
         }
     },
 
+    // The test uses this Chainr spec, on the input data to produce the "expected" JSON below
     "spec": [
         {
+            // first operation is shift
             "operation": "shift",
             "spec": {
                 "rating": {
@@ -34,6 +37,7 @@
             }
         },
         {
+            // second operation is to default some values
             "operation": "default",
             "spec": {
                 "~z": "zz",
@@ -44,16 +48,19 @@
             }
         },
         {
+            // third operation is to remove something
             "operation": "remove",
             "spec": {
                 "~deleteme": ""
             }
         },
         {
+            // last operation is to sort the JSON
             "operation": "sort"
         }
     ],
 
+    // The expected result
     "expected": {
         "~a": "aa",
         "~id": "id",
