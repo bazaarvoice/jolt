@@ -1,9 +1,7 @@
 {
     "input" : {
         "data" : {
-            "tunaOrder":["tuna-Age",
-                "tuna-Tone",
-                "tuna-Color"],
+            "tunaOrder":["tuna-Age", "tuna-Tone", "tuna-Color"],
             "marlinOrder" : [ "marlin-Spear" ]
         }
     },
@@ -28,9 +26,7 @@
     },
 
     "expected" : {
-        "TunaFishOrder":["Age",
-            "Tone",
-            "Color"],
+        "TunaFishOrder":["Age", "Tone", "Color"],
         "MarlinFishOrder" : [ "Spear" ]
     }
 }

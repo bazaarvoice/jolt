@@ -12,15 +12,19 @@ public class ShiftrTest {
     @DataProvider
     public Object[][] getTestCaseUnits() {
         return new Object[][] {
+            {"arrayMismatch"},
             {"bucketToPrefixSoup"},
             {"declaredOutputArray"},
             {"explicitArrayKey"},
             {"firstSample"},
             {"identity"},
             {"inputArrayToPrefix"},
+            {"invertMap"},
             {"keyref"},
             {"lhsAmpMatch"},
             {"listKeys"},
+            {"mapToList"},
+            {"mapToList2"},
             {"multiPlacement"},
             {"objectToArray"},
             {"photosArray"},

@@ -6,20 +6,18 @@
         "tuna": 9
     },
 
-
     "spec": {
         "*": {
-            "@": "a.b.c",
-            "$": "a.b.d"
+            "@": "a.b.originalValues",
+            "$": "a.b.originalKeys"
         }
     },
-
 
     "expected": {
         "a": {
             "b": {
-                "d": ["foo", "bar", "baz", "tuna"],
-                "c": [3, 14, 15, 9]
+                "originalKeys": ["foo", "bar", "baz", "tuna"],
+                "originalValues": [3, 14, 15, 9]
             }
         }
     }
