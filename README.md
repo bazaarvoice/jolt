@@ -100,7 +100,7 @@ They all follow the pattern :
 }
 ```
 
-The best way to learn the transform syntax, is to really look at the input and output json, get an understanding of how data is moving, and then look at the transform spec and see how it facilitates it.
+Look at the "input" and "output" json, get an understanding of how data is moving, and then look at the transform spec to see how it facilitates it.
 
 For reference, [this](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/test/resources/json/shiftr/firstSample.json) was the very first test we wrote.
 

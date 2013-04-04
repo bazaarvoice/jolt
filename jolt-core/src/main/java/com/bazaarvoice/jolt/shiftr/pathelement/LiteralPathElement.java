@@ -10,6 +10,8 @@ public class LiteralPathElement extends BasePathElement implements MatchablePath
 
     private final List<String> subKeys;
 
+    private int hashCount = 0;
+
     public LiteralPathElement( String key ) {
         super(key);
 
@@ -57,5 +59,13 @@ public class LiteralPathElement extends BasePathElement implements MatchablePath
 
     public int getSubKeyCount(){
         return subKeys.size();
+    }
+
+    public int getHashCount() {
+        return hashCount;
+    }
+
+    public void incrementHashCount() {
+        hashCount++;
     }
 }

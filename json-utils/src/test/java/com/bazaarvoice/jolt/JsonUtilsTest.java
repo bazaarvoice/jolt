@@ -9,9 +9,16 @@ import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public class JsonUtilsTest {
+
+    private Diffy diffy = new Diffy();
+
+    private Map ab = ImmutableMap.builder().put( "a", "b" ).build();
+    private Map cd = ImmutableMap.builder().put( "c", "d" ).build();
+    private Map top = ImmutableMap.builder().put( "A", ab ).put( "B", cd ).build();
 
     @DataProvider
     public Object[][] removeRecursiveCases() {
@@ -51,12 +58,53 @@ public class JsonUtilsTest {
 
 
     @Test(dataProvider = "removeRecursiveCases")
-    public void testRemoveRecursive(Object json, String key, Object expected)
-            throws IOException {
+    public void testRemoveRecursive(Object json, String key, Object expected) throws IOException {
+
         JsonUtils.removeRecursive( json, key );
-        Diffy.Result result = new Diffy().diff( expected, json );
+
+        Diffy.Result result = diffy.diff( expected, json );
         if (!result.isEmpty()) {
             AssertJUnit.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString( result.expected ) + "\n  actual: " + JsonUtils.toJsonString( result.actual ) );
         }
+    }
+
+    @Test
+    public void runFixtureTests() throws IOException {
+
+        String testFixture = "/jsonUtils/jsonUtils-removeRecursive.json";
+        List<Map<String, Object>> tests = (List<Map<String, Object>>) JsonUtils.jsonToObject( JsonUtilsTest.class.getResourceAsStream( testFixture ) );
+
+        for ( Map<String,Object> testUnit : tests ) {
+
+            Object data = testUnit.get( "input" );
+            String toRemove = (String) testUnit.get( "remove" );
+            Object expected = testUnit.get( "expected" );
+
+            JsonUtils.removeRecursive( data, toRemove );
+
+            Diffy.Result result = diffy.diff( expected, data );
+            if (!result.isEmpty()) {
+                AssertJUnit.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
+            }
+        }
+    }
+
+    @Test( description = "No exception if we don't try to remove from an ImmutableMap.")
+    public void doNotUnnecessarilyDieOnImmutableMaps() throws IOException
+    {
+        Map expected = JsonUtils.jsonToMap( JsonUtils.toJsonString( top ) );
+
+        JsonUtils.removeRecursive( top, "tuna" );
+
+        Diffy.Result result = diffy.diff( expected, top );
+        if (!result.isEmpty()) {
+            AssertJUnit.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
+        }
+    }
+
+    @Test( expectedExceptions = UnsupportedOperationException.class, description = "Exception if try to remove from an Immutable map.")
+    public void correctExceptionWithImmutableMap() throws IOException
+    {
+        JsonUtils.removeRecursive( top, "c" );
     }
 }

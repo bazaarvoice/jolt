@@ -1,0 +1,68 @@
+{
+    "comment0": "Given a catalogConfig that tells the fields configured on a category.",
+    "comment1": "I want to invert it and figure out, for each field which categories use it.",
+
+    "input": {
+        "catalogConfig": {
+            "ROOT": {
+                "fields": {
+                    "review": [
+                        "Age",
+                        "Gender",
+                        "Quality"
+                    ],
+                    "question" : [
+                        "Gender"
+                    ]
+                }
+            },
+            "category7": {
+                "fields": {
+                    "review": [
+                        "Age",
+                        "Quality"
+                    ]
+                }
+            },
+            "category8": {
+                "fields": {
+                    "review": [
+                        "Quality"
+                    ],
+                    "question" : [
+                        "Age"
+                    ]
+                }
+            }
+        }
+    },
+    "spec": {
+        "catalogConfig": {
+            "*": {
+                "fields": {
+                    "*": {
+                        "*" : {
+                            // We need to match the leaf levels of the inputs, and then use the $ wildcard, to pull the key of our parent
+                            "*" : {
+                                "$4" : "&1.&3.[]"  // trailing [] tells Shiftr to make an array, even if there is only one output
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "expected" : {
+        "Age": {
+            "review"   : [ "ROOT", "category7" ],
+            "question" : [ "category8" ]
+        },
+        "Gender": {
+            "review"   : [  "ROOT" ],  // the trailing [] in the spec, is why "ROOT" is in an array by itself
+            "question" : [  "ROOT" ]
+        },
+        "Quality": {
+            "review"   : [ "ROOT", "category7", "category8" ]
+        }
+    }
+}
