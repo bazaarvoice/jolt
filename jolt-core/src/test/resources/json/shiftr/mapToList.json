@@ -1,0 +1,32 @@
+{
+    "input": {
+        "ratings": {
+            "primary": 5,
+            "quality": 4
+        }
+    },
+
+    "spec": {
+        "ratings": {
+            "*": {
+                // #2 means go two levels up the tree, and ask the "ratings" node, how many of its children have been matched
+                //  this allows us to put the Name and the Value into the same object in the Ratings array
+                "$": "Ratings[#2].Name",
+                "@": "Ratings[#2].Value"
+            }
+        }
+    },
+
+    "expected": {
+        "Ratings": [
+            {
+                "Name": "primary",
+                "Value": 5
+            },
+            {
+                "Name": "quality",
+                "Value": 4
+            }
+        ]
+    }
+}

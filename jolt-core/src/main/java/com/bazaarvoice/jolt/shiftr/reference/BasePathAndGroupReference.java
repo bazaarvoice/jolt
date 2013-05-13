@@ -14,14 +14,14 @@ import com.bazaarvoice.jolt.exception.SpecException;
  *  In the CanonicalForm the first entry is how far up the WalkedPath to look for a LiteralPathElement,
  *   and the second entry is which part of that LiteralPathElement to ask for.
  */
-public abstract class BaseReference implements Reference {
+public abstract class BasePathAndGroupReference implements PathAndGroupReference {
 
-    private final int pathIndex;    // equals 0 for "&"  "&0"  and  "&(0,x)"
     private final int keyGroup;     // equals 0 for "&"  "&0"  and  "&(x,0)"
+    private final int pathIndex;    // equals 0 for "&"  "&0"  and  "&(0,x)"
 
     protected abstract char getToken();
 
-    public BaseReference( String refStr ) {
+    public BasePathAndGroupReference( String refStr ) {
 
         if ( refStr == null || refStr.length() == 0 || getToken() != refStr.charAt( 0 ) ) {
             throw new SpecException( "Invalid reference key=" + refStr + " either blank or doesn't start with correct character=" + getToken() );

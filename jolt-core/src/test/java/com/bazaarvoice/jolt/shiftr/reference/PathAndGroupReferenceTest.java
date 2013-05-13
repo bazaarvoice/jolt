@@ -5,7 +5,7 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-public class ReferenceTest {
+public class PathAndGroupReferenceTest {
 
     @DataProvider
     public Object[][] getValidReferenceTests() {
@@ -20,7 +20,7 @@ public class ReferenceTest {
     @Test( dataProvider = "getValidReferenceTests" )
     public void validAmpReferencePatternTest(String key, int pathIndex, int keyGroup, String canonicalForm) {
 
-        Reference amp = new AmpReference( "&" + key );
+        PathAndGroupReference amp = new AmpReference( "&" + key );
         AssertJUnit.assertEquals( pathIndex, amp.getPathIndex() );
         AssertJUnit.assertEquals( keyGroup, amp.getKeyGroup() );
         AssertJUnit.assertEquals( "&" + canonicalForm, amp.getCanonicalForm() );
@@ -29,7 +29,7 @@ public class ReferenceTest {
     @Test( dataProvider = "getValidReferenceTests" )
     public void validDollarReferencePatternTest(String key, int pathIndex, int keyGroup, String canonicalForm) {
 
-        Reference amp = new DollarReference( "$" + key );
+        PathAndGroupReference amp = new DollarReference( "$" + key );
         AssertJUnit.assertEquals( pathIndex, amp.getPathIndex() );
         AssertJUnit.assertEquals( keyGroup, amp.getKeyGroup() );
         AssertJUnit.assertEquals( "$" + canonicalForm, amp.getCanonicalForm() );

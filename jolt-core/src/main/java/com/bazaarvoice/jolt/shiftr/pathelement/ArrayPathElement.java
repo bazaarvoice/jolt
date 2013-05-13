@@ -3,13 +3,16 @@ package com.bazaarvoice.jolt.shiftr.pathelement;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.shiftr.reference.AmpReference;
 import com.bazaarvoice.jolt.shiftr.WalkedPath;
+import com.bazaarvoice.jolt.shiftr.reference.HashReference;
+import com.bazaarvoice.jolt.shiftr.reference.PathAndGroupReference;
+import com.bazaarvoice.jolt.shiftr.reference.PathReference;
 
 public class ArrayPathElement extends BasePathElement implements MatchablePathElement, EvaluatablePathElement {
 
-    public enum ArrayPathType { AUTO_EXPAND, REFERENCE, EXPLICIT_INDEX }
+    public enum ArrayPathType { AUTO_EXPAND, REFERENCE, HASH, EXPLICIT_INDEX }
 
     private final ArrayPathType arrayPathType;
-    private final AmpReference ref;
+    private final PathReference ref;
 
     private final String canonicalForm;
     private final String arrayIndex;
@@ -22,7 +25,7 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
         }
 
         ArrayPathType apt;
-        AmpReference r = null;
+        PathReference r = null;
         String aI = "";
 
         if ( key.length() == 2 ) {
@@ -32,9 +35,15 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
         else {
             String meat = key.substring( 1, key.length() - 1 );  // trim the [ ]
 
-            if ( meat.contains( "&" ) ) {
+            if ( AmpReference.TOKEN.equals( meat.charAt( 0 ) ) ) {
                 r = new AmpReference( meat );
                 apt = ArrayPathType.REFERENCE;
+
+                canonicalForm = "[" + r.getCanonicalForm() + "]";
+            }
+            else if ( HashReference.TOKEN.equals( meat.charAt( 0 ) ) ) {
+                r = new HashReference( meat );
+                apt = ArrayPathType.HASH;
 
                 canonicalForm = "[" + r.getCanonicalForm() + "]";
             }
@@ -73,9 +82,21 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
             case EXPLICIT_INDEX:
                 return arrayIndex;
 
+            case HASH:
+                LiteralPathElement element = walkedPath.elementFromEnd( ref.getPathIndex() );
+                Integer index = element.getHashCount();
+                return index.toString();
+
             case REFERENCE:
                 LiteralPathElement lpe = walkedPath.elementFromEnd( ref.getPathIndex() );
-                String keyPart = lpe.getSubKeyRef( ref.getKeyGroup() );
+                String keyPart;
+
+                if ( ref instanceof PathAndGroupReference ) {
+                    keyPart = lpe.getSubKeyRef( ( (PathAndGroupReference) ref).getKeyGroup() );
+                }
+                else {
+                    keyPart = lpe.getSubKeyRef( 0 );
+                }
                 try
                 {
                     Integer.parseInt( keyPart );
