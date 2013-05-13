@@ -166,6 +166,7 @@ public class CompositeSpec extends Spec {
             return false;
         }
 
+        // add ourselves to the path, so that our children can reference us
         walkedPath.add( thisLevel );
 
         // Handle any special / key based children first, but don't have them block anything
@@ -176,7 +177,12 @@ public class CompositeSpec extends Spec {
         // Handle the rest of the children
         executionStrategy.process( this, input, walkedPath, output );
 
+        // We are done, so remove ourselves from the walkedPath
         walkedPath.removeLast();
+
+        // we matched so increment the matchCount of our parent
+        walkedPath.lastElement().incrementHashCount();
+
         return true;
     }
 
@@ -206,7 +212,18 @@ public class CompositeSpec extends Spec {
             void processList( CompositeSpec spec, List<Object> inputList, WalkedPath walkedPath, Map<String, Object> output ) {
 
                 for( String key : spec.literalChildren.keySet() ) {
-                    int keyInt = Integer.parseInt( key );
+
+                    int keyInt = Integer.MAX_VALUE;
+
+                    try {
+                        keyInt = Integer.parseInt( key );
+                    }
+                    catch( NumberFormatException nfe ) {
+                        // If the data is an Array, but the spec keys are Non-Integer Strings,
+                        //  we are annoyed, but we don't stop the whole transform.
+                        // Just this part of the Transform won't work.
+                    }
+
                     if ( keyInt < inputList.size() ) {
 
                         Object subInput = inputList.get( keyInt );

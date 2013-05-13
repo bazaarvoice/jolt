@@ -1,0 +1,63 @@
+{
+    "input": {
+        "cdvHisto": {
+            "Expertise": {
+                "Intermediate": 10
+            },
+            "HowLong": {
+                "UpTo1Year": 4,
+                "Under1Month": 3,
+                "Over1Year": 3
+            }
+        }
+    },
+
+    "comment0": "Jolt is weak on transforming Maps to lists.",
+    "comment1": "If we introduce the # to the RHS, we can do it.",
+    "comment2": "Also means each node above creates an integer index.",
+
+    "spec": {
+        "cdvHisto": {
+            "*": {
+                "$": [ "ContextDataDistribution.&1.Id", "ContextDataDistribution.&1.Label" ],
+                "*": {
+                    "@": "ContextDataDistribution.&2.Values.[#2].Count",
+                    "$": "ContextDataDistribution.&2.Values.[#2].Value"
+                }
+            }
+        }
+    },
+
+    "expected": {
+        "ContextDataDistribution": {
+            "Expertise": {
+                "Id": "Expertise",
+                "Label": "Expertise",
+                "Values": [
+                    {
+                        "Count": 10,
+                        "Value": "Intermediate"
+                    }
+                ]
+            },
+            "HowLong": {
+                "Id": "HowLong",
+                "Label": "HowLong",
+                "Values": [
+                    {
+                        "Count": 4,
+                        "Value": "UpTo1Year"
+                    },
+                    {
+                        "Count": 3,
+                        "Value": "Under1Month"
+                    },
+                    {
+                        "Count": 3,
+                        "Value": "Over1Year"
+                    }
+                ]
+            }
+        }
+    }
+}

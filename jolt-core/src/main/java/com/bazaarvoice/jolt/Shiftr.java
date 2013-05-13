@@ -2,6 +2,7 @@ package com.bazaarvoice.jolt;
 
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.shiftr.WalkedPath;
+import com.bazaarvoice.jolt.shiftr.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.shiftr.spec.CompositeSpec;
 
 import java.util.HashMap;
@@ -196,10 +197,10 @@ import java.util.Map;
  *
  * '$' Wildcard
  *   Valid only on the LHS of the spec.
- *   The existence of this wildcard is a reflection of the fact that the "data" of the input Json, can be both in the "values",
- *    but also can be encoded in the "keys" of the input JSON
+ *   The existence of this wildcard is a reflection of the fact that the "data" of the input Json, can be both in the "values"
+ *    and the "keys" of the input JSON
  *
- *   The base case operation of Shiftr is to operate on input JSON "values", thus we need a way to specify that we want to operate on the input JSON "key".
+ *   The base case operation of Shiftr is to copy input JSON "values", thus we need a way to specify that we want to copy the input JSON "key" instead.
  *
  *   Thus '$' specifies that we want to use an input key, or input key derived value, as the data to be placed in the output JSON.
  *   '$' has the same syntax as the '&' wildcard, and can be read as, dereference to get a value, and then use that value as the data to be output.
@@ -239,6 +240,13 @@ import java.util.Map;
  *     }
  *   }
  *   </pre>
+ *
+ * '#' Wildcard
+ *   Valid only on the RHS of the spec, nested in an array, like "[#2]"
+ *   This wildcard is useful if you want to take a JSON map and turn it into a JSON array, and you do not care about the order of the array.
+ *
+ *   While Shiftr is doing its parallel tree walk of the input data and the spec, it tracks how many matched it has processed at each level
+ *    of the spec tree.
  *
  *
  * '|' Wildcard
@@ -442,7 +450,13 @@ public class Shiftr implements SpecTransform {
     public Object transform( Object input ) {
 
         Map<String,Object> output = new HashMap<String,Object>();
-        rootSpec.apply( ROOT_KEY, input, new WalkedPath(), output );
+
+        // Create a root LiteralPathElement so that # is useful at the root level
+        LiteralPathElement rootLpe = new LiteralPathElement( ROOT_KEY );
+        WalkedPath walkedPath = new WalkedPath();
+        walkedPath.add( rootLpe );
+
+        rootSpec.apply( ROOT_KEY, input, walkedPath, output );
 
         return output.get( ROOT_KEY );
     }

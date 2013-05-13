@@ -1,6 +1,8 @@
 package com.bazaarvoice.jolt.shiftr.reference;
 
-public class DollarReference extends BaseReference {
+public class DollarReference extends BasePathAndGroupReference {
+
+    public static final Character TOKEN = '$';
 
     public DollarReference( String refStr ) {
         super(refStr);
@@ -8,6 +10,6 @@ public class DollarReference extends BaseReference {
 
     @Override
     protected char getToken() {
-        return '$';
+        return TOKEN;
     }
 }

@@ -84,38 +84,43 @@ public class LeafSpec extends Spec {
         }
 
         Object data;
-        Boolean returnValue;
+        boolean realChild;
 
         if ( this.pathElement instanceof DollarPathElement ) {
             DollarPathElement subRef = (DollarPathElement) this.pathElement;
 
             // The data is the parent key, so evaluate against the parent's path
             data = subRef.evaluate( walkedPath );
-            returnValue = false;  // don't block further Shiftr matches
+            realChild = false;  // don't block further Shiftr matches
         }
         else if ( this.pathElement instanceof AtPathElement ) {
 
             // The data is our parent's data
             data = input;
-            returnValue = false;  // don't block further Shiftr matches
+            realChild = false;  // don't block further Shiftr matches
         }
         else {
             // the data is the input
             data = input;
             // tell our parent that we matched and no further processing for this inputKey should be done
-            returnValue = true;
+            realChild = true;
         }
 
         // Add our the LiteralPathElement for this level, so that write path References can use it as &(0,0)
         walkedPath.add( thisLevel );
 
-        // Place the data in the write
+        // Write out the data
         for ( ShiftrWriter outputPath : shiftrWriters ) {
             outputPath.write( data, output, walkedPath );
         }
 
         walkedPath.removeLast();
 
-        return returnValue;
+        if ( realChild ) {
+            // we were a "real" child, so increment the matchCount of our parent
+            walkedPath.lastElement().incrementHashCount();
+        }
+
+        return realChild;
     }
 }

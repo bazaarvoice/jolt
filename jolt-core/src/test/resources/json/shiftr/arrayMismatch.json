@@ -1,0 +1,47 @@
+{
+    // Context : Shiftr will only operate if / when it finds matches
+    // Purpose : Verify that Shiftr operates even when it is faced with
+    //   array mismatches
+
+    "input": {
+
+        "id": "reviewId",
+        "text": "This is a review.",
+        "rating" : 5,
+
+        "statistics": {
+            "id": "statsId",
+            "feedbackCount": "10"
+        },
+        "author": [
+            {
+                "id": "authorId",
+                "name": "Author Name"
+            }
+        ]
+    },
+
+    "spec": {
+
+        "id" : "Id",
+        "text" : "ReviewText",
+        "rating" : "Rating",
+
+        "statistics" : {
+            "0" : {
+                "feedbackCount" : "FeedbackCount"
+            }
+        },
+        "author" : {
+            "id" : "AuthorId",
+            "name" : "AuthorName"
+        }
+    },
+
+    "expected": {
+
+        "Id" : "reviewId",
+        "ReviewText" : "This is a review.",
+        "Rating" : 5
+    }
+}

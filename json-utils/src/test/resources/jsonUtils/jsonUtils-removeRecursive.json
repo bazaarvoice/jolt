@@ -1,0 +1,28 @@
+[
+    {
+        "input" : {
+            "L1_A" : {
+                "L2_A" : {
+                    "L3_A" : "Good",
+                    "L3_B" : "RemoveThis"
+                },
+                "L2_B" : "l2_b"
+            },
+            "L1_B" : "l1_b",
+
+            "L3_B" : "RemoveThis"
+        },
+
+        "remove" : "L3_B",
+
+        "expected" : {
+            "L1_A" : {
+                "L2_A" : {
+                    "L3_A" : "Good"
+                },
+                "L2_B" : "l2_b"
+            },
+            "L1_B" : "l1_b"
+        }
+    }
+]
