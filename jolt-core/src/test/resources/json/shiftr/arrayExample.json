@@ -1,0 +1,89 @@
+{
+    "input": {
+        "Photos": [
+            {
+                "Id": "1234",
+                "Caption": "photo 1",
+                "Sizes": {
+                    "thumbnail": {
+                        "Url": "http://test.com/0001/1234/photoThumb.jpg",
+                        "Id": "thumbnail"
+                    },
+                    "normal": {
+                        "Url": "http://test.com/0001/1234/photo.jpg",
+                        "Id": "normal"
+                    }
+                },
+                "SizesOrder": [
+                    "thumbnail",
+                    "normal"
+                ]
+            },
+            {
+                "Id": "5678",
+                "Caption": "photo 2",
+                "Sizes": {
+                    "thumbnail": {
+                        "Url": "http://test.com/0001/5678/photoThumb.jpg",
+                        "Id": "thumbnail"
+                    },
+                    "normal": {
+                        "Url": "http://test.com/0001/5678/photo.jpg",
+                        "Id": "normal"
+                    }
+                },
+                "SizesOrder": [
+                    "thumbnail",
+                    "normal"
+                ]
+            }
+        ]
+    },
+
+    // We aren't radically transforming the data here, just changing the case of the keys.
+    // This illustrates the usage of the '[]' and '&' operators, to put all the content in the right place, aka maintain order
+    "spec": {
+        "Photos": {
+            "*": {
+                "Id": "photos[&1].id",
+                "Caption": "photos[&1].caption",
+                "Sizes": {
+                    "*": {
+                        "Url": "photos[&3].sizes.&1"
+                    }
+                },
+                "SizesOrder": "photos[&1].sizesOrder"
+            }
+        }
+    },
+
+    "expected": {
+        "photos": [
+            {
+                "id": "1234",
+                "caption": "photo 1",
+                "sizes": {
+                    "thumbnail": "http://test.com/0001/1234/photoThumb.jpg",
+                    "normal": "http://test.com/0001/1234/photo.jpg"
+                },
+                "sizesOrder": [
+                    "thumbnail",
+                    "normal"
+                ]
+            },
+            {
+                "id": "5678",
+                "caption": "photo 2",
+                "sizes": {
+                    "thumbnail": "http://test.com/0001/5678/photoThumb.jpg",
+                    "normal": "http://test.com/0001/5678/photo.jpg"
+                },
+                "sizesOrder": [
+                    "thumbnail",
+                    "normal"
+                ]
+            }
+        ]
+    }
+
+}

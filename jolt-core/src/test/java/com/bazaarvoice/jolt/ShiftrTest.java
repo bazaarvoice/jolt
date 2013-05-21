@@ -12,6 +12,7 @@ public class ShiftrTest {
     @DataProvider
     public Object[][] getTestCaseUnits() {
         return new Object[][] {
+            {"arrayExample"},
             {"arrayMismatch"},
             {"bucketToPrefixSoup"},
             {"declaredOutputArray"},
@@ -27,7 +28,6 @@ public class ShiftrTest {
             {"mapToList2"},
             {"multiPlacement"},
             {"objectToArray"},
-            {"photosArray"},
             {"prefixDataToArray"},
             {"prefixedData"},
             {"prefixSoupToBuckets"},
