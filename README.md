@@ -3,7 +3,7 @@ Jolt
 
 Jolt is a JSON to JSON transformation library written in Java.
 
-Transform specification is itself a JSON document.
+The "specification" for the transformation is itself a JSON document.
 
 Useful For
 -------
@@ -21,13 +21,13 @@ Jolt provides a set transform components, that can be "chained" together to form
 
 Each transform component covers a specific transform task with a unique JSON format DSL for that task.
 
-The provided transform components are:
+The provided transforms are:
 
     shift   : copy data from the input tree and put it the output tree
     default : apply default values to the tree
     remove  : remove data from the tree
     sort    : sort the Map key values alphabetically ( for debugging and human readability )
-    java    : run any Java class that implements the Transform interface
+    java    : run any Java class that implements the `Transform` interface
 
 The out-of-the-box Jolt transforms should be able to do 90% of what you need, with the `java` component giving you a way to implement the last 10%.
 
@@ -36,14 +36,21 @@ Jolt Components
 
 This project produces two maven artifacts.
 
-1. `jolt-core` : only one dependency on apache.commons
-2. `json-utils` : Jackson and testing utilities.   Used by jolt-core as a test dependency.
+1. `jolt-core` : only one dependency on apache.commons for StringUtils
+    * The goal is for the `jolt-core` artifact to be pure Java, so that it does not cause any dependency issues.
+2. `json-utils` : Jackson wrapper and testing utilities.   Used by jolt-core as a test dependency.
+    * If you are willing to pull in Jackson 2, this artifact provides nice utility methods.
 
 Maven Dependency
 ```
 <dependency>
     <groupId>com.bazaarvoice.jolt</groupId>
     <artifactId>jolt-core</artifactId>
+    <version>${jolt.version}</version>
+</dependency>
+<dependency>
+    <groupId>com.bazaarvoice.jolt</groupId>
+    <artifactId>json-utils</artifactId>
     <version>${jolt.version}</version>
 </dependency>
 ```
@@ -79,11 +86,11 @@ return output;
 ```
 
 
-Transfrom DSL Syntax
+Shiftr DSL Syntax
 ---------------
 
-Please look at our tests, ([shiftr tests](https://github.com/bazaarvoice/jolt/tree/master/jolt-core/src/test/resources/json/shiftr)), for nice bite sized transform examples.
-They all follow the pattern :
+Shiftr is transform that does the most "heavy lifting".   To learn the Shiftr DSL, please look at our unit tests, ([shiftr tests](https://github.com/bazaarvoice/jolt/tree/master/jolt-core/src/test/resources/json/shiftr)), for nice bite sized transform examples, and read the Javadoc.
+The unit tests all follow the pattern :
 ```
 {
     "input": {
@@ -110,13 +117,32 @@ Alternatives
 Prior to Jolt, there were two approaches to doing Json to Json transforms.
 
 1) JSON -> XML -> XSLT or STX -> XML -> JSON
-Aside from being a Rube Goldberg approach, XSLT is more complicated than Jolt because it is trying to do the whole transform in a single shot with a single DSL.
+
+Aside from being a Rube Goldberg approach, XSLT is more complicated than Jolt because it is trying to do the whole transform with a single DSL.
 
 2) Write a Template (Velocity, FreeMarker, etc) that take hydrated JSON input and write textual JSON output
+
 With this approach you are having to work from the output format backwards to the input, which is complex for any non-trivial transform.
 Eg, the structure of your template will be dictated by the output JSON format, and you will end up coding a parallel tree walk of the input data and the output format in your template.
 Jolt works forward from the input data to the output format which is simpler, and it does the parallel tree walk for you.
 
+Performance
+-----------
+
+The primary goal of Jolt was to improve "developer speed" by providing the ability to have a declarative rather than imperative transform.
+That said, Jolt should have a better runtime than the alternatives listed above.
+
+Work has been done to make the stock Jolt transforms performant :
+
+1. Transforms can be initialized once with their spec, and re-used many times in a mult-threaded environment.
+    * We reuse initialized Jolt transforms to service multiple web requests from a DropWizard service.
+2. "*" wildcard logic was redone to reduce the use of Regex in the common case, which was a dramatic speed improvement.
+3. The parallel tree walk performed by Shiftr was optimized.
+
+Two things to be aware of :
+
+1. Jolt is not "stream" based, so if you have a very large Json document to transform you need to have enough memory to hold it.
+2. The transform process will create and discard a lot of objects, so the garbage collector will have work to do.
 
 # Code Coverage
 

@@ -148,7 +148,7 @@ public class CompositeSpec extends Spec {
     }
 
     /**
-     * If this Spec matches the inputkey, then perform one step in the Shiftr parallel treewalk.
+     * If this Spec matches the inputKey, then perform one step in the Shiftr parallel treewalk.
      *
      * Step one level down the input "tree" by carefully handling the List/Map nature the input to
      *  get the "one level down" data.
@@ -156,7 +156,7 @@ public class CompositeSpec extends Spec {
      * Step one level down the Spec tree by carefully and efficiently applying our children to the
      *  "one level down" data.
      *
-     * @return true if this this spec "handles" the inputkey such that no sibling specs need to see it
+     * @return true if this this spec "handles" the inputKey such that no sibling specs need to see it
      */
     @Override
     public boolean apply( String inputKey, Object input, WalkedPath walkedPath, Map<String,Object> output )
