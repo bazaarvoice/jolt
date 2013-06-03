@@ -42,7 +42,7 @@ public class KeyOrderingTest {
     @Test(dataProvider = "shiftrKeyOrderingTestCases" )
     public void testKeyOrdering( String testName, Map<String,Object> spec, List<String> expectedOrder ) {
 
-        CompositeSpec root = new CompositeSpec( Shiftr.ROOT_KEY, spec );
+        ShiftrCompositeSpec root = new ShiftrCompositeSpec( Shiftr.ROOT_KEY, spec );
 
         for ( int index = 0; index < expectedOrder.size(); index++) {
             String expected = expectedOrder.get( index );

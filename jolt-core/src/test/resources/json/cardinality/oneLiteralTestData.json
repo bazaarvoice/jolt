@@ -1,0 +1,91 @@
+{
+    "input" : {
+
+        "review" : {
+            "rating" : [ 5, 4 ]
+        },
+
+        "data" : {
+            "stats" : [ {
+                "viewed" : 10,
+                "clicks" : 20
+                },
+                {
+                    "viewed" : 3,
+                    "clicks" : 2
+                } ]
+        },
+
+        "isMap" : {
+            "data" : "stuff"
+        },
+
+        "isSingleton" : "whatever",
+
+        "emptyListContainer" : {
+            "emptyList" : []
+        },
+
+        "nullData" : null
+    },
+
+    // Rules
+    //  MANY
+    //   if array, then done
+    //   otherwise make array and set [0] with the data
+    //
+    //  ONE
+    //   if not array, done
+    //   if array, grab [0] if it exists
+    //
+
+    "spec" : {
+
+        "review" : {
+            // We want review.rating to be a single value, but in the input it is an Array
+            //  So pick the first item from the Array, and use that
+           "rating" : "ONE"
+        },
+
+        "data" : {
+            "stats" : "ONE"
+        },
+
+        "isMap" : "ONE",
+
+        "isSingleton" : "ONE",
+
+        "emptyListContainer" : {
+            "emptyList" : "ONE"
+        },
+
+        "nullData" : "ONE"
+
+    },
+
+    "expected" : {
+
+        "review" : {
+            "rating" : 5
+        },
+
+        "data" : {
+            "stats" : {
+                "viewed" : 10,
+                "clicks" : 20
+            }
+        },
+
+        "isMap" : {
+            "data" : "stuff"
+        },
+
+        "isSingleton" : "whatever",
+
+        "emptyListContainer" : {
+            "emptyList" : null
+        },
+
+        "nullData" : null
+    }
+}

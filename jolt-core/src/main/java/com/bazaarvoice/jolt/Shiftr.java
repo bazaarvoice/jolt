@@ -1,9 +1,9 @@
 package com.bazaarvoice.jolt;
 
 import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.shiftr.WalkedPath;
-import com.bazaarvoice.jolt.shiftr.pathelement.LiteralPathElement;
-import com.bazaarvoice.jolt.shiftr.spec.CompositeSpec;
+import com.bazaarvoice.jolt.common.WalkedPath;
+import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
+import com.bazaarvoice.jolt.shiftr.spec.ShiftrCompositeSpec;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -418,7 +418,7 @@ import java.util.Map;
 public class Shiftr implements SpecTransform {
 
     public static final String ROOT_KEY = "root";
-    private final CompositeSpec rootSpec;
+    private final ShiftrCompositeSpec rootSpec;
 
     /**
      * Initialize a Shiftr transform with a Spec.
@@ -434,7 +434,7 @@ public class Shiftr implements SpecTransform {
             throw new SpecException( "Shiftr expected a spec of Map type, got " + spec.getClass().getSimpleName() );
         }
 
-        rootSpec = new CompositeSpec( ROOT_KEY, (Map<String, Object>) spec );
+        rootSpec = new ShiftrCompositeSpec( ROOT_KEY, (Map<String, Object>) spec );
     }
 
 
