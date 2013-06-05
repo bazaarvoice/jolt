@@ -1,7 +1,10 @@
 package com.bazaarvoice.jolt;
 
+import com.bazaarvoice.jolt.chainr.GoodTestTransform;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.exception.TransformException;
+import com.bazaarvoice.jolt.chainr.ExplodingTestTransform;
+import com.bazaarvoice.jolt.chainr.DelegationResult;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -151,7 +154,7 @@ public class ChainrTest {
     public void process_itCallsDelegatr() {
         List<Map<String,Object>> spec = this.newChainrSpec();
         Object delegateSpec = new HashMap();
-        spec.add( this.newDelegatrActivity( GoodDelegate.class, delegateSpec ) );
+        spec.add( this.newDelegatrActivity( GoodTestTransform.class, delegateSpec ) );
         Object input = new Object();
 
         Chainr unit = new Chainr( spec );
@@ -180,7 +183,7 @@ public class ChainrTest {
     @DataProvider
     public Object[][] failureTransformCases() {
         return new Object[][] {
-            { this.newShiftrDelegatrSpec( ExplodingDelegate.class, null ) }
+            { this.newShiftrDelegatrSpec( ExplodingTestTransform.class, null ) }
         };
     }
 
