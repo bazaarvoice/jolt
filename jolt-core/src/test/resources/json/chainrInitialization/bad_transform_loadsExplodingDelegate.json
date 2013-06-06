@@ -1,0 +1,6 @@
+[
+    {
+        "operation" : "java",
+        "className": "com.bazaarvoice.jolt.chainr.ExplodingTestTransform"
+    }
+]

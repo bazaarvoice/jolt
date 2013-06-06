@@ -21,11 +21,11 @@
     </scm>
 
     <properties>
-        <commons-lang.version>2.3</commons-lang.version>
-        <jackson.version>2.1.1</jackson.version>
+        <commons-lang.version>2.6</commons-lang.version>
+        <jackson.version>2.2.1</jackson.version>
 
         <!-- TEST -->
-        <guava.version>13.0.1</guava.version>
+        <guava.version>14.0.1</guava.version>
         <testng.version>6.3</testng.version>
     </properties>
 
@@ -55,6 +55,7 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.testng</groupId>
