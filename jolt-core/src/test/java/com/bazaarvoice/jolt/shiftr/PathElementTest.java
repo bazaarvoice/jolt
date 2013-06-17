@@ -1,13 +1,14 @@
 package com.bazaarvoice.jolt.shiftr;
 
-import com.bazaarvoice.jolt.shiftr.pathelement.AmpPathElement;
-import com.bazaarvoice.jolt.shiftr.pathelement.ArrayPathElement;
-import com.bazaarvoice.jolt.shiftr.pathelement.EvaluatablePathElement;
-import com.bazaarvoice.jolt.shiftr.pathelement.LiteralPathElement;
-import com.bazaarvoice.jolt.shiftr.pathelement.MatchablePathElement;
-import com.bazaarvoice.jolt.shiftr.pathelement.PathElement;
-import com.bazaarvoice.jolt.shiftr.reference.AmpReference;
-import com.bazaarvoice.jolt.shiftr.spec.Spec;
+import com.bazaarvoice.jolt.common.WalkedPath;
+import com.bazaarvoice.jolt.common.pathelement.AmpPathElement;
+import com.bazaarvoice.jolt.common.pathelement.ArrayPathElement;
+import com.bazaarvoice.jolt.common.pathelement.EvaluatablePathElement;
+import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
+import com.bazaarvoice.jolt.common.pathelement.MatchablePathElement;
+import com.bazaarvoice.jolt.common.pathelement.PathElement;
+import com.bazaarvoice.jolt.common.reference.AmpReference;
+import com.bazaarvoice.jolt.shiftr.spec.ShiftrSpec;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
@@ -89,8 +90,8 @@ public class PathElementTest {
     @Test
     public void calculateOutputTest_refsOnly() {
 
-        MatchablePathElement pe1 = (MatchablePathElement) Spec.parse( "tuna-*-marlin-*" ).get( 0 );
-        MatchablePathElement pe2 = (MatchablePathElement) Spec.parse( "rating-*" ).get( 0 );
+        MatchablePathElement pe1 = (MatchablePathElement) ShiftrSpec.parse( "tuna-*-marlin-*" ).get( 0 );
+        MatchablePathElement pe2 = (MatchablePathElement) ShiftrSpec.parse( "rating-*" ).get( 0 );
 
         LiteralPathElement lpe = pe1.match( "tuna-marlin", new WalkedPath() );
         AssertJUnit.assertNull( lpe );
@@ -130,8 +131,8 @@ public class PathElementTest {
     public void calculateOutputTest_arrayIndexes() {
 
         // simulate Shiftr LHS specs
-        MatchablePathElement pe1 = (MatchablePathElement) Spec.parse( "tuna-*-marlin-*" ).get( 0 );
-        MatchablePathElement pe2 = (MatchablePathElement) Spec.parse( "rating-*" ).get( 0 );
+        MatchablePathElement pe1 = (MatchablePathElement) ShiftrSpec.parse( "tuna-*-marlin-*" ).get( 0 );
+        MatchablePathElement pe2 = (MatchablePathElement) ShiftrSpec.parse( "rating-*" ).get( 0 );
 
         // match them against some data to get LiteralPathElements with captured values
         LiteralPathElement lpe = pe1.match( "tuna-2-marlin-3", new WalkedPath() );

@@ -1,9 +1,10 @@
 package com.bazaarvoice.jolt.shiftr;
 
+import com.bazaarvoice.jolt.common.WalkedPath;
 import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.shiftr.pathelement.EvaluatablePathElement;
-import com.bazaarvoice.jolt.shiftr.pathelement.PathElement;
-import com.bazaarvoice.jolt.shiftr.spec.Spec;
+import com.bazaarvoice.jolt.common.pathelement.EvaluatablePathElement;
+import com.bazaarvoice.jolt.common.pathelement.PathElement;
+import com.bazaarvoice.jolt.shiftr.spec.ShiftrSpec;
 import com.bazaarvoice.jolt.traversr.Traversr;
 import org.apache.commons.lang.StringUtils;
 
@@ -36,7 +37,7 @@ public class ShiftrWriter {
         if ( StringUtils.isNotBlank( dotNotation ) ) {
             String[] split = dotNotation.split( "\\." );
 
-            paths = Spec.parse( split );
+            paths = ShiftrSpec.parse( split );
             trav = new ShiftrTraversr( dotNotation );
         }
         else {

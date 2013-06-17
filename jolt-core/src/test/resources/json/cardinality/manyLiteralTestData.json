@@ -1,0 +1,73 @@
+{
+    "input" : {
+        "categories" : {
+            "brand" : "Apple",
+            "category" : "iPod"
+        },
+
+        "stuff" : {
+            "nestedStuff" : [
+                "item",
+                "thingy"
+            ]
+        },
+
+        "isSingleton" : "value",
+
+        "nullData" : null,
+
+        "emptyArray" : []
+    },
+
+    // Rules
+    //  MANY
+    //   if array, then done
+    //   otherwise make array and set [0] with the data
+    //
+    //  ONE
+    //   if not array, done
+    //   if array, grab [0] if it exists
+    //
+
+    "spec" : {
+
+        // In the input above Category is a Map, we want it to be an Array
+        //  Take the input map, and set it as index 0 of an array
+        "categories" : "MANY",
+
+        "stuff" : {
+            "nestedStuff" : "MANY"
+        },
+
+        "data" : "MANY",
+
+        "nullData" : "MANY",
+
+        "emptyArray" : "MANY",
+
+        "doesNotHitAnything" : "MANY"
+
+    },
+
+    "expected" : {
+        "categories" : [
+            {
+                "brand" : "Apple",
+                "category" : "iPod"
+            }
+        ],
+
+        "stuff" : {
+            "nestedStuff" : [
+                "item",
+                "thingy"
+            ]
+        },
+
+        "isSingleton" : "value",
+
+        "nullData" : [],
+
+        "emptyArray" : []
+    }
+}

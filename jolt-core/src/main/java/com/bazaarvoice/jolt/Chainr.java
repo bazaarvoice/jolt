@@ -81,6 +81,7 @@ public class Chainr implements SpecTransform {
         temp.put( "default", Defaultr.class );
         temp.put( "remove", Removr.class );
         temp.put( "sort", Sortr.class );
+        temp.put( "cardinality", CardinalityTransform.class );
         STOCK_TRANSFORMS = Collections.unmodifiableMap( temp );
     }
 
