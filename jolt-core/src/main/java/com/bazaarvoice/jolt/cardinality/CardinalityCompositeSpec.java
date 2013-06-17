@@ -1,4 +1,4 @@
-package com.bazaarvoice.jolt.cardinality.spec;
+package com.bazaarvoice.jolt.cardinality;
 
 import com.bazaarvoice.jolt.common.WalkedPath;
 import com.bazaarvoice.jolt.common.pathelement.AmpPathElement;
@@ -25,7 +25,7 @@ public class CardinalityCompositeSpec extends CardinalitySpec {
     private static final ComputedKeysComparator computedKeysComparator = new ComputedKeysComparator();
 
     // Three different buckets for the children of this CardinalityCompositeSpec
-    private CardinalityLeafSpec specialChild;         // children that aren't actually triggered off the input data
+    private CardinalityLeafSpec specialChild;                    // children that aren't actually triggered off the input data
     private final Map<String, CardinalitySpec> literalChildren;  // children that are simple exact matches against the input data
     private final List<CardinalitySpec> computedChildren;        // children that are regex matches against the input data
 
@@ -112,7 +112,7 @@ public class CardinalityCompositeSpec extends CardinalitySpec {
     }
 
     /**
-     * If this Spec matches the inputkey, then perform one step in the SpecTransform parallel treewalk.
+     * If this Spec matches the inputkey, then perform one step in the parallel treewalk.
      * <p/>
      * Step one level down the input "tree" by carefully handling the List/Map nature the input to
      * get the "one level down" data.
@@ -168,7 +168,7 @@ public class CardinalityCompositeSpec extends CardinalitySpec {
 
     /**
      * This method implements the Cardinality matching behavior
-     * when we have both literal and computed children.
+     *  when we have both literal and computed children.
      * <p/>
      * For each input key, we see if it matches a literal, and it not, try to match the key with every computed child.
      */

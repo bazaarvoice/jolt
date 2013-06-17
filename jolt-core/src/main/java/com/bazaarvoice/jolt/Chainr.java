@@ -65,7 +65,7 @@ import java.util.Map;
  */
 public class Chainr implements SpecTransform {
 
-    public final static String JAVA_DELEGATE_IDENTIFIER = "java";
+    public final static String CUSTOM_TRANSFORM_IDENTIFIER = "java";
 
     public final static String OPERATION_KEY = "operation";
     public final static String CLASSNAME_KEY = "className";
@@ -74,22 +74,41 @@ public class Chainr implements SpecTransform {
     /**
      * Maps operation names to the classes that handle them
      */
-    private static final Map<String, Class> CHAINABLES;
-
+    private static final Map<String, Class<? extends Transform>> STOCK_TRANSFORMS;
     static {
-        HashMap<String, Class> temp = new HashMap<String, Class>();
+        HashMap<String, Class<? extends Transform>> temp = new HashMap<String, Class<? extends Transform>>();
         temp.put( "shift", Shiftr.class );
         temp.put( "default", Defaultr.class );
         temp.put( "remove", Removr.class );
         temp.put( "sort", Sortr.class );
         temp.put( "cardinality", CardinalityTransform.class );
-        CHAINABLES = Collections.unmodifiableMap( temp );
+        STOCK_TRANSFORMS = Collections.unmodifiableMap( temp );
     }
 
     private final List<Transform> transforms;
 
     /**
+     * Runs a spec on some input calling each specified operation in turn.
+     *
+     * @param input a JSON (Jackson-parsed) maps-of-maps object to transform
+     * @return an object representing the JSON resulting from the transform
+     * @throws com.bazaarvoice.jolt.exception.TransformException if the specification is malformed, an operation is not
+     *                       found, or if one of the specified transforms throws an exception.
+     */
+    @Override
+    public Object transform( Object input ) {
+
+        Object intermediate = input;
+        for ( Transform transform : transforms ) {
+            intermediate = transform.transform( intermediate );
+        }
+        return intermediate;
+    }
+
+
+    /**
      * Initialize a Chainr to run a list of Transforms.
+     * This is the constructor most "production" usages of Chainr should use.
      *
      * @param chainrSpec List of transforms to run
      */
@@ -139,7 +158,6 @@ public class Chainr implements SpecTransform {
         }
 
         List<Object> operations = (List<Object>) chainrSpec;
-        List<Transform> tf = new ArrayList<Transform>(operations.size());
 
         int start, end;
         if ( all ) {
@@ -156,108 +174,168 @@ public class Chainr implements SpecTransform {
             throw new SpecException(  "JOLT Chainr : invalid from and to parameters.  from=" + from + " to=" + to );
         }
 
-        for ( int index = start; index < end; index++ ) {
+        transforms = Collections.unmodifiableList( getTransforms( operations, start, end ) );
+    }
 
-            Object chainrEntryObj = operations.get( index );
-            if ( ! (chainrEntryObj instanceof Map) ) {
-                throw new SpecException( "JOLT Chainr expects a JSON array of objects - Malformed spec at index:" + index );
-            }
 
-            tf.add ( getTransform( (Map<String,Object>) chainrEntryObj, index ) );
-        }
+    private List<Transform> getTransforms( List<Object> operations, int start, int end ) {
 
-        if ( tf.isEmpty() ) {
+        if ( operations.isEmpty() ) {
             throw new SpecException( "JOLT Chainr passed an empty JSON array.");
         }
 
-        transforms = Collections.unmodifiableList( tf );
-    }
+        List<Transform> transformList = new ArrayList<Transform>(operations.size());
 
-    private Transform getTransform( Map<String,Object> chainrEntry, int chainrIndex ) {
+        for ( int index = start; index < end; index++ ) {
 
-        Object opNameObj = chainrEntry.get( OPERATION_KEY );
-        if ( opNameObj == null ) {
-            throw new SpecException( "JOLT Chainr needs a specified operation, Chainr spec index:" + chainrIndex );
+            Object chainrEntryObj = operations.get( index );
+
+            ChainrEntry entry = processChainrEntry( index, chainrEntryObj );
+
+            transformList.add( entry.getTransform() );
         }
 
-        String opName = opNameObj.toString().toLowerCase();
-        Object specObj = chainrEntry.get( SPEC_KEY );
-        Object classNameObj = chainrEntry.get( CLASSNAME_KEY );
-
-        Class opClass;
-        if ( JAVA_DELEGATE_IDENTIFIER.equals( opName ) ) {
-
-            if ((classNameObj == null) || !(classNameObj instanceof String)) {
-                throw new SpecException( "JOLT 'java' operation requires a 'className' parameter.  Chainr spec index:" + chainrIndex );
-            }
-
-            String className = (String) classNameObj;
-            try {
-                opClass = Class.forName( className );
-                if (Chainr.class.isAssignableFrom( opClass )) {
-                    throw new SpecException( "Attempt to nest Chainr inside itself at Chainr spec index:" + chainrIndex );
-                }
-
-            } catch ( ClassNotFoundException e ) {
-                throw new SpecException( "JOLT Chainr could not find custome tranform class :"+className + ".  Chainr spec index:" + chainrIndex, e );
-            }
-        } else {
-            opClass = CHAINABLES.get( opName );
-        }
-
-        if ( opClass == null ) {
-            throw new SpecException( "JOLT Chainr does not support operation: " + opName + ".  Chainr spec index:" + chainrIndex);
-        }
-
-        if ( ! Transform.class.isAssignableFrom( opClass ) ) {
-            throw new SpecException( "JOLT Chainr operation:" + opNameObj + " does not implement Transform.  Chainr spec index:" + chainrIndex );
-        }
-
-        if ( SpecTransform.class.isAssignableFrom( opClass ) ) {
-
-            if ( specObj == null ){
-                throw new SpecException( "JOLT Chainr - operation:" + opName + " implemented by className:" + opClass.getCanonicalName() + " requires a spec." );
-            }
-
-            try {
-                // Lookup a Constructor with a Single "Object" arg.
-                Constructor constructor = opClass.getConstructor( new Class[] { Object.class } );
-
-                return (Transform) constructor.newInstance( specObj );
-            }
-            catch ( NoSuchMethodException nsme )
-            {
-                throw new SpecException( "JOLT Chainr encountered an exception constructing SpecTransform className:" + opClass.getCanonicalName() + ".  Specifically, no single arg constructor found.", nsme );
-            }
-            catch( Exception e ) {
-                // FYI 3 exceptions are known to be thrown here
-                // IllegalAccessException, InvocationTargetException, InstantiationException
-                throw new SpecException( "JOLT Chainr encountered an exception constructing SpecTransform className:" + opClass.getCanonicalName(), e );
-            }
-        } else {
-            try {
-                return (Transform) opClass.newInstance();
-            } catch ( Exception e ) {
-                throw new SpecException( "JOLT Chainr encountered an exception instantiating Transform className:" + opClass.getCanonicalName(), e );
-            }
-        }
+        return transformList;
     }
 
     /**
-     * Runs a spec on some input calling each specified operation in turn.
+     * Process an element from the Chainr Spec into a ChainrEntry class.
+     * This method tries to validate the syntax of the Chainr spec, where
+     *  as the ChainrEntry deals more with Transform instantiation.
      *
-     * @param input a JSON (Jackson-parsed) maps-of-maps object to transform
-     * @return an object representing the JSON resulting from the transform
-     * @throws com.bazaarvoice.jolt.exception.TransformException if the specification is malformed, an operation is not
-     *                       found, or if one of the specified transforms throws an exception.
+     * @param chainrEntryObj the unknown Object from the Chainr list
+     * @param index the index of the chainrEntryObj, used in reporting errors
+     * @return an initialized ChanirEntry
      */
-    @Override
-    public Object transform( Object input ) {
+    private ChainrEntry processChainrEntry( int index, Object chainrEntryObj ) {
 
-        Object intermediate = input;
-        for ( Transform transform : transforms ) {
-            intermediate = transform.transform( intermediate );
+        if ( ! (chainrEntryObj instanceof Map ) ) {
+            throw new SpecException( "JOLT Chainr expects a JSON array of objects - Malformed spec at index:" + index );
         }
-        return intermediate;
+
+        Map<String,Object> chainrEntryMap = (Map<String, Object>) chainrEntryObj;
+
+        Object opNameObj = chainrEntryMap.get( OPERATION_KEY );
+        if ( opNameObj == null || !(opNameObj instanceof String)) {
+            throw new SpecException( "JOLT Chainr needs a 'operation' of type String, spec index:" + index );
+        }
+
+        String operation = opNameObj.toString().toLowerCase();
+        Object specObj = chainrEntryMap.get( SPEC_KEY );
+        String className = null;
+
+        if ( CUSTOM_TRANSFORM_IDENTIFIER.equals( operation ) ) {
+
+            Object classNameObj = chainrEntryMap.get( CLASSNAME_KEY );
+            if ((classNameObj == null) || !(classNameObj instanceof String)) {
+                throw new SpecException( "JOLT 'java' operation requires a 'className' parameter.  Chainr spec index:" + index );
+            }
+
+            className = (String) classNameObj;
+        }
+        else if ( ! STOCK_TRANSFORMS.containsKey( operation ) ) {
+            throw new SpecException( "JOLT Chainr does not know/support operation: " + operation + ".  Chainr spec index:" + index);
+        }
+
+        return new ChainrEntry( index, operation, specObj, className );
+    }
+
+
+    /**
+     * Helper class that encapsulates the Java specific instantiation logic need to create and initialize
+     *  Transform objects.
+     *
+     * If I didn't want to keep Jackson from being a dependency, this would be the type of class that
+     *  I would have just had Jackson load for me.
+     */
+    private static class ChainrEntry {
+        private final int index;
+        private final String operation;
+        private final Object spec;
+        private final String className;
+
+        private ChainrEntry( int index, String operation, Object spec, String className ) {
+            this.index = index;
+            this.operation = operation;
+            this.spec = spec;
+            this.className = className;
+        }
+
+        public Transform getTransform() {
+            return initializeTransform( getTransformClass() );
+        }
+
+        private Class<? extends Transform> getTransformClass() {
+
+            Class<? extends Transform> opClass;
+            if ( CUSTOM_TRANSFORM_IDENTIFIER.equals( operation ) ) {
+                opClass = getCustomTransformClass();
+            } else {
+                opClass = STOCK_TRANSFORMS.get( operation );
+            }
+
+            if ( opClass == null ) {
+                throw new SpecException( "JOLT Chainr does not support operation: " + operation + ".  Chainr spec index:" + index);
+            }
+
+            if ( ! Transform.class.isAssignableFrom( opClass ) ) {
+                throw new SpecException( "JOLT Chainr class:" + className + " does not implement Transform.  Chainr spec index:" + index );
+            }
+
+            return opClass;
+        }
+
+        private Class<Transform> getCustomTransformClass() {
+
+            Class opClass;
+            try {
+                opClass = Class.forName( className );
+                if (Chainr.class.isAssignableFrom( opClass )) {
+                    throw new SpecException( "Attempt to nest Chainr inside itself at Chainr spec index:" + index );
+                }
+
+            } catch ( ClassNotFoundException e ) {
+                throw new SpecException( "JOLT Chainr could not find custom transform class :"+className + ".  Chainr spec index:" + index, e );
+            }
+
+            if ( Transform.class.isAssignableFrom( opClass ) ) {
+                return (Class<Transform>) opClass;
+            }
+            else {
+                throw new SpecException( "Custom transform class :"+className + " does not implement the Transform interface.  Chainr spec index:" + index );
+            }
+        }
+
+        private Transform initializeTransform( Class<? extends Transform> transformClass ) {
+
+            try {
+                // If the opClass is a SpecTransform, we try to construct it with the provided spec.
+                if ( SpecTransform.class.isAssignableFrom( transformClass ) ) {
+
+                    if ( spec == null ) {
+                        throw new SpecException( "JOLT Chainr - operation:" + operation + " implemented by className:" + transformClass.getCanonicalName() + " requires a spec." );
+                    }
+
+                    try {
+                        // Lookup a Constructor with a Single "Object" arg.
+                        Constructor<? extends Transform> constructor = transformClass.getConstructor( new Class[] {Object.class} );
+
+                        return constructor.newInstance( spec );
+                    } catch ( NoSuchMethodException nsme ) {
+                        // This means the transform class "violated" the marker interface
+                        throw new SpecException( "JOLT Chainr encountered an exception constructing SpecTransform className:" + transformClass.getCanonicalName() + ".  Specifically, no single arg constructor found.", nsme );
+                    }
+                }
+                else {
+                    // The opClass is just a Transform, so just create a newInstance of it.
+                    return transformClass.newInstance();
+                }
+            } catch ( Exception e ) {
+                // FYI 3 exceptions are known to be thrown here
+                // IllegalAccessException, InvocationTargetException, InstantiationException
+                throw new SpecException( "JOLT Chainr encountered an exception constructing Transform className:" + transformClass.getCanonicalName(), e );
+            }
+        }
+
     }
 }

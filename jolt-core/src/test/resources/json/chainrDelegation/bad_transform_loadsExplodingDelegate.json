@@ -1,6 +1,0 @@
-[
-    {
-        "operation" : "java",
-        "className": "com.bazaarvoice.jolt.ExplodingDelegate"
-    }
-]

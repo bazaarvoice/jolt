@@ -16,6 +16,9 @@ import java.util.Map;
 /**
  * Convenience class for path based off a single dot notation String,
  *  like "rating.&1(2).&.value".
+ *
+ * This processes the dot notation path into internal data structures, so
+ *  that the String processing only happens once.
  */
 public class ShiftrWriter {
 
