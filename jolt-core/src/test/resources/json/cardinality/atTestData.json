@@ -1,0 +1,105 @@
+{
+    "input" : {
+
+        "photos" : {
+            "url" :  [ "http://pants.com/123-normal.jpg", "http://pants.com/123-thumbnail.jpg" ],
+            "caption" : "Nice pants"
+        },
+
+        "photosArray" : [
+            {
+                "url" :  [ "http://pants.com/123-normal.jpg", "http://pants.com/123-thumbnail.jpg" ],
+                "caption" : "Nice pants"
+            },
+            {
+                "url" :  [ "http://pants.com/123-thumbnail.jpg", "http://pants.com/123-normal.jpg" ],
+                "caption" : "Nice pants"
+            }
+        ],
+
+        "views" : [
+            { "count" : 1024 },
+            { "count" : 2048 }
+        ],
+
+        "nullParent" : null,
+
+        "emptyArray" : [],
+
+        "zion" : {
+            "neo" : "anderson",
+            "matrix" : "sweet"
+        }
+    },
+
+    "spec" : {
+
+        // This is the more common use case
+        "photos" : {
+            "@" : "MANY",  // make photos an array
+            "*" : { // for each item in the array
+                "url" : "ONE"   // url should be singular
+            }
+        },
+
+        "photosArray" : {
+            "*" : { // for each item in the array
+                "url" : "ONE"   // url should be singular
+            }
+        },
+
+        // This is a corner case
+        "views" : {
+            "@" : "ONE",   // make the views be singular
+            "count" : "MANY"   // make the count be many
+        },
+
+        "nullParent" : {
+            "@" : "MANY"
+        },
+
+        "emptyArray" : {
+            "@" : "MANY"
+        },
+
+        "zion" : {
+            "neo" : "ONE",
+            "*" : "MANY"
+        }
+    },
+
+    "expected" : {
+        "photos" : [
+            {
+                "url" :  "http://pants.com/123-normal.jpg",
+                "caption" : "Nice pants"
+            }
+        ],
+
+        "photosArray" : [
+            {
+                "url" :  "http://pants.com/123-normal.jpg",
+                "caption" : "Nice pants"
+            },
+            {
+                "url" :  "http://pants.com/123-thumbnail.jpg",
+                "caption" : "Nice pants"
+            }
+        ],
+
+        "views" : {
+            "count" : [ 1024 ]
+        },
+
+        "nullParent" : [],
+
+        "emptyArray" : [],
+
+        "zion" : {
+            "neo" : "anderson",
+            "matrix" : [
+                "sweet"
+            ]
+        }
+    }
+}

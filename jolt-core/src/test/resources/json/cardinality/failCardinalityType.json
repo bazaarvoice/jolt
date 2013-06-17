@@ -1,0 +1,13 @@
+{
+    "input" : {
+
+        "photos" : {
+            "url" :  [ "http://pants.com/123-normal.jpg", "http://pants.com/123-thumbnail.jpg" ],
+            "caption" : "Nice pants"
+        }
+    },
+
+    "spec" : {
+        "photos" : "pants"
+    }
+}
