@@ -6,6 +6,9 @@ import com.bazaarvoice.jolt.common.pathelement.AtPathElement;
 import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.common.pathelement.PathElement;
 import com.bazaarvoice.jolt.common.pathelement.StarAllPathElement;
+import com.bazaarvoice.jolt.common.pathelement.StarPathElement;
+import com.bazaarvoice.jolt.common.pathelement.StarRegexPathElement;
+import com.bazaarvoice.jolt.common.pathelement.StarSinglePathElement;
 import com.bazaarvoice.jolt.exception.SpecException;
 
 import java.util.ArrayList;
@@ -61,7 +64,7 @@ public class CardinalityCompositeSpec extends CardinalitySpec {
                 } else {
                     throw new SpecException( "@ CardinalityTransform key, can not have children." );
                 }
-            } else {   // star || (& with children)
+            } else {   // star
                 computed.add( child );
             }
         }
@@ -80,35 +83,32 @@ public class CardinalityCompositeSpec extends CardinalitySpec {
      */
     private static List<CardinalitySpec> createChildren( Map<String, Object> rawSpec ) {
 
-        List<CardinalitySpec> result = new ArrayList<CardinalitySpec>();
+        List<CardinalitySpec> children = new ArrayList<CardinalitySpec>();
         Set<String> actualKeys = new HashSet<String>();
 
-        for ( String rawLhsStr : rawSpec.keySet() ) {
+        for ( String keyString : rawSpec.keySet() ) {
 
-            Object rawRhs = rawSpec.get( rawLhsStr );
-            String[] keyStrings = rawLhsStr.split( "\\|" ); // unwrap the syntactic sugar of the OR
-            for ( String keyString : keyStrings ) {
+            Object rawRhs = rawSpec.get( keyString );
 
-                CardinalitySpec childSpec;
-                if ( rawRhs instanceof Map ) {
-                    childSpec = new CardinalityCompositeSpec( keyString, (Map<String, Object>) rawRhs );
-                } else {
-                    childSpec = new CardinalityLeafSpec( keyString, rawRhs );
-                }
-
-                String childCanonicalString = childSpec.pathElement.getCanonicalForm();
-
-                if ( actualKeys.contains( childCanonicalString ) ) {
-                    throw new IllegalArgumentException( "Duplicate canonical CardinalityTransform key found : " + childCanonicalString );
-                }
-
-                actualKeys.add( childCanonicalString );
-
-                result.add( childSpec );
+            CardinalitySpec childSpec;
+            if ( rawRhs instanceof Map ) {
+                childSpec = new CardinalityCompositeSpec( keyString, (Map<String, Object>) rawRhs );
+            } else {
+                childSpec = new CardinalityLeafSpec( keyString, rawRhs );
             }
+
+            String childCanonicalString = childSpec.pathElement.getCanonicalForm();
+
+            if ( actualKeys.contains( childCanonicalString ) ) {
+                throw new IllegalArgumentException( "Duplicate canonical CardinalityTransform key found : " + childCanonicalString );
+            }
+
+            actualKeys.add( childCanonicalString );
+
+            children.add( childSpec );
         }
 
-        return result;
+        return children;
     }
 
     /**
@@ -131,25 +131,27 @@ public class CardinalityCompositeSpec extends CardinalitySpec {
 
         walkedPath.add( thisLevel );
 
-        // Handle any special / key based children first, but don't have them block anything
+        // The specialChild can change the data object that I point to.
+        // Aka, my key had a value that was a List, and that gets changed so that my key points to a ONE value
         if (specialChild != null) {
             input = specialChild.applyToParentContainer( inputKey, input, walkedPath, parentContainer );
         }
 
         // Handle the rest of the children
-        process( this, input, walkedPath );
+        process( input, walkedPath );
 
         walkedPath.removeLast();
         return true;
     }
 
-    private void process( CardinalityCompositeSpec spec, Object input, WalkedPath walkedPath ) {
+    private void process( Object input, WalkedPath walkedPath ) {
+
         if ( input instanceof Map ) {
 
             // Iterate over the whole entrySet rather than the keyset with follow on gets of the values
             Set<Map.Entry<String, Object>> entrySet = new HashSet<Map.Entry<String, Object>>( ( (Map<String, Object>) input ).entrySet() );
             for ( Map.Entry<String, Object> inputEntry : entrySet ) {
-                applyKeyToLiteralAndComputed( spec, inputEntry.getKey(), inputEntry.getValue(), walkedPath, input );
+                applyKeyToLiteralAndComputed( this, inputEntry.getKey(), inputEntry.getValue(), walkedPath, input );
             }
         } else if ( input instanceof List ) {
 
@@ -157,12 +159,13 @@ public class CardinalityCompositeSpec extends CardinalitySpec {
                 Object subInput = ( (List<Object>) input ).get( index );
                 String subKeyStr = Integer.toString( index );
 
-                applyKeyToLiteralAndComputed( spec, subKeyStr, subInput, walkedPath, input );
+                applyKeyToLiteralAndComputed( this, subKeyStr, subInput, walkedPath, input );
             }
         } else if ( input != null ) {
+
             // if not a map or list, must be a scalar
             String scalarInput = input.toString();
-            applyKeyToLiteralAndComputed( spec, scalarInput, null, walkedPath, scalarInput );
+            applyKeyToLiteralAndComputed( this, scalarInput, null, walkedPath, scalarInput );
         }
     }
 
@@ -199,7 +202,7 @@ public class CardinalityCompositeSpec extends CardinalitySpec {
 
         static {
             orderMap.put( AmpPathElement.class, 1 );
-            orderMap.put( StarAllPathElement.class, 2 );
+            orderMap.put( StarPathElement.class, 2 );
         }
 
         @Override
