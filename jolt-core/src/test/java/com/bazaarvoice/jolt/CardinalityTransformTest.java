@@ -14,6 +14,7 @@ public class CardinalityTransformTest {
         return new Object[][] {
                 {"oneLiteralTestData"},
                 {"manyLiteralTestData"},
+                {"starTestData"},
                 {"atTestData"}
         };
     }
@@ -42,6 +43,6 @@ public class CardinalityTransformTest {
         Object spec = testUnit.get( "spec" );
 
         // Should throw exception
-        CardinalityTransform cardinalityTransform = new CardinalityTransform( spec );
+        new CardinalityTransform( spec );
     }
 }

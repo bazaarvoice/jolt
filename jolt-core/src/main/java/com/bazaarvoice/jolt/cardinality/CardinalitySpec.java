@@ -6,7 +6,10 @@ import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.common.pathelement.MatchablePathElement;
 import com.bazaarvoice.jolt.common.pathelement.PathElement;
 import com.bazaarvoice.jolt.common.pathelement.StarAllPathElement;
+import com.bazaarvoice.jolt.common.pathelement.StarRegexPathElement;
+import com.bazaarvoice.jolt.common.pathelement.StarSinglePathElement;
 import com.bazaarvoice.jolt.exception.SpecException;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,25 +22,14 @@ import java.util.List;
  *   Some kind of PathElement (based off that raw LHS value)
  *
  * Additionally there are 2 distinct subclasses of the base Spec
- *  CardinalityLeafSpec : where the RHS is a String or Array of Strings, that specify an write path for the data from this level in the tree
+ *  CardinalityLeafSpec : where the RHS is either "ONE" or "MANY"
  *  CardinalityCompositeSpec : where the RHS is a map of children Specs
  *
- * Mapping of Json Shiftr Spec to Spec objects :
- * {
- *   rating-*" : {      // ShiftrCompositeSpec with one child and a Star PathElement
- *     "&(1)" : {       // ShiftrCompositeSpec with one child and a Reference PathElement
- *       "foo: {        // ShiftrCompositeSpec with one child and a Literal PathElement
- *         "value" : "Rating-&1.value"  // OutputtingSpec with a Literal PathElement and one write path
- *       }
- *     }
- *   }
- * }
- *
- * The tree structure of formed by the CompositeSpecs is what is used during Shiftr transforms
+ * The tree structure of formed by the CompositeSpecs is what is used during the transform
  *  to do the parallel tree walk with the input data tree.
  *
  * During the parallel tree walk, a Path<Literal PathElements> is maintained, and used when
- *  a tree walk encounters an Outputting spec to evaluate the wildcards in the write DotNotationPath.
+ *  a tree walk encounters a leaf spec.
  */
 public abstract class CardinalitySpec {
 
@@ -67,6 +59,14 @@ public abstract class CardinalitySpec {
         }
         else if ( "*".equals( key ) ) {
             return Arrays.<PathElement>asList( new StarAllPathElement( key ) );
+        }
+        else if ( key.contains( "*" ) ) {
+            if ( StringUtils.countMatches( key, "*" ) == 1 ) {
+                return Arrays.<PathElement>asList( new StarSinglePathElement( key ) );
+            }
+            else {
+                return Arrays.<PathElement>asList( new StarRegexPathElement( key ) );
+            }
         }
         else {
             return Arrays.<PathElement>asList( new LiteralPathElement( key ) );
