@@ -1,4 +1,4 @@
-package com.bazaarvoice.jolt.cardinality.spec;
+package com.bazaarvoice.jolt.cardinality;
 
 import com.bazaarvoice.jolt.common.WalkedPath;
 import com.bazaarvoice.jolt.common.pathelement.AtPathElement;
