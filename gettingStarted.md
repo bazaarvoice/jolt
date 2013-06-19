@@ -16,6 +16,8 @@ Maven Dependency to Add to your pom file
 </dependency>
 ```
 
+Where `latest.jolt.version` looks like `0.0.5`, and can be found by looking at the [project's tags](https://github.com/bazaarvoice/jolt/tags).
+
 The two maven artifacts are:
 
 1. `jolt-core` : only one dependency on apache.commons for StringUtils
@@ -25,6 +27,10 @@ The two maven artifacts are:
 
 
 ## 2 Code and Sample Data
+
+1. Copy - paste this code and sample data.
+2. Get it to run
+3. Replace the input and spec file with your own
 
 ### JoltSample.java
 ```
@@ -93,9 +99,9 @@ public class JoltSample {
 ]
 ```
 
-### Ouputs
+### Output
 
-Minus the formatting
+Minus the pretty formatting, looks like :
 ```
 {
     "Rating": 3,
