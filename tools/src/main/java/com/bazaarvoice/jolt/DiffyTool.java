@@ -19,14 +19,18 @@ public class DiffyTool {
                 .description( "Jolt CLI Diffy Tool" )
                 .defaultHelp( true );
 
+        // TODO: why is filePath2 still required?
         parser.addArgument( "filePath1" ).help( "File path to first JSON document to be fed to Diffy" )
                 .type( Arguments.fileType().verifyExists().verifyIsFile().verifyCanRead() );
-        parser.addArgument( "filePath2" ).help( "File path to second JSON document to be fed to Diffy" )
+        parser.addArgument( "filePath2" ).help( "File path to second JSON document to be fed to Diffy" ).required( false )
                 .type( Arguments.fileType().verifyExists().verifyIsFile().verifyCanRead() );
 
+        // TODO: when -i and there's no std input it hangs
         parser.addArgument( "-s" ).help( "help for suppress output" )
                 .action( Arguments.storeTrue() );
         parser.addArgument( "-a" ).help( "help for array order oblivious" )
+                .action( Arguments.storeTrue() );
+        parser.addArgument( "-i" ).help( "help for accept input from standard in" )
                 .action( Arguments.storeTrue() );
 
         Namespace ns = null;
@@ -36,6 +40,7 @@ public class DiffyTool {
             parser.handleError(e);
             System.exit(1);
         }
+
 
         boolean suppressOutput = ns.getBoolean( "s" );
 
@@ -47,7 +52,28 @@ public class DiffyTool {
         }
 
         Map<String, Object> objectMap1 = createObjectMap( ( File ) ns.get( "filePath1" ), suppressOutput );
-        Map<String, Object> objectMap2 = createObjectMap( ( File ) ns.get( "filePath2" ), suppressOutput );
+        Map<String, Object> objectMap2 = null;
+        if ( ns.getBoolean( "i" ) ) {
+            try {
+                objectMap2 = JsonUtils.jsonToMap( System.in );
+            } catch ( IOException e ) {
+                if ( e instanceof JsonParseException ) {
+                    printOutput( suppressOutput, "Standard input did not contain properly formatted JSON." );
+                } else {
+                    printOutput( suppressOutput, "Failed to process standard input." );
+                }
+                System.exit( 1 );
+            }
+        } else {
+            File file = (File) ns.get( "filePath2" );
+            if ( file == null ) {
+                printOutput( suppressOutput, "Second file path is required is standard input is not provided." );
+                System.exit( 1 );
+            }
+            else {
+                objectMap2 = createObjectMap( file, suppressOutput );
+            }
+        }
 
         Diffy.Result result = diffy.diff( objectMap1, objectMap2 );
 
@@ -56,6 +82,7 @@ public class DiffyTool {
             System.exit( 0 );
         } else {
             try {
+                // TODO: better message here. talk about "file1" and "file2" or something
                 printOutput( suppressOutput, "A difference was found. Diffy expected this:\n" +
                         JsonUtils.toPrettyJsonString( result.expected ) + "\n" +
                         "Diffy found this:\n" +
@@ -65,12 +92,6 @@ public class DiffyTool {
             } finally {
                 System.exit( 1 );
             }
-        }
-    }
-
-    private static void printOutput( boolean suppressOutput, String output ) {
-        if ( !suppressOutput ) {
-            System.out.println( output );
         }
     }
 
@@ -90,5 +111,11 @@ public class DiffyTool {
             System.exit( 1 );
         }
         return objectMap;
+    }
+
+    private static void printOutput( boolean suppressOutput, String output ) {
+        if ( !suppressOutput ) {
+            System.out.println( output );
+        }
     }
 }
