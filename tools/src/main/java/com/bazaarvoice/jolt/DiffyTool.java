@@ -16,21 +16,27 @@ public class DiffyTool {
 
     public static void main (String[] args) {
         ArgumentParser parser = ArgumentParsers.newArgumentParser( "diffy" )
-                .description( "Jolt CLI Diffy Tool" )
+                .description( "Jolt CLI Diffy Tool. This tool will ingest two JSON inputs (from files or standard input) and " +
+                        "perform the Jolt Diffy operation to detect any differences. The program will return and exit code of " +
+                        "0 if no differences are found or a 1 if a difference is found or an error is encountered." )
                 .defaultHelp( true );
 
-        // TODO: why is filePath2 still required?
-        parser.addArgument( "filePath1" ).help( "File path to first JSON document to be fed to Diffy" )
+        File nullFile = null;
+        parser.addArgument( "filePath1" ).help( "File path to feed to Input #1 for the Diffy operation. " +
+                "This file should contain properly formatted JSON." )
                 .type( Arguments.fileType().verifyExists().verifyIsFile().verifyCanRead() );
-        parser.addArgument( "filePath2" ).help( "File path to second JSON document to be fed to Diffy" ).required( false )
-                .type( Arguments.fileType().verifyExists().verifyIsFile().verifyCanRead() );
+        parser.addArgument( "filePath2" ).help( "File path to feed to Input #2 for the Diffy operation. " +
+                "This file should contain properly formatted JSON. " +
+                "This argument is mutually exclusive with -i; one or the other should be specified." )
+                .type( Arguments.fileType().verifyExists().verifyIsFile().verifyCanRead() )
+                .nargs( "?" ).setDefault( nullFile );   // these last two method calls make filePath2 optional
 
-        // TODO: when -i and there's no std input it hangs
-        parser.addArgument( "-s" ).help( "help for suppress output" )
+        parser.addArgument( "-s" ).help( "Diffy will suppress output and run silently." )
                 .action( Arguments.storeTrue() );
-        parser.addArgument( "-a" ).help( "help for array order oblivious" )
+        parser.addArgument( "-a" ).help( "Diffy will not consider array order when detecting differences" )
                 .action( Arguments.storeTrue() );
-        parser.addArgument( "-i" ).help( "help for accept input from standard in" )
+        parser.addArgument( "-i" ).help( "Diffy will use standard in as input for Input #2 rather than the filePath2 argument. " +
+                "Standard in should contain properly formatted JSON." )
                 .action( Arguments.storeTrue() );
 
         Namespace ns = null;
@@ -38,21 +44,21 @@ public class DiffyTool {
             ns = parser.parseArgs(args);
         } catch (ArgumentParserException e) {
             parser.handleError(e);
-            System.exit(1);
+            System.exit( 1 );
         }
-
 
         boolean suppressOutput = ns.getBoolean( "s" );
 
         Diffy diffy;
-        if ( ns.getBoolean( "a" ) ) {   // caller wants to disregard array order when diffing
+        if ( ns.getBoolean( "a" ) ) {
             diffy = new ArrayOrderObliviousDiffy();
         } else {
             diffy = new Diffy();
         }
 
-        Map<String, Object> objectMap1 = createObjectMap( ( File ) ns.get( "filePath1" ), suppressOutput );
+        Map<String, Object> objectMap1 = createObjectMapFromFile( (File) ns.get( "filePath1" ), suppressOutput );
         Map<String, Object> objectMap2 = null;
+
         if ( ns.getBoolean( "i" ) ) {
             try {
                 objectMap2 = JsonUtils.jsonToMap( System.in );
@@ -67,11 +73,11 @@ public class DiffyTool {
         } else {
             File file = (File) ns.get( "filePath2" );
             if ( file == null ) {
-                printOutput( suppressOutput, "Second file path is required is standard input is not provided." );
+                printOutput( suppressOutput, "Second file path is required if standard input (-i) is not utilized." );
                 System.exit( 1 );
             }
             else {
-                objectMap2 = createObjectMap( file, suppressOutput );
+                objectMap2 = createObjectMapFromFile( file, suppressOutput );
             }
         }
 
@@ -82,10 +88,9 @@ public class DiffyTool {
             System.exit( 0 );
         } else {
             try {
-                // TODO: better message here. talk about "file1" and "file2" or something
-                printOutput( suppressOutput, "A difference was found. Diffy expected this:\n" +
+                printOutput( suppressOutput, "A difference was found. Input #1 contained this:\n" +
                         JsonUtils.toPrettyJsonString( result.expected ) + "\n" +
-                        "Diffy found this:\n" +
+                        "Input #2 contained this:\n" +
                         JsonUtils.toPrettyJsonString( result.actual ) );
             } catch ( IOException e ) {
                 printOutput( suppressOutput, "A difference was found, but diffy encountered an error while writing the result." );
@@ -95,7 +100,14 @@ public class DiffyTool {
         }
     }
 
-    private static Map<String, Object> createObjectMap( File file, boolean suppressOutput ) {
+    /**
+     * Uses the File to build a Map containing JSON data found in the file. This method will
+     * exit with an error code of 1 if has any trouble opening the file or the file did not
+     * contain properly formatted JSON (i.e. the JSON parser was unable to parse its contents)
+     *
+     * @return the Map containing the JSON data
+     */
+    private static Map<String, Object> createObjectMapFromFile( File file, boolean suppressOutput ) {
         Map<String, Object> objectMap = null;
         try {
             FileInputStream inputStream = new FileInputStream( file );
@@ -113,6 +125,9 @@ public class DiffyTool {
         return objectMap;
     }
 
+    /**
+     * Prints the given string to standard out, or doesn't, based on the suppressOutput flag
+     */
     private static void printOutput( boolean suppressOutput, String output ) {
         if ( !suppressOutput ) {
             System.out.println( output );
