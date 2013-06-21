@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class DiffyTool {
 
-    public static void main (String[] args) {
+    public static void main( String[] args ) {
         ArgumentParser parser = ArgumentParsers.newArgumentParser( "diffy" )
                 .description( "Jolt CLI Diffy Tool. This tool will ingest two JSON inputs (from files or standard input) and " +
                         "perform the Jolt Diffy operation to detect any differences. The program will return and exit code of " +
@@ -41,9 +41,9 @@ public class DiffyTool {
 
         Namespace ns = null;
         try {
-            ns = parser.parseArgs(args);
-        } catch (ArgumentParserException e) {
-            parser.handleError(e);
+            ns = parser.parseArgs( args );
+        } catch ( ArgumentParserException e ) {
+            parser.handleError( e );
             System.exit( 1 );
         }
 
@@ -75,8 +75,7 @@ public class DiffyTool {
             if ( file == null ) {
                 printOutput( suppressOutput, "Second file path is required if standard input (-i) is not utilized." );
                 System.exit( 1 );
-            }
-            else {
+            } else {
                 objectMap2 = createObjectMapFromFile( file, suppressOutput );
             }
         }
