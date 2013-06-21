@@ -18,6 +18,7 @@ JSON to JSON transformation library written in Java where the "specification" fo
    * [6 Alternatives](#Alternatives)
    * [7 Performance](#Performance)
    * [8 Code Coverage](#Code_Coverage)
+   * [9 Release Notes](#Release_Notes)
 
 ## <a name="Overview"></a> Overview
 
@@ -147,3 +148,7 @@ When we move to a proper open source CI build, this can go away.
     open jolt-core/target/site/cobertura/index.html
 
 Currently code coverage is at 89% line, and 83% branch.
+
+## <a name="Release_Notes"></a> Release Notes
+
+On the [Github Jolt Wiki](https://github.com/bazaarvoice/jolt/wiki/Release-Notes).
