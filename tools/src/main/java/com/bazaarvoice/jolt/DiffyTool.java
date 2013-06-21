@@ -87,12 +87,12 @@ public class DiffyTool {
             System.exit( 0 );
         } else {
             try {
-                printOutput( suppressOutput, "A difference was found. Input #1 contained this:\n" +
+                printOutput( suppressOutput, "Differences found. Input #1 contained this:\n" +
                         JsonUtils.toPrettyJsonString( result.expected ) + "\n" +
                         "Input #2 contained this:\n" +
                         JsonUtils.toPrettyJsonString( result.actual ) );
             } catch ( IOException e ) {
-                printOutput( suppressOutput, "A difference was found, but diffy encountered an error while writing the result." );
+                printOutput( suppressOutput, "Differences found, but diffy encountered an error while writing the result." );
             } finally {
                 System.exit( 1 );
             }
