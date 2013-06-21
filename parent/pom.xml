@@ -5,7 +5,9 @@
     <parent>
         <groupId>com.bazaarvoice.commons</groupId>
         <artifactId>bv-opensource-super-pom</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
+        <relativePath />
+        <!--an empty relativePath for the super-pom, makes maven happy -->
     </parent>
 
     <groupId>com.bazaarvoice.jolt</groupId>
