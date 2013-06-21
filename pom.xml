@@ -13,7 +13,9 @@
     <name>Jolt</name>
 
     <scm>
+        <url>https://github.com/bazaarvoice/jolt</url>
         <connection>scm:git:git@github.com:bazaarvoice/jolt.git</connection>
+        <developerConnection>scm:git:git@github.com:bazaarvoice/jolt.git</developerConnection>
     </scm>
 
     <modules>
