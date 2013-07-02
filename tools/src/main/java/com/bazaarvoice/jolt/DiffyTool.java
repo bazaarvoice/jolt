@@ -15,6 +15,18 @@ import java.util.Map;
 public class DiffyTool {
 
     public static void main( String[] args ) {
+        int exitCode = runDiffy( args ) ? 0 : 1;
+        System.exit( exitCode );
+    }
+
+    /**
+     * The logic for running DiffyTool has been captured in a helper method that returns a boolean to facilitate unit testing.
+     * Since System.exit terminates the JVM it would not be practical to test the main method.
+     *
+     * @param args the arguments from the command line input
+     * @return true if two inputs were read with no differences, false if differences were found or an error was encountered
+     */
+    protected static boolean runDiffy( String[] args ) {
         ArgumentParser parser = ArgumentParsers.newArgumentParser( "diffy" )
                 .description( "Jolt CLI Diffy Tool. This tool will ingest two JSON inputs (from files or standard input) and " +
                         "perform the Jolt Diffy operation to detect any differences. The program will return and exit code of " +
@@ -39,12 +51,12 @@ public class DiffyTool {
                 "Standard in should contain properly formatted JSON." )
                 .action( Arguments.storeTrue() );
 
-        Namespace ns = null;
+        Namespace ns;
         try {
             ns = parser.parseArgs( args );
         } catch ( ArgumentParserException e ) {
             parser.handleError( e );
-            System.exit( 1 );
+            return false;
         }
 
         boolean suppressOutput = ns.getBoolean( "s" );
@@ -57,7 +69,7 @@ public class DiffyTool {
         }
 
         Map<String, Object> objectMap1 = createObjectMapFromFile( (File) ns.get( "filePath1" ), suppressOutput );
-        Map<String, Object> objectMap2 = null;
+        Map<String, Object> objectMap2;
 
         if ( ns.getBoolean( "i" ) ) {
             try {
@@ -68,13 +80,13 @@ public class DiffyTool {
                 } else {
                     printOutput( suppressOutput, "Failed to process standard input." );
                 }
-                System.exit( 1 );
+                return false;
             }
         } else {
             File file = (File) ns.get( "filePath2" );
             if ( file == null ) {
                 printOutput( suppressOutput, "Second file path is required if standard input (-i) is not utilized." );
-                System.exit( 1 );
+                return false;
             } else {
                 objectMap2 = createObjectMapFromFile( file, suppressOutput );
             }
@@ -84,7 +96,7 @@ public class DiffyTool {
 
         if ( result.isEmpty() ) {
             printOutput( suppressOutput, "Diffy found no differences" );
-            System.exit( 0 );
+            return true;
         } else {
             try {
                 printOutput( suppressOutput, "Differences found. Input #1 contained this:\n" +
@@ -94,7 +106,7 @@ public class DiffyTool {
             } catch ( IOException e ) {
                 printOutput( suppressOutput, "Differences found, but diffy encountered an error while writing the result." );
             } finally {
-                System.exit( 1 );
+                return false;
             }
         }
     }
