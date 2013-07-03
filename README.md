@@ -17,8 +17,9 @@ JSON to JSON transformation library written in Java where the "specification" fo
    * [5 Getting Transform Help](#Getting_Transform_Help)
    * [6 Alternatives](#Alternatives)
    * [7 Performance](#Performance)
-   * [8 Code Coverage](#Code_Coverage)
-   * [9 Release Notes](#Release_Notes)
+   * [8 CLI] (#CLI)
+   * [9 Code Coverage](#Code_Coverage)
+   * [10 Release Notes](#Release_Notes)
 
 ## <a name="Overview"></a> Overview
 
@@ -138,6 +139,27 @@ Two things to be aware of :
 
 1. Jolt is not "stream" based, so if you have a very large Json document to transform you need to have enough memory to hold it.
 2. The transform process will create and discard a lot of objects, so the garbage collector will have work to do.
+
+## <a name="CLI"></a> Diffy CLI
+
+The bin/ directory contains a command-line tool for using Diffy. To use it,
+
+#### Install/Update
+1. clone the project (e.g., to $JOLT_CHECKOUT)
+1. cd $JOLT_CHECKOUT; git pull; mvn clean package
+1. add $JOLT_CHECKOUT/bin/ to your PATH.
+
+#### Using Curl
+The Diffy tool has the ability to accept input from standard in.
+This can be useful if you want to compare output from curl to data in a file without having to go through the trouble of piping the curl output into a file and then subsequently calling diffy.
+
+For example, instead of doing this:
+
+    curl -s "http://some.host.com/stuff/data.json" > data.json
+    diffy data.json moreData.json
+You can do this:
+
+    curl -s "http://some.host.com/stuff/data.json" | diffy -i moreData.json
 
 ## <a name="Code_Coverage"></a> Code Coverage
 

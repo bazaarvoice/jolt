@@ -1,0 +1,21 @@
+{
+    "input" : {
+        "rating-primary" : [ 5, 4 ],
+        "rating-quality" : [ 4, 5 ],
+
+        "rating-multi" : 3
+    },
+
+    "spec" : {
+        "rating-*" : "ONE",
+
+        "rating-multi" : "MANY"  // here's a comment!
+    },
+
+    "expected" : {
+        "rating-primary" : 5,
+        "rating-quality" : 4,
+
+        "rating-multi" : [ 3 ]
+    }
+}
