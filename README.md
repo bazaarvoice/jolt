@@ -163,6 +163,8 @@ You can do this:
 
 ## <a name="Code_Coverage"></a> Code Coverage
 
+[![Build Status](https://secure.travis-ci.org/bazaarvoice/jolt.png)](http://travis-ci.org/bazaarvoice/jolt)
+
 For the moment we jave Cobertura configured in our poms.
 When we move to a proper open source CI build, this can go away.
 
