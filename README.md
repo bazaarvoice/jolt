@@ -171,7 +171,7 @@ When we move to a proper open source CI build, this can go away.
     mvn cobertura:cobertura
     open jolt-core/target/site/cobertura/index.html
 
-Currently code coverage is at 89% line, and 83% branch.
+Currently code coverage is at 89% line, and 81% branch.
 
 ## <a name="Release_Notes"></a> Release Notes
 
