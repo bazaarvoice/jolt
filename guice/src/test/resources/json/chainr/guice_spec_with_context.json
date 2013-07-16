@@ -1,0 +1,68 @@
+{
+    "spec": [
+        {
+            // Verify that the GuiceInstantiator correctly loads stock transforms
+            "operation": "default",
+            "spec": {
+                "b": "bb"
+            }
+        },
+        {
+            // This guy will add  "c" : "cc" + suffix where
+            //  "c" is hardcoded
+            //  "cc" comes from guice injection
+            //  suffix comes from context
+            "operation": "com.bazaarvoice.jolt.chainr.transforms.GuiceContextDrivenTransform"
+        },
+        {
+            // This guy will add  "d" : "dd" + suffix
+            //  "d" is from the spec KEY_TO_ADD
+            //  "dd" comes from guice injection
+            //  suffix comes from context
+            "operation": "com.bazaarvoice.jolt.chainr.transforms.GuiceSpecAndContextDrivenTransform",
+            "spec" : {
+                "KEY_TO_ADD" : "d"
+            }
+        }
+    ],
+
+    "tests" : [
+        {
+            "testCaseName" : "cc, dd, and -guice",
+
+            // Input data for the unit test data.   Will verify that this data passes all the way thru.
+            "input": {
+                "a" : "aa"
+            },
+            "context" : {
+                "suffix" : "-guice"
+            },
+
+            "expected": {
+                "a": "aa",
+                "b": "bb",
+                "c": "cc-guice",
+                "d": "dd-guice"
+            }
+        },
+        {
+            "testCaseName" : "cc, dd, and -tuna",
+
+            // Input data for the unit test data.   Will verify that this data passes all the way thru.
+            "input": {
+                "a" : "aa"
+            },
+            "context" : {
+                "suffix" : "-tuna"
+            },
+
+            "expected": {
+                "a": "aa",
+                "b": "bb",
+                "c": "cc-tuna",
+                "d": "dd-tuna"
+            }
+        }
+    ]
+
+}

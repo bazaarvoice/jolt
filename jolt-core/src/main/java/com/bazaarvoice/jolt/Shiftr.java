@@ -20,6 +20,7 @@ import com.bazaarvoice.jolt.common.WalkedPath;
 import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.shiftr.spec.ShiftrCompositeSpec;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -430,7 +431,7 @@ import java.util.Map;
  * Instances of this class execute Shiftr transformations given a transform spec of Jackson-style maps of maps
  * and a Jackson-style map-of-maps input.
  */
-public class Shiftr implements SpecTransform {
+public class Shiftr implements SpecDriven, Transform {
 
     public static final String ROOT_KEY = "root";
     private final ShiftrCompositeSpec rootSpec;
@@ -440,6 +441,7 @@ public class Shiftr implements SpecTransform {
      *
      * @throws com.bazaarvoice.jolt.exception.SpecException for a malformed spec
      */
+    @Inject
     public Shiftr( Object spec ) {
 
         if ( spec == null ){

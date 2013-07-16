@@ -15,9 +15,7 @@
  */
 package com.bazaarvoice.jolt;
 
-import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.exception.TransformException;
-
+import javax.inject.Inject;
 import java.util.Map;
 
 /**
@@ -72,15 +70,20 @@ import java.util.Map;
  *  in which case Removr will recursively walk down the tree.
  * <p/>
  */
-public class Removr implements SpecTransform {
+public class Removr implements SpecDriven, Transform {
 
     private final Map<String, Object> spec;
 
-
+    @Inject
     public Removr( Object spec ) {
         this.spec = (Map<String, Object>) spec;
     }
 
+    /**
+     * Recursively removes data from the input JSON.
+     *
+     * @param input the JSON object to transform in plain vanilla Jackson Map<String, Object> style
+     */
     @Override
     public Object transform( Object input ) {
         return removr( spec, input );

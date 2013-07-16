@@ -24,7 +24,7 @@ public class SpecException extends JoltException {
         super(msg);
     }
 
-    public SpecException(String msg, Exception ex) {
-        super(msg, ex);
+    public SpecException(String msg, Throwable t) {
+        super(msg, t);
     }
 }

@@ -19,6 +19,7 @@ import com.bazaarvoice.jolt.defaultr.Key;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.exception.TransformException;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -168,7 +169,7 @@ import java.util.Map;
  * If it is an array, we treat the "root" level of the Defaultr spec, as if it were the child of an Array type Defaultr entry.
  * To force unambiguity, Defaultr throws an Exception if the input is null.
  */
-public class Defaultr implements SpecTransform {
+public class Defaultr implements SpecDriven, Transform {
 
     public interface WildCards {
         public static final String STAR = "*";
@@ -184,6 +185,7 @@ public class Defaultr implements SpecTransform {
      *
      * @throws SpecException for a malformed spec or if there are issues
      */
+    @Inject
     public Defaultr( Object spec ) {
 
         String rootKey = "root";

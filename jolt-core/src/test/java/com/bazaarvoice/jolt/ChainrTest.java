@@ -15,11 +15,13 @@
  */
 package com.bazaarvoice.jolt;
 
-import com.bazaarvoice.jolt.chainr.GoodTestTransform;
+import com.bazaarvoice.jolt.chainr.transforms.TransformTestResult;
+import com.bazaarvoice.jolt.chainr.spec.ChainrEntry;
+import com.bazaarvoice.jolt.chainr.transforms.GoodTestTransform;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.exception.TransformException;
-import com.bazaarvoice.jolt.chainr.ExplodingTestTransform;
-import com.bazaarvoice.jolt.chainr.DelegationResult;
+import com.bazaarvoice.jolt.chainr.transforms.ExplodingTestTransform;
+import org.testng.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -30,8 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.bazaarvoice.jolt.Chainr.*;
-
 public class ChainrTest {
 
     private List<Map<String,Object>> newChainrSpec() {
@@ -40,41 +40,33 @@ public class ChainrTest {
 
     private Map<String, Object> newActivity( String opname ) {
         Map<String, Object> activity = new HashMap<String, Object>();
-        activity.put( OPERATION_KEY, opname );
+        activity.put( ChainrEntry.OPERATION_KEY, opname );
         return activity;
     }
 
     private Map<String, Object> newActivity( String operation, Object spec ) {
         Map<String, Object> activity = new HashMap<String, Object>();
-        activity.put( OPERATION_KEY, operation );
+        activity.put( ChainrEntry.OPERATION_KEY, operation );
         if ( spec != null ) {
-            activity.put( SPEC_KEY, spec );
+            activity.put( ChainrEntry.SPEC_KEY, spec );
         }
         return activity;
     }
 
-    private Map<String, Object> newFailActivity( String operation, Object spec ) {
+    private Map<String, Object> newCustomJavaActivity( Class cls, Object spec ) {
         Map<String, Object> activity = new HashMap<String, Object>();
-        activity.put( OPERATION_KEY, operation );
-        activity.put( "tuna", spec );
-        return activity;
-    }
-
-    private Map<String, Object> newDelegatrActivity(Class cls, Object spec ) {
-        Map<String, Object> activity = new HashMap<String, Object>();
-        activity.put( OPERATION_KEY, "java" );
-        activity.put( CLASSNAME_KEY, cls.getName() );
+        activity.put( ChainrEntry.OPERATION_KEY, cls.getName() );
         if ( spec != null ) {
-            activity.put( SPEC_KEY, spec );
+            activity.put( ChainrEntry.SPEC_KEY, spec );
         }
 
         return activity;
     }
 
-    private List<Map<String,Object>> newShiftrDelegatrSpec( Class cls, Object delegateSpec  )
+    private List<Map<String,Object>> newCustomJavaChainrSpec( Class cls, Object delegateSpec )
     {
         List<Map<String,Object>> retvalue = this.newChainrSpec();
-        retvalue.add( newDelegatrActivity( cls, delegateSpec ));
+        retvalue.add( newCustomJavaActivity( cls, delegateSpec ));
         return retvalue;
     }
 
@@ -112,8 +104,8 @@ public class ChainrTest {
 
         Object chainrSpec = this.newShiftrChainrSpec( shiftrSpec );
 
-        Chainr unit = new Chainr( chainrSpec );
-        Object actual = unit.transform( input );
+        Chainr unit = Chainr.fromSpec( chainrSpec );
+        Object actual = unit.transform( input, null );
 
         JoltTestUtil.runDiffy( "failed Shiftr call.", expected, actual );
     }
@@ -128,8 +120,8 @@ public class ChainrTest {
 
         Object chainrSpec = this.newShiftrDefaultrSpec( defaultrSpec );
 
-        Chainr unit = new Chainr( chainrSpec );
-        Object actual = unit.transform( input );
+        Chainr unit = Chainr.fromSpec( chainrSpec );
+        Object actual = unit.transform( input, null );
 
         JoltTestUtil.runDiffy( "failed Defaultr call.", expected, actual );
     }
@@ -144,8 +136,8 @@ public class ChainrTest {
 
         Object chainrSpec = this.newShiftrRemovrSpec( removrSpec );
 
-        Chainr unit = new Chainr( chainrSpec );
-        Object actual = unit.transform( input );
+        Chainr unit = Chainr.fromSpec( chainrSpec );
+        Object actual = unit.transform( input, null );
 
         JoltTestUtil.runDiffy( "failed Removr call.", expected, actual );
     }
@@ -156,8 +148,8 @@ public class ChainrTest {
         Object expected = JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/sortr/simple/output.json" ) );
         Object chainrSpec = this.newShiftrSortrSpec( null );
 
-        Chainr unit = new Chainr( chainrSpec );
-        Object actual = unit.transform( input );
+        Chainr unit = Chainr.fromSpec( chainrSpec );
+        Object actual = unit.transform( input, null );
 
         JoltTestUtil.runDiffy( "failed Sortr call.", expected, actual );
 
@@ -166,14 +158,14 @@ public class ChainrTest {
     }
 
     @Test
-    public void process_itCallsDelegatr() {
+    public void process_itCallsCustomJavaTransform() {
         List<Map<String,Object>> spec = this.newChainrSpec();
         Object delegateSpec = new HashMap();
-        spec.add( this.newDelegatrActivity( GoodTestTransform.class, delegateSpec ) );
+        spec.add( this.newCustomJavaActivity( GoodTestTransform.class, delegateSpec ) );
         Object input = new Object();
 
-        Chainr unit = new Chainr( spec );
-        DelegationResult actual = (DelegationResult) unit.transform( input );
+        Chainr unit = Chainr.fromSpec( spec );
+        TransformTestResult actual = (TransformTestResult) unit.transform( input, null );
 
         AssertJUnit.assertEquals( input, actual.input );
         AssertJUnit.assertEquals( delegateSpec, actual.spec );
@@ -191,21 +183,21 @@ public class ChainrTest {
 
     @Test(dataProvider = "failureSpecCases", expectedExceptions = SpecException.class)
     public void process_itBlowsUp_fromSpec(Object spec) {
-        new Chainr( spec );
+        Chainr.fromSpec( spec );
         AssertJUnit.fail("Should have failed during spec initialization.");
     }
 
     @DataProvider
     public Object[][] failureTransformCases() {
         return new Object[][] {
-            { this.newShiftrDelegatrSpec( ExplodingTestTransform.class, null ) }
+            { this.newCustomJavaChainrSpec( ExplodingTestTransform.class, null ) }
         };
     }
 
     @Test(dataProvider = "failureTransformCases", expectedExceptions = TransformException.class)
-    public void process_itBlowsUp_fromTransorm(Object spec) {
-        Chainr unit = new Chainr( spec );
-        unit.transform( new HashMap() );
+    public void process_itBlowsUp_fromTransform(Object spec) {
+        Chainr unit = Chainr.fromSpec( spec );
+        unit.transform( new HashMap(), null );
         AssertJUnit.fail("Should have failed during transform.");
     }
 
@@ -221,15 +213,19 @@ public class ChainrTest {
 
     @Test(dataProvider = "getTestCaseNames")
     public void runTestCases(String testCaseName, boolean sorted ) throws IOException {
-        String testPath = "/json/chainr/" + testCaseName;
+        String testPath = "/json/chainr/integration/" + testCaseName;
         Map<String, Object> testUnit = (Map<String, Object>) JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( testPath + ".json" ) );
 
         Object input = testUnit.get( "input" );
         Object spec = testUnit.get( "spec" );
         Object expected = testUnit.get( "expected" );
 
-        Chainr unit = new Chainr( spec );
-        Object actual = unit.transform( input );
+        Chainr unit = Chainr.fromSpec( spec );
+
+        Assert.assertFalse( unit.hasContextualTransforms() );
+        Assert.assertEquals( unit.getContextualTransforms().size(), 0 );
+
+        Object actual = unit.transform( input, null );
 
         JoltTestUtil.runDiffy( "failed case " + testPath, expected, actual );
 
