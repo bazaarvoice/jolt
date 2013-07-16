@@ -41,7 +41,7 @@ public class RemovrTest {
         Object expected = testUnit.get( "expected" );
 
         Removr removr = new Removr( spec );
-        Object actual = removr.transform( input );
+        Object actual = removr.transform( input, null );
 
         JoltTestUtil.runDiffy( "failed case " + testPath, expected, actual );
     }

@@ -45,7 +45,7 @@ public class CardinalityTransformTest {
         Object expected = testUnit.get( "expected" );
 
         CardinalityTransform cardinalityTransform = new CardinalityTransform( spec );
-        Object actual = cardinalityTransform.transform( input );
+        Object actual = cardinalityTransform.transform( input, null );
 
         JoltTestUtil.runDiffy( "failed case " + testPath, expected, actual );
     }

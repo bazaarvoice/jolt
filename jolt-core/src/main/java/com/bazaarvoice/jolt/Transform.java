@@ -15,6 +15,8 @@
  */
 package com.bazaarvoice.jolt;
 
+import java.util.Map;
+
 /**
  * Base interface for all Jolt Transforms.
  *
@@ -24,11 +26,26 @@ package com.bazaarvoice.jolt;
 public interface Transform {
 
     /**
-     * Execute a transform on some input JSON and return the result.
+     * Execute a transform on some input JSON with optionally provided "context" and return the result.
+     *
+     * The "context" is optional, and allows transforms to tweak their behavior based upon criteria
+     * outside of the input Json object.
+     *
+     * The canonical example for the need to have Transforms consider "context" is a Transform that creates
+     * urls based upon input data.  Should it generate http or https urls?
+     *
+     * Most likely the input Json data does not provide any guidance.  This is what the "context" is for.
+     * It allows the consumer of the Transform to specialize it based on data outside the scope of the input Json.
+     *
+     * Without the "context" notion you would instead create a HttpUrlTransform and a HttpsUrlTransform.
+     * This creates problems when you want to used them as part of a larger Chainr Transform, as you
+     * would need to create two Chainrs that are almost the same.   The number of Chainrs needed grows
+     * combinatorially as you add other context sensitive transforms.
      *
      * @param input the JSON object to transform in plain vanilla Jackson Map<String, Object> style
+     * @param context information outside of the input JSON that needs to be taken into account when doing the transform
      * @return the results of the transformation
      * @throws com.bazaarvoice.jolt.exception.TransformException if there are issues with the transform
      */
-    Object transform( Object input );
+    Object transform( Object input, Map<String, Object> context );
 }

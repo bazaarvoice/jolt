@@ -24,7 +24,7 @@ public class JoltException extends RuntimeException {
         super(msg);
     }
 
-    public JoltException( String msg, Exception ex ) {
-        super(msg, ex);
+    public JoltException( String msg, Throwable t ) {
+        super(msg, t);
     }
 }

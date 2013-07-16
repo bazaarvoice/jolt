@@ -15,18 +15,21 @@
  */
 package com.bazaarvoice.jolt.chainr;
 
-import com.bazaarvoice.jolt.SpecTransform;
+import com.bazaarvoice.jolt.Diffy;
+import com.bazaarvoice.jolt.JsonUtils;
+import org.testng.AssertJUnit;
 
-public class GoodTestTransform implements SpecTransform {
+import java.io.IOException;
 
-    private Object spec;
+public class JoltTestUtil {
 
-    public GoodTestTransform( Object spec ) {
-        this.spec = spec;
-    }
+    private static Diffy diffy = new Diffy();
 
-    @Override
-    public Object transform( Object input ) {
-        return new DelegationResult( input, spec );
+    public static void runDiffy( String failureMessage, Object expected, Object actual ) throws IOException {
+
+        Diffy.Result result = diffy.diff( expected, actual );
+        if (!result.isEmpty()) {
+            AssertJUnit.fail( failureMessage + ".\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
+        }
     }
 }

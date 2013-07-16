@@ -30,8 +30,14 @@ import java.util.Map;
  */
 public class Sortr implements Transform {
 
+    /**
+     * Sorts the JSON for human readability.
+     *
+     * @param input the JSON object to transform in plain vanilla Jackson Map<String, Object> style
+     * @param context ignored
+     */
     @Override
-    public Object transform( Object input ) {
+    public Object transform( Object input, Map<String, Object> context ) {
         return sortJson( input );
     }
 

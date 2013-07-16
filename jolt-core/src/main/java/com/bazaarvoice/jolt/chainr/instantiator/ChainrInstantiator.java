@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.bazaarvoice.jolt.chainr;
+package com.bazaarvoice.jolt.chainr.instantiator;
 
 import com.bazaarvoice.jolt.Transform;
-import com.bazaarvoice.jolt.exception.TransformException;
+import com.bazaarvoice.jolt.chainr.spec.ChainrEntry;
 
-public class ExplodingTestTransform implements Transform {
+/**
+ * Interface to allow the guts of the Transform class loading logic to be swapped out.
+ * This primarily exists to allow clients of Jolt to load their own custom Java Transforms
+ *  via Guice or other dependency injection systems.
+ */
+public interface ChainrInstantiator {
 
-    @Override
-    public Object transform( Object input ) {
-        throw new TransformException( "kaboom" );
-    }
+    public Transform hydrateTransform( ChainrEntry entry );
 }

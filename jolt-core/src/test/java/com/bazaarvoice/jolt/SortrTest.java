@@ -46,7 +46,7 @@ public class SortrTest {
         Map<String, Object> expected = (Map<String, Object>) JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/output.json" ) );
 
         Sortr sortr = new Sortr();
-        Map<String, Object> actual = (Map<String, Object>) sortr.transform( input );
+        Map<String, Object> actual = (Map<String, Object>) sortr.transform( input, null );
 
         JoltTestUtil.runDiffy( "Make sure it is still the same object : " + testPath, expected, actual );
 

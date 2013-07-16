@@ -74,7 +74,7 @@ public class ShiftrUnitTest {
     public void shiftrUnitTest(String testName, Map<String, Object> spec, Map<String, Object> data, Map<String, Object> expected) throws Exception {
 
         Shiftr shiftr = new Shiftr( spec );
-        Object actual = shiftr.transform( data );
+        Object actual = shiftr.transform( data, null );
 
         JoltTestUtil.runDiffy( testName, expected, actual );
     }

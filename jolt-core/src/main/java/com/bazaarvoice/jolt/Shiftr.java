@@ -20,6 +20,7 @@ import com.bazaarvoice.jolt.common.WalkedPath;
 import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.shiftr.spec.ShiftrCompositeSpec;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -440,6 +441,7 @@ public class Shiftr implements SpecTransform {
      *
      * @throws com.bazaarvoice.jolt.exception.SpecException for a malformed spec
      */
+    @Inject
     public Shiftr( Object spec ) {
 
         if ( spec == null ){
@@ -457,12 +459,13 @@ public class Shiftr implements SpecTransform {
      * Applies the Shiftr transform.
      *
      * @param input the JSON object to transform
+     * @param context ignored
      * @return the output object with data shifted to it
      * @throws com.bazaarvoice.jolt.exception.TransformException for a malformed spec or if there are issues during
      * the transform
      */
     @Override
-    public Object transform( Object input ) {
+    public Object transform( Object input, Map<String, Object> context ) {
 
         Map<String,Object> output = new HashMap<String,Object>();
 

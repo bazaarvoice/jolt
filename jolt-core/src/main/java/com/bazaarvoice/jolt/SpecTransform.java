@@ -16,11 +16,17 @@
 package com.bazaarvoice.jolt;
 
 /**
- * Marker interface for Jolt transforms that are based off a "spec".
+ * Marker interface for Jolt Transforms that are based off a "spec".
  *
  * Implementations of this interface are expected to have a single arg Constructor,
  *  which takes an Object that is the spec for the constructed instance.
- * Chainr leverages this to instantiate SpecTransform object correctly.
+ * Chainr leverages this to instantiate these objects correctly.
+ *
+ * Additionally, all SpecTransform implmentations should mark their Constructor
+ * with the javax.inject.@Inject annotation, so that they can be loaded via
+ * Dependency Injection systems.
+ *
+ * All of the "stock" Jolt SpecTransforms are marked with @Inject.
  *
  * Ideally, calls to the transform method are expected to be stateless and multi-thread safe.
  */

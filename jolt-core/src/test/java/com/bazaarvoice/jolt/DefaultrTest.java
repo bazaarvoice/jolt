@@ -52,7 +52,7 @@ public class DefaultrTest {
         Object expected = testUnit.get( "expected" );
 
         Defaultr defaultr = new Defaultr(spec);
-        Object actual = defaultr.transform( input );
+        Object actual = defaultr.transform( input, null );
 
         JoltTestUtil.runDiffy( "failed case " + testPath, expected, actual );
     }
@@ -66,7 +66,7 @@ public class DefaultrTest {
         Defaultr defaultr = new Defaultr(spec);
         {
             Object input = testUnit.get( "input" );
-            Map<String, Object> fiddle = (Map<String, Object>) defaultr.transform( input );
+            Map<String, Object> fiddle = (Map<String, Object>) defaultr.transform( input, null );
 
             List array = (List) fiddle.get( "array" );
             array.add("a");
@@ -80,7 +80,7 @@ public class DefaultrTest {
             Object input = testUnit2.get( "input" );
             Object expected = testUnit2.get( "expected" );
 
-            Object actual = defaultr.transform( input );
+            Object actual = defaultr.transform( input, null );
             JoltTestUtil.runDiffy( "Same spec deepcopy fail.", expected, actual );
         }
     }
