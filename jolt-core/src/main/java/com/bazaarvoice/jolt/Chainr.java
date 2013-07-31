@@ -79,6 +79,8 @@ import java.util.Map;
  */
 public class Chainr implements Transform {
 
+    private final List<Transform> transforms;
+
     public static Chainr fromSpec( Object input ) {
         return new ChainrBuilder( input ).build();
     }
@@ -86,8 +88,6 @@ public class Chainr implements Transform {
     public static Chainr fromSpec( Object input, ChainrInstantiator instantiator ) {
         return new ChainrBuilder( input ).loader( instantiator ).build();
     }
-
-    private final List<Transform> transforms;
 
     public Chainr( List<Transform> transforms ) {
         this.transforms = Collections.unmodifiableList( new ArrayList<Transform>( transforms ) );

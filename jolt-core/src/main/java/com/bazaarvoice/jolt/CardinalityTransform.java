@@ -221,9 +221,8 @@ public class CardinalityTransform implements SpecTransform {
     /**
      * Applies the Cardinality transform.
      *
-     *
      * @param input the JSON object to transform
-     * @param context
+     * @param context ignored
      * @return the output object with data shifted to it
      * @throws com.bazaarvoice.jolt.exception.TransformException for a malformed spec or if there are issues during
      * the transform
