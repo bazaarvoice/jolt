@@ -26,6 +26,7 @@ import java.lang.reflect.Constructor;
  */
 public class DefaultChainrInstantiator implements ChainrInstantiator {
 
+    @Override
     public Transform hydrateTransform( ChainrEntry entry ) {
 
         Object spec = entry.getSpec();

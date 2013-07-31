@@ -35,10 +35,10 @@ import java.util.Map;
 public class GuicedChainrContextTest {
 
     @DataProvider
-    public Iterator<Object[]> getTests() throws IOException {
+    public Iterator<Object[]> getCases() throws IOException {
 
         String testPath = "/json/chainr/guice_spec_with_context.json";
-        Map<String, Object> testSuite = (Map<String, Object>) JsonUtils.jsonToObject( GuicedChainrContextTest.class.getResourceAsStream( testPath ) );
+        Map<String, Object> testSuite = JsonUtils.jsonToMap( GuicedChainrContextTest.class.getResourceAsStream( testPath ) );
 
         Object spec = testSuite.get( "spec" );
         List<Map> tests = (List<Map>) testSuite.get( "tests" );
@@ -58,8 +58,8 @@ public class GuicedChainrContextTest {
         return accum.iterator();
     }
 
-    @Test( dataProvider = "getTests" )
-    public void successCase( String testCaseName, Object spec, Object input, Map<String,Object> context, Object expected ) throws IOException {
+    @Test( dataProvider = "getCases")
+    public void successCases( String testCaseName, Object spec, Object input, Map<String,Object> context, Object expected ) throws IOException {
 
         Module parentModule = new AbstractModule() {
             @Override

@@ -18,8 +18,12 @@ package com.bazaarvoice.jolt.chainr;
 import com.bazaarvoice.jolt.Chainr;
 import com.bazaarvoice.jolt.JsonUtils;
 import com.bazaarvoice.jolt.chainr.instantiator.GuiceChainrInstantiator;
+import com.bazaarvoice.jolt.chainr.transforms.GuiceTransformMissingInjectAnnotation;
 import com.bazaarvoice.jolt.chainr.transforms.GuiceSpecDrivenTransform;
 import com.bazaarvoice.jolt.chainr.transforms.GuiceTransform;
+import com.bazaarvoice.jolt.exception.SpecException;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -31,10 +35,10 @@ import java.util.Map;
 public class GuicedChainrTest {
 
     @Test
-    public void runTestCases() throws IOException {
+    public void successTestCase() throws IOException {
 
         String testPath = "/json/chainr/guice_spec.json";
-        Map<String, Object> testUnit = (Map<String, Object>) JsonUtils.jsonToObject( GuicedChainrTest.class.getResourceAsStream( testPath ) );
+        Map<String, Object> testUnit = JsonUtils.jsonToMap( GuicedChainrTest.class.getResourceAsStream( testPath ) );
 
         Object input = testUnit.get( "input" );
         Object spec = testUnit.get( "spec" );
@@ -60,5 +64,65 @@ public class GuicedChainrTest {
         Object actual = unit.transform( input, null );
 
         JoltTestUtil.runDiffy( "failed case " + testPath, expected, actual );
+    }
+
+
+    @Test( expectedExceptions = SpecException.class )
+    public void itBlowsUpForMissingProviderStockTransform() throws IOException
+    {
+        String testPath = "/json/chainr/guice_spec.json";
+        Map<String, Object> testUnit = JsonUtils.jsonToMap( GuicedChainrTest.class.getResourceAsStream( testPath ) );
+
+        Object spec = testUnit.get( "spec" );
+
+        Module parentModule = new AbstractModule() {
+            @Override
+            protected void configure() {
+            }
+
+            @Provides
+            public GuiceSpecDrivenTransform.GuiceConfig getConfigD() {
+                return new GuiceSpecDrivenTransform.GuiceConfig( "dd" );
+            }
+        };
+
+        Chainr.fromSpec( spec, new GuiceChainrInstantiator( parentModule ) );
+    }
+
+    @Test( expectedExceptions = SpecException.class )
+    public void itBlowsUpForMissingProviderSpecTransform() throws IOException
+    {
+        String testPath = "/json/chainr/guice_spec.json";
+        Map<String, Object> testUnit = JsonUtils.jsonToMap( GuicedChainrTest.class.getResourceAsStream( testPath ) );
+
+        Object spec = testUnit.get( "spec" );
+
+        Module parentModule = new AbstractModule() {
+            @Override
+            protected void configure() {
+            }
+
+            @Provides
+            public GuiceTransform.GuiceConfig getConfigC() {
+                return new GuiceTransform.GuiceConfig( "c", "cc" );
+            }
+        };
+
+        Chainr.fromSpec( spec, new GuiceChainrInstantiator( parentModule ) );
+    }
+
+    @Test( expectedExceptions = SpecException.class )
+    public void itBlowsUpForBadGuiceTransform() {
+        Chainr.fromSpec( ImmutableList.of( ImmutableMap.of( "operator", "com.bazaarvoice.jolt.chainr.transforms.GuiceTransformMissingInjectAnnotation" ) ),
+                new GuiceChainrInstantiator( new AbstractModule() {
+                    @Override
+                    protected void configure() {
+                    }
+
+                    @Provides
+                    public GuiceTransformMissingInjectAnnotation.BadGuiceConfig getConfigC() {
+                        return new GuiceTransformMissingInjectAnnotation.BadGuiceConfig( "b:", "bad" );
+                    }
+                } ) );
     }
 }

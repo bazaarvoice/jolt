@@ -25,5 +25,8 @@ import com.bazaarvoice.jolt.chainr.spec.ChainrEntry;
  */
 public interface ChainrInstantiator {
 
+    /**
+     * Instantiate the Transform class specified by the ChainrEntry.
+     */
     public Transform hydrateTransform( ChainrEntry entry );
 }
