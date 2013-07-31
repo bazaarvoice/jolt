@@ -70,9 +70,9 @@ import java.util.Map;
  *
  * [
  *     {
- *         "operation": "com.bazaarvoice.tuna.TunaTransform",
+ *         "operation": "com.bazaarvoice.tuna.CustomTransform",
  *
- *         // "spec" : { ..  } // optional spec to use to construct a TunaTransform if it has the SpecTransform marker interface.
+ *         "spec" : { ..  } // optional spec to use to construct a CustomTransform if it has the SpecTransform marker interface.
  *     },
  *     ...
  * ]

@@ -40,7 +40,7 @@ import java.util.Map;
 public class ChainrEntry {
 
     /**
-     * Maps transform names to the classes that handle them
+     * Map transform "operation" names to the classes that handle them
      */
     public static final Map<String, String> STOCK_TRANSFORMS;
     static {
@@ -57,7 +57,6 @@ public class ChainrEntry {
     public static final String SPEC_KEY = "spec";
 
     private final int index;
-    private final String operationString;
     private final Object spec;
     private final String operationClassName;
 
@@ -66,8 +65,8 @@ public class ChainrEntry {
 
     /**
      * Process an element from the Chainr Spec into a ChainrEntry class.
-     * This method tries to validate the syntax of the Chainr spec, where
-     *  as the ChainrEntry deals more with Transform instantiation.
+     * This method tries to validate the syntax of the Chainr spec, whereas
+     * the ChainrInstantiator deals with loading the Transform classes.
      *
      * @param chainrEntryObj the unknown Object from the Chainr list
      * @param index the index of the chainrEntryObj, used in reporting errors
@@ -75,7 +74,7 @@ public class ChainrEntry {
     public ChainrEntry( int index, Object chainrEntryObj ) {
 
         if ( ! (chainrEntryObj instanceof Map ) ) {
-            throw new SpecException( "JOLT Chainr expects a JSON array of objects - Malformed spec at index:" + index );
+            throw new SpecException( "JOLT ChainrEntry expects a JSON map - Malformed spec at index:" + index );
         }
 
         @SuppressWarnings( "unchecked" ) // We know it is a Map due to the check above
@@ -90,11 +89,9 @@ public class ChainrEntry {
         }
 
         if ( STOCK_TRANSFORMS.containsKey( opString ) ) {
-            operationString = opString;
             operationClassName = STOCK_TRANSFORMS.get( opString );
         }
         else {
-            operationString = null;
             operationClassName = opString;
         }
 
@@ -103,7 +100,7 @@ public class ChainrEntry {
         spec = chainrEntryMap.get( ChainrEntry.SPEC_KEY );
         isSpecDriven = SpecTransform.class.isAssignableFrom( transformClass );
         if ( isSpecDriven && ! chainrEntryMap.containsKey( SPEC_KEY ) ) {
-            throw new SpecException( "JOLT Chainr - operation:" + operationString + " implemented by className:" + transformClass.getCanonicalName() + " requires a spec." );
+            throw new SpecException( "JOLT Chainr - Transform className:" + transformClass.getCanonicalName() + " requires a spec." );
         }
     }
 
@@ -115,7 +112,7 @@ public class ChainrEntry {
         }
         else if ( operationNameObj instanceof String) {
             if ( StringUtils.isBlank( (String) operationNameObj ) ) {
-                throw new SpecException( "JOLT Chainr '" + ChainrEntry.OPERATION_KEY + "' should be null or non-blank, spec index:" + index );
+                throw new SpecException( "JOLT Chainr '" + ChainrEntry.OPERATION_KEY + "' should not be blank, spec index:" + index );
             }
             return (String) operationNameObj;
         }
@@ -135,7 +132,7 @@ public class ChainrEntry {
 
             if ( ! Transform.class.isAssignableFrom( opClass ) )
             {
-                throw new SpecException( "JOLT Chainr class:" + operationClassName + " does not implement Transform.  Chainr spec index:" + getIndex() );
+                throw new SpecException( "JOLT Chainr class:" + operationClassName + " does not implement the Transform interface.  Chainr spec index:" + getIndex() );
             }
 
             @SuppressWarnings( "unchecked" ) // We know it is some type of Transform due to the check above
@@ -152,10 +149,6 @@ public class ChainrEntry {
 
     public int getIndex() {
         return index;
-    }
-
-    public String getOperationString() {
-        return operationString;
     }
 
     public Object getSpec() {
