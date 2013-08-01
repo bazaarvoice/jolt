@@ -13,15 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.bazaarvoice.jolt.chainr;
+package com.bazaarvoice.jolt.chainr.transforms;
 
-import com.bazaarvoice.jolt.Transform;
-import com.bazaarvoice.jolt.exception.TransformException;
+import com.bazaarvoice.jolt.SpecTransform;
 
-public class ExplodingTestTransform implements Transform {
+import javax.inject.Inject;
+import java.util.Map;
+
+public class GoodTestTransform implements SpecTransform {
+
+    private Object spec;
+
+    @Inject
+    public GoodTestTransform( Object spec ) {
+        this.spec = spec;
+    }
 
     @Override
-    public Object transform( Object input ) {
-        throw new TransformException( "kaboom" );
+    public Object transform( Object input, Map<String, Object> context ) {
+        return new TransformTestResult( input, spec );
     }
 }

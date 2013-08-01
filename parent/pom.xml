@@ -24,8 +24,14 @@
     </scm>
 
     <properties>
+        <!-- core -->
         <commons-lang.version>2.6</commons-lang.version>
+        <javax-inject.version>1</javax-inject.version>
+
+        <!-- module dependencies -->
         <jackson.version>2.2.1</jackson.version>
+        <guice.version>3.0</guice.version>
+        <argparse4j.version>0.4.1</argparse4j.version>
 
         <!-- TEST -->
         <guava.version>14.0.1</guava.version>
@@ -35,10 +41,16 @@
     <dependencyManagement>
         <dependencies>
 
+            <!-- Core -->
             <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
                 <version>${commons-lang.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>${javax-inject.version}</version>
             </dependency>
 
             <!-- Json -->
@@ -51,6 +63,20 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
                 <version>${jackson.version}</version>
+            </dependency>
+
+            <!-- Guice integration module -->
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>${guice.version}</version>
+            </dependency>
+
+            <!-- Cli Tools module -->
+            <dependency>
+                <groupId>net.sourceforge.argparse4j</groupId>
+                <artifactId>argparse4j</artifactId>
+                <version>${argparse4j.version}</version>
             </dependency>
 
             <!-- Testing -->

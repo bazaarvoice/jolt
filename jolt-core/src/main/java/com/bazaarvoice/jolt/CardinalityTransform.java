@@ -19,7 +19,7 @@ import com.bazaarvoice.jolt.cardinality.CardinalityCompositeSpec;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.common.WalkedPath;
 
-import java.util.HashMap;
+import javax.inject.Inject;
 import java.util.Map;
 
 /**
@@ -204,6 +204,7 @@ public class CardinalityTransform implements SpecTransform {
      *
      * @throws com.bazaarvoice.jolt.exception.SpecException for a malformed spec
      */
+    @Inject
     public CardinalityTransform( Object spec ) {
 
         if ( spec == null ){
@@ -221,12 +222,13 @@ public class CardinalityTransform implements SpecTransform {
      * Applies the Cardinality transform.
      *
      * @param input the JSON object to transform
+     * @param context ignored
      * @return the output object with data shifted to it
      * @throws com.bazaarvoice.jolt.exception.TransformException for a malformed spec or if there are issues during
      * the transform
      */
     @Override
-    public Object transform( Object input ) {
+    public Object transform( Object input, Map<String, Object> context ) {
 
         rootSpec.apply( ROOT_KEY, input, new WalkedPath(), null );
 

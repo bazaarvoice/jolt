@@ -67,7 +67,7 @@ public class ShiftrTest {
         Object expected = testUnit.get( "expected" );
 
         Shiftr shiftr = new Shiftr( spec );
-        Object actual = shiftr.transform( input );
+        Object actual = shiftr.transform( input, null );
 
         JoltTestUtil.runDiffy( "failed case " + testPath, expected, actual );
     }

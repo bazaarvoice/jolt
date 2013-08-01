@@ -24,7 +24,7 @@ public class TransformException extends JoltException {
         super(msg);
     }
 
-    public TransformException( String msg, Exception ex ) {
-        super(msg, ex);
+    public TransformException( String msg, Throwable t ) {
+        super(msg, t);
     }
 }

@@ -13,19 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.bazaarvoice.jolt.chainr;
+package com.bazaarvoice.jolt.chainr.transforms;
 
-import com.bazaarvoice.jolt.SpecTransform;
+import com.bazaarvoice.jolt.Transform;
+import com.bazaarvoice.jolt.exception.TransformException;
 
-/**
- * Chainr should barf on this class, as it is a SpecTransform without a single arg constructor.
- * This class is reference from a JSON test fixture.
- */
-public class BadSpecTransform implements SpecTransform {
+import java.util.Map;
+
+public class ExplodingTestTransform implements Transform {
 
     @Override
-    public Object transform( Object input ) {
-        return input;
+    public Object transform( Object input, Map<String, Object> context ) {
+        throw new TransformException( "kaboom" );
     }
 }
-

@@ -19,6 +19,7 @@ import com.bazaarvoice.jolt.defaultr.Key;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.exception.TransformException;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -184,6 +185,7 @@ public class Defaultr implements SpecTransform {
      *
      * @throws SpecException for a malformed spec or if there are issues
      */
+    @Inject
     public Defaultr( Object spec ) {
 
         String rootKey = "root";
@@ -216,11 +218,13 @@ public class Defaultr implements SpecTransform {
     /**
      * Top level standalone Defaultr method.
      *
+     *
      * @param input Json object to have defaults applied to.  This will be modifed.
+     * @param context ignored
      * @return the modified input
      */
     @Override
-    public Object transform( Object input ) {
+    public Object transform( Object input, Map<String, Object> context ) {
 
         if ( input == null ) {
             // if null, assume HashMap

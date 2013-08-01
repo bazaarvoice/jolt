@@ -13,15 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.bazaarvoice.jolt.chainr;
+package com.bazaarvoice.jolt.chainr.transforms;
 
-public class DelegationResult {
+import com.bazaarvoice.jolt.SpecTransform;
 
-    public Object input;
-    public Object spec;
+import javax.inject.Inject;
+import java.util.Map;
 
-    DelegationResult(Object input, Object spec) {
-        this.input = input;
-        this.spec = spec;
+/**
+ * Chainr should barf on this class, as it is a SpecTransform without a single arg constructor.
+ * This class is reference from a JSON test fixture.
+ */
+public class BadSpecTransform implements SpecTransform {
+
+    @Override
+    public Object transform( Object input, Map<String, Object> context ) {
+        return input;
     }
 }

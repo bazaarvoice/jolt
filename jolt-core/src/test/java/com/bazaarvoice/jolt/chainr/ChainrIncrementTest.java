@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.bazaarvoice.jolt;
+package com.bazaarvoice.jolt.chainr;
 
-import com.bazaarvoice.jolt.exception.SpecException;
+import com.bazaarvoice.jolt.Chainr;
+import com.bazaarvoice.jolt.JoltTestUtil;
+import com.bazaarvoice.jolt.JsonUtils;
+import com.bazaarvoice.jolt.exception.TransformException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -27,23 +30,23 @@ public class ChainrIncrementTest {
     @DataProvider
     public Object[][] fromToTests() throws IOException {
 
-        Object chainrSpec = JsonUtils.jsonToObject( ChainrIncrementTest.class.getResourceAsStream( "/json/chainrIncrements/spec.json" ) );
+        Object chainrSpec = JsonUtils.jsonToObject( ChainrIncrementTest.class.getResourceAsStream( "/json/chainr/increments/spec.json" ) );
 
         return new Object[][] {
-            {chainrSpec, 0, 0},
-            {chainrSpec, 0, 2},
-            {chainrSpec, 1, 2},
-            {chainrSpec, 1, 3}
+            {chainrSpec, 0, 1},
+            {chainrSpec, 0, 3},
+            {chainrSpec, 1, 3},
+            {chainrSpec, 1, 4}
         };
     }
 
     @Test( dataProvider = "fromToTests")
     public void testChainrIncrementsFromTo( Object chainrSpec, int start, int end ) throws IOException {
-        Chainr chainr = new Chainr( chainrSpec, start, end );
+        Chainr chainr = Chainr.fromSpec( chainrSpec );
 
-        Object expected = JsonUtils.jsonToObject( ChainrIncrementTest.class.getResourceAsStream( "/json/chainrIncrements/" + start + "-" + end + ".json" ) );
+        Object expected = JsonUtils.jsonToObject( ChainrIncrementTest.class.getResourceAsStream( "/json/chainr/increments/" + start + "-" + end + ".json" ) );
 
-        Object actual = chainr.transform( new HashMap() );
+        Object actual = chainr.transform( start, end, new HashMap() );
 
         JoltTestUtil.runDiffy( "failed incremental From-To Chainr", expected, actual );
     }
@@ -52,22 +55,22 @@ public class ChainrIncrementTest {
     @DataProvider
     public Object[][] toTests() throws IOException {
 
-        Object chainrSpec = JsonUtils.jsonToObject( ChainrIncrementTest.class.getResourceAsStream( "/json/chainrIncrements/spec.json" ) );
+        Object chainrSpec = JsonUtils.jsonToObject( ChainrIncrementTest.class.getResourceAsStream( "/json/chainr/increments/spec.json" ) );
 
         return new Object[][] {
-                {chainrSpec, 0},
-                {chainrSpec, 2}
+                {chainrSpec, 1},
+                {chainrSpec, 3}
         };
     }
 
     @Test( dataProvider = "toTests")
     public void testChainrIncrementsTo( Object chainrSpec, int end  ) throws IOException {
 
-        Chainr chainr = new Chainr( chainrSpec, end );
+        Chainr chainr = Chainr.fromSpec( chainrSpec );
 
-        Object expected = JsonUtils.jsonToObject( ChainrIncrementTest.class.getResourceAsStream( "/json/chainrIncrements/0-" + end + ".json" ) );
+        Object expected = JsonUtils.jsonToObject( ChainrIncrementTest.class.getResourceAsStream( "/json/chainr/increments/0-" + end + ".json" ) );
 
-        Object actual = chainr.transform( new HashMap() );
+        Object actual = chainr.transform( end, new HashMap() );
 
         JoltTestUtil.runDiffy( "failed incremental To Chainr", expected, actual );
     }
@@ -75,17 +78,19 @@ public class ChainrIncrementTest {
     @DataProvider
     public Object[][] failTests() throws IOException {
 
-        Object chainrSpec = JsonUtils.jsonToObject( ChainrIncrementTest.class.getResourceAsStream( "/json/chainrIncrements/spec.json" ) );
+        Object chainrSpec = JsonUtils.jsonToObject( ChainrIncrementTest.class.getResourceAsStream( "/json/chainr/increments/spec.json" ) );
 
         return new Object[][] {
+                {chainrSpec, 0, 0},
                 {chainrSpec, -2, 2},
                 {chainrSpec, 0, -2},
                 {chainrSpec, 1, 10000}
         };
     }
 
-    @Test( dataProvider = "failTests", expectedExceptions = SpecException.class)
+    @Test( dataProvider = "failTests", expectedExceptions = TransformException.class)
     public void testFails( Object chainrSpec, int start, int end  ) throws IOException {
-        new Chainr( chainrSpec, start, end );
+        Chainr chainr = Chainr.fromSpec( chainrSpec );
+        chainr.transform( start, end, new HashMap());
     }
 }
