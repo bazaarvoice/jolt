@@ -58,4 +58,11 @@ public class ChainrInitializationTest {
         AssertJUnit.assertEquals( input, actual.input );
         AssertJUnit.assertNotNull( actual.spec );
     }
+
+    @Test( expectedExceptions = RuntimeException.class )
+    public void chainrBuilderFailsOnNullLoader() throws IOException {
+
+        Object validSpec = JsonUtils.jsonToObject( ChainrInitializationTest.class.getResourceAsStream( "/json/chainr/transforms/loadsGoodTransform.json" ) );
+        new ChainrBuilder( validSpec ).loader( null );
+    }
 }

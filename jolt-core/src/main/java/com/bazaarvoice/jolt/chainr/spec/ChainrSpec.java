@@ -24,13 +24,28 @@ import java.util.List;
 /**
  * Helper class that encapsulates the Chainr spec's list.
  *
- * If I didn't want to keep Jackson from being a dependency, this would be the type of class that
- * I would have Jackson load for me.
+ * For reference : a Chainr spec should be an array of objects in order that look like this:
+ *
+ * <pre>
+ * [
+ *     {
+ *         "operation": "[operation-name]",
+ *         // stuff that the specific transform needs go here
+ *     },
+ *     ...
+ * ]
+ * </pre>
+ *
+ * This class represents the Array, while the ChainrEntry class encompass the individual elements
+ * of the array.
  */
 public class ChainrSpec {
 
-    protected final List<ChainrEntry> chainrEntries;
+    private final List<ChainrEntry> chainrEntries;
 
+    /**
+     * @param chainrSpec Plain vanilla hydrated JSON representation of a Chainr spec .json file.
+     */
     public ChainrSpec( Object chainrSpec ) {
 
         if ( !( chainrSpec instanceof List ) ) {
@@ -58,6 +73,9 @@ public class ChainrSpec {
         chainrEntries = Collections.unmodifiableList( entries );
     }
 
+    /**
+     * @return the list of ChainrEntries from the initialize file
+     */
     public List<ChainrEntry> getChainrEntries() {
         return chainrEntries;
     }

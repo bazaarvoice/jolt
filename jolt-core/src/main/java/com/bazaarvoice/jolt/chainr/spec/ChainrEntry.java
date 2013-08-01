@@ -33,9 +33,6 @@ import java.util.Map;
 /**
  * Helper class that encapsulates the information one of the individual transform entries in
  * the Chainr spec's list.
- *
- * If I didn't want to keep Jackson from being a dependency, this would be the type of class that
- * I would have Jackson load for me.
  */
 public class ChainrEntry {
 
@@ -146,23 +143,38 @@ public class ChainrEntry {
     }
 
 
-
+    /**
+     * Used to produce helpful error messages while processing a chainr spec file.
+     * @return the position of this ChainrEntry in the overall list of ChainrEntries
+     */
     public int getIndex() {
         return index;
     }
 
+    /**
+     * @return Spec for the transform, can be null
+     */
     public Object getSpec() {
         return spec;
     }
 
+    /**
+     * @return class name of the Transform specified in the Chainr spec
+     */
     public String getOperationClassName() {
         return operationClassName;
     }
 
+    /**
+     * @return Class instance specified by this ChainrEntry
+     */
     public Class<? extends Transform> getTransformClass() {
         return transformClass;
     }
 
+    /**
+     * @return true if the Transform specifed by this ChainrEntry implements the SpecTransform interface
+     */
     public boolean isSpecDriven() {
         return isSpecDriven;
     }

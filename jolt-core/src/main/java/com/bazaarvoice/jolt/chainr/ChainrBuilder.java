@@ -40,7 +40,18 @@ public class ChainrBuilder {
         this.chainrSpec = new ChainrSpec( chainrSpecObj );
     }
 
+    /**
+     * Set a ChainrInstantiator to use when instantiating Transform Objects.
+     * If one is not set, defaults to DefaultChainrInstantiator;
+     *
+     * @param loader ChainrInstantiator to use load Transforms
+     */
     public ChainrBuilder loader( ChainrInstantiator loader ) {
+
+        if ( loader == null ) {
+            throw new RuntimeException( "ChainrBuilder requires a non-null laoder." );
+        }
+
         this.chainrInstantiator = loader;
         return this;
     }
