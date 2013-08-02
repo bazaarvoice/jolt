@@ -1,0 +1,8 @@
+[
+    {
+        "operation" : "com.bazaarvoice.jolt.chainr.transforms.GoodTestTransform",
+        "spec" : {
+            "a" : "b"
+        }
+    }
+]

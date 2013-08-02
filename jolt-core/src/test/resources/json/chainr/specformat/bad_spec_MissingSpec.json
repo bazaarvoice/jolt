@@ -1,0 +1,5 @@
+[
+    {
+        "operation" : "com.bazaarvoice.jolt.chainr.transforms.GoodTestTransform"
+    }
+]

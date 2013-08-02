@@ -1,0 +1,8 @@
+[
+    {
+        "operation" : "com.bazaarvoice.jolt.chainr.transforms.BadSpecTransform",
+        "spec" : {
+            "valid_spec" : "but transform is bad, as it does not have a single arg constructor"
+        }
+    }
+]

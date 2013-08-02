@@ -12,9 +12,9 @@
         }
     },
 
-    "comment0": "Jolt is weak on transforming Maps to lists.",
-    "comment1": "If we introduce the # to the RHS, we can do it.",
-    "comment2": "Also means each node above creates an integer index.",
+    "comment0": "Shiftr was weak on transforming Maps to lists.",
+    "comment1": "We introduced the # to the RHS so we can do it.",
+    "comment2": "It means each node above creates an integer index.",
 
     "spec": {
         "cdvHisto": {
