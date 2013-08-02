@@ -45,7 +45,7 @@ public class DefaultrTest {
     public void runTestCases(String testCaseName) throws IOException {
 
         String testPath = "/json/defaultr/" + testCaseName;
-        Map<String, Object> testUnit = (Map<String, Object>) JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( testPath + ".json" ) );
+        Map<String, Object> testUnit = JsonUtils.jsonToMap( Defaultr.class.getResourceAsStream( testPath + ".json" ) );
 
         Object input = testUnit.get( "input" );
         Object spec = testUnit.get( "spec" );
@@ -59,7 +59,7 @@ public class DefaultrTest {
 
     @Test
     public void deepCopyTest() throws IOException {
-        Map<String, Object> testUnit = (Map<String, Object>) JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( "/json/defaultr/deepCopy.json" ) );
+        Map<String, Object> testUnit = JsonUtils.jsonToMap( Defaultr.class.getResourceAsStream( "/json/defaultr/deepCopy.json" ) );
 
         Object spec = testUnit.get( "spec" );
 
@@ -75,7 +75,7 @@ public class DefaultrTest {
             subMap.put("c", "c");
         }
         {
-            Map<String, Object> testUnit2 = (Map<String, Object>) JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( "/json/defaultr/deepCopy.json" ) );
+            Map<String, Object> testUnit2 = JsonUtils.jsonToMap( Defaultr.class.getResourceAsStream( "/json/defaultr/deepCopy.json" ) );
 
             Object input = testUnit2.get( "input" );
             Object expected = testUnit2.get( "expected" );

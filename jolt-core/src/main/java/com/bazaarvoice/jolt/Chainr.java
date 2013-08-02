@@ -15,19 +15,20 @@
  */
 package com.bazaarvoice.jolt;
 
+import com.bazaarvoice.jolt.chainr.ChainrBuilder;
+import com.bazaarvoice.jolt.chainr.instantiator.ChainrInstantiator;
 import com.bazaarvoice.jolt.exception.SpecException;
+import com.bazaarvoice.jolt.exception.TransformException;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Chainr is the JOLT mechanism for chaining transforms together. Any of the built-in JOLT
  * transform types can be called directly from Chainr. Any custom-written Java transforms
- * can be adapted in by using the Transform or SpecTransform interfaces.
+ * can be adapted in by implementing the Transform or SpecTransform interfaces.
  *
  * A Chainr spec should be an array of objects in order that look like this:
  *
@@ -64,293 +65,194 @@ import java.util.Map;
  *     ...
  * ]
  *
- * Custom Java classes that implement Tranform or SpecTransform can be loaded by specifying the full
+ * Custom Java classes that implement Tranform and/or SpecDriven can be loaded by specifying the full
  *  className to load.   Additionally, if upon reflection of the class we see that it is an instance of a
  *  SpecTransform, then we will construct it with a the supplied "spec" object.
  *
  * [
  *     {
- *         "operation": "java",
- *         "className" : "com.bazaarvoice.tuna.TunaTransform"
+ *         "operation": "com.bazaarvoice.tuna.CustomTransform",
  *
- *         // "spec" : { ..  } // optional spec to use to construct a TunaTransform if it has the SpecTransform marker interface.
+ *         "spec" : { ..  } // optional spec to use to construct a CustomTransform if it has the SpecTransform marker interface.
  *     },
  *     ...
  * ]
  */
-public class Chainr implements SpecTransform {
+public class Chainr implements Transform, ContextualTransform {
 
-    public final static String CUSTOM_TRANSFORM_IDENTIFIER = "java";
+    // We build two typed Lists of JoltTransform implementations, where the "nulls" in the transforms list is
+    //  expected to fall thru to the ContextualTransform list
+    private final List<Transform> transformsList;
+    private final List<ContextualTransform> contextualTransformList;
 
-    public final static String OPERATION_KEY = "operation";
-    public final static String CLASSNAME_KEY = "className";
-    public final static String SPEC_KEY = "spec";
+    private final List<ContextualTransform> peekContextualTransforms;
 
-    /**
-     * Maps operation names to the classes that handle them
-     */
-    private static final Map<String, Class<? extends Transform>> STOCK_TRANSFORMS;
-    static {
-        HashMap<String, Class<? extends Transform>> temp = new HashMap<String, Class<? extends Transform>>();
-        temp.put( "shift", Shiftr.class );
-        temp.put( "default", Defaultr.class );
-        temp.put( "remove", Removr.class );
-        temp.put( "sort", Sortr.class );
-        temp.put( "cardinality", CardinalityTransform.class );
-        STOCK_TRANSFORMS = Collections.unmodifiableMap( temp );
+    public static Chainr fromSpec( Object input ) {
+        return new ChainrBuilder( input ).build();
     }
 
-    private final List<Transform> transforms;
+    public static Chainr fromSpec( Object input, ChainrInstantiator instantiator ) {
+        return new ChainrBuilder( input ).loader( instantiator ).build();
+    }
+
+    public Chainr( List<JoltTransform> joltTransforms ) {
+
+        if ( joltTransforms == null ) {
+            throw new IllegalArgumentException( "Chainr requires a list of JoltTransforms." );
+        }
+
+        transformsList = new ArrayList<Transform>( joltTransforms.size() );
+        contextualTransformList = new ArrayList<ContextualTransform>( joltTransforms.size() );
+
+        ArrayList<ContextualTransform> contextTransforms = new ArrayList<ContextualTransform>();
+
+        for ( JoltTransform joltTransform : joltTransforms ) {
+
+            // Do one pass of instanceof checks, and the sort the JoltTransforms into two lists
+            boolean isTransform = joltTransform instanceof Transform;
+            boolean isContextual = joltTransform instanceof ContextualTransform;
+
+            if ( isContextual && isTransform ) {
+                throw new SpecException( "JOLT Chainr - JoltTransform className:" + joltTransform.getClass().getCanonicalName() +
+                        " implements both Transform and ContextualTransform, should only implement one of those interfaces." );
+            }
+            if ( ! isContextual && ! isTransform ) {
+                throw new SpecException( "JOLT Chainr - Transform className:" + joltTransform.getClass().getCanonicalName() +
+                        " should implement Transform or ContextualTransform." );
+            }
+
+            // The two lists of JoltTransforms will have nulls when the transform is of the "other" type.
+            if ( isContextual ) {
+                transformsList.add( null );
+                contextualTransformList.add( (ContextualTransform) joltTransform );
+
+                contextTransforms.add( (ContextualTransform) joltTransform ); // This list is for "public" consumption
+            }
+            else
+            {
+                transformsList.add( (Transform) joltTransform );
+                contextualTransformList.add( null );
+            }
+        }
+
+        contextTransforms.trimToSize();
+        peekContextualTransforms = Collections.unmodifiableList( contextTransforms );
+    }
 
     /**
-     * Runs a spec on some input calling each specified operation in turn.
+     * Runs a series of Transforms on the input, piping the inputs and outputs of the Transforms together.
+     *
+     * Chainr instances are meant to be immutable once they are created so that they can be
+     * used many times.
+     *
+     * The notion of passing "context" to the transforms allows chainr instances to be
+     * reused, even in situations were you need to slightly vary.
      *
      * @param input a JSON (Jackson-parsed) maps-of-maps object to transform
+     * @param context optional tweaks that the consumer of the transform would like
      * @return an object representing the JSON resulting from the transform
      * @throws com.bazaarvoice.jolt.exception.TransformException if the specification is malformed, an operation is not
      *                       found, or if one of the specified transforms throws an exception.
      */
     @Override
+    public Object transform( Object input, Map<String, Object> context ) {
+        return doTransform( transformsList, contextualTransformList, input, context );
+    }
+
+    @Override
     public Object transform( Object input ) {
+        return doTransform( transformsList, contextualTransformList, input, null );
+    }
+
+    /**
+     * Have Chainr run a subset of the transforms in it's spec.
+     *
+     * Useful for testing and debugging.
+     *
+     * @param input the input data to transform
+     * @param to transform from the chainrSpec to end with: 0 based index exclusive
+     */
+    public Object transform( int to, Object input ) {
+        return transform( 0, to, input, null );
+    }
+
+    /**
+     * Useful for testing and debugging.
+     *
+     * @param input the input data to transform
+     * @param to transform from the chainrSpec to end with: 0 based index exclusive
+     * @param context optional tweaks that the consumer of the transform would like
+     */
+    public Object transform( int to, Object input, Map<String, Object> context ) {
+        return transform( 0, to, input, context );
+    }
+
+    /**
+     * Useful for testing and debugging.
+     *
+     * @param input the input data to transform
+     * @param from transform from the chainrSpec to start with: 0 based index
+     * @param to transform from the chainrSpec to end with: 0 based index exclusive
+     */
+    public Object transform( int from, int to, Object input ) {
+        return transform( from, to, input, null );
+    }
+
+    /**
+     * Have Chainr run a subset of the transforms in it's spec.
+     *
+     * Useful for testing and debugging.
+     *
+     * @param input the input data to transform
+     * @param from transform from the chainrSpec to start with: 0 based index
+     * @param to transform from the chainrSpec to end with: 0 based index exclusive
+     * @param context optional tweaks that the consumer of the transform would like
+     */
+    public Object transform( int from, int to, Object input, Map<String, Object> context ) {
+
+        if ( (from < 0 ) || (to > transformsList.size() || to <= from ) ) {
+            throw new TransformException( "JOLT Chainr : invalid from and to parameters : from=" + from + " to=" + to );
+        }
+
+        return doTransform( transformsList.subList( from, to ), contextualTransformList.subList( from, to ), input, context );
+    }
+
+    private static Object doTransform( List<Transform> transforms, List<ContextualTransform> contextualTransforms, Object input, Map<String, Object> context ) {
 
         Object intermediate = input;
-        for ( Transform transform : transforms ) {
-            intermediate = transform.transform( intermediate );
+
+        for ( int index = 0; index < transforms.size(); index++ ) {
+
+            Transform transform = transforms.get( index );
+
+            if ( transform != null ) {
+                intermediate = transform.transform( intermediate );
+            }
+            else {
+                ContextualTransform contextualTransform = contextualTransforms.get( index );
+                if ( contextualTransform == null ) {
+                    throw new IllegalStateException( "No JoltTransform found for index:" + index );
+                }
+                contextualTransform.transform( input, context );
+            }
         }
         return intermediate;
     }
 
-
     /**
-     * Initialize a Chainr to run a list of Transforms.
-     * This is the constructor most "production" usages of Chainr should use.
-     *
-     * @param chainrSpec List of transforms to run
+     * @return true if this Chainr instance has any ContextualTransforms
      */
-    public Chainr( Object chainrSpec ) {
-        this( chainrSpec, /* ignored */ -1 , /* ignored */ -1, true );
-    }
-
-
-    /**
-     * Initialize a Chainr to run only a subset of the transforms in it's spec.
-     *
-     * Useful for testing and debugging.
-     *
-     * @param chainrSpec List of transforms to run
-     * @param to transform from the chainrSpec to start with: 0 based index inclusive
-     */
-    public Chainr( Object chainrSpec, int to ) {
-        this( chainrSpec, 0, to, false);
+    public boolean hasContextualTransforms() {
+        return peekContextualTransforms.size() != 0;
     }
 
     /**
-     * Initialize a Chainr to run only a subset of the transforms in it's spec.
+     * This method allows Chainr clients to examine the ContextualTransforms
+     * in this Chainr instance.  This may be helpful when building the "context".
      *
-     * Useful for testing and debugging.
-     *
-     * @param chainrSpec List of transforms to run
-     * @param from transform from the chainrSpec to start with: 0 based index
-     * @param to transform from the chainrSpec to end with: 0 based index inclusive
+     * @return List of ContextualTransforms used by this Chainr instance
      */
-    public Chainr( Object chainrSpec, int from, int to ) {
-        this( chainrSpec, from, to, false);
-    }
-
-
-    /**
-     * Private constructor.
-     *
-     * @param chainrSpec List of transforms to run
-     * @param from transform from the chainrSpec to start with: 0 based index
-     * @param to transform from the chainrSpec to end with: 0 based index inclusive
-     * @param all if true, "from" and "to" parameters are ignored, instead from=0 and to=chainrSpec.size()
-     */
-    private Chainr( Object chainrSpec, int from, int to, boolean all ) {
-
-        if ( !( chainrSpec instanceof List ) ) {
-            throw new SpecException(  "JOLT Chainr expects a JSON array of objects - Malformed spec." );
-        }
-
-        List<Object> operations = (List<Object>) chainrSpec;
-
-        int start, end;
-        if ( all ) {
-            start = 0;
-            end = operations.size();
-        }
-        else
-        {
-            start = from;
-            end = to + 1;
-        }
-
-        if ( (start < 0 ) || (end > operations.size() ||  end <= start ) ) {
-            throw new SpecException(  "JOLT Chainr : invalid from and to parameters.  from=" + from + " to=" + to );
-        }
-
-        transforms = Collections.unmodifiableList( getTransforms( operations, start, end ) );
-    }
-
-
-    private List<Transform> getTransforms( List<Object> operations, int start, int end ) {
-
-        if ( operations.isEmpty() ) {
-            throw new SpecException( "JOLT Chainr passed an empty JSON array.");
-        }
-
-        List<Transform> transformList = new ArrayList<Transform>(operations.size());
-
-        for ( int index = start; index < end; index++ ) {
-
-            Object chainrEntryObj = operations.get( index );
-
-            ChainrEntry entry = processChainrEntry( index, chainrEntryObj );
-
-            transformList.add( entry.getTransform() );
-        }
-
-        return transformList;
-    }
-
-    /**
-     * Process an element from the Chainr Spec into a ChainrEntry class.
-     * This method tries to validate the syntax of the Chainr spec, where
-     *  as the ChainrEntry deals more with Transform instantiation.
-     *
-     * @param chainrEntryObj the unknown Object from the Chainr list
-     * @param index the index of the chainrEntryObj, used in reporting errors
-     * @return an initialized ChanirEntry
-     */
-    private ChainrEntry processChainrEntry( int index, Object chainrEntryObj ) {
-
-        if ( ! (chainrEntryObj instanceof Map ) ) {
-            throw new SpecException( "JOLT Chainr expects a JSON array of objects - Malformed spec at index:" + index );
-        }
-
-        Map<String,Object> chainrEntryMap = (Map<String, Object>) chainrEntryObj;
-
-        Object opNameObj = chainrEntryMap.get( OPERATION_KEY );
-        if ( opNameObj == null || !(opNameObj instanceof String)) {
-            throw new SpecException( "JOLT Chainr needs a 'operation' of type String, spec index:" + index );
-        }
-
-        String operation = opNameObj.toString().toLowerCase();
-        Object specObj = chainrEntryMap.get( SPEC_KEY );
-        String className = null;
-
-        if ( CUSTOM_TRANSFORM_IDENTIFIER.equals( operation ) ) {
-
-            Object classNameObj = chainrEntryMap.get( CLASSNAME_KEY );
-            if ((classNameObj == null) || !(classNameObj instanceof String)) {
-                throw new SpecException( "JOLT 'java' operation requires a 'className' parameter.  Chainr spec index:" + index );
-            }
-
-            className = (String) classNameObj;
-        }
-        else if ( ! STOCK_TRANSFORMS.containsKey( operation ) ) {
-            throw new SpecException( "JOLT Chainr does not know/support operation: " + operation + ".  Chainr spec index:" + index);
-        }
-
-        return new ChainrEntry( index, operation, specObj, className );
-    }
-
-
-    /**
-     * Helper class that encapsulates the Java specific instantiation logic need to create and initialize
-     *  Transform objects.
-     *
-     * If I didn't want to keep Jackson from being a dependency, this would be the type of class that
-     *  I would have just had Jackson load for me.
-     */
-    private static class ChainrEntry {
-        private final int index;
-        private final String operation;
-        private final Object spec;
-        private final String className;
-
-        private ChainrEntry( int index, String operation, Object spec, String className ) {
-            this.index = index;
-            this.operation = operation;
-            this.spec = spec;
-            this.className = className;
-        }
-
-        public Transform getTransform() {
-            return initializeTransform( getTransformClass() );
-        }
-
-        private Class<? extends Transform> getTransformClass() {
-
-            Class<? extends Transform> opClass;
-            if ( CUSTOM_TRANSFORM_IDENTIFIER.equals( operation ) ) {
-                opClass = getCustomTransformClass();
-            } else {
-                opClass = STOCK_TRANSFORMS.get( operation );
-            }
-
-            if ( opClass == null ) {
-                throw new SpecException( "JOLT Chainr does not support operation: " + operation + ".  Chainr spec index:" + index);
-            }
-
-            if ( ! Transform.class.isAssignableFrom( opClass ) ) {
-                throw new SpecException( "JOLT Chainr class:" + className + " does not implement Transform.  Chainr spec index:" + index );
-            }
-
-            return opClass;
-        }
-
-        private Class<Transform> getCustomTransformClass() {
-
-            Class opClass;
-            try {
-                opClass = Class.forName( className );
-                if (Chainr.class.isAssignableFrom( opClass )) {
-                    throw new SpecException( "Attempt to nest Chainr inside itself at Chainr spec index:" + index );
-                }
-
-            } catch ( ClassNotFoundException e ) {
-                throw new SpecException( "JOLT Chainr could not find custom transform class :"+className + ".  Chainr spec index:" + index, e );
-            }
-
-            if ( Transform.class.isAssignableFrom( opClass ) ) {
-                return (Class<Transform>) opClass;
-            }
-            else {
-                throw new SpecException( "Custom transform class :"+className + " does not implement the Transform interface.  Chainr spec index:" + index );
-            }
-        }
-
-        private Transform initializeTransform( Class<? extends Transform> transformClass ) {
-
-            try {
-                // If the opClass is a SpecTransform, we try to construct it with the provided spec.
-                if ( SpecTransform.class.isAssignableFrom( transformClass ) ) {
-
-                    if ( spec == null ) {
-                        throw new SpecException( "JOLT Chainr - operation:" + operation + " implemented by className:" + transformClass.getCanonicalName() + " requires a spec." );
-                    }
-
-                    try {
-                        // Lookup a Constructor with a Single "Object" arg.
-                        Constructor<? extends Transform> constructor = transformClass.getConstructor( new Class[] {Object.class} );
-
-                        return constructor.newInstance( spec );
-                    } catch ( NoSuchMethodException nsme ) {
-                        // This means the transform class "violated" the marker interface
-                        throw new SpecException( "JOLT Chainr encountered an exception constructing SpecTransform className:" + transformClass.getCanonicalName() + ".  Specifically, no single arg constructor found.", nsme );
-                    }
-                }
-                else {
-                    // The opClass is just a Transform, so just create a newInstance of it.
-                    return transformClass.newInstance();
-                }
-            } catch ( Exception e ) {
-                // FYI 3 exceptions are known to be thrown here
-                // IllegalAccessException, InvocationTargetException, InstantiationException
-                throw new SpecException( "JOLT Chainr encountered an exception constructing Transform className:" + transformClass.getCanonicalName(), e );
-            }
-        }
-
+    public List<ContextualTransform> getContextualTransforms() {
+        return peekContextualTransforms;
     }
 }

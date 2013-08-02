@@ -42,8 +42,8 @@ public class SortrTest {
         }
 
         String testPath = "/json/sortr/"+testCaseName;
-        Map<String, Object> input = (Map<String, Object>) JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/input.json") );
-        Map<String, Object> expected = (Map<String, Object>) JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + "/output.json" ) );
+        Map<String, Object> input = JsonUtils.jsonToMap( Shiftr.class.getResourceAsStream( testPath + "/input.json") );
+        Map<String, Object> expected = JsonUtils.jsonToMap( Shiftr.class.getResourceAsStream( testPath + "/output.json" ) );
 
         Sortr sortr = new Sortr();
         Map<String, Object> actual = (Map<String, Object>) sortr.transform( input );

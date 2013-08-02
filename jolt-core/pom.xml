@@ -11,14 +11,19 @@
     </parent>
 
     <artifactId>jolt-core</artifactId>
-    <version>0.0.7-SNAPSHOT</version>
     <name>Jolt Core</name>
     <packaging>jar</packaging>
 
     <dependencies>
+
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
         </dependency>
 
         <dependency>

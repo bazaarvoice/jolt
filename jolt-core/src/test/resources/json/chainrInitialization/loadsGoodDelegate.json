@@ -1,9 +1,0 @@
-[
-    {
-        "operation" : "java",
-        "className": "com.bazaarvoice.jolt.chainr.GoodTestTransform",
-        "spec" : {
-            "a" : "b"
-        }
-    }
-]

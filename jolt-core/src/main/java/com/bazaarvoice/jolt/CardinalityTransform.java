@@ -19,7 +19,7 @@ import com.bazaarvoice.jolt.cardinality.CardinalityCompositeSpec;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.common.WalkedPath;
 
-import java.util.HashMap;
+import javax.inject.Inject;
 import java.util.Map;
 
 /**
@@ -194,7 +194,7 @@ import java.util.Map;
  * List    MANY         List     no-op
  * </pre>
  */
-public class CardinalityTransform implements SpecTransform {
+public class CardinalityTransform implements SpecDriven, Transform {
 
     protected static final String ROOT_KEY = "root";
     private final CardinalityCompositeSpec rootSpec;
@@ -204,6 +204,7 @@ public class CardinalityTransform implements SpecTransform {
      *
      * @throws com.bazaarvoice.jolt.exception.SpecException for a malformed spec
      */
+    @Inject
     public CardinalityTransform( Object spec ) {
 
         if ( spec == null ){
