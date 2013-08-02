@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -140,11 +141,10 @@ public class JsonUtils {
 
     public static Map<String, Object> jsonToMap( InputStream in )
             throws IOException {
-        TypeReference<HashMap<String, Object>> typeRef
-                = new TypeReference<HashMap<String, Object>>() {
+        TypeReference<LinkedHashMap<String, Object>> typeRef
+                = new TypeReference<LinkedHashMap<String, Object>>() {
         };
-        HashMap<String, Object> o = OBJECT_MAPPER.readValue( in, typeRef );
-        return o;
+        return OBJECT_MAPPER.readValue( in, typeRef );
     }
 
     public static <T> T jsonTo( InputStream in, TypeReference<T> typeRef )

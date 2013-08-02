@@ -137,7 +137,7 @@ public class DiffyTool {
         Map<String, Object> objectMap = null;
         try {
             FileInputStream inputStream = new FileInputStream( file );
-            objectMap = (Map<String, Object>) JsonUtils.jsonToObject( inputStream );
+            objectMap = JsonUtils.jsonToMap( inputStream );
             inputStream.close();
             return objectMap;
         } catch ( IOException e ) {

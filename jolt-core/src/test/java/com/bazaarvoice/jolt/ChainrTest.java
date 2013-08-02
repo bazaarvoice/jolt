@@ -96,7 +96,7 @@ public class ChainrTest {
 
     @Test
     public void process_itCallsShiftr() throws IOException {
-        Map<String, Object> testUnit = (Map<String, Object>) JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/shiftr/queryMappingXform.json" ) );
+        Map<String, Object> testUnit = JsonUtils.jsonToMap( ChainrTest.class.getResourceAsStream( "/json/shiftr/queryMappingXform.json" ) );
 
         Object input = testUnit.get( "input" );
         Object shiftrSpec = testUnit.get( "spec" );
@@ -112,7 +112,7 @@ public class ChainrTest {
 
     @Test
     public void process_itCallsDefaultr() throws IOException {
-        Map<String, Object> testUnit = (Map<String, Object>) JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/defaultr/firstSample.json" ) );
+        Map<String, Object> testUnit = JsonUtils.jsonToMap( ChainrTest.class.getResourceAsStream( "/json/defaultr/firstSample.json" ) );
 
         Object input = testUnit.get( "input" );
         Object defaultrSpec = testUnit.get( "spec" );
@@ -128,7 +128,7 @@ public class ChainrTest {
 
     @Test
     public void process_itCallsRemover() throws IOException {
-        Map<String, Object> testUnit = (Map<String, Object>) JsonUtils.jsonToObject( ChainrTest.class.getResourceAsStream( "/json/removr/firstSample.json" ) );
+        Map<String, Object> testUnit = JsonUtils.jsonToMap( ChainrTest.class.getResourceAsStream( "/json/removr/firstSample.json" ) );
 
         Object input = testUnit.get( "input" );
         Object removrSpec = testUnit.get( "spec" );
@@ -214,7 +214,7 @@ public class ChainrTest {
     @Test(dataProvider = "getTestCaseNames")
     public void runTestCases(String testCaseName, boolean sorted ) throws IOException {
         String testPath = "/json/chainr/integration/" + testCaseName;
-        Map<String, Object> testUnit = (Map<String, Object>) JsonUtils.jsonToObject( Defaultr.class.getResourceAsStream( testPath + ".json" ) );
+        Map<String, Object> testUnit = JsonUtils.jsonToMap( Defaultr.class.getResourceAsStream( testPath + ".json" ) );
 
         Object input = testUnit.get( "input" );
         Object spec = testUnit.get( "spec" );

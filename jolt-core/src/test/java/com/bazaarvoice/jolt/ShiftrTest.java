@@ -60,7 +60,7 @@ public class ShiftrTest {
     public void runTestUnits(String testCaseName) throws IOException {
 
         String testPath = "/json/shiftr/" + testCaseName;
-        Map<String, Object> testUnit = (Map<String, Object>) JsonUtils.jsonToObject( Shiftr.class.getResourceAsStream( testPath + ".json" ) );
+        Map<String, Object> testUnit = JsonUtils.jsonToMap( Shiftr.class.getResourceAsStream( testPath + ".json" ) );
 
         Object input = testUnit.get( "input" );
         Object spec = testUnit.get( "spec" );
