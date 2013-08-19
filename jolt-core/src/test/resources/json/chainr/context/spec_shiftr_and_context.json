@@ -1,0 +1,35 @@
+{
+    "spec": [
+        {
+            // verify that stock transforms behave when used with "contexts"
+            "operation": "shift",
+            "spec": {
+                "b": "bb"
+            }
+        },
+        {
+            "operation": "com.bazaarvoice.jolt.chainr.transforms.GoodShiftrSpecAndContextDrivenTransform"
+        }
+    ],
+
+    "tests" : [
+        {
+            "testCaseName" : "the test",
+
+            // Input data for the unit test data.
+            "input": {
+                "a" : "aa",
+                "b": "bb"
+            },
+
+            "context" : {
+                "test_context_key_1" : "xx"
+            },
+
+            "expected": {
+                "bb": "bb",
+                "xx": "xx"
+            }
+        }
+    ]
+}

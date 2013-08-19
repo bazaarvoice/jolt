@@ -15,22 +15,23 @@
  */
 package com.bazaarvoice.jolt;
 
-import com.bazaarvoice.jolt.chainr.transforms.TransformTestResult;
-import com.bazaarvoice.jolt.chainr.spec.ChainrEntry;
-import com.bazaarvoice.jolt.chainr.transforms.GoodTestTransform;
-import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.exception.TransformException;
-import com.bazaarvoice.jolt.chainr.transforms.ExplodingTestTransform;
-import org.testng.Assert;
-import org.testng.AssertJUnit;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.testng.Assert;
+import org.testng.AssertJUnit;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+import com.bazaarvoice.jolt.chainr.spec.ChainrEntry;
+import com.bazaarvoice.jolt.chainr.transforms.ExplodingTestTransform;
+import com.bazaarvoice.jolt.chainr.transforms.GoodTestTransform;
+import com.bazaarvoice.jolt.chainr.transforms.TransformTestResult;
+import com.bazaarvoice.jolt.exception.SpecException;
+import com.bazaarvoice.jolt.exception.TransformException;
 
 public class ChainrTest {
 
@@ -169,6 +170,11 @@ public class ChainrTest {
 
         AssertJUnit.assertEquals( input, actual.input );
         AssertJUnit.assertEquals( delegateSpec, actual.spec );
+    }
+    
+    @Test
+    public void process_itCallsShiftrAndCustomContextualTransformer() {
+        
     }
 
     @DataProvider
