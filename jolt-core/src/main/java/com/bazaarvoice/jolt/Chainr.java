@@ -233,7 +233,7 @@ public class Chainr implements Transform, ContextualTransform {
                 if ( contextualTransform == null ) {
                     throw new IllegalStateException( "No JoltTransform found for index:" + index );
                 }
-                contextualTransform.transform( input, context );
+                intermediate = contextualTransform.transform( intermediate, context );
             }
         }
         return intermediate;
