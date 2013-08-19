@@ -1,10 +1,17 @@
 {
+    // verify that stock transforms behave when used with "context" transforms
     "spec": [
         {
-            // verify that stock transforms behave when used with "contexts"
             "operation": "default",
             "spec": {
-                "b": "bb"
+                "B": "bb"  // default in a silly "B" value
+            }
+        },
+        {
+            "operation": "shift",
+            "spec": {
+                "a": "a", // pass the input "a" value thru
+                "B": "b"  // "adjust" the silly capital B value
             }
         },
         {
