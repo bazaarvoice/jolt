@@ -31,15 +31,14 @@ public class DiffyToolTest {
         // chooses the path to the resource files copied by maven into the target/ directory. Obviously, this assumes
         // that you did not name $JOLT_CHECKOUT 'tools'. If that check fails then the path is chosen with the assumption
         // that the test is running in an IDE (Intellij IDEA in my case). Your mileage with other IDE's may very.
-        String[] workingPath = System.getProperty( "user.dir" ).split( "/" );
-        String path;
-        if ( workingPath[workingPath.length - 1].equals( "tools" ) ) {
+        String path = System.getProperty( "user.dir" );
+        if ( path.endsWith( "tools" ) ) {
             // This test is being run by maven
-            path = "target/test-classes/json/";
+            path += "//target//test-classes//json//";
         }
         else {
             // This test is being run in an IDE (IntelliJ IDEA)
-            path = "tools/src/test/resources/json/";
+          path += "//tools//src//test//resources//json//";
         }
 
         // Input with no differences should return true
