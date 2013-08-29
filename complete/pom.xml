@@ -11,24 +11,20 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>json-utils</artifactId>
-    <name>Jolt Json Utils</name>
+    <artifactId>jolt-complete</artifactId>
+    <name>Jolt Complete</name>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>com.bazaarvoice.jolt</groupId>
+            <artifactId>jolt-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <scope>test</scope>
+            <groupId>com.bazaarvoice.jolt</groupId>
+            <artifactId>json-utils</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
