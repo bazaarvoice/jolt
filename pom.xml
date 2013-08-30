@@ -22,7 +22,7 @@
         <module>parent</module>
         <module>jolt-core</module>
         <module>json-utils</module>
-        <module>tools</module>
+        <module>cli</module>
         <module>guice</module>
     </modules>
 
