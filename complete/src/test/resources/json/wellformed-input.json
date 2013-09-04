@@ -1,0 +1,22 @@
+[
+    {
+        "operation": "cardinality",
+        "spec": {
+            "facets": {
+                "statistics": {
+                    "_type":"MANY"
+                }
+            }
+        }
+    },
+    {
+        "operation": "default",
+        "spec": {
+            "facets": {
+                "statistics": {
+                    "id":"abc123"
+                }
+            }
+        }
+    }
+]

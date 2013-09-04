@@ -26,13 +26,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by IntelliJ IDEA.
- * User: nate.forman
- * Date: 8/3/12
- * Time: 11:47 PM
- * To change this template use File | Settings | File Templates.
- */
 public class DiffyTest {
 
     private Diffy unit;
