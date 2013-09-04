@@ -24,6 +24,7 @@
         <module>json-utils</module>
         <module>cli</module>
         <module>guice</module>
+        <module>complete</module>
     </modules>
 
 </project>
