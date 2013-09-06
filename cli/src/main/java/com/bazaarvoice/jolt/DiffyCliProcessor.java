@@ -47,7 +47,7 @@ public class DiffyCliProcessor implements JoltCliProcessor {
                 .type( Arguments.fileType().verifyExists().verifyIsFile().verifyCanRead() );
         diffyParser.addArgument( "filePath2" ).help( "File path to feed to Input #2 for the Diffy operation. " +
                 "This file should contain valid JSON. " +
-                "This argument is mutually exclusive with -i; one or the other should be specified." )
+                "If this argument is not specified then standard input will be used." )
                 .type( Arguments.fileType().verifyExists().verifyIsFile().verifyCanRead() )
                 .nargs( "?" ).setDefault( (File) null );   // these last two method calls make filePath2 optional
 
