@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt;
 
+import com.bazarvoice.jolt.ChainrFactory;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
@@ -66,11 +67,9 @@ public class TransformCliProcessor implements JoltCliProcessor {
     @Override
     public boolean process( Namespace ns ) {
 
-        Object spec = JoltCliUtilities.createJsonObjectFromFile( (File) ns.get( "spec" ), SUPPRESS_OUTPUT );
-
         Chainr chainr;
         try {
-            chainr = Chainr.fromSpec( spec );
+            chainr = ChainrFactory.fromFile((File) ns.get("spec"));
         } catch ( Exception e ) {
             JoltCliUtilities.printToStandardOut( "Chainr failed to process spec file.", SUPPRESS_OUTPUT );
             return false;
