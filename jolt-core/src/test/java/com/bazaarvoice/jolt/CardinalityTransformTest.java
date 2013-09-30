@@ -38,7 +38,7 @@ public class CardinalityTransformTest {
     public void runTestUnits(String testCaseName) throws IOException {
 
         String testPath = "/json/cardinality/" + testCaseName;
-        Map<String, Object> testUnit = JsonUtils.jsonToMap( CardinalityTransformTest.class.getResourceAsStream( testPath + ".json" ) );
+        Map<String, Object> testUnit = JsonUtils.classpathToMap( testPath + ".json" );
 
         Object input = testUnit.get( "input" );
         Object spec = testUnit.get( "spec" );
@@ -53,7 +53,7 @@ public class CardinalityTransformTest {
     @Test(expectedExceptions=SpecException.class)
     public void testSpecExceptions() throws IOException {
         String testPath = "/json/cardinality/failCardinalityType";
-        Map<String, Object> testUnit = JsonUtils.jsonToMap( CardinalityTransformTest.class.getResourceAsStream( testPath + ".json" ) );
+        Map<String, Object> testUnit = JsonUtils.classpathToMap( testPath + ".json" );
 
         Object spec = testUnit.get( "spec" );
 

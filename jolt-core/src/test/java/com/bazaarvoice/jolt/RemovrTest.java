@@ -34,7 +34,7 @@ public class RemovrTest {
     public void runTestCases(String testCaseName) throws IOException {
 
         String testPath = "/json/removr/" + testCaseName;
-        Map<String, Object> testUnit = JsonUtils.jsonToMap( Removr.class.getResourceAsStream( testPath + ".json" ) );
+        Map<String, Object> testUnit = JsonUtils.classpathToMap( testPath + ".json" );
 
         Object input = testUnit.get( "input" );
         Object spec = testUnit.get( "spec" );

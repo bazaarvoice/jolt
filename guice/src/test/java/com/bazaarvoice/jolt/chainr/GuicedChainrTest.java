@@ -39,7 +39,7 @@ public class GuicedChainrTest {
     public void successTestCase() throws IOException {
 
         String testPath = "/json/chainr/guice_spec.json";
-        Map<String, Object> testUnit = JsonUtils.jsonToMap( GuicedChainrTest.class.getResourceAsStream( testPath ) );
+        Map<String, Object> testUnit = JsonUtils.classpathToMap( testPath );
 
         Object input = testUnit.get( "input" );
         Object spec = testUnit.get( "spec" );
@@ -76,7 +76,7 @@ public class GuicedChainrTest {
     public void itBlowsUpForMissingProviderStockTransform() throws IOException
     {
         String testPath = "/json/chainr/guice_spec.json";
-        Map<String, Object> testUnit = JsonUtils.jsonToMap( GuicedChainrTest.class.getResourceAsStream( testPath ) );
+        Map<String, Object> testUnit = JsonUtils.classpathToMap( testPath );
 
         Object spec = testUnit.get( "spec" );
 
@@ -98,7 +98,7 @@ public class GuicedChainrTest {
     public void itBlowsUpForMissingProviderSpecTransform() throws IOException
     {
         String testPath = "/json/chainr/guice_spec.json";
-        Map<String, Object> testUnit = JsonUtils.jsonToMap( GuicedChainrTest.class.getResourceAsStream( testPath ) );
+        Map<String, Object> testUnit = JsonUtils.classpathToMap( testPath );
 
         Object spec = testUnit.get( "spec" );
 
