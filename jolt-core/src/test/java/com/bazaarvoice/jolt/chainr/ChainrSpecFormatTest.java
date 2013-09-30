@@ -29,10 +29,10 @@ public class ChainrSpecFormatTest {
     @DataProvider
     public Object[][] badFormatSpecs() throws IOException {
         return new Object[][] {
-                {JsonUtils.jsonToObject( ChainrSpecFormatTest.class.getResourceAsStream( "/json/chainr/specformat/bad_spec_arrayClassName.json" ) )},
-                {JsonUtils.jsonToObject( ChainrSpecFormatTest.class.getResourceAsStream( "/json/chainr/specformat/bad_spec_ClassName.json" ) )},
-                {JsonUtils.jsonToObject( ChainrSpecFormatTest.class.getResourceAsStream( "/json/chainr/specformat/bad_spec_NonTransformClass.json" ) )},
-                {JsonUtils.jsonToObject( ChainrSpecFormatTest.class.getResourceAsStream( "/json/chainr/specformat/bad_spec_empty.json" ) )}
+                {JsonUtils.classpathToObject( "/json/chainr/specformat/bad_spec_arrayClassName.json" )},
+                {JsonUtils.classpathToObject( "/json/chainr/specformat/bad_spec_ClassName.json" )},
+                {JsonUtils.classpathToObject( "/json/chainr/specformat/bad_spec_NonTransformClass.json" )},
+                {JsonUtils.classpathToObject( "/json/chainr/specformat/bad_spec_empty.json" )}
         };
     }
 

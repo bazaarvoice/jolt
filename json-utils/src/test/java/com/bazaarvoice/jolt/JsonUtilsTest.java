@@ -87,7 +87,7 @@ public class JsonUtilsTest {
     public void runFixtureTests() throws IOException {
 
         String testFixture = "/jsonUtils/jsonUtils-removeRecursive.json";
-        List<Map<String, Object>> tests = (List<Map<String, Object>>) JsonUtils.jsonToObject( JsonUtilsTest.class.getResourceAsStream( testFixture ) );
+        List<Map<String, Object>> tests = (List<Map<String, Object>>) JsonUtils.classpathToObject(  testFixture );
 
         for ( Map<String,Object> testUnit : tests ) {
 

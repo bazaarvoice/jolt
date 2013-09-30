@@ -39,7 +39,7 @@ public class GuicedChainrContextTest {
     public Iterator<Object[]> getCases() throws IOException {
 
         String testPath = "/json/chainr/guice_spec_with_context.json";
-        Map<String, Object> testSuite = JsonUtils.jsonToMap( GuicedChainrContextTest.class.getResourceAsStream( testPath ) );
+        Map<String, Object> testSuite = JsonUtils.classpathToMap( testPath );
 
         Object spec = testSuite.get( "spec" );
         List<Map> tests = (List<Map>) testSuite.get( "tests" );

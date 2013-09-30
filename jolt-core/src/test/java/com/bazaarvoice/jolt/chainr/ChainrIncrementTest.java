@@ -30,7 +30,7 @@ public class ChainrIncrementTest {
     @DataProvider
     public Object[][] fromToTests() throws IOException {
 
-        Object chainrSpec = JsonUtils.jsonToObject( ChainrIncrementTest.class.getResourceAsStream( "/json/chainr/increments/spec.json" ) );
+        Object chainrSpec = JsonUtils.classpathToObject( "/json/chainr/increments/spec.json" );
 
         return new Object[][] {
             {chainrSpec, 0, 1},
@@ -44,7 +44,7 @@ public class ChainrIncrementTest {
     public void testChainrIncrementsFromTo( Object chainrSpec, int start, int end ) throws IOException {
         Chainr chainr = Chainr.fromSpec( chainrSpec );
 
-        Object expected = JsonUtils.jsonToObject( ChainrIncrementTest.class.getResourceAsStream( "/json/chainr/increments/" + start + "-" + end + ".json" ) );
+        Object expected = JsonUtils.classpathToObject( "/json/chainr/increments/" + start + "-" + end + ".json" );
 
         Object actual = chainr.transform( start, end, new HashMap() );
 
@@ -55,7 +55,7 @@ public class ChainrIncrementTest {
     @DataProvider
     public Object[][] toTests() throws IOException {
 
-        Object chainrSpec = JsonUtils.jsonToObject( ChainrIncrementTest.class.getResourceAsStream( "/json/chainr/increments/spec.json" ) );
+        Object chainrSpec = JsonUtils.classpathToObject(  "/json/chainr/increments/spec.json" );
 
         return new Object[][] {
                 {chainrSpec, 1},
@@ -68,7 +68,7 @@ public class ChainrIncrementTest {
 
         Chainr chainr = Chainr.fromSpec( chainrSpec );
 
-        Object expected = JsonUtils.jsonToObject( ChainrIncrementTest.class.getResourceAsStream( "/json/chainr/increments/0-" + end + ".json" ) );
+        Object expected = JsonUtils.classpathToObject( "/json/chainr/increments/0-" + end + ".json" );
 
         Object actual = chainr.transform( end, new HashMap() );
 
@@ -78,7 +78,7 @@ public class ChainrIncrementTest {
     @DataProvider
     public Object[][] failTests() throws IOException {
 
-        Object chainrSpec = JsonUtils.jsonToObject( ChainrIncrementTest.class.getResourceAsStream( "/json/chainr/increments/spec.json" ) );
+        Object chainrSpec = JsonUtils.classpathToObject( "/json/chainr/increments/spec.json" );
 
         return new Object[][] {
                 {chainrSpec, 0, 0},
