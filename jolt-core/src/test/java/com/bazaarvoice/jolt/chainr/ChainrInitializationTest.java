@@ -38,7 +38,7 @@ public class ChainrInitializationTest {
     @DataProvider
     public Object[][] badTransforms() throws IOException {
         return new Object[][] {
-            {JsonUtils.jsonToObject( ChainrInitializationTest.class.getResourceAsStream( "/json/chainr/transforms/bad_transform_loadsExplodingTransform.json" ) )}
+            {JsonUtils.classpathToObject(  "/json/chainr/transforms/bad_transform_loadsExplodingTransform.json" )}
         };
     }
 
@@ -52,7 +52,7 @@ public class ChainrInitializationTest {
     @DataProvider
     public Object[][] passingTestCases() throws IOException {
         return new Object[][] {
-            {new Object(), JsonUtils.jsonToObject( ChainrInitializationTest.class.getResourceAsStream( "/json/chainr/transforms/loadsGoodTransform.json" ) )}
+            {new Object(), JsonUtils.classpathToObject( "/json/chainr/transforms/loadsGoodTransform.json" )}
         };
     }
 
@@ -69,7 +69,7 @@ public class ChainrInitializationTest {
     @Test( expectedExceptions = IllegalArgumentException.class )
     public void chainrBuilderFailsOnNullLoader() throws IOException {
 
-        Object validSpec = JsonUtils.jsonToObject( ChainrInitializationTest.class.getResourceAsStream( "/json/chainr/transforms/loadsGoodTransform.json" ) );
+        Object validSpec = JsonUtils.classpathToObject( "/json/chainr/transforms/loadsGoodTransform.json" );
         new ChainrBuilder( validSpec ).loader( null );
     }
 

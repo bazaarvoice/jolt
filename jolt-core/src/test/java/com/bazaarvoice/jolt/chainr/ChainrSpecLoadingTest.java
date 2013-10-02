@@ -30,7 +30,7 @@ public class ChainrSpecLoadingTest {
     @DataProvider
     public Object[][] badFormatSpecs() throws IOException {
         return new Object[][] {
-                {JsonUtils.jsonToObject( ChainrSpecFormatTest.class.getResourceAsStream( "/json/chainr/specloading/bad_spec_SpecTransform.json" ) )}
+                {JsonUtils.classpathToObject( "/json/chainr/specloading/bad_spec_SpecTransform.json" )}
         };
     }
 

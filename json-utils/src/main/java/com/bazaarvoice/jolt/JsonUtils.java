@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -160,5 +161,49 @@ public class JsonUtils {
     public static String toPrettyJsonString( Object map )
             throws IOException {
         return PRETTY_PRINT_WRITER.writeValueAsString( map );
+    }
+
+    public static Object filepathToObject( String filepath ) {
+        Object json;
+        try {
+            FileInputStream fileInputStream = new FileInputStream( filepath );
+            json = jsonToObject( fileInputStream );
+        } catch ( IOException e ) {
+            throw new RuntimeException( "Unable to load json file " + filepath );
+        }
+        return json;
+    }
+
+    public static Map<String, Object> filepathToMap( String filepath ) {
+        Map<String, Object> json;
+        try {
+            FileInputStream fileInputStream = new FileInputStream( filepath );
+            json = jsonToMap( fileInputStream );
+        } catch ( IOException e ) {
+            throw new RuntimeException( "Unable to load json file " + filepath );
+        }
+        return json;
+    }
+
+    public static Object classpathToObject( String filepath ) {
+        Object json;
+        try {
+            InputStream inputStream = Object.class.getResourceAsStream( filepath );
+            json = jsonToObject( inputStream );
+        } catch ( IOException e ) {
+            throw new RuntimeException( "Unable to load json file " + filepath );
+        }
+        return json;
+    }
+
+    public static Map<String, Object> classpathToMap( String filepath ) {
+        Map<String, Object> json;
+        try {
+            InputStream inputStream = Object.class.getResourceAsStream( filepath );
+            json = jsonToMap( inputStream );
+        } catch ( IOException e ) {
+            throw new RuntimeException( "Unable to load json file " + filepath );
+        }
+        return json;
     }
 }

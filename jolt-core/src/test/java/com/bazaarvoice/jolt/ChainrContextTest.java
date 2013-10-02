@@ -31,7 +31,7 @@ public class ChainrContextTest {
     public Iterator<Object[]> getTests() throws IOException {
 
         String testPath = "/json/chainr/context/spec_with_context.json";
-        Map<String, Object> testSuite = JsonUtils.jsonToMap( ChainrContextTest.class.getResourceAsStream( testPath ) );
+        Map<String, Object> testSuite = JsonUtils.classpathToMap( testPath );
 
         Object spec = testSuite.get( "spec" );
         List<Map> tests = (List<Map>) testSuite.get( "tests" );
