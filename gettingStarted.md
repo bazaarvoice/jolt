@@ -43,10 +43,10 @@ public class JoltSample {
 
     public static void main(String[] args) throws IOException {
 
-        Object chainrSpecJSON = JsonUtils.jsonToObject( JoltBootStrap.class.getResourceAsStream( "chainrSpec.json" ) );
+        Object chainrSpecJSON = JsonUtils.jsonToObject( JoltSample.class.getResourceAsStream( "chainrSpec.json" ) );
         Chainr chainr = new Chainr( chainrSpecJSON );
 
-        Object inputJSON = JsonUtils.jsonToObject( JoltBootStrap.class.getResourceAsStream( "input.json" ) );
+        Object inputJSON = JsonUtils.jsonToObject( JoltSample.class.getResourceAsStream( "input.json" ) );
 
         Object transformedOutput = chainr.transform( inputJSON );
         System.out.println( JsonUtils.toJsonString( transformedOutput ) );
