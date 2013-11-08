@@ -1,0 +1,33 @@
+{
+    "input": {
+        "iamnotinspec":"eh?",
+        "nested":{
+            "level1":"",
+            "level2":"1"
+        },
+        "wildcard":""
+    },
+
+    "spec":
+    {
+        "iamnotininput":"",
+        "nested":
+        {
+            "a":{
+                "b":""
+            }
+        },
+        "wildcard":{
+            "*":""
+        }
+    },
+
+    "expected": {
+        "iamnotinspec":"eh?",
+        "nested":{
+            "level1":"",
+            "level2":"1"
+        },
+        "wildcard":""
+    }
+}

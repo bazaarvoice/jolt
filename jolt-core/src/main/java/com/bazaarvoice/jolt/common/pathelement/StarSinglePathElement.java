@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * PathElement for the a single "*" wildcard.   In this case we can avoid doing any
+ * PathElement for the a single "*" wildcard such as tag-*.   In this case we can avoid doing any
  *  regex work by doing String begins and ends with comparisons.
  */
 public class StarSinglePathElement extends BasePathElement implements StarPathElement {

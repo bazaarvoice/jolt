@@ -8,6 +8,7 @@
         "productId": "31231231",
 
         "ipAddress": "192.168.1.100",
+        "ipAdd": "192.168.1.100",
         "lastModificationTime": "yesterday",
         "submissionId": "34343",
 
@@ -15,8 +16,13 @@
 
         "configured": {
             "a": "b",
-            "c": "d"
-        }
+            "c": {
+                "d":"e",
+                "f":"g"
+            }
+        },
+        "non-nested-input":{},
+        "iamnotinspec":"eh?"
     },
 
     "spec": {
@@ -27,20 +33,32 @@
         "id": "",
         "productId": "",
 
-        "ipAddress": "",
+        "ipAddress|ipAdd": "",
         "lastModificationTime": "",
         "submissionId": "",
 
+        "non-nested-input":{
+            "a":""
+        },
         "configured": {
-            "c": ""
-        }
+            "c": {
+                "d":""
+            }
+        },
+        "iamnotininput":""
+
     },
 
     "expected": {
         "this": "stays",
 
         "configured": {
-            "a": "b"
-        }
+            "a": "b",
+            "c": {
+                "f":"g"
+            }
+        },
+        "non-nested-input":{},
+        "iamnotinspec":"eh?"
     }
 }
