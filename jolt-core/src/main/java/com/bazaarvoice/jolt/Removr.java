@@ -15,7 +15,13 @@
  */
 package com.bazaarvoice.jolt;
 
+import com.bazaarvoice.jolt.common.WalkedPath;
+import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
+import com.bazaarvoice.jolt.exception.SpecException;
+import com.bazaarvoice.jolt.removr.spec.RemovrCompositeSpec;
+
 import javax.inject.Inject;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -64,6 +70,94 @@ import java.util.Map;
  *   }
  * }
  * </pre>
+ *
+ *  * Removr Wildcards
+ *
+ * '*' Wildcard
+ *   Valid only on the LHS ( input JSON keys ) side of a Removr Spec
+ *   The '*' wildcard can be used by itself or to match part of a key.
+ *
+ *   '*' wildcard by itself :
+ *    To remove "all" keys under an input, use the * on LHS.
+ *    <pre>
+ *    // example input
+ *    {
+ *     "ratings":{
+ *        "Set1":{
+ *           "a":"a",
+ *           "b":"b"
+ *        },
+ *        "Set2":{
+ *            "c":"c",
+ *            "b":"b"
+ *        }
+ *      },
+ *    }
+ *    //desired output
+ *     {
+ *     "ratings":{
+ *        "Set1":{
+ *           "a":"a"
+ *        },
+ *        "Set2":{
+ *            "c":"c"
+ *        }
+ *      },
+ *    }
+ *
+ *    //Spec would be
+ *    {
+ *     "ratings":{
+ *        "*":{
+ *          "b":""
+ *        },
+ *      },
+ *    }
+ *    </pre>
+ *    In this example, "Set1" and "Set2" under rating both have the same structure, and thus we can use the '*'
+ *     to allow use to write more compact rules to remove "b" from all children under ratings. This is especially useful when we don't know
+ *     how many children will  be under ratings, but we would like to nuke certain part of it across.
+ *
+ *   '*' wildcard as part of a key :
+ *    This is useful for working with input JSON with keys that are "prefixed".
+ *    Ex : if you had an input document like
+ *    <pre>
+ *        {
+ *         "ratings_legacy":{
+ *              "Set1":{
+ *                  "a":"a",
+ *                  "b":"b"
+ *                },
+ *              "Set2":{
+ *                  "a":"a",
+ *                   "b":"b"
+ *               }
+ *           }
+ *
+ *         "ratings_new":{
+ *               "Set1":{
+ *                   "a":"a",
+ *                   "b":"b"
+ *               },
+ *               "Set2":{
+ *                   "a":"a",
+ *                   "b":"b"
+ *               }
+ *          }
+ *       }
+ *    </pre>
+ *
+ *    A 'rating_*' would match both keys. As in Shiftr wildcard matching, * wildcard is as non greedy as possible, which enable us to give more than one * in key.
+ *
+ *    For an ouput that removed Set1 from all ratings_* key, the spec would be,
+ *     <pre>
+ *        {
+ *         "ratings_*":{
+ *              "Set1":""
+ *       }
+ *    </pre>
+ *
+ *
  * <p/>
  * The Spec file format for Removr is a tree Map<String, Object> objects.
  * The "Right hand side" of the of each entry is ignored/irrelevant unless it is a map,
@@ -73,9 +167,20 @@ import java.util.Map;
 public class Removr implements SpecDriven, Transform {
 
     private final Map<String, Object> spec;
+    public static final String ROOT_KEY = "root";
+    private final RemovrCompositeSpec rootSpec;
 
     @Inject
     public Removr( Object spec ) {
+
+        if ( spec == null ){
+            throw new SpecException( "Removr expected a spec of Map type, got 'null'." );
+        }
+        if ( ! ( spec instanceof Map ) ) {
+            throw new SpecException( "Removr expected a spec of Map type, got " + spec.getClass().getSimpleName() );
+        }
+
+        rootSpec = new RemovrCompositeSpec( ROOT_KEY, (Map<String, Object>) spec );
         this.spec = (Map<String, Object>) spec;
     }
 
@@ -86,28 +191,15 @@ public class Removr implements SpecDriven, Transform {
      */
     @Override
     public Object transform( Object input ) {
-        return removr( spec, input );
+        return transformInternal(input);
     }
 
-    /**
-     * Recursively walk the spec and remove keys from the data.
-     */
-    private static Object removr( Object specObj, Object removeeObj ) {
-
-        if ( specObj != null && removeeObj != null && specObj instanceof Map && removeeObj instanceof Map ) {
-            Map<String, Object> localSpec = (Map<String, Object>) specObj;
-            Map<String, Object> removee = (Map<String, Object>) removeeObj;
-
-            for ( String nukeKey : localSpec.keySet() ) {
-
-                Object subNuke = localSpec.get( nukeKey );
-                if ( subNuke != null && subNuke instanceof Map ) {
-                    removr( subNuke, removee.get( nukeKey ) );
-                } else {
-                    removee.remove( nukeKey );
-                }
-            }
-        }
-        return removeeObj;
+    private  Object transformInternal(Object input)
+    {
+        //Wrap the input in a map to fool the compositespec to recurse itself.
+        Map<String,Object> wrappedMap = new HashMap<String, Object>();
+        wrappedMap.put(ROOT_KEY, input);
+        rootSpec.remove(wrappedMap);
+        return input;
     }
 }
