@@ -23,17 +23,19 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Recursively sorts all maps within a JSON object into sorted LinkedHashMaps so that serialized
+ * Recursively sorts all maps within a JSON object into new sorted LinkedHashMaps so that serialized
  * representations are deterministic.  Useful for debugging and making test fixtures.
+ *
+ * Note this will make a copy of the input Map and List objects.
  *
  * The sort order is standard alphabetical ascending, with a special case for "~" prefixed keys to be bumped to the top.
  */
 public class Sortr implements Transform {
 
     /**
-     * Sorts the JSON for human readability.
+     * Makes a "sorted" copy of the input Json for human readability.
      *
-     * @param input the JSON object to transform in plain vanilla Jackson Map<String, Object> style
+     * @param input the JSON object to transform, in plain vanilla Jackson Map<String, Object> style
      */
     @Override
     public Object transform( Object input ) {
@@ -62,12 +64,13 @@ public class Sortr implements Transform {
     }
 
     private static List<Object> ordered( List<Object> list ) {
-        // don't sort the list because that would change intent, but sort its components
-        for ( int index = 0; index < list.size(); index++ ) {
-            Object obj = list.get( index );
-            list.set( index, sortJson( obj ) );
+        // Don't sort the list because that would change intent, but sort its components
+        // Additionally, make a copy of the List in-case the provided list is Immutable / Unmodifiable
+        List<Object> newList = new ArrayList<Object>( list.size() );
+        for ( Object obj : list ) {
+            newList.add( sortJson( obj ) );
         }
-        return list;
+        return newList;
     }
 
     private static JsonKeyComparator jsonKeyComparator = new JsonKeyComparator();
