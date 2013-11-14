@@ -17,8 +17,7 @@ package com.bazaarvoice.jolt.common.pathelement;
 
 import com.bazaarvoice.jolt.common.WalkedPath;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,9 +34,11 @@ public class StarRegexPathElement extends BasePathElement implements StarPathEle
         pattern = makePattern( key );
     }
 
+
     private static Pattern makePattern( String key ) {
 
         // "rating-*-*"  ->  "^rating-(.+?)-(.+?)$"   aka the '*' must match something in a non-greedy way
+        key = escapeMetacharsIfAny(key);
         String regex = "^" + key.replace("*", "(.+?)")  + "$";
 
         /*
@@ -51,7 +52,41 @@ public class StarRegexPathElement extends BasePathElement implements StarPathEle
               Differences Among Greedy, Reluctant, and Possessive Quantifiers section
         */
 
-        return Pattern.compile( regex );
+        return Pattern.compile( regex);
+    }
+
+    private static String escapeMetacharsIfAny(String key){
+        // Metachars to escape .^$|*+?()[{\
+
+        char[] keyChars = key.toCharArray();
+
+        //String.replace replaces all instances of the char sequence. So, it would try to escape the occurrence as many times as the occurrence frequency. For ex: if a key as 2 '5star.rating.1', it would escape it twice resulting in 5star//.rating//.1.
+        //So, we keep an list of already seen characters.
+        Map<Character, Boolean> charsAlreadySeen = new HashMap<Character,Boolean>();
+        for(char keychar: keyChars) {
+            switch (keychar) {
+
+                case '(':
+                case '[':
+                case '{':
+                case '\\':
+                case '^':
+                case '$':
+                case '|':
+                case ')':
+                case '?':
+                case '+':
+                case '.':
+                    if(!charsAlreadySeen.containsKey(keychar)){
+                        key = key.replace(String.valueOf(keychar), "\\" + keychar);
+                        charsAlreadySeen.put(keychar,true);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        return key;
     }
 
     /**

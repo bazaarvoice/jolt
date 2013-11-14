@@ -1,0 +1,23 @@
+
+{
+    "input": {
+        "TAG.Bob$ge":"",
+        "TAG-Bob-grp1-grp2$ge":"",
+        "TAG-Bob-grp1-grp2ge":"",
+        "TAG-Bob-grp1-ge":"",
+        "TAG-Bob-grp1-$":"",
+        "TAG-Bob-grp1-$1":""
+    },
+
+
+    "spec": {
+        "TAG.*$*": "",
+        "TAG-*-*$*":""
+    },
+
+    "expected": {
+        "TAG-Bob-grp1-grp2ge":"",
+        "TAG-Bob-grp1-ge":"",
+        "TAG-Bob-grp1-$":""
+    }
+}

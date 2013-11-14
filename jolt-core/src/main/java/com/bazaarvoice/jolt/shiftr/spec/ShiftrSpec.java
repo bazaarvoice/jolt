@@ -15,18 +15,9 @@
  */
 package com.bazaarvoice.jolt.shiftr.spec;
 
+import com.bazaarvoice.jolt.common.pathelement.*;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.common.WalkedPath;
-import com.bazaarvoice.jolt.common.pathelement.AmpPathElement;
-import com.bazaarvoice.jolt.common.pathelement.ArrayPathElement;
-import com.bazaarvoice.jolt.common.pathelement.AtPathElement;
-import com.bazaarvoice.jolt.common.pathelement.DollarPathElement;
-import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
-import com.bazaarvoice.jolt.common.pathelement.MatchablePathElement;
-import com.bazaarvoice.jolt.common.pathelement.PathElement;
-import com.bazaarvoice.jolt.common.pathelement.StarAllPathElement;
-import com.bazaarvoice.jolt.common.pathelement.StarRegexPathElement;
-import com.bazaarvoice.jolt.common.pathelement.StarSinglePathElement;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
@@ -131,6 +122,9 @@ public abstract class ShiftrSpec {
         }
         else if ( StringUtils.countMatches( key, "*" ) == 1 ) {
             return Arrays.<PathElement>asList( new StarSinglePathElement( key ) );
+        }
+        else if ( StringUtils.countMatches( key, "*" ) == 2 ) {
+            return Arrays.<PathElement>asList( new DoubleStarPathElement( key ) );
         }
         else if ( key.contains("*") ) {
             return Arrays.<PathElement>asList( new StarRegexPathElement( key ) );

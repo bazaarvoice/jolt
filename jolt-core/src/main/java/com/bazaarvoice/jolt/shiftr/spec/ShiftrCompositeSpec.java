@@ -15,17 +15,9 @@
  */
 package com.bazaarvoice.jolt.shiftr.spec;
 
+import com.bazaarvoice.jolt.common.pathelement.*;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.common.WalkedPath;
-import com.bazaarvoice.jolt.common.pathelement.AmpPathElement;
-import com.bazaarvoice.jolt.common.pathelement.AtPathElement;
-import com.bazaarvoice.jolt.common.pathelement.DollarPathElement;
-import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
-import com.bazaarvoice.jolt.common.pathelement.PathElement;
-import com.bazaarvoice.jolt.common.pathelement.StarAllPathElement;
-import com.bazaarvoice.jolt.common.pathelement.StarPathElement;
-import com.bazaarvoice.jolt.common.pathelement.StarRegexPathElement;
-import com.bazaarvoice.jolt.common.pathelement.StarSinglePathElement;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -436,6 +428,7 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
             orderMap.put( StarAllPathElement.class, 2 );
             orderMap.put( StarRegexPathElement.class, 2 );
             orderMap.put( StarSinglePathElement.class, 2 );
+            orderMap.put( DoubleStarPathElement.class, 2 );
         }
 
         @Override
