@@ -15,12 +15,16 @@
  */
 package com.bazaarvoice.jolt;
 
+import junit.framework.Assert;
 import org.apache.commons.lang.StringUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +34,7 @@ public class SortrTest {
     @DataProvider
     public Object[][] getTestCaseNames() {
         return new Object[][] {
-            {"simple" }
+            { "simple" }
         };
     }
 
@@ -97,5 +101,24 @@ public class SortrTest {
         }
 
         return null; // success
+    }
+
+    @Test
+    public void testDoesNotBlowUpOnUnmodifiableArray() {
+        List<Object> hasNan = new ArrayList<Object>();
+        hasNan.add( 1 );
+        hasNan.add( Double.NaN );
+        hasNan.add( 2 );
+
+        Map map = new HashMap();
+        map.put("a", "shouldBeFirst");
+        map.put("hasNan", Collections.unmodifiableList( hasNan ) );
+
+        try {
+            Sortr.sortJson( map );
+        }
+        catch( UnsupportedOperationException uoe ) {
+            Assert.fail( "Sort threw a UnsupportedOperationException" );
+        }
     }
 }
