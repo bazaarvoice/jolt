@@ -41,7 +41,6 @@ public class StarDoublePathElement extends BasePathElement implements StarPathEl
         }
 
         String[] split = key.split("\\*");
-
         boolean startsWithStar = key.startsWith( "*" );
         boolean endsWithStar = key.endsWith("*");
         if (  startsWithStar && endsWithStar) {
