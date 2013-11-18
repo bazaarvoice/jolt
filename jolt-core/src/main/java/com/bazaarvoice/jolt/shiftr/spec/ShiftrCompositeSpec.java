@@ -15,26 +15,11 @@
  */
 package com.bazaarvoice.jolt.shiftr.spec;
 
+import com.bazaarvoice.jolt.common.pathelement.*;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.common.WalkedPath;
-import com.bazaarvoice.jolt.common.pathelement.AmpPathElement;
-import com.bazaarvoice.jolt.common.pathelement.AtPathElement;
-import com.bazaarvoice.jolt.common.pathelement.DollarPathElement;
-import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
-import com.bazaarvoice.jolt.common.pathelement.PathElement;
-import com.bazaarvoice.jolt.common.pathelement.StarAllPathElement;
-import com.bazaarvoice.jolt.common.pathelement.StarPathElement;
-import com.bazaarvoice.jolt.common.pathelement.StarRegexPathElement;
-import com.bazaarvoice.jolt.common.pathelement.StarSinglePathElement;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Spec that has children, which it builds and then manages during Transforms.
@@ -75,7 +60,7 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
         super( rawKey );
 
         ArrayList<ShiftrSpec> special = new ArrayList<ShiftrSpec>();
-        Map<String, ShiftrSpec> literals = new HashMap<String, ShiftrSpec>();
+        Map<String, ShiftrSpec> literals = new LinkedHashMap<String, ShiftrSpec>();
         ArrayList<ShiftrSpec> computed = new ArrayList<ShiftrSpec>();
 
         // self check
@@ -432,10 +417,10 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
         static {
             orderMap.put( AmpPathElement.class, 1 );
             // TODO this feels weird, but it works
-            orderMap.put( StarPathElement.class, 2 );
-            orderMap.put( StarAllPathElement.class, 2 );
             orderMap.put( StarRegexPathElement.class, 2 );
-            orderMap.put( StarSinglePathElement.class, 2 );
+            orderMap.put( StarDoublePathElement.class, 3 );
+            orderMap.put( StarSinglePathElement.class, 4 );
+            orderMap.put( StarAllPathElement.class, 5 );
         }
 
         @Override

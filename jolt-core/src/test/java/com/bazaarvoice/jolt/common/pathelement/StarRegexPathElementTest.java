@@ -27,6 +27,7 @@ public class StarRegexPathElementTest {
                 {"easy star test",                "rating-*-*",               "rating-tuna-marlin",                         "tuna",      "marlin"},
                 {"easy facet usage",              "terms--config--*--*--cdv", "terms--config--Expertise--12345--cdv",       "Expertise", "12345"},
                 {"degenerate ProductId in facet", "terms--config--*--*--cdv", "terms--config--Expertise--12345--6789--cdv", "Expertise", "12345--6789"},
+                {"multi metachar test",           "rating.$.*.*",               "rating.$.marlin$.test.",                   "marlin$",   "test."},
         };
     }
 
@@ -51,5 +52,13 @@ public class StarRegexPathElementTest {
         AssertJUnit.assertNull( star.match( "tuna--", null ) );
         AssertJUnit.assertNull( star.match( "tuna-bob-", null ) );
         AssertJUnit.assertNull( star.match( "tuna--bob", null ) );
+
+        StarPathElement multiMetacharStarpathelement = new StarRegexPathElement( "rating-$-*-*");
+
+        AssertJUnit.assertNull( multiMetacharStarpathelement.match( "rating-capGrp1-capGrp2", null ) );
+        AssertJUnit.assertNull( multiMetacharStarpathelement.match( "rating-$capGrp1-capGrp2", null ) );
+        AssertJUnit.assertNotNull(multiMetacharStarpathelement.match( "rating-$-capGrp1-capGrp2",null) );
+
+
     }
 }

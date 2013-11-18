@@ -17,8 +17,7 @@ package com.bazaarvoice.jolt.common.pathelement;
 
 import com.bazaarvoice.jolt.common.WalkedPath;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,9 +34,11 @@ public class StarRegexPathElement extends BasePathElement implements StarPathEle
         pattern = makePattern( key );
     }
 
+
     private static Pattern makePattern( String key ) {
 
         // "rating-*-*"  ->  "^rating-(.+?)-(.+?)$"   aka the '*' must match something in a non-greedy way
+        key = escapeMetacharsIfAny(key);
         String regex = "^" + key.replace("*", "(.+?)")  + "$";
 
         /*
@@ -51,7 +52,58 @@ public class StarRegexPathElement extends BasePathElement implements StarPathEle
               Differences Among Greedy, Reluctant, and Possessive Quantifiers section
         */
 
-        return Pattern.compile( regex );
+        return Pattern.compile( regex);
+    }
+
+    // Metachars to escape .^$|*+?()[{\ in a regex
+
+    /** +
+     *
+     * @param key : String key that needs to be escaped before compiling into regex.
+     * @return : Metachar escaped key.
+     *
+     * Regex has some special meaning for the metachars [ .^$|*+?()[{\ ].If any of these metachars is present in the pattern key that was passed, it needs to be escaped so that
+     * it can be matched against literal.
+     */
+    private static String escapeMetacharsIfAny(String key){
+
+        char[] keyChars = key.toCharArray();
+
+        // String.replace replaces all instances of the char sequence. So, it would try to escape the occurrence as many times as the occurrence frequency.
+        // For ex: if a key as 2 '5star.rating.1', it would escape it twice resulting in 5star//.rating//.1.
+        // So, we keep an list of already seen characters.
+
+        Set<Character> charsAlreadySeen = new HashSet<Character>();
+
+        for(char keychar: keyChars) {
+
+            switch (keychar) {
+
+                case '(':
+                case '[':
+                case '{':
+                case '\\':
+                case '^':
+                case '$':
+                case '|':
+                case ')':
+                case '?':
+                case '+':
+                case '.':
+
+                    if(!charsAlreadySeen.contains( keychar )){
+
+                        key = key.replace(String.valueOf(keychar), "\\" + keychar);
+
+                        charsAlreadySeen.add(keychar);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        return key;
     }
 
     /**
@@ -75,6 +127,7 @@ public class StarRegexPathElement extends BasePathElement implements StarPathEle
         }
 
         int groupCount = matcher.groupCount();
+
         List<String> subKeys = new ArrayList<String>(groupCount);
         for ( int index = 1; index <= groupCount; index++) {
             subKeys.add( matcher.group( index ) );

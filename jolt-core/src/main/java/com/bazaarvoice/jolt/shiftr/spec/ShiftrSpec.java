@@ -15,18 +15,9 @@
  */
 package com.bazaarvoice.jolt.shiftr.spec;
 
+import com.bazaarvoice.jolt.common.pathelement.*;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.common.WalkedPath;
-import com.bazaarvoice.jolt.common.pathelement.AmpPathElement;
-import com.bazaarvoice.jolt.common.pathelement.ArrayPathElement;
-import com.bazaarvoice.jolt.common.pathelement.AtPathElement;
-import com.bazaarvoice.jolt.common.pathelement.DollarPathElement;
-import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
-import com.bazaarvoice.jolt.common.pathelement.MatchablePathElement;
-import com.bazaarvoice.jolt.common.pathelement.PathElement;
-import com.bazaarvoice.jolt.common.pathelement.StarAllPathElement;
-import com.bazaarvoice.jolt.common.pathelement.StarRegexPathElement;
-import com.bazaarvoice.jolt.common.pathelement.StarSinglePathElement;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
@@ -85,10 +76,13 @@ public abstract class ShiftrSpec {
     //  once all the shiftr specific logic is extracted.
     public static List<PathElement> parse( String key )  {
 
+
         if ( key.contains("@") ) {
+
             return Arrays.<PathElement>asList( new AtPathElement( key ) );
         }
         else if ( key.contains("$") ) {
+
             return Arrays.<PathElement>asList( new DollarPathElement( key ) );
         }
         else if ( key.contains("[") ) {
@@ -120,6 +114,7 @@ public abstract class ShiftrSpec {
             return subElements;
         }
         else if ( key.contains("&") ) {
+
             if ( key.contains("*") )
             {
                 throw new SpecException("Can't mix * with & ) ");
@@ -129,11 +124,19 @@ public abstract class ShiftrSpec {
         else if ( "*".equals( key ) ) {
             return Arrays.<PathElement>asList( new StarAllPathElement( key ) );
         }
-        else if ( StringUtils.countMatches( key, "*" ) == 1 ) {
-            return Arrays.<PathElement>asList( new StarSinglePathElement( key ) );
-        }
-        else if ( key.contains("*") ) {
-            return Arrays.<PathElement>asList( new StarRegexPathElement( key ) );
+        else if (key.contains("*" ) ) {
+
+            int numOfStars = StringUtils.countMatches( key, "*" );
+
+            if(numOfStars == 1){
+                return Arrays.<PathElement>asList( new StarSinglePathElement( key ) );
+            }
+            else if(numOfStars == 2){
+                return Arrays.<PathElement>asList( new StarDoublePathElement( key ) );
+            }
+            else {
+                return Arrays.<PathElement>asList( new StarRegexPathElement( key ) );
+            }
         }
         else {
             return Arrays.<PathElement>asList( new LiteralPathElement( key ) );

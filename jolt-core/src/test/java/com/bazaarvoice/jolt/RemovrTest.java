@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt;
 
+import com.bazaarvoice.jolt.exception.SpecException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -26,7 +27,10 @@ public class RemovrTest {
     @DataProvider
     public Object[][] getTestCaseNames() {
         return new Object[][] {
-            {"firstSample"}
+        {"firstSample"},
+        {"boundaryConditions"},
+        {"removrWithWildcardSupport"},
+        {"multiStarSupport"}
         };
     }
 
@@ -45,4 +49,22 @@ public class RemovrTest {
 
         JoltTestUtil.runDiffy( "failed case " + testPath, expected, actual );
     }
+
+    @DataProvider
+    public Object[][] getNegativeTestCaseNames() {
+        return new Object[][] {
+                {"negativeTestCases"}
+        };
+    }
+
+    @Test(dataProvider = "getNegativeTestCaseNames", expectedExceptions = SpecException.class)
+    public void runNegativeTestCases(String testCaseName) throws IOException {
+
+        String testPath = "/json/removr/" + testCaseName;
+        Map<String, Object> testUnit = JsonUtils.classpathToMap( testPath + ".json" );
+
+        Object spec = testUnit.get( "spec" );
+        Removr removr = new Removr( spec );
+    }
+
 }
