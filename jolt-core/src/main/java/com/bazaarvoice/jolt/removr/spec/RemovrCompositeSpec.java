@@ -54,13 +54,9 @@
             ArrayList<RemovrSpec> all = new ArrayList<RemovrSpec>();
 
             for ( String rawLhsStr : spec.keySet() ) {
-
                 Object rawRhs = spec.get( rawLhsStr );
-
                 String[] keyStrings = rawLhsStr.split( "\\|" );
-
                 for ( String keyString : keyStrings ) {
-
                     RemovrSpec childSpec;
                     if( rawRhs instanceof Map ) {
                         childSpec = new RemovrCompositeSpec(keyString, (Map<String, Object>) rawRhs );
@@ -71,11 +67,9 @@
                     else{
                         throw new SpecException("Invalid Removr spec RHS. Should be a non-empty string or Map");
                     }
-
                     all.add(childSpec);
                 }
             }
-
             allChildren = Collections.unmodifiableList( all );
         }
 
@@ -85,13 +79,9 @@
          */
         @Override
         public void remove(Map<String, Object> input){
-
             if(pathElement instanceof LiteralPathElement){
-
                 handleLiterals(input);
-
             }else{
-
                 handleComputed(input);
             }
         }
@@ -103,12 +93,9 @@
          */
         @Override
         public void removeByKey(Map<String, Object> inputMap, String literalKey){
-
             Object subInput = inputMap.get(literalKey);
             if(subInput instanceof Map){
-
                 for(RemovrSpec childSpec : allChildren){
-
                     // Recursive call if composite spec, else removes the element from the map if it is a leaf spec.
                     childSpec.remove((Map<String, Object>) subInput);
                 }
@@ -116,21 +103,15 @@
         }
 
         private void handleLiterals(Map<String, Object> input){
-
             if(input == null)
                 return;
-
             removeByKey(input, pathElement.getRawKey());
         }
 
         private void handleComputed(Map<String, Object> input){
-
             List<String> keysToBeRemoved = findKeysToBeRemoved(input);
-
             for(String key:keysToBeRemoved){
-
                 if(input.get(key) instanceof Map){
-
                     removeByKey(input,key);
                 }
             }

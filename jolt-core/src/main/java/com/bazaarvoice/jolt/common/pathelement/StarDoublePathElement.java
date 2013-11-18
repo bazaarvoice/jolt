@@ -42,33 +42,27 @@ public class StarDoublePathElement extends BasePathElement implements StarPathEl
 
         String[] split = key.split("\\*");
 
-        if ( key.startsWith( "*" )  && key.endsWith( "*" )) {
-
+        boolean startsWithStar = key.startsWith( "*" );
+        boolean endsWithStar = key.endsWith("*");
+        if (  startsWithStar && endsWithStar) {
             prefix = "";
             mid = split[1];
             suffix = "";
-
         }
-        else if ( key.endsWith( "*" ) ) {
-
+        else if ( endsWithStar ) {
             prefix = split[0];
             mid = split[1];
             suffix = "";
-
         }
-        else if ( key.startsWith( "*" ) ) {
-
+        else if ( startsWithStar ) {
             prefix = "";
             mid = split[1];
             suffix = split[2];
-
         }
         else{
-
             prefix=split[0];
             mid=split[1];
             suffix=split[2];
-
         }
     }
     /**
@@ -77,7 +71,6 @@ public class StarDoublePathElement extends BasePathElement implements StarPathEl
      */
     @Override
     public boolean stringMatch(String literal) {
-
         boolean isMatch = false;
         if(literal.startsWith(prefix) && literal.endsWith(suffix)){
 
@@ -92,7 +85,6 @@ public class StarDoublePathElement extends BasePathElement implements StarPathEl
      * in the '*'
      */
     private int finMidIndex(String literal){
-
         int startOffset = prefix.length() + 1;
         int endOffset = literal.length() - suffix.length() - 1;
         int midIndex = literal.substring(startOffset, endOffset).indexOf(mid);
@@ -108,7 +100,6 @@ public class StarDoublePathElement extends BasePathElement implements StarPathEl
     @Override
     public LiteralPathElement match(String dataKey, WalkedPath walkedPath) {
         if ( stringMatch( dataKey ) )  {
-
             List<String> subKeys = new ArrayList<String>(2);
 
             int midStart = finMidIndex(dataKey);
@@ -122,7 +113,6 @@ public class StarDoublePathElement extends BasePathElement implements StarPathEl
 
             return new LiteralPathElement(dataKey, subKeys);
         }
-
         return null;
     }
 

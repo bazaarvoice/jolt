@@ -169,14 +169,12 @@ public class Removr implements SpecDriven, Transform {
 
     @Inject
     public Removr( Object spec ) {
-
         if ( spec == null ){
             throw new SpecException( "Removr expected a spec of Map type, got 'null'." );
         }
         if ( ! ( spec instanceof Map ) ) {
             throw new SpecException( "Removr expected a spec of Map type, got " + spec.getClass().getSimpleName() );
         }
-
         rootSpec = new RemovrCompositeSpec( ROOT_KEY, (Map<String, Object>) spec );
         this.spec = (Map<String, Object>) spec;
     }

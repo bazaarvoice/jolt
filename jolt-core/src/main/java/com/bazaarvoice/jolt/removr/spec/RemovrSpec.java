@@ -52,31 +52,19 @@ public abstract class RemovrSpec {
 
     // Ex Keys :  *, cdv-*, *-$de
     public static List<PathElement> parse(String key) {
-
         if ( "*".equals( key ) ) {
-
             return Arrays.<PathElement>asList(new StarAllPathElement(key));
-
         }
 
         int numOfStars = StringUtils.countMatches(key, "*");
-
         if (numOfStars == 1) {
-
             return Arrays.<PathElement>asList(new StarSinglePathElement(key));
-
         } else if (numOfStars == 2) {
-
             return Arrays.<PathElement>asList(new StarDoublePathElement(key));
-
         } else if (numOfStars > 2) {
-
             return Arrays.<PathElement>asList(new StarRegexPathElement(key));
-
         } else {
-
             return Arrays.<PathElement>asList(new LiteralPathElement(key));
-
         }
     }
 
@@ -86,24 +74,18 @@ public abstract class RemovrSpec {
      */
 
     public List<String> findKeysToBeRemoved(Map<String, Object> input) {
-
         ArrayList<String> keysToBeRemoved = new ArrayList<String>();
-
         boolean isStarPathElement = pathElement instanceof StarPathElement;
-
         for (String ipkey : input.keySet()) {
             if (isStarPathElement) {
-
                 if ( ( (StarPathElement) pathElement).stringMatch( ipkey ) ) {
                     keysToBeRemoved.add(ipkey);
                 }
-
             } else {
 
                 keysToBeRemoved.add(pathElement.getRawKey());
             }
         }
-
         return keysToBeRemoved;
     }
 

@@ -26,7 +26,6 @@ public class RemovrLeafSpec extends RemovrSpec {
 
 
     public RemovrLeafSpec( String rawKey ) {
-
         super( rawKey );
     }
 
@@ -37,7 +36,6 @@ public class RemovrLeafSpec extends RemovrSpec {
      */
     @Override
     public void remove(Map<String, Object> input ){
-
        if(!(input instanceof Map))
            return;
 
