@@ -51,6 +51,7 @@ public class ShiftrTest {
             {"specialKeys"},
             {"wildcards"},
             {"wildcardSelfAndRef"},
+            {"wildcardsWithOr"},
         };
     }
 
