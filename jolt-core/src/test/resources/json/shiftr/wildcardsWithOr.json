@@ -1,0 +1,51 @@
+{
+	"input": {
+		"foo-a-v": 1,
+		"bar-a-v": 2,
+		"foo-b-v": 3,
+		"bar-b-v": 4,
+		"foo-c-v": 5,
+		"bar-c-v": 6,
+		"foo-d-v": 7,
+		"bar-d-v": 8,
+
+		"foo-e-v": 9,
+		"bar-e-v": 10,
+		"foo-f-v": 11,
+		"bar-f-v": 12,
+		"foo-g-v": 13,
+		"bar-g-v": 14,
+		"foo-h-v": 15,
+		"bar-h-v": 16,
+
+		"flat": 17
+	},
+
+
+	"spec": {
+		"bar-a-v|foo-a-v": "i",
+		"bar-b-v|foo-b-*": "h",
+		"bar-c-*|foo-c-v": "g",
+		"bar-d-*|foo-d-*": "f",
+
+		"foo-e-v|bar-e-v": "e",
+		"foo-f-v|bar-f-*": "d",
+		"foo-g-*|bar-g-v": "c",
+		"foo-h-*|bar-h-*": "b",
+
+		"flat":"a"
+	},
+
+
+	"expected": {
+		"a" : 17,
+		"b" : [ 15, 16 ],
+		"c" : [ 14, 13 ],
+		"d" : [ 11, 12 ],
+		"e" : [ 9, 10 ],
+		"f" : [ 7, 8 ],
+		"g" : [ 5, 6 ],
+		"h" : [ 4, 3 ],
+		"i" : [ 2, 1 ]
+	}
+}
