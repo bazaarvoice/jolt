@@ -128,9 +128,9 @@ Jolt works forward from the input data to the output format which is simpler, an
 The primary goal of Jolt was to improve "developer speed" by providing the ability to have a declarative rather than imperative transforms.
 That said, Jolt should have a better runtime than the alternatives listed above.
 
-Work has been done to make the stock Jolt transforms performant :
+Work has been done to make the stock Jolt transforms fast:
 
-1. Transforms can be initialized once with their spec, and re-used many times in a mult-threaded environment.
+1. Transforms can be initialized once with their spec, and re-used many times in a multi-threaded environment.
     * We reuse initialized Jolt transforms to service multiple web requests from a DropWizard service.
 2. "*" wildcard logic was redone to reduce the use of Regex in the common case, which was a dramatic speed improvement.
 3. The parallel tree walk performed by Shiftr was optimized.
@@ -148,7 +148,7 @@ Jolt Transforms and tools can be run from the command line. Command line interfa
 
 [![Build Status](https://secure.travis-ci.org/bazaarvoice/jolt.png)](http://travis-ci.org/bazaarvoice/jolt)
 
-For the moment we jave Cobertura configured in our poms.
+For the moment we have Cobertura configured in our poms.
 When we move to a proper open source CI build, this can go away.
 
     mvn cobertura:cobertura
