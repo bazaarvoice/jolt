@@ -27,7 +27,7 @@ import java.util.List;
 
 public class ChainrBuilder {
 
-    protected ChainrSpec chainrSpec;
+    private final ChainrSpec chainrSpec;
     protected ChainrInstantiator chainrInstantiator = new DefaultChainrInstantiator();
 
     /**

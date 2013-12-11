@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * Defaultr is a kind of JOLT transform that applies default values in a non-destructive way.
  *
- * For comparision :
+ * For comparison :
  * Shitr walks the input data and asks its spec "Where should this go?"
  * Defaultr walks the spec and asks "Does this exist in the data?  If not, add it."
  *
@@ -218,7 +218,7 @@ public class Defaultr implements SpecDriven, Transform {
     /**
      * Top level standalone Defaultr method.
      *
-     * @param input JSON object to have defaults applied to.  This will be modifed.
+     * @param input JSON object to have defaults applied to. This will be modified.
      * @return the modified input
      */
     @Override
