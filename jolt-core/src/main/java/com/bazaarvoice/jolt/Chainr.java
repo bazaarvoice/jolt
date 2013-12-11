@@ -102,7 +102,6 @@ public class Chainr implements Transform, ContextualTransform {
 
         for ( JoltTransform joltTransform : joltTransforms ) {
 
-            // Do one pass of instanceof checks, and the sort the JoltTransforms into two lists
             boolean isTransform = joltTransform instanceof Transform;
             boolean isContextual = joltTransform instanceof ContextualTransform;
 
@@ -115,7 +114,6 @@ public class Chainr implements Transform, ContextualTransform {
                         " should implement Transform or ContextualTransform." );
             }
 
-            // The two lists of JoltTransforms will have nulls when the transform is of the "other" type.
             if ( isContextual ) {
                 contextualTransformList.add( (ContextualTransform) joltTransform );
             }
