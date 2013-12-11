@@ -5,7 +5,7 @@ JSON to JSON transformation library written in Java where the "specification" fo
 
 ### Useful For
 
-1. Transforming JSON data from ElasticSearch, MonogoDb, Cassandra, etc before sending it off to the world
+1. Transforming JSON data from ElasticSearch, MongoDb, Cassandra, etc before sending it off to the world
 1. Extracting data from a large JSON documents for your own consumption
 
 ## Table of Contents
