@@ -36,7 +36,7 @@ import java.util.Map;
  *  LeafSpec : where the RHS is a String or Array of Strings, that specify an write path for the data from this level in the tree
  *  CompositeSpec : where the RHS is a map of children Specs
  *
- * Mapping of Json Shiftr Spec to Spec objects :
+ * Mapping of JSON Shiftr Spec to Spec objects :
  * {
  *   rating-*" : {      // CompositeSpec with one child and a Star PathElement
  *     "&(1)" : {       // CompositeSpec with one child and a Reference PathElement
@@ -55,7 +55,7 @@ import java.util.Map;
  */
 public abstract class ShiftrSpec {
 
-    // The processed key from the Json config
+    // The processed key from the JSON config
     protected final MatchablePathElement pathElement;
 
     public ShiftrSpec(String rawJsonKey) {

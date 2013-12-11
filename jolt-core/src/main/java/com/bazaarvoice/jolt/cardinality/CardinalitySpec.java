@@ -48,7 +48,7 @@ import java.util.List;
  */
 public abstract class CardinalitySpec {
 
-    // The processed key from the Json config
+    // The processed key from the JSON config
     protected final MatchablePathElement pathElement;
 
     public CardinalitySpec( String rawJsonKey ) {

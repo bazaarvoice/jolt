@@ -18,10 +18,10 @@ package com.bazaarvoice.jolt;
 import java.util.List;
 
 /**
- * Subclass of Diffy that does not care about Json Array order.
+ * Subclass of Diffy that does not care about JSON Array order.
  *
- * Useful for diffing Json created from Java Tools that do not
- *  care about preserving Json array order from call to call.
+ * Useful for diffing JSON created from Java Tools that do not
+ *  care about preserving JSON array order from call to call.
  *  *cough* DevAPI *cough*
  */
 public class ArrayOrderObliviousDiffy extends Diffy {
