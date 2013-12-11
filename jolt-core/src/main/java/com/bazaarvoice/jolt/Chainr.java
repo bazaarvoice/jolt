@@ -193,7 +193,7 @@ public class Chainr implements Transform, ContextualTransform {
      */
     public Object transform( int from, int to, Object input, Map<String, Object> context ) {
 
-        if ( (from < 0 ) || (to > transformsList.size() || to <= from ) ) {
+        if ( from < 0 || to > transformsList.size() || to <= from ) {
             throw new TransformException( "JOLT Chainr : invalid from and to parameters : from=" + from + " to=" + to );
         }
 
