@@ -48,7 +48,10 @@ import java.util.List;
  */
 public abstract class CardinalitySpec {
 
-    // The processed key from the Json config
+    private static final String STAR = "*";
+    private static final String AT = "@";
+
+    // The processed key from the JSON config
     protected final MatchablePathElement pathElement;
 
     public CardinalitySpec( String rawJsonKey ) {
@@ -66,17 +69,17 @@ public abstract class CardinalitySpec {
         this.pathElement = (MatchablePathElement) pe;
     }
 
-    //  once all the cardinalitytransform specific logic is extracted.
+    // once all the cardinalitytransform specific logic is extracted.
     public static List<PathElement> parse( String key )  {
 
-        if ( key.contains("@") ) {
+        if ( key.contains(AT) ) {
             return Arrays.<PathElement>asList( new AtPathElement( key ) );
         }
-        else if ( "*".equals( key ) ) {
+        else if ( STAR.equals(key) ) {
             return Arrays.<PathElement>asList( new StarAllPathElement( key ) );
         }
-        else if ( key.contains( "*" ) ) {
-            if ( StringUtils.countMatches( key, "*" ) == 1 ) {
+        else if ( key.contains(STAR) ) {
+            if ( StringUtils.countMatches( key, STAR) == 1 ) {
                 return Arrays.<PathElement>asList( new StarSinglePathElement( key ) );
             }
             else {
