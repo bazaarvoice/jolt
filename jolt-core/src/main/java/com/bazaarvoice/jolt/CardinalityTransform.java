@@ -55,7 +55,7 @@ import java.util.Map;
  *  specifying a "cardinality" for each piece of data that you care about changing in the output.
  * Input data that are not called out in the spec will remain in the output unchanged.
  *
- * For example, given this simple input Json :
+ * For example, given this simple input JSON :
  * <pre>
  * {
  *   "review" : {
@@ -71,7 +71,7 @@ import java.util.Map;
  *   }
  * }
  * </pre>
- * would product the following output Json :
+ * would product the following output JSON :
  * <pre>
  * {
  *   "review" : {

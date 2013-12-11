@@ -20,12 +20,15 @@ import com.bazaarvoice.jolt.chainr.instantiator.ChainrInstantiator;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.exception.TransformException;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Chainr is the JOLT mechanism for chaining transforms together. Any of the built-in JOLT
+ * Chainr is the JOLT mechanism for chaining {@link JoltTransform}s together. Any of the built-in JOLT
  * transform types can be called directly from Chainr. Any custom-written Java transforms
- * can be adapted in by implementing the Transform or SpecTransform interfaces.
+ * can be adapted in by implementing the {@link Transform} or {@link SpecDriven} interfaces.
  *
  * A Chainr spec should be an array of objects in order that look like this:
  *
@@ -43,11 +46,11 @@ import java.util.*;
  *
  * Currently, [operation-name] can be any of the following:
  *
- * - shift: (Shiftr) a tool for moving parts of an input JSON document to a new output document
- * - default: (Defaultr) a tool for applying default values to the provided JSON document
- * - remove: (Removr) a tool for removing specific values from the provided JSON document
- * - sort: (Sortr) sort the JSON document, purely for human readability / debugging
- * - java: passes control to whatever Java class you specify as long as it implements the Transform interface
+ * - shift: ({@link Shiftr}) a tool for moving parts of an input JSON document to a new output document
+ * - default: ({@link Defaultr}) a tool for applying default values to the provided JSON document
+ * - remove: ({@link Removr}) a tool for removing specific values from the provided JSON document
+ * - sort: ({@link Sortr}) sort the JSON document
+ * - java: passes control to whatever Java class you specify as long as it implements the {@link Transform} interface
  *
  * Shift, default, and remove operation all require a "spec", while sort does not.
  *
@@ -62,15 +65,15 @@ import java.util.*;
  *     ...
  * ]
  *
- * Custom Java classes that implement Tranform and/or SpecDriven can be loaded by specifying the full
- *  className to load.   Additionally, if upon reflection of the class we see that it is an instance of a
- *  SpecTransform, then we will construct it with a the supplied "spec" object.
+ * Custom Java classes that implement {@link Transform} and/or {@link SpecDriven} can be loaded by specifying the full
+ *  className to load. Additionally, if upon reflection of the class we see that it is an instance of a
+ *  {@link SpecDriven}, then we will construct it with a the supplied "spec" object.
  *
  * [
  *     {
  *         "operation": "com.bazaarvoice.tuna.CustomTransform",
  *
- *         "spec" : { ..  } // optional spec to use to construct a CustomTransform if it has the SpecTransform marker interface.
+ *         "spec" : { ... } // optional spec to use to construct a custom {@link Transform} if it has the {@link SpecDriven} marker interface.
  *     },
  *     ...
  * ]
@@ -78,7 +81,7 @@ import java.util.*;
 public class Chainr implements Transform, ContextualTransform {
 
     // We build two typed Lists of JoltTransform implementations, where the "nulls" in the transforms list is
-    //  expected to fall thru to the ContextualTransform list
+    // expected to fall through to the ContextualTransform list
     private final List<JoltTransform> transformsList;
     private final List<ContextualTransform> contextualTransformList;
 

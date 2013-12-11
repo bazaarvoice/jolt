@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Removr is a kind of JOLT transform that removes content from the input Json.
+ * Removr is a kind of JOLT transform that removes content from the input JSON.
  * <p/>
  * For comparision :
  * Shitr walks the input data and asks its spec "Where should this go?"
@@ -30,7 +30,7 @@ import java.util.Map;
  *
  * While, Removr walks the spec and asks "if this exists, remove it."
  * <p/>
- * Example : Given input Json like
+ * Example : Given input JSON like
  * <pre>
  * {
  *   "~emVersion" : "2",
