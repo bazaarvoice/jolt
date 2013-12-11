@@ -20,10 +20,7 @@ import com.bazaarvoice.jolt.chainr.instantiator.ChainrInstantiator;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.exception.TransformException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Chainr is the JOLT mechanism for chaining transforms together. Any of the built-in JOLT
@@ -82,10 +79,8 @@ public class Chainr implements Transform, ContextualTransform {
 
     // We build two typed Lists of JoltTransform implementations, where the "nulls" in the transforms list is
     //  expected to fall thru to the ContextualTransform list
-    private final List<Transform> transformsList;
+    private final List<JoltTransform> transformsList;
     private final List<ContextualTransform> contextualTransformList;
-
-    private final List<ContextualTransform> peekContextualTransforms;
 
     public static Chainr fromSpec( Object input ) {
         return new ChainrBuilder( input ).build();
@@ -101,10 +96,9 @@ public class Chainr implements Transform, ContextualTransform {
             throw new IllegalArgumentException( "Chainr requires a list of JoltTransforms." );
         }
 
-        transformsList = new ArrayList<Transform>( joltTransforms.size() );
-        contextualTransformList = new ArrayList<ContextualTransform>( joltTransforms.size() );
+        this.transformsList = Collections.unmodifiableList(joltTransforms);
 
-        ArrayList<ContextualTransform> contextTransforms = new ArrayList<ContextualTransform>();
+        contextualTransformList = new LinkedList<ContextualTransform>();
 
         for ( JoltTransform joltTransform : joltTransforms ) {
 
@@ -123,20 +117,9 @@ public class Chainr implements Transform, ContextualTransform {
 
             // The two lists of JoltTransforms will have nulls when the transform is of the "other" type.
             if ( isContextual ) {
-                transformsList.add( null );
                 contextualTransformList.add( (ContextualTransform) joltTransform );
-
-                contextTransforms.add( (ContextualTransform) joltTransform ); // This list is for "public" consumption
-            }
-            else
-            {
-                transformsList.add( (Transform) joltTransform );
-                contextualTransformList.add( null );
             }
         }
-
-        contextTransforms.trimToSize();
-        peekContextualTransforms = Collections.unmodifiableList( contextTransforms );
     }
 
     /**
@@ -156,12 +139,12 @@ public class Chainr implements Transform, ContextualTransform {
      */
     @Override
     public Object transform( Object input, Map<String, Object> context ) {
-        return doTransform( transformsList, contextualTransformList, input, context );
+        return doTransform( transformsList, input, context );
     }
 
     @Override
     public Object transform( Object input ) {
-        return doTransform( transformsList, contextualTransformList, input, null );
+        return doTransform( transformsList, input, null );
     }
 
     /**
@@ -214,28 +197,23 @@ public class Chainr implements Transform, ContextualTransform {
             throw new TransformException( "JOLT Chainr : invalid from and to parameters : from=" + from + " to=" + to );
         }
 
-        return doTransform( transformsList.subList( from, to ), contextualTransformList.subList( from, to ), input, context );
+        return doTransform( transformsList.subList( from, to ), input, context );
     }
 
-    private static Object doTransform( List<Transform> transforms, List<ContextualTransform> contextualTransforms, Object input, Map<String, Object> context ) {
+    private Object doTransform( List<JoltTransform> transforms, Object input, Map<String, Object> context ) {
 
         Object intermediate = input;
 
-        for ( int index = 0; index < transforms.size(); index++ ) {
+        for( JoltTransform transform : transforms ) {
 
-            Transform transform = transforms.get( index );
+            if( transform instanceof Transform ) {
+                intermediate = ((Transform) transform).transform( intermediate );
+            } else {
+                intermediate = ((ContextualTransform) transform).transform( intermediate, context );
+            }
 
-            if ( transform != null ) {
-                intermediate = transform.transform( intermediate );
-            }
-            else {
-                ContextualTransform contextualTransform = contextualTransforms.get( index );
-                if ( contextualTransform == null ) {
-                    throw new IllegalStateException( "No JoltTransform found for index:" + index );
-                }
-                intermediate = contextualTransform.transform( intermediate, context );
-            }
         }
+
         return intermediate;
     }
 
@@ -243,7 +221,7 @@ public class Chainr implements Transform, ContextualTransform {
      * @return true if this Chainr instance has any ContextualTransforms
      */
     public boolean hasContextualTransforms() {
-        return !peekContextualTransforms.isEmpty();
+        return !contextualTransformList.isEmpty();
     }
 
     /**
@@ -253,6 +231,6 @@ public class Chainr implements Transform, ContextualTransform {
      * @return List of ContextualTransforms used by this Chainr instance
      */
     public List<ContextualTransform> getContextualTransforms() {
-        return peekContextualTransforms;
+        return Collections.unmodifiableList(contextualTransformList);
     }
 }
