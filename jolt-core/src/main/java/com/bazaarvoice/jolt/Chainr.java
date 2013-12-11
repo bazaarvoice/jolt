@@ -243,7 +243,7 @@ public class Chainr implements Transform, ContextualTransform {
      * @return true if this Chainr instance has any ContextualTransforms
      */
     public boolean hasContextualTransforms() {
-        return peekContextualTransforms.size() != 0;
+        return !peekContextualTransforms.isEmpty();
     }
 
     /**
