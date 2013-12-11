@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Json Diff tool that will walk two "Json" objects simultaneously and identify mismatches.
+ * JSON Diff tool that will walk two "JSON" objects simultaneously and identify mismatches.
  *
  * Algorithm :
  *   1) make a copy of both input objects

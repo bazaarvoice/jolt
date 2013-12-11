@@ -86,7 +86,7 @@ public class JoltCliUtilities {
     }
 
     /**
-     * This method will read in Json, either from the given file or from standard in
+     * This method will read in JSON, either from the given file or from standard in
      * if the file is null. An object contain the ingested input is returned.
      *
      * @param file the file to read the input from, or null to use standard in

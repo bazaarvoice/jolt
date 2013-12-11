@@ -51,9 +51,9 @@ Javadoc explaining each transform DSL :
 * [default](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Defaultr.java)
 * [remove](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Removr.java)
 * [sort](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Sortr.java)
-* java : Implement the Transform or SpecTransform interfaces
+* java : Implement the Transform or SpecDriven interfaces
     * [Transform](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Transform.java) interface
-    * [SpecTransform](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/SpecTransform.java)
+    * [SpecDriven](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/SpecDriven.java)
 
 Running a Jolt transform means creating an instance of [Chainr](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Chainr.java)  with a list of transforms.
 

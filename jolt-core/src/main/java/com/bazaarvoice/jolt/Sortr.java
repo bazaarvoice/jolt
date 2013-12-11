@@ -33,7 +33,7 @@ import java.util.Map;
 public class Sortr implements Transform {
 
     /**
-     * Makes a "sorted" copy of the input Json for human readability.
+     * Makes a "sorted" copy of the input JSON for human readability.
      *
      * @param input the JSON object to transform, in plain vanilla Jackson Map<String, Object> style
      */

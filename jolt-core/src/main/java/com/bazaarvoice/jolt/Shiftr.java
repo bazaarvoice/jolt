@@ -27,17 +27,17 @@ import java.util.Map;
 /**
  *
  * Shiftr is a kind of JOLT transform that specifies where "data" from the input JSON should be placed in the
- * output JSON, aka how the input Json/data should be shifted around to make the output Json/data.
+ * output JSON, aka how the input JSON/data should be shifted around to make the output JSON/data.
  *
  * At a base level, a single Shiftr "command" is a mapping from an input path to an output path,
  *  similar to the "mv" command in Unix, "mv /var/data/mysql/data /media/backup/mysql".
  *
- * In Shiftr, the input path is a Json tree structure, and the output path is flattend "dot notation" path notation.
+ * In Shiftr, the input path is a JSON tree structure, and the output path is flattend "dot notation" path notation.
  *
  * The idea is that you can start with a copy your JSon input data data and modify it into a Shiftr spec by
  *  supplying a "dot notation" output path for each piece of data that you care about.
  *
- * For example, given this simple input Json :
+ * For example, given this simple input JSON :
  * <pre>
  * {
  *   "rating": {
@@ -58,7 +58,7 @@ import java.util.Map;
  *     }
  * }
  * </pre>
- * would product the following output Json :
+ * would product the following output JSON :
  * <pre>
  * {
  *   "SecondaryRatings" : {
@@ -74,7 +74,7 @@ import java.util.Map;
  * Using wildcards, you can leverage the fact that you know, not just the data and it's immediate key, but the whole input
  *  path to that data.
  *
- * Expanding the example above, say we have the following expanded Input Json:
+ * Expanding the example above, say we have the following expanded Input JSON:
  * <pre>
  * {
  *   "rating": {
@@ -213,7 +213,7 @@ import java.util.Map;
  *
  * '$' Wildcard
  *   Valid only on the LHS of the spec.
- *   The existence of this wildcard is a reflection of the fact that the "data" of the input Json, can be both in the "values"
+ *   The existence of this wildcard is a reflection of the fact that the "data" of the input JSON, can be both in the "values"
  *    and the "keys" of the input JSON
  *
  *   The base case operation of Shiftr is to copy input JSON "values", thus we need a way to specify that we want to copy the input JSON "key" instead.
@@ -363,7 +363,7 @@ import java.util.Map;
  *
  *
  * 3) JSON arrays in the spec file
- * Json Arrays in Shiftr spec are used to to specify that piece of input data should be copied to two places in the output JSON.
+ * JSON Arrays in Shiftr spec are used to to specify that piece of input data should be copied to two places in the output JSON.
  * Example :
  * <pre>
  *   // input

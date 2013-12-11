@@ -123,7 +123,7 @@ public abstract class Key {
             }
         }
         else {
-            // literal such as String, number, or Json array
+            // literal such as String, number, or JSON array
             literalValue = spec;
         }
     }

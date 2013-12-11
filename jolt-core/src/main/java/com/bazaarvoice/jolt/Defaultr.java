@@ -32,7 +32,7 @@ import java.util.Map;
  * Shitr walks the input data and asks its spec "Where should this go?"
  * Defaultr walks the spec and asks "Does this exist in the data?  If not, add it."
  *
- * Example : Given input Json like
+ * Example : Given input JSON like
  * <pre>
  * {
  *   "Rating":3,
@@ -104,7 +104,7 @@ import java.util.Map;
  * </pre>
  *
  * The Spec file format for Defaulr a tree Map<String, Object> objects.   Defaultr handles outputing
- *  of Json Arrays via special wildcard in the Spec.
+ *  of JSON Arrays via special wildcard in the Spec.
  *
  * Defaltr Spec WildCards and Flag :
  * "*" aka STAR : Apply these defaults to all input keys at this level
@@ -218,7 +218,7 @@ public class Defaultr implements SpecDriven, Transform {
     /**
      * Top level standalone Defaultr method.
      *
-     * @param input Json object to have defaults applied to.  This will be modifed.
+     * @param input JSON object to have defaults applied to.  This will be modifed.
      * @return the modified input
      */
     @Override
