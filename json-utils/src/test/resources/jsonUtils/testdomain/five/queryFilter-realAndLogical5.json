@@ -1,0 +1,66 @@
+
+// Even better format.  Values are a list and are typed.
+// Now that the RealFilters values are a list, Real and Logicial Fitlers can
+//  share a getValues( List<T> list ) interface, which is kinda nice.
+//
+// Note the "type" : "INTEGER" line.   It is needed because we cannot infer
+//  the Filter type from the type of the Values.
+//
+// That said having the "type" : "INTEGER" line means we don't have to have a custom
+//  Deserializer, as we can use the @JsonTypeInfo and @JsonSubTypes annotations to do the
+//  work for us.
+//
+// @JsonTypeInfo(use=JsonTypeInfo.Id.NAME,include=JsonTypeInfo.As.PROPERTY,property="type")
+// @JsonSubTypes({
+//    @JsonSubTypes.Type(value=IntegerRealFilter5.class,name="INTEGER"),
+//    ...
+// })
+{
+    "AND" : [
+        {
+            "type" : "INTEGER",
+            "field": "RATING",
+            "operator" : "EQ",
+            "values": [ 3 ]
+        },
+        {
+            "type" : "STRING",
+            "field": "PRODUCTID",
+            "operator" : "EQ",
+            "values": [ "Acme-1234" ]
+        },
+        {
+            "OR" : [
+                {
+                    "type" : "STRING",
+                    "field": "ID",
+                    "operator" : "EQ",
+                    "values": [ "789" ]
+                },
+                {
+                    "AND" : [
+                        {
+                            "type" : "BOOLEAN",
+                            "field": "ISFEATURED",
+                            "operator" : "EQ",
+                            "values": [ true ]
+                        },
+                        {
+                            "type" : "BOOLEAN",
+                            "field": "HASPHOTOS",
+                            "operator" : "EQ",
+                            "values": [ true ]
+                        },
+                        {
+                            "type" : "DATE",
+                            "field": "SUBMISSION_TIME",
+                            "operator" : "LTE",
+                            "values": [ "1-1-2014" ]   // This is the reason the type Enum is needed
+                            //  as DATE and STRING both "encode" to JSON strings
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

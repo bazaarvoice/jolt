@@ -1,0 +1,39 @@
+
+// This is a much nicer formulation / format.
+// Silly "queryParam" is gone, but still have all values being Strings, e.g. "value": "3".
+//
+// Note this Json file is used by both testdomain two and three Java code.
+//  Java "three" is nicer than "two", in that more logic was moved out of the MappingTest Module
+//  into the LogicalFilter3 @JsonDeserializer
+{
+    "AND" : [
+        {
+            "queryParam": "RATING",
+            "value": "3"
+        },
+        {
+            "queryParam": "PRODUCTID",
+            "value": "Acme-1234"
+        },
+        {
+            "OR" : [
+                {
+                    "queryParam": "ID",
+                    "value": "789"
+                },
+                {
+                    "AND" : [
+                        {
+                            "queryParam": "ISFEATURED",
+                            "value": "true"
+                        },
+                        {
+                            "queryParam": "HASPHOTOS",
+                            "value": "true"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

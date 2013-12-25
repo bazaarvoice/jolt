@@ -23,9 +23,12 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class JsonUtilsTest {
 
@@ -87,7 +90,7 @@ public class JsonUtilsTest {
     public void runFixtureTests() throws IOException {
 
         String testFixture = "/jsonUtils/jsonUtils-removeRecursive.json";
-        List<Map<String, Object>> tests = (List<Map<String, Object>>) JsonUtils.classpathToObject(  testFixture );
+        List<Map<String, Object>> tests = (List<Map<String, Object>>) JsonUtils.classpathToObject( testFixture );
 
         for ( Map<String,Object> testUnit : tests ) {
 
@@ -121,5 +124,28 @@ public class JsonUtilsTest {
     public void correctExceptionWithImmutableMap() throws IOException
     {
         JsonUtils.removeRecursive( top, "c" );
+    }
+
+    @Test
+    public void validateJacksonClosesInputStreams() {
+
+        final Set<String> closedSet = new HashSet<String>();
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream( "{ \"a\" : \"b\" }".getBytes() ) {
+            @Override
+            public void close() throws IOException {
+                closedSet.add("closed");
+                super.close();
+            }
+        };
+
+        // Pass our wrapped InputStream to Jackson via JsonUtils.
+        Map<String,Object> map = JsonUtils.jsonToMap( byteArrayInputStream );
+
+        // Verify that we in fact loaded some data
+        AssertJUnit.assertNotNull( map );
+        AssertJUnit.assertEquals( 1, map.size() );
+
+        // Verify that the close method was in fact called on the InputStream
+        AssertJUnit.assertEquals( 1, closedSet.size() );
     }
 }

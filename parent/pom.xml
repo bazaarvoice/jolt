@@ -29,13 +29,13 @@
         <javax-inject.version>1</javax-inject.version>
 
         <!-- module dependencies -->
-        <jackson.version>2.2.1</jackson.version>
+        <jackson.version>2.2.3</jackson.version>
         <guice.version>3.0</guice.version>
-        <argparse4j.version>0.4.1</argparse4j.version>
+        <argparse4j.version>0.4.2</argparse4j.version>
 
         <!-- TEST -->
-        <guava.version>14.0.1</guava.version>
-        <testng.version>6.3</testng.version>
+        <guava.version>15.0</guava.version>
+        <testng.version>6.8.7</testng.version>
     </properties>
 
     <dependencyManagement>

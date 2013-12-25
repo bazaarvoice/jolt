@@ -94,7 +94,7 @@ public class ChainrFactory {
         try {
             FileInputStream fileInputStream = new FileInputStream( chainrSpecFile );
             chainrSpec = JsonUtils.jsonToObject( fileInputStream );
-        } catch ( IOException e ) {
+        } catch ( Exception e ) {
             throw new RuntimeException( "Unable to load chainr spec file " + chainrSpecFile.getAbsolutePath() );
         }
         return getChainr( chainrInstantiator, chainrSpec );

@@ -15,59 +15,46 @@
  */
 package com.bazaarvoice.jolt;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Static method convenience wrappers for a JsonUtil configured with a minimal ObjectMapper.
+ *
+ * The ObjectMapper use is configured to :
+ *   Allow comments in the JSON strings,
+ *   Hydrates all JSON Maps into LinkedHashMaps.
+ */
 public class JsonUtils {
 
-    // thread safe: http://wiki.fasterxml.com/JacksonFAQThreadSafety
-    private static final ObjectMapper OBJECT_MAPPER;
-    private static final ObjectWriter PRETTY_PRINT_WRITER;
+    private static final JsonUtil util = new JsonUtilImpl();
 
-    static {
-        JsonFactory factory = new JsonFactory();
-        factory.enable( JsonParser.Feature.ALLOW_COMMENTS );
-        OBJECT_MAPPER = new ObjectMapper( factory );
-        PRETTY_PRINT_WRITER = OBJECT_MAPPER.writerWithDefaultPrettyPrinter();
+    /**
+     * Construct a JsonUtil with a Jackson ObjectMapper that has been preconfigured with custom
+     *  Modules or Mixins.
+     */
+    public static JsonUtil customJsonUtil( ObjectMapper mapper ) {
+        return new JsonUtilImpl( mapper );
     }
 
-    public static Object cloneJson( Object json ) {
 
-        // deep copy a map:
-        if ( json instanceof Map ) {
-            Map<String, Object> jsonMap = (Map<String, Object>) json;
-            Map retvalue = new HashMap();
-            for ( String key : jsonMap.keySet() ) {
-                retvalue.put( key, cloneJson( jsonMap.get( key ) ) );
-            }
-            return retvalue;
-        }
+    /**
+     * Makes a deep copy of a Map<String, Object> object by converting it to a String and then
+     * back onto stock JSON objects.
+     *
+     * @param obj object tree to copy
+     * @return deep copy of the incoming obj
+     */
+    public static Object cloneJson( Object obj ) {
 
-        // deep copy a list
-        if ( json instanceof List ) {
-            List jsonList = (List) json;
-            List retvalue = new ArrayList( jsonList.size() );
-            for ( Object sub : jsonList ) {
-                retvalue.add( cloneJson( sub ) );
-            }
-            return retvalue;
-        }
-
-        // string, number, null doesn't need copying
-        return json;
+        String string = util.toJsonString( obj );
+        return util.jsonToObject( string );
     }
 
     /**
@@ -91,8 +78,8 @@ public class JsonUtils {
             }
 
             // regardless, recurse down the tree
-            for ( String subkey : jsonMap.keySet() ) {
-                Object value = jsonMap.get( subkey );
+            for ( String subKey : jsonMap.keySet() ) {
+                Object value = jsonMap.get( subKey );
                 removeRecursive( value, keyToRemove );
             }
         }
@@ -125,85 +112,80 @@ public class JsonUtils {
         return jsonToMap( new ByteArrayInputStream( json.getBytes() ) );
     }
 
-    public static Map<String, Object> jsonToMap( String json )
-            throws IOException {
-        return jsonToMap( new ByteArrayInputStream( json.getBytes() ) );
+    //// All the methods listed below are static passthrus to the JsonUtil interface
+    public static Object jsonToObject( String json ) {
+        return util.jsonToObject( json );
     }
 
-    public static Object jsonToObject( String json )
-            throws IOException {
-        return jsonToObject( new ByteArrayInputStream( json.getBytes() ) );
+    public static Object jsonToObject( InputStream in ) {
+        return util.jsonToObject( in );
     }
 
-    public static Object jsonToObject( InputStream in )
-            throws IOException {
-        return OBJECT_MAPPER.readValue( in, Object.class );
+    public static Map<String, Object> jsonToMap( String json ) {
+        return util.jsonToMap( json );
     }
 
-    public static Map<String, Object> jsonToMap( InputStream in )
-            throws IOException {
-        TypeReference<LinkedHashMap<String, Object>> typeRef
-                = new TypeReference<LinkedHashMap<String, Object>>() {
-        };
-        return OBJECT_MAPPER.readValue( in, typeRef );
+    public static Map<String, Object> jsonToMap( InputStream in ) {
+        return util.jsonToMap( in );
     }
 
-    public static <T> T jsonTo( InputStream in, TypeReference<T> typeRef )
-            throws IOException {
-        return OBJECT_MAPPER.readValue( in, typeRef );
+    public static List<Object> jsonToList( String json ) {
+        return util.jsonToList( json );
     }
 
-    public static String toJsonString( Object map )
-            throws IOException {
-        return OBJECT_MAPPER.writeValueAsString( map );
+    public static List<Object> jsonToList( InputStream in ) {
+        return util.jsonToList( in );
     }
 
-    public static String toPrettyJsonString( Object map )
-            throws IOException {
-        return PRETTY_PRINT_WRITER.writeValueAsString( map );
+    public static Object filepathToObject( String filePath ) {
+        return util.filepathToObject( filePath );
     }
 
-    public static Object filepathToObject( String filepath ) {
-        Object json;
-        try {
-            FileInputStream fileInputStream = new FileInputStream( filepath );
-            json = jsonToObject( fileInputStream );
-        } catch ( IOException e ) {
-            throw new RuntimeException( "Unable to load json file " + filepath );
-        }
-        return json;
+    public static Map<String, Object> filepathToMap( String filePath ) {
+        return util.filepathToMap( filePath );
     }
 
-    public static Map<String, Object> filepathToMap( String filepath ) {
-        Map<String, Object> json;
-        try {
-            FileInputStream fileInputStream = new FileInputStream( filepath );
-            json = jsonToMap( fileInputStream );
-        } catch ( IOException e ) {
-            throw new RuntimeException( "Unable to load json file " + filepath );
-        }
-        return json;
+    public static List<Object> filepathToList( String filePath ) {
+        return util.filepathToList( filePath );
     }
 
-    public static Object classpathToObject( String filepath ) {
-        Object json;
-        try {
-            InputStream inputStream = Object.class.getResourceAsStream( filepath );
-            json = jsonToObject( inputStream );
-        } catch ( IOException e ) {
-            throw new RuntimeException( "Unable to load json file " + filepath );
-        }
-        return json;
+    public static Object classpathToObject( String classPath ) {
+        return util.classpathToObject( classPath );
     }
 
-    public static Map<String, Object> classpathToMap( String filepath ) {
-        Map<String, Object> json;
-        try {
-            InputStream inputStream = Object.class.getResourceAsStream( filepath );
-            json = jsonToMap( inputStream );
-        } catch ( IOException e ) {
-            throw new RuntimeException( "Unable to load json file " + filepath );
-        }
-        return json;
+    public static Map<String, Object> classpathToMap( String classPath ) {
+        return util.classpathToMap( classPath );
+    }
+
+    public static List<Object> classpathToList( String classPath ) {
+        return util.classpathToList( classPath );
+    }
+
+    public static <T> T classpathToType( String classPath, TypeReference<T> typeRef ) {
+        return util.classpathToType( classPath, typeRef );
+    }
+
+    /**
+     * Use the stringToType method instead.
+     */
+    @Deprecated
+    public static <T> T jsonTo( String json, TypeReference<T> typeRef ) {
+        return util.stringToType( json, typeRef );
+    }
+
+    /**
+     * Use the streamToType method instead.
+     */
+    @Deprecated
+    public static <T> T jsonTo( InputStream in, TypeReference<T> typeRef ) {
+        return util.streamToType( in, typeRef );
+    }
+
+    public static String toJsonString( Object obj ) {
+        return util.toJsonString( obj );
+    }
+
+    public static String toPrettyJsonString( Object obj ) {
+        return util.toPrettyJsonString( obj );
     }
 }

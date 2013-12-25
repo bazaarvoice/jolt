@@ -1,0 +1,10 @@
+{
+    "RATING" : {
+        "queryParam" : "RATING",
+        "value" : "3"
+    },
+    "PRODUCTID" : {
+        "queryParam" : "PRODUCTID",
+        "value" : "Acme-1234"
+    }
+}

@@ -1,0 +1,37 @@
+
+// Even better format.  Values are typed.
+// This formulation requires a one to one mapping between the JSON type (String, number, boolean)
+//  and a RealFilter.  In practice this would not work as String and Date filters have
+//  JSON values that are strings.
+{
+    "AND" : [
+        {
+            "queryParam": "RATING",
+            "value": 3
+        },
+        {
+            "queryParam": "PRODUCTID",
+            "value": "Acme-1234"
+        },
+        {
+            "OR" : [
+                {
+                    "queryParam": "ID",
+                    "value": "789"
+                },
+                {
+                    "AND" : [
+                        {
+                            "queryParam": "ISFEATURED",
+                            "value": true
+                        },
+                        {
+                            "queryParam": "HASPHOTOS",
+                            "value": true
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -47,7 +47,7 @@ public class ChainrFactoryTest {
         AssertJUnit.assertTrue( "ChainrFactory did not return an instance of Chainr.", result instanceof Chainr );
     }
 
-    @Test( expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = "Unable to load json file.*" )
+    @Test( expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = "Unable to load JSON.*" )
     public void testGetChainrInstanceFromClassPath_error()
             throws Exception {
         ChainrFactory.fromClassPath( CLASSPATH + MALFORMED_INPUT_FILENAME );
@@ -60,7 +60,7 @@ public class ChainrFactoryTest {
         AssertJUnit.assertTrue( "ChainrFactory did not return an instance of Chainr.", result instanceof Chainr );
     }
 
-    @Test( expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = "Unable to load json file.*" )
+    @Test( expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = "Unable to load JSON.*" )
     public void testGetChainrInstanceFromClassPathWithInstantiator_error()
             throws Exception {
         ChainrFactory.fromClassPath( CLASSPATH + MALFORMED_INPUT_FILENAME, new DefaultChainrInstantiator() );
@@ -73,7 +73,7 @@ public class ChainrFactoryTest {
         AssertJUnit.assertTrue( "ChainrFactory did not return an instance of Chainr.", result instanceof Chainr );
     }
 
-    @Test( expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = "Unable to load json file.*" )
+    @Test( expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = "Unable to load JSON.*" )
     public void testGetChainrInstanceFromFileSystem_error()
             throws Exception {
         ChainrFactory.fromFileSystem( fileSystemPath + MALFORMED_INPUT_FILENAME );
@@ -86,7 +86,7 @@ public class ChainrFactoryTest {
         AssertJUnit.assertTrue( "ChainrFactory did not return an instance of Chainr.", result instanceof Chainr );
     }
 
-    @Test(expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = "Unable to load json file.*")
+    @Test(expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = "Unable to load JSON.*")
     public void testGetChainrInstanceFromFileSystemWithInstantiator_error()
             throws Exception {
         ChainrFactory.fromFileSystem( fileSystemPath + MALFORMED_INPUT_FILENAME, new DefaultChainrInstantiator() );

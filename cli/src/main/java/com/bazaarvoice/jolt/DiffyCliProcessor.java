@@ -88,7 +88,7 @@ public class DiffyCliProcessor implements JoltCliProcessor {
                         JsonUtils.toPrettyJsonString( result.expected ) + "\n" +
                         "Input #2 contained this:\n" +
                         JsonUtils.toPrettyJsonString( result.actual ), suppressOutput );
-            } catch ( IOException e ) {
+            } catch ( Exception e ) {
                 JoltCliUtilities.printToStandardOut( "Differences found, but diffy encountered an error while writing the result.", suppressOutput );
             } finally {
                 return false;

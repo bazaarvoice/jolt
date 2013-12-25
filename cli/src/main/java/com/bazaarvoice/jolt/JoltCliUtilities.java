@@ -78,7 +78,7 @@ public class JoltCliUtilities {
             } else {
                 printToStandardOut( JsonUtils.toPrettyJsonString( output ), suppressOutput );
             }
-        } catch ( IOException e ) {
+        } catch ( Exception e ) {
             printToStandardOut( "An error occured while attempting to print the output.", suppressOutput );
             return false;
         }
@@ -98,7 +98,7 @@ public class JoltCliUtilities {
         if ( file == null ) {
             try {
                 jsonObject = JsonUtils.jsonToMap( System.in );
-            } catch ( IOException e ) {
+            } catch ( Exception e ) {
                 if ( e instanceof JsonParseException ) {
                     printToStandardOut( "Standard input did not contain properly formatted JSON.", suppressOutput );
                 } else {
