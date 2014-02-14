@@ -13,13 +13,14 @@ JSON to JSON transformation library written in Java where the "specification" fo
    * [1 Overview](#Overview)
    * [2 Documentation](#Documentation)
    * [3 Shiftr Transform DSL](#Shiftr_Transform_DSL)
-   * [4 Getting Started](#Getting_Started)
-   * [5 Getting Transform Help](#Getting_Transform_Help)
-   * [6 Alternatives](#Alternatives)
-   * [7 Performance](#Performance)
-   * [8 CLI](#CLI)
-   * [9 Code Coverage](#Code_Coverage)
-   * [10 Release Notes](#Release_Notes)
+   * [4 Demo](#Demo)
+   * [5 Getting Started](#Getting_Started)
+   * [6 Getting Transform Help](#Getting_Transform_Help)
+   * [7 Alternatives](#Alternatives)
+   * [8 Performance](#Performance)
+   * [9 CLI](#CLI)
+   * [10 Code Coverage](#Code_Coverage)
+   * [11 Release Notes](#Release_Notes)
 
 ## <a name="Overview"></a> Overview
 
@@ -60,15 +61,14 @@ Running a Jolt transform means creating an instance of [Chainr](https://github.c
 The JSON spec for Chainr looks like : [unit test](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/test/resources/json/chainr/firstSample.json).
 
 The Java side looks like :
-```
-Chainr chainr = new Chainr( ...getResourceAsStream( "/path/to/chainr/spec.json" ) );
 
-Object input = elasticSearchHit.getSource(); // ElasticSearch already returns hydrated JSon
+    Chainr chainr = JsonUtils.classpathToList( "/path/to/chainr/spec.json" );
 
-Object output = chainr.transform( input );
+    Object input = elasticSearchHit.getSource(); // ElasticSearch already returns hydrated JSon
 
-return output;
-```
+    Object output = chainr.transform( input );
+
+    return output;
 
 ### <a name="Shiftr_Transform_DSL"></a> Shiftr Transform DSL
 
@@ -76,21 +76,20 @@ The Shiftr transform generally does most of the "heavy lifting" in the transform
 To see the Shiftr DSL in action, please look at our unit tests ([shiftr tests](https://github.com/bazaarvoice/jolt/tree/master/jolt-core/src/test/resources/json/shiftr)) for nice bite sized transform examples, and read the Shiftr [docs](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Shiftr.java).
 
 Our unit tests follow the pattern :
-```
-{
-    "input": {
-        // sample input
-    },
 
-    "spec": {
-        // transform spec
-    },
+    {
+        "input": {
+            // sample input
+        },
 
-    "expected": {
-        // what the output of the transform looks like
+        "spec": {
+            // transform spec
+        },
+
+        "expected": {
+            // what the output of the transform looks like
+        }
     }
-}
-```
 
 We read in "input", apply the "spec", and [Diffy](https://github.com/bazaarvoice/jolt/blob/master/json-utils/src/main/java/com/bazaarvoice/jolt/Diffy.java) it against the "expected".
 
@@ -99,9 +98,19 @@ To learn the Shiftr DSL, examine "input" and "output" json, get an understanding
 For reference, [this](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/test/resources/json/shiftr/firstSample.json) was the very first test we wrote.
 
 
+## <a name="Demo"></a> Demo
+
+There is a demo available at [jolt-demo.appspot.com](http://jolt-demo.appspot.com/).
+You can paste in JSON input data and a Spec, and it will post the data to server and run the transform.
+
+Note
+
+* it is hosted on a free Google App Engine instance, so it may take a minute to spin up.
+* it validates in input JSON and spec client side, but if there are any errors server side it just silently fails.
+
 ## <a name="Getting_Started"></a> Getting Started
 
-Has it's [own doc](gettingStarted.md).
+Getting started code wise has it's [own doc](gettingStarted.md).
 
 ## <a name="Getting_Transform_Help"></a> Getting Transform Help
 
@@ -158,4 +167,4 @@ Currently code coverage is at 89% line, and 81% branch.
 
 ## <a name="Release_Notes"></a> Release Notes
 
-On the [Github Jolt Wiki](https://github.com/bazaarvoice/jolt/wiki/Release-Notes).
+[Versions and Release Notes available here](https://github.com/bazaarvoice/jolt/releases).

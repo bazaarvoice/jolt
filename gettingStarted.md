@@ -16,7 +16,7 @@ Maven Dependency to Add to your pom file
 </dependency>
 ```
 
-Where `latest.jolt.version` looks like `0.0.5`, and can be found by looking at the [project's tags](https://github.com/bazaarvoice/jolt/tags).
+Where `latest.jolt.version` looks like `0.0.11`, and can be found by looking at the [project's releases](https://github.com/bazaarvoice/jolt/releases).
 
 The two maven artifacts are:
 
@@ -33,85 +33,88 @@ The two maven artifacts are:
 3. Replace the input and spec file with your own
 
 ### JoltSample.java
-```
-import com.bazaarvoice.jolt.Chainr;
-import com.bazaarvoice.jolt.JsonUtils;
 
-import java.io.IOException;
+Available [here](https://github.com/bazaarvoice/jolt/tree/master/jolt-core/src/test/java/com/bazaarvoice/jolt/sample/JoltSample.java).
 
-public class JoltSample {
+    package com.bazaarvoice.jolt.sample;
 
-    public static void main(String[] args) throws IOException {
+    import com.bazaarvoice.jolt.Chainr;
+    import com.bazaarvoice.jolt.JsonUtils;
 
-        Object chainrSpecJSON = JsonUtils.jsonToObject( JoltSample.class.getResourceAsStream( "chainrSpec.json" ) );
-        Chainr chainr = new Chainr( chainrSpecJSON );
+    import java.io.IOException;
+    import java.util.List;
 
-        Object inputJSON = JsonUtils.jsonToObject( JoltSample.class.getResourceAsStream( "input.json" ) );
+    public class JoltSample {
 
-        Object transformedOutput = chainr.transform( inputJSON );
-        System.out.println( JsonUtils.toJsonString( transformedOutput ) );
+        public static void main(String[] args) throws IOException {
+
+            List chainrSpecJSON = JsonUtils.classpathToList( "/json/sample/spec.json" );
+            Chainr chainr = Chainr.fromSpec( chainrSpecJSON );
+
+            Object inputJSON = JsonUtils.classpathToObject( "/json/sample/input.json" );
+
+            Object transformedOutput = chainr.transform( inputJSON );
+            System.out.println( JsonUtils.toJsonString( transformedOutput ) );
+        }
     }
-}
-```
 
-### input.json
-```
-{
-    "rating": {
-        "primary": {
-            "value": 3
+### /json/sample/input.json
+Available [here](https://github.com/bazaarvoice/jolt/tree/master/jolt-core/src/test/resources/json/sample/input.json).
+
+    {
+        "rating": {
+            "primary": {
+                "values": 3
+            },
+            "quality": {
+                "values": 3
+            }
+        }
+    }
+
+### /json/sample/spec.json
+Available [here](https://github.com/bazaarvoice/jolt/tree/master/jolt-core/src/test/resources/json/sample/spec.json).
+
+    [
+        {
+            "operation": "shift",
+            "spec": {
+                "rating": {
+                    "primary": {
+                        "values": "Rating"
+                    },
+                    "*": {
+                        "values": "SecondaryRatings.&1.Value",
+                        "$": "SecondaryRatings.&.Id"
+                    }
+                }
+            }
         },
-        "quality": {
-            "value": 3
-        }
-    }
-}
-```
-
-### chainrSpec.json
-```
-[
-    {
-        "operation": "shift",
-        "spec": {
-            "rating": {
-                "primary": {
-                    "value": "Rating"
-                },
-                "*": {
-                    "value": "SecondaryRatings.&1.Value",
-                    "$": "SecondaryRatings.&.Id"
+        {
+            "operation": "default",
+            "spec": {
+                "Range" : 5,
+                "SecondaryRatings" : {
+                    "*" : {
+                        "Range" : 5
+                    }
                 }
             }
         }
-    },
-    {
-        "operation": "default",
-        "spec": {
-            "Range" : 5,
-            "SecondaryRatings" : {
-                "*" : {
-                    "Range" : 5
-                }
-            }
-        }
-    }
-]
-```
+    ]
 
 ### Output
 
-Minus the pretty formatting, looks like :
-```
-{
-    "Rating": 3,
-    "Range": 5,
-    "SecondaryRatings": {
-        "quality": {
-            "Id": "quality",
-            "Value": 3,
-            "Range": 5
+With pretty formatting, looks like :
+
+    {
+        "Rating": 3,
+        "Range": 5,
+        "SecondaryRatings": {
+            "quality": {
+                "Id": "quality",
+                "Value": 3,
+                "Range": 5
+            }
         }
     }
-}
-```
