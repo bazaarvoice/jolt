@@ -30,9 +30,22 @@ import java.util.Map;
  */
 public class Diffy {
 
+    private final JsonUtil jsonUtil;
+
+    public Diffy() {
+        jsonUtil = JsonUtils.getDefaultJsonUtil();
+    }
+
+    /**
+     * Pass in a custom jsonUtil to use for the cloneJson method.
+     */
+    public Diffy( JsonUtil jsonUtil ) {
+        this.jsonUtil = jsonUtil;
+    }
+
     public Result diff(Object expected, Object actual) {
-        Object expectedCopy = JsonUtils.cloneJson( expected );
-        Object actualCopy = JsonUtils.cloneJson( actual );
+        Object expectedCopy = jsonUtil.cloneJson( expected );
+        Object actualCopy = jsonUtil.cloneJson( actual );
         return diffHelper( expectedCopy, actualCopy );
     }
 

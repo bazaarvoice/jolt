@@ -43,20 +43,6 @@ public class JsonUtils {
         return new JsonUtilImpl( mapper );
     }
 
-
-    /**
-     * Makes a deep copy of a Map<String, Object> object by converting it to a String and then
-     * back onto stock JSON objects.
-     *
-     * @param obj object tree to copy
-     * @return deep copy of the incoming obj
-     */
-    public static Object cloneJson( Object obj ) {
-
-        String string = util.toJsonString( obj );
-        return util.jsonToObject( string );
-    }
-
     /**
      * Removes a key recursively from anywhere in a JSON document.
      * NOTE: mutates its input.
@@ -112,6 +98,10 @@ public class JsonUtils {
         return jsonToMap( new ByteArrayInputStream( json.getBytes() ) );
     }
 
+    public static JsonUtil getDefaultJsonUtil() {
+        return util;
+    }
+
     //// All the methods listed below are static passthrus to the JsonUtil interface
     public static Object jsonToObject( String json ) {
         return util.jsonToObject( json );
@@ -165,6 +155,32 @@ public class JsonUtils {
         return util.classpathToType( classPath, typeRef );
     }
 
+    public static <T> T classpathToType( String classPath, Class<T> aClass ) {
+        return util.classpathToType( classPath, aClass );
+    }
+
+    public static <T> T stringToType ( String json, TypeReference<T> typeRef ) {
+        return util.stringToType( json, typeRef );
+    }
+
+    public static <T> T stringToType( String json, Class<T> aClass ) {
+        return util.stringToType( json, aClass );
+    }
+
+    public static <T> T fileToType ( String filePath, TypeReference<T> typeRef ) {
+        return util.fileToType( filePath, typeRef );
+    }
+    public static <T> T fileToType ( String filePath, Class<T> aClass ) {
+        return util.fileToType( filePath, aClass );
+    }
+
+    public static <T> T streamToType( InputStream in, TypeReference<T> typeRef ) {
+        return util.streamToType( in, typeRef );
+    }
+    public static <T> T streamToType( InputStream in, Class<T> aClass ) {
+        return util.streamToType( in, aClass );
+    }
+
     /**
      * Use the stringToType method instead.
      */
@@ -187,5 +203,18 @@ public class JsonUtils {
 
     public static String toPrettyJsonString( Object obj ) {
         return util.toPrettyJsonString( obj );
+    }
+
+
+    /**
+     * Makes a deep copy of a Map<String, Object> object by converting it to a String and then
+     * back onto stock JSON objects.
+     *
+     * @param obj object tree to copy
+     * @return deep copy of the incoming obj
+     */
+    public static Object cloneJson( Object obj ) {
+        // use the "configured" util for the serialize to String part
+        return util.cloneJson( obj );
     }
 }

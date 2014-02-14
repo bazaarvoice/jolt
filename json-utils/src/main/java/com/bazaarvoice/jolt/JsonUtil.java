@@ -63,12 +63,29 @@ public interface JsonUtil {
     @Deprecated
     <T> T jsonTo( InputStream in, TypeReference<T> typeRef );
 
-    <T> T stringToType   (    String json, TypeReference<T> typeRef );
-    <T> T classpathToType(    String json, TypeReference<T> typeRef );
-    <T> T fileToType     (    String json, TypeReference<T> typeRef );
-    <T> T streamToType   ( InputStream in, TypeReference<T> typeRef );
+    <T> T stringToType   (String json, TypeReference<T> typeRef );
+    <T> T stringToType   (String json, Class<T> aClass );
 
-    // SERIALIZATION
+    <T> T classpathToType(String classPath, TypeReference<T> typeRef );
+    <T> T classpathToType(String classPath, Class<T> aClass );
+
+    <T> T fileToType     (String filePath, TypeReference<T> typeRef );
+    <T> T fileToType     (String filePath, Class<T> aClass );
+
+    <T> T streamToType   ( InputStream in, TypeReference<T> typeRef );
+    <T> T streamToType   ( InputStream in, Class<T> aClass );
+
     String toJsonString( Object obj );
     String toPrettyJsonString( Object obj );
+
+    /**
+     * Makes a deep copy of a Map<String, Object> object by converting it to a String and then
+     * back onto stock JSON objects.
+     *
+     * Leverages Serialization
+     *
+     * @param obj object tree to copy
+     * @return deep copy of the incoming obj
+     */
+    Object cloneJson( Object obj );
 }

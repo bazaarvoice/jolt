@@ -78,10 +78,12 @@ public class JsonUtilImpl implements JsonUtil {
     }
 
     // DE-SERIALIZATION
+    @Override
     public Object jsonToObject( String json ) {
         return jsonToObject( new ByteArrayInputStream( json.getBytes() ) );
     }
 
+    @Override
     public Object jsonToObject( InputStream in ) {
         try {
             return objectMapper.readValue( in, Object.class );
@@ -91,10 +93,12 @@ public class JsonUtilImpl implements JsonUtil {
         }
     }
 
+    @Override
     public Map<String, Object> jsonToMap( String json ) {
         return jsonToMap( new ByteArrayInputStream( json.getBytes() ) );
     }
 
+    @Override
     public Map<String, Object> jsonToMap( InputStream in ) {
         try {
             return objectMapper.readValue( in, mapTypeReference );
@@ -104,10 +108,12 @@ public class JsonUtilImpl implements JsonUtil {
         }
     }
 
+    @Override
     public List<Object> jsonToList( String json ) {
         return jsonToList( new ByteArrayInputStream( json.getBytes() ) );
     }
 
+    @Override
     public List<Object> jsonToList( InputStream in ) {
         try {
             return objectMapper.readValue( in, listTypeReference );
@@ -118,6 +124,7 @@ public class JsonUtilImpl implements JsonUtil {
     }
 
 
+    @Override
     public Object filepathToObject( String filePath ) {
         try {
             FileInputStream fileInputStream = new FileInputStream( filePath );
@@ -128,6 +135,7 @@ public class JsonUtilImpl implements JsonUtil {
         }
     }
 
+    @Override
     public Map<String, Object> filepathToMap( String filePath ) {
         try {
             FileInputStream fileInputStream = new FileInputStream( filePath );
@@ -138,6 +146,7 @@ public class JsonUtilImpl implements JsonUtil {
         }
     }
 
+    @Override
     public List<Object> filepathToList( String filePath ) {
         try {
             FileInputStream fileInputStream = new FileInputStream( filePath );
@@ -148,6 +157,7 @@ public class JsonUtilImpl implements JsonUtil {
         }
     }
 
+    @Override
     public Object classpathToObject( String classPath ) {
         try {
             InputStream inputStream = this.getClass().getResourceAsStream( classPath );
@@ -159,6 +169,7 @@ public class JsonUtilImpl implements JsonUtil {
         }
     }
 
+    @Override
     public Map<String, Object> classpathToMap( String classPath ) {
         try {
             InputStream inputStream = this.getClass().getResourceAsStream( classPath );
@@ -169,6 +180,7 @@ public class JsonUtilImpl implements JsonUtil {
         }
     }
 
+    @Override
     public List<Object> classpathToList( String classPath ) {
         try {
             InputStream inputStream = this.getClass().getResourceAsStream( classPath );
@@ -180,24 +192,38 @@ public class JsonUtilImpl implements JsonUtil {
     }
 
     @Deprecated
+    @Override
     public <T> T jsonTo( InputStream in, TypeReference<T> typeRef ) {
         return streamToType(in, typeRef);
     }
 
     @Deprecated
+    @Override
     public <T> T jsonTo( String json, TypeReference<T> typeRef ) {
         return streamToType( new ByteArrayInputStream( json.getBytes() ), typeRef );
     }
 
-    public <T> T stringToType(    String json, TypeReference<T> typeRef ) {
+    @Override
+    public <T> T stringToType( String json, TypeReference<T> typeRef ) {
         return streamToType( new ByteArrayInputStream( json.getBytes() ), typeRef );
     }
 
-    public <T> T classpathToType(    String path, TypeReference<T> typeRef ) {
-        return streamToType( this.getClass().getResourceAsStream( path ), typeRef );
+    @Override
+    public <T> T stringToType( String json, Class<T> aClass ) {
+        return streamToType( new ByteArrayInputStream( json.getBytes() ), aClass );
     }
 
-    public <T> T fileToType  (    String filePath, TypeReference<T> typeRef ) {
+    @Override
+    public <T> T classpathToType( String classPath, TypeReference<T> typeRef ) {
+        return streamToType( this.getClass().getResourceAsStream( classPath ), typeRef );
+    }
+    @Override
+    public <T> T classpathToType( String classPath, Class<T> aClass ) {
+        return streamToType( this.getClass().getResourceAsStream( classPath ), aClass );
+    }
+
+    @Override
+    public <T> T fileToType( String filePath, TypeReference<T> typeRef ) {
         try {
             FileInputStream fileInputStream = new FileInputStream( filePath );
             return streamToType( fileInputStream, typeRef );
@@ -207,6 +233,18 @@ public class JsonUtilImpl implements JsonUtil {
         }
     }
 
+    @Override
+    public <T> T fileToType( String filePath, Class<T> aClass ) {
+        try {
+            FileInputStream fileInputStream = new FileInputStream( filePath );
+            return streamToType( fileInputStream, aClass );
+        }
+        catch ( IOException e ) {
+            throw new RuntimeException( "Unable to load JSON file from: " + filePath );
+        }
+    }
+
+    @Override
     public <T> T streamToType( InputStream in, TypeReference<T> typeRef ) {
         try {
             return objectMapper.readValue( in, typeRef );
@@ -216,8 +254,19 @@ public class JsonUtilImpl implements JsonUtil {
         }
     }
 
+    @Override
+    public <T> T streamToType( InputStream in, Class<T> aClass ) {
+        try {
+            return objectMapper.readValue( in, aClass );
+        }
+        catch ( IOException e ) {
+            throw new RuntimeException( "Unable to load JSON object from InputStream.", e );
+        }
+    }
+
 
     // SERIALIZATION
+    @Override
     public String toJsonString( Object obj ) {
         try {
             return objectMapper.writeValueAsString( obj );
@@ -227,6 +276,7 @@ public class JsonUtilImpl implements JsonUtil {
         }
     }
 
+    @Override
     public String toPrettyJsonString( Object obj ) {
         try {
             return prettyPrintWriter.writeValueAsString( obj );
@@ -234,5 +284,11 @@ public class JsonUtilImpl implements JsonUtil {
         catch ( IOException e ) {
             throw new RuntimeException( "Unable to serialize object : " + obj, e );
         }
+    }
+
+    @Override
+    public Object cloneJson( Object obj ) {
+        String string = this.toJsonString( obj );
+        return this.jsonToObject( string );
     }
 }
