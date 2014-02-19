@@ -16,7 +16,7 @@ Maven Dependency to Add to your pom file
 </dependency>
 ```
 
-Where `latest.jolt.version` looks like `0.0.11`, and can be found by looking at the [project's releases](https://github.com/bazaarvoice/jolt/releases).
+Where `latest.jolt.version` looks like `0.0.12`, and can be found by looking at the [project's releases](https://github.com/bazaarvoice/jolt/releases).
 
 The two maven artifacts are:
 

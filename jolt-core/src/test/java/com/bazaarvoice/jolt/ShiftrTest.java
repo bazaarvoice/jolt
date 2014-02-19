@@ -43,6 +43,7 @@ public class ShiftrTest {
             {"mapToList2"},
             {"multiPlacement"},
             {"objectToArray"},
+            {"passThru"},
             {"prefixDataToArray"},
             {"prefixedData"},
             {"prefixSoupToBuckets"},

@@ -24,23 +24,30 @@ JSON to JSON transformation library written in Java where the "specification" fo
 
 ## <a name="Overview"></a> Overview
 
-Jolt provides a set transform components, that can be "chained" together to form the overall JSON to JSON transform.
+Jolt :
 
-Jolt consumes and produces "hydrated" JSON : in-memory tree of Maps, Lists, Strings, etc.
+* provides a set of transforms, that can be "chained" together to form the overall JSON to JSON transform.
+* focuses on transforming the *structure* of your JSON data, not manipulating specific values
+    * The idea being: use Jolt to get most of the structure right, then write code to fix values
+* consumes and produces "hydrated" JSON : in-memory tree of Maps, Lists, Strings, etc.
+    * use Jackson (or whatever) to serialize and deserialize the JSON text
 
-Jolt lets Jackson serialize and deserialize the JSON text which offloads the work of handling commas and closing brackets.
+### Stock Transforms
 
-Each transform component covers a specific transform task with a unique JSON format DSL for that task.
+The Stock transforms are:
 
-The provided transforms are:
+    shift       : copy data from the input tree and put it the output tree
+    default     : apply default values to the tree
+    remove      : remove data from the tree
+    sort        : sort the Map key values alphabetically ( for debugging and human readability )
+    cardinality : "fix" the cardinality of input data.  Eg, the "urls" element is usually a List, but if there is only one, then it is a String
 
-    shift   : copy data from the input tree and put it the output tree
-    default : apply default values to the tree
-    remove  : remove data from the tree
-    sort    : sort the Map key values alphabetically ( for debugging and human readability )
-    java    : run any Java class that implements the `Transform` interface
+Each transform has it's own DSL (Domain Specific Language) in order to facilitate it's narrow job.
 
-The out-of-the-box Jolt transforms should be able to do 90% of what you need, with the `java` component giving you a way to implement that last 10%.
+Currently, all the Stock transforms just effect the "structure" of the data.
+To do data manipulation, you will need to write Java code.   If you write your Java "data manipulation" code to implement the Transform interface, then you can insert your code in the transform chain.
+
+The out-of-the-box Jolt transforms should be able to do most of your structural transformation, with custom Java Transforms implementing your data manipulation.
 
 ## <a name="Documentation"></a> Documentation
 
@@ -52,9 +59,10 @@ Javadoc explaining each transform DSL :
 * [default](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Defaultr.java)
 * [remove](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Removr.java)
 * [sort](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Sortr.java)
-* java : Implement the Transform or SpecDriven interfaces
+* full qualified Java ClassName : Class implements the Transform or ContextualTransform interfaces, and can optionally be SpecDriven (marker interface)
     * [Transform](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Transform.java) interface
     * [SpecDriven](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/SpecDriven.java)
+        * where the "input" is "hydrated" Java version of your JSON Data
 
 Running a Jolt transform means creating an instance of [Chainr](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Chainr.java)  with a list of transforms.
 
@@ -73,7 +81,7 @@ The Java side looks like :
 ### <a name="Shiftr_Transform_DSL"></a> Shiftr Transform DSL
 
 The Shiftr transform generally does most of the "heavy lifting" in the transform chain.
-To see the Shiftr DSL in action, please look at our unit tests ([shiftr tests](https://github.com/bazaarvoice/jolt/tree/master/jolt-core/src/test/resources/json/shiftr)) for nice bite sized transform examples, and read the Shiftr [docs](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Shiftr.java).
+To see the Shiftr DSL in action, please look at our unit tests ([shiftr tests](https://github.com/bazaarvoice/jolt/tree/master/jolt-core/src/test/resources/json/shiftr)) for nice bite sized transform examples, and read the extensive Shiftr [javadoc](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Shiftr.java).
 
 Our unit tests follow the pattern :
 
