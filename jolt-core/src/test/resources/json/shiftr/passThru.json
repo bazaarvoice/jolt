@@ -1,0 +1,57 @@
+{
+    "input": {
+
+        "id": "reviewId",
+        "text": "This is a review.",
+        "rating" : 5,
+
+        "statistics": {
+            "id": "statsId",
+            "feedbackCount": "10"
+        },
+        "author": [
+            {
+                "id": "authorId",
+                "name": "Author Name",
+                "other" : "this should not pass thru"
+            }
+        ]
+    },
+
+    // I want to
+    //  1) "rename" statistics
+    //  2) pass thru author id
+    //  3) pass thru everything else
+    "spec": {
+
+        "statistics" : "stats",   // "rename" statistics -> stats
+
+        "id|text|rating" : "&",   // This is nice and compact.  Good use of the "|" LHS operator.
+
+        "author" : {
+            "*" :{
+                "id|name" : "&2.[&1].&"   // This is a bit hokey, in that we need to enumerate the entire tree that we came down.
+                                          // Note this could have been "author[&1].&"
+            }
+        }
+    },
+
+    "expected": {
+
+        "id": "reviewId",
+        "text": "This is a review.",
+        "rating" : 5,
+
+        "author": [
+            {
+                "id": "authorId",
+                "name": "Author Name"
+            }
+        ],
+
+        "stats": {
+            "id": "statsId",
+            "feedbackCount": "10"
+        }
+    }
+}
