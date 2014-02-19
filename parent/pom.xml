@@ -34,7 +34,7 @@
         <argparse4j.version>0.4.2</argparse4j.version>
 
         <!-- TEST -->
-        <guava.version>15.0</guava.version>
+        <guava.version>16.0.1</guava.version>
         <testng.version>6.8.7</testng.version>
     </properties>
 
