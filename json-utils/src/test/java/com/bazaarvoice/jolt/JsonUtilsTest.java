@@ -15,10 +15,13 @@
  */
 package com.bazaarvoice.jolt;
 
+import com.beust.jcommander.internal.Sets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import org.testng.Assert;
 import org.testng.AssertJUnit;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.testng.collections.Lists;
@@ -26,6 +29,7 @@ import org.testng.collections.Lists;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +41,40 @@ public class JsonUtilsTest {
     private Map ab = ImmutableMap.builder().put( "a", "b" ).build();
     private Map cd = ImmutableMap.builder().put( "c", "d" ).build();
     private Map top = ImmutableMap.builder().put( "A", ab ).put( "B", cd ).build();
+
+    private String jsonSourceString = "{ " +
+                                      "    \"a\": { " +
+                                      "        \"b\": [ " +
+                                      "            0, " +
+                                      "            1, " +
+                                      "            2, " +
+                                      "            1.618 " +
+                                      "        ] " +
+                                      "    }, " +
+                                      "    \"p\": [ " +
+                                      "        \"m\", " +
+                                      "        \"n\", " +
+                                      "        { " +
+                                      "            \"1\": 1, " +
+                                      "            \"2\": 2, " +
+                                      "            \"pi\": 3.14159 " +
+                                      "        } " +
+                                      "    ], " +
+                                      "    \"x\": \"y\" " +
+                                      "}\n";
+
+    private Object jsonSource;
+
+    @BeforeClass
+    @SuppressWarnings("unchecked")
+    public void setup() throws IOException {
+        jsonSource = JsonUtils.jsonToObject(jsonSourceString);
+        // added for type cast checking
+        Set<String> aSet = Sets.newHashSet();
+        aSet.add("i");
+        aSet.add("j");
+        ((Map) jsonSource).put("s", aSet);
+    }
 
     @DataProvider
     public Object[][] removeRecursiveCases() {
@@ -90,6 +128,7 @@ public class JsonUtilsTest {
     public void runFixtureTests() throws IOException {
 
         String testFixture = "/jsonUtils/jsonUtils-removeRecursive.json";
+        @SuppressWarnings("unchecked")
         List<Map<String, Object>> tests = (List<Map<String, Object>>) JsonUtils.classpathToObject( testFixture );
 
         for ( Map<String,Object> testUnit : tests ) {
@@ -148,4 +187,47 @@ public class JsonUtilsTest {
         // Verify that the close method was in fact called on the InputStream
         AssertJUnit.assertEquals( 1, closedSet.size() );
     }
+
+    @DataProvider (parallel = true)
+         public Iterator<Object[]> coordinates() throws IOException {
+             List<Object[]> testCases = com.beust.jcommander.internal.Lists.newArrayList();
+     
+             testCases.add(new Object[] { 0, new Object[] {"a", "b", 0}} );
+             testCases.add(new Object[] { 1, new Object[] {"a", "b", 1}} );
+             testCases.add(new Object[] { 2, new Object[] {"a", "b", 2}} );
+             testCases.add(new Object[] { 1.618, new Object[] {"a", "b", 3}} );
+             testCases.add(new Object[] { "m", new Object[] {"p", 0}} );
+             testCases.add(new Object[] { "n", new Object[] {"p", 1}} );
+             testCases.add(new Object[] { 1, new Object[] {"p", 2, "1"}} );
+             testCases.add(new Object[] { 2, new Object[] {"p", 2, "2"}} );
+             testCases.add(new Object[] { 3.14159, new Object[] {"p", 2, "pi"}} );
+             testCases.add(new Object[] { "y", new Object[] {"x"}} );
+     
+             testCases.add(new Object[] { ((Map) jsonSource).get("a"), new Object[] {"a"}} );
+             testCases.add(new Object[] { ((Map)(((Map) jsonSource).get("a"))).get("b"), new Object[] {"a", "b"}} );
+             testCases.add(new Object[] { ((List)((Map)(((Map) jsonSource).get("a"))).get("b")).get(0), new Object[] {"a", "b", 0}} );
+             testCases.add(new Object[] { ((List)((Map)(((Map) jsonSource).get("a"))).get("b")).get(1), new Object[] {"a", "b", 1}} );
+             testCases.add(new Object[] { ((List)((Map)(((Map) jsonSource).get("a"))).get("b")).get(2), new Object[] {"a", "b", 2}} );
+             testCases.add(new Object[] { ((List)((Map)(((Map) jsonSource).get("a"))).get("b")).get(3), new Object[] {"a", "b", 3}} );
+             testCases.add(new Object[] { ((Map) jsonSource).get("p"), new Object[] {"p"}} );
+             testCases.add(new Object[] { ((List)(((Map) jsonSource).get("p"))).get(0), new Object[] {"p", 0}} );
+             testCases.add(new Object[] { ((List)(((Map) jsonSource).get("p"))).get(1), new Object[] {"p", 1}} );
+             testCases.add(new Object[] { ((List)(((Map) jsonSource).get("p"))).get(2), new Object[] {"p", 2}} );
+             testCases.add(new Object[] { ((Map)((List)(((Map) jsonSource).get("p"))).get(2)).get("1"), new Object[] {"p", 2, "1"}} );
+             testCases.add(new Object[] { ((Map)((List)(((Map) jsonSource).get("p"))).get(2)).get("2"), new Object[] {"p", 2, "2"}} );
+             testCases.add(new Object[] { ((Map)((List)(((Map) jsonSource).get("p"))).get(2)).get("pi"), new Object[] {"p", 2, "pi"}} );
+             testCases.add(new Object[] { ((Map) jsonSource).get("x"), new Object[] {"x"}} );
+     
+             return testCases.iterator();
+         }
+
+    /**
+     * Method: navigate(Object source, Object... paths)
+     */
+    @Test (dataProvider = "coordinates")
+    public void navigator(Object expected, Object[] path) throws Exception {
+        Object actual = JsonUtils.navigate(jsonSource, path);
+        Assert.assertEquals(actual, expected);
+    }
+
 }

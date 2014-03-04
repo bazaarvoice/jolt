@@ -217,4 +217,25 @@ public class JsonUtils {
         // use the "configured" util for the serialize to String part
         return util.cloneJson( obj );
     }
+
+    /**
+     * Navigate inside a json object in quick and dirty way.
+     *
+     * @param source the source json object
+     * @param paths the paths array to travel
+     * @return the object of Type <T> at final destination
+     * @throws NullPointerException if the source is null
+     * @throws UnsupportedOperationException if the source is not Map or List
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T navigate(Object source, Object... paths) throws NullPointerException, UnsupportedOperationException {
+        Object destination = source;
+        for (Object path : paths) {
+            if(destination == null) throw new NullPointerException("Navigation not possible on null object");
+            if(destination instanceof Map) destination = ((Map) destination).get(path);
+            else if(path instanceof Integer && destination instanceof List) destination = ((List) destination).get((Integer)path);
+            else throw new UnsupportedOperationException("Navigation supports only Map and List source types and non-null String and Integer path types");
+        }
+        return (T) destination;
+    }
 }
