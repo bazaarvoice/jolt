@@ -18,6 +18,7 @@ package com.bazaarvoice.jolt.chainr.spec;
 import com.bazaarvoice.jolt.CardinalityTransform;
 import com.bazaarvoice.jolt.Chainr;
 import com.bazaarvoice.jolt.Defaultr;
+import com.bazaarvoice.jolt.Extractr;
 import com.bazaarvoice.jolt.JoltTransform;
 import com.bazaarvoice.jolt.Removr;
 import com.bazaarvoice.jolt.Shiftr;
@@ -43,6 +44,7 @@ public class ChainrEntry {
     static {
         HashMap<String, String> temp = new HashMap<String, String>();
         temp.put( "shift", Shiftr.class.getCanonicalName() );
+        temp.put( "extract", Extractr.class.getCanonicalName() );
         temp.put( "default", Defaultr.class.getCanonicalName() );
         temp.put( "remove", Removr.class.getCanonicalName() );
         temp.put( "sort", Sortr.class.getCanonicalName() );

@@ -1,0 +1,28 @@
+{
+    "input": {
+        "rating": {
+            "primary": {
+                "value": 4,
+                "max": 5
+            },
+            "quality": {
+                "value": 3,
+                "max": 7
+            },
+            "texture": {
+                "value": 5,
+                "max": 7
+            }
+        }
+    },
+
+    "spec": {
+        "rating.*.value" : "ratingValues[]",
+        "rating.*.$" : "ratingKeys[]"
+    },
+
+    "expected": {
+        "ratingValues" : [ 4, 3, 5 ],
+        "ratingKeys" : ["primary", "quality", "texture"]
+    }
+}

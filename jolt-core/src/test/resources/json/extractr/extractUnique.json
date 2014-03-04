@@ -1,0 +1,45 @@
+{
+    "input": {
+        "book": [
+            {
+                "title": "Altered Carbon",
+                "author": "Richard K Morgan"
+            },
+            {
+                "title": "Broken Angels",
+                "author": "Richard K Morgan"
+            },
+            {
+                "title": "Snow Crash",
+                "author": "Neal Stephenson"
+            },
+            {
+                "title": "In the Beginning was the Command Line",
+                "author": "Neal Stephenson"
+            },
+            {
+                "title": "Old Man's War",
+                "author": "John Scalzi"
+            }
+        ]
+    },
+
+    // I want to know what all the unique authors are.
+    // What I want is a Set, and the only Set semantics available in Json are as the keySet of a map.
+    // Hence, I want Shiftr to walk all the way down, and use the author "value" as a key, in the output.
+    // Having walked down that far, the value that will be written is "null".
+    //
+    // Example "book.*.author.*" will match down to "book.0.author.Richard K Morgan".   At "Richard K Morgan" there is no RHS value,
+    //  or rather the Right Hand Side value is null.
+    "spec": {
+        "book.*.author.*" : "authors.&"
+    },
+
+    "expected": {
+        "authors": {
+            "Richard K Morgan": null,
+            "Neal Stephenson": null,
+            "John Scalzi": null
+        }
+    }
+}
