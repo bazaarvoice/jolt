@@ -21,7 +21,7 @@ import com.bazaarvoice.jolt.common.pathelement.EvaluatablePathElement;
 import com.bazaarvoice.jolt.common.pathelement.PathElement;
 import com.bazaarvoice.jolt.shiftr.spec.ShiftrSpec;
 import com.bazaarvoice.jolt.traversr.Traversr;
-import org.apache.commons.lang.StringUtils;
+import com.bazaarvoice.jolt.utils.StringTools;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +49,7 @@ public class ShiftrWriter {
         List<PathElement> paths;
         Traversr trav;
 
-        if ( StringUtils.isNotBlank( dotNotation ) ) {
+        if ( StringTools.isNotBlank(dotNotation) ) {
             String[] split = dotNotation.split( "\\." );
 
             paths = ShiftrSpec.parse( split );

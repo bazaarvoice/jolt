@@ -17,7 +17,7 @@ package com.bazaarvoice.jolt.shiftr.spec;
 
 import com.bazaarvoice.jolt.Shiftr;
 import com.bazaarvoice.jolt.shiftr.ShiftrWriter;
-import org.apache.commons.lang.StringUtils;
+import com.bazaarvoice.jolt.utils.StringTools;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.common.WalkedPath;
 import com.bazaarvoice.jolt.common.pathelement.AtPathElement;
@@ -75,7 +75,7 @@ public class ShiftrLeafSpec extends ShiftrSpec {
         // This is needed for the "identity" transform, eg if we are just supposed to put the input into the output
         //  what key do we put it under?
         String outputPathStr = (String) rawObj;
-        if ( StringUtils.isBlank( outputPathStr ) ) {
+        if ( StringTools.isBlank(outputPathStr) ) {
             outputPathStr = Shiftr.ROOT_KEY;
         }
         else {

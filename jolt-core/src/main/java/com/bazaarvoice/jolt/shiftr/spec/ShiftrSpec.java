@@ -18,7 +18,7 @@ package com.bazaarvoice.jolt.shiftr.spec;
 import com.bazaarvoice.jolt.common.pathelement.*;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.common.WalkedPath;
-import org.apache.commons.lang.StringUtils;
+import com.bazaarvoice.jolt.utils.StringTools;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,7 +87,7 @@ public abstract class ShiftrSpec {
         }
         else if ( key.contains("[") ) {
 
-            if ( StringUtils.countMatches( key, "[" ) != 1 || StringUtils.countMatches( key, "]" ) != 1 ) {
+            if ( StringTools.countMatches(key, "[") != 1 || StringTools.countMatches(key, "]") != 1 ) {
                 throw new SpecException( "Invalid key:" + key + " has too many [] references.");
             }
 
@@ -126,7 +126,7 @@ public abstract class ShiftrSpec {
         }
         else if (key.contains("*" ) ) {
 
-            int numOfStars = StringUtils.countMatches( key, "*" );
+            int numOfStars = StringTools.countMatches(key, "*");
 
             if(numOfStars == 1){
                 return Arrays.<PathElement>asList( new StarSinglePathElement( key ) );
