@@ -24,7 +24,7 @@ import com.bazaarvoice.jolt.common.pathelement.StarRegexPathElement;
 import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.common.pathelement.StarPathElement;
 import com.bazaarvoice.jolt.exception.SpecException;
-import org.apache.commons.lang.StringUtils;
+import com.bazaarvoice.jolt.utils.StringTools;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,7 +56,7 @@ public abstract class RemovrSpec {
             return Arrays.<PathElement>asList(new StarAllPathElement(key));
         }
 
-        int numOfStars = StringUtils.countMatches(key, "*");
+        int numOfStars = StringTools.countMatches(key, "*");
         if (numOfStars == 1) {
             return Arrays.<PathElement>asList(new StarSinglePathElement(key));
         } else if (numOfStars == 2) {

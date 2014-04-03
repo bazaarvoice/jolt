@@ -16,7 +16,7 @@
 package com.bazaarvoice.jolt.common.pathelement;
 
 import com.bazaarvoice.jolt.common.WalkedPath;
-import org.apache.commons.lang.StringUtils;
+import com.bazaarvoice.jolt.utils.StringTools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ public class StarDoublePathElement extends BasePathElement implements StarPathEl
     public StarDoublePathElement(String key) {
         super(key);
 
-        if ( StringUtils.countMatches(key, "*") != 2 ) {
+        if ( StringTools.countMatches(key, "*") != 2 ) {
             throw new IllegalArgumentException( "StarDoublePathElement should have two '*' in its key." );
         }
 

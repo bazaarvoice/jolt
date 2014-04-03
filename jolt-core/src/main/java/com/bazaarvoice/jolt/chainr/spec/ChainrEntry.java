@@ -24,7 +24,7 @@ import com.bazaarvoice.jolt.Shiftr;
 import com.bazaarvoice.jolt.Sortr;
 import com.bazaarvoice.jolt.SpecDriven;
 import com.bazaarvoice.jolt.exception.SpecException;
-import org.apache.commons.lang.StringUtils;
+import com.bazaarvoice.jolt.utils.StringTools;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -109,7 +109,7 @@ public class ChainrEntry {
             return null;
         }
         else if ( operationNameObj instanceof String) {
-            if ( StringUtils.isBlank( (String) operationNameObj ) ) {
+            if ( StringTools.isBlank((String) operationNameObj) ) {
                 throw new SpecException( "JOLT Chainr '" + ChainrEntry.OPERATION_KEY + "' should not be blank" + getErrorMessageIndexSuffix() );
             }
             return (String) operationNameObj;

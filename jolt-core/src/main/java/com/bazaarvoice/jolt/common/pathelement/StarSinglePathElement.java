@@ -16,7 +16,7 @@
 package com.bazaarvoice.jolt.common.pathelement;
 
 import com.bazaarvoice.jolt.common.WalkedPath;
-import org.apache.commons.lang.StringUtils;
+import com.bazaarvoice.jolt.utils.StringTools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ public class StarSinglePathElement extends BasePathElement implements StarPathEl
     public StarSinglePathElement( String key ) {
         super(key);
 
-        if ( StringUtils.countMatches( key, "*" ) != 1 ) {
+        if ( StringTools.countMatches(key, "*") != 1 ) {
             throw new IllegalArgumentException( "StarSinglePathElement should only have one '*' in its key." );
         }
         else if ( "*".equals( key ) ) {

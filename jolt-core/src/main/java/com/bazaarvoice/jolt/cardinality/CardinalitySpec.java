@@ -24,7 +24,7 @@ import com.bazaarvoice.jolt.common.pathelement.StarAllPathElement;
 import com.bazaarvoice.jolt.common.pathelement.StarRegexPathElement;
 import com.bazaarvoice.jolt.common.pathelement.StarSinglePathElement;
 import com.bazaarvoice.jolt.exception.SpecException;
-import org.apache.commons.lang.StringUtils;
+import com.bazaarvoice.jolt.utils.StringTools;
 
 import java.util.Arrays;
 import java.util.List;
@@ -79,7 +79,7 @@ public abstract class CardinalitySpec {
             return Arrays.<PathElement>asList( new StarAllPathElement( key ) );
         }
         else if ( key.contains(STAR) ) {
-            if ( StringUtils.countMatches( key, STAR) == 1 ) {
+            if ( StringTools.countMatches(key, STAR) == 1 ) {
                 return Arrays.<PathElement>asList( new StarSinglePathElement( key ) );
             }
             else {
