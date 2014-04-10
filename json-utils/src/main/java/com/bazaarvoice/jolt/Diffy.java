@@ -134,5 +134,16 @@ public class Diffy {
         public boolean isEmpty() {
             return (expected == null) && (actual == null);
         }
+
+        @Override
+        public String toString() {
+            if(isEmpty()) {
+                return "There is no difference!";
+            }
+            else {
+                return "\nExpected:\n" + JsonUtils.toPrettyJsonString(expected) + "\n" +
+                       "\nActual\n" + JsonUtils.toPrettyJsonString(actual);
+            }
+        }
     }
 }

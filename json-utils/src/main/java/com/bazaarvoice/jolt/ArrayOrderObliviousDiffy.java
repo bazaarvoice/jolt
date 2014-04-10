@@ -26,16 +26,32 @@ import java.util.List;
  */
 public class ArrayOrderObliviousDiffy extends Diffy {
 
+    @Override
     protected Result diffList(List expected, List actual) {
-        Result result = super.diffList( expected, actual );
-        if (result.isEmpty()) {
-            return result;
-        }
-        for (int i=expected.size()-1; i>=0; i--) {
-            int idx = actual.indexOf( expected.get( i ) );
-            if (idx >= 0) {
-                expected.remove( i );
-                actual.remove( idx );
+        for (int i=0; i<expected.size(); i++) {
+            Object exp = expected.get(i);
+            /**
+             * iterate through all the items in list and see any of them matches with it
+             * contains() does the same thing, but checks only equals()
+             * we have to check if either, equals() or hashcode() or our own diff()
+             * returns that they are same
+             *
+             * this applies to Lists with similar but differently ordered data set
+             * i.e. [[1,2]].contains([2,1]) == false
+             *
+             * this is expensive, but necessary!
+             */
+            for(int j=0; j< actual.size(); j++) {
+                Object act = actual.get(j);
+                if((act != null && exp != null) && (
+                        act.equals(exp) ||
+                        act.hashCode() == exp.hashCode() ||
+                        diff(exp, act).isEmpty()
+                    )) {
+                    expected.remove(i);
+                    actual.remove(j);
+                    i--; j--;
+                }
             }
         }
         if (expected.isEmpty() && actual.isEmpty()) {
