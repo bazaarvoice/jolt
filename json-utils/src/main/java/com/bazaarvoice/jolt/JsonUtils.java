@@ -47,10 +47,13 @@ public class JsonUtils {
      * Removes a key recursively from anywhere in a JSON document.
      * NOTE: mutates its input.
      *
+     * Deprecated: use JoltUtils instead
+     *
      * @param json        the Jackson Object version of the JSON document
      *                    (contents changed by this call)
      * @param keyToRemove the key to remove from the document
      */
+    @Deprecated
     public static void removeRecursive( Object json, String keyToRemove ) {
         if ( ( json == null ) || ( keyToRemove == null ) ) {
             return;
@@ -221,6 +224,8 @@ public class JsonUtils {
     /**
      * Navigate inside a json object in quick and dirty way.
      *
+     * Deprecated: use JoltUtils instead
+     *
      * @param source the source json object
      * @param paths the paths array to travel
      * @return the object of Type <T> at final destination
@@ -228,6 +233,7 @@ public class JsonUtils {
      * @throws UnsupportedOperationException if the source is not Map or List
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public static <T> T navigate(Object source, Object... paths) throws NullPointerException, UnsupportedOperationException {
         Object destination = source;
         for (Object path : paths) {
