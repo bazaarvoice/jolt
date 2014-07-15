@@ -103,7 +103,7 @@ import java.util.Map;
  * }
  * </pre>
  *
- * The Spec file format for Defaulr a tree Map<String, Object> objects.   Defaultr handles outputing
+ * The Spec file format for Defaulr a tree Map<String, Object> objects.   Defaultr handles outputting
  *  of JSON Arrays via special wildcard in the Spec.
  *
  * Defaltr Spec WildCards and Flag :
