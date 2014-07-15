@@ -32,7 +32,7 @@ import java.util.Map;
  * At a base level, a single Shiftr "command" is a mapping from an input path to an output path,
  *  similar to the "mv" command in Unix, "mv /var/data/mysql/data /media/backup/mysql".
  *
- * In Shiftr, the input path is a JSON tree structure, and the output path is flattend "dot notation" path notation.
+ * In Shiftr, the input path is a JSON tree structure, and the output path is flattened "dot notation" path notation.
  *
  * The idea is that you can start with a copy your JSon input data data and modify it into a Shiftr spec by
  *  supplying a "dot notation" output path for each piece of data that you care about.

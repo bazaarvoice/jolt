@@ -24,8 +24,8 @@ import java.util.Map;
 /**
  * Removr is a kind of JOLT transform that removes content from the input JSON.
  * <p/>
- * For comparision :
- * Shitr walks the input data and asks its spec "Where should this go?"
+ * For comparison :
+ * Shiftr walks the input data and asks its spec "Where should this go?"
  * Defaultr walks the spec and asks "Does this exist in the data?  If not, add it."
  *
  * While, Removr walks the spec and asks "if this exists, remove it."
