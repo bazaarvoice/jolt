@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Bazaarvoice, Inc.
+ * Copyright 2014 Bazaarvoice, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.shiftr;
 
+import com.bazaarvoice.jolt.traversr.SimpleTraversr;
 import com.bazaarvoice.jolt.traversr.Traversr;
 
 import java.util.List;
@@ -26,14 +27,14 @@ import java.util.List;
  * This processes the dot notation path into internal data structures, so
  *  that the String processing only happens once.
  */
-public class ShiftrWriter extends PathEvaluatingTraversal {
+public class TransposeReader extends PathEvaluatingTraversal {
 
-    public ShiftrWriter( String dotNotation ) {
+    public TransposeReader( String dotNotation ) {
         super( dotNotation );
     }
 
     @Override
     protected Traversr createTraversr( List<String> paths ) {
-        return new ShiftrTraversr( paths );
+        return new SimpleTraversr( paths );
     }
 }

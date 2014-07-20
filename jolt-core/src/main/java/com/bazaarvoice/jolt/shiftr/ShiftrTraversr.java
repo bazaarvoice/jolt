@@ -27,6 +27,10 @@ public class ShiftrTraversr extends SimpleTraversr {
         super( humanPath );
     }
 
+    public ShiftrTraversr( List<String> paths ) {
+        super( paths );
+    }
+
     /**
      * Do a Shift style insert :
      *  1) if there is no data "there", then just set it

@@ -50,9 +50,22 @@ public class ShiftrTest {
             {"queryMappingXform"},
             {"singlePlacement"},
             {"specialKeys"},
+            {"transposeArrayContents1"},
+            {"transposeArrayContents2"},
+            {"transposeComplex1"},
+            {"transposeComplex2"},
+            {"transposeComplex3"},
+            {"transposeComplex4"},
+            {"transposeInverseMap1"},
+            {"transposeInverseMap2"},
+            {"transposeLHS1"},
+            {"transposeLHS2"},
+            {"transposeLHS3"},
+            {"transposeSimple1"},
+            {"transposeSimple2"},
             {"wildcards"},
             {"wildcardSelfAndRef"},
-            {"wildcardsWithOr"},
+            {"wildcardsWithOr"}
         };
     }
 

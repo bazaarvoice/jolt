@@ -105,8 +105,8 @@ public class PathElementTest {
     @Test
     public void calculateOutputTest_refsOnly() {
 
-        MatchablePathElement pe1 = (MatchablePathElement) ShiftrSpec.parse( "tuna-*-marlin-*" ).get( 0 );
-        MatchablePathElement pe2 = (MatchablePathElement) ShiftrSpec.parse( "rating-*" ).get( 0 );
+        MatchablePathElement pe1 = (MatchablePathElement) ShiftrSpec.parseSingleKeyLHS( "tuna-*-marlin-*" );
+        MatchablePathElement pe2 = (MatchablePathElement) ShiftrSpec.parseSingleKeyLHS( "rating-*" );
 
         LiteralPathElement lpe = pe1.match( "tuna-marlin", new WalkedPath() );
         AssertJUnit.assertNull( lpe );
@@ -146,8 +146,8 @@ public class PathElementTest {
     public void calculateOutputTest_arrayIndexes() {
 
         // simulate Shiftr LHS specs
-        MatchablePathElement pe1 = (MatchablePathElement) ShiftrSpec.parse( "tuna-*-marlin-*" ).get( 0 );
-        MatchablePathElement pe2 = (MatchablePathElement) ShiftrSpec.parse( "rating-*" ).get( 0 );
+        MatchablePathElement pe1 = (MatchablePathElement) ShiftrSpec.parseSingleKeyLHS( "tuna-*-marlin-*" );
+        MatchablePathElement pe2 = (MatchablePathElement) ShiftrSpec.parseSingleKeyLHS( "rating-*" );
 
         // match them against some data to get LiteralPathElements with captured values
         LiteralPathElement lpe = pe1.match( "tuna-2-marlin-3", new WalkedPath() );
@@ -166,7 +166,7 @@ public class PathElementTest {
 
         // Evaluate the write path against the LiteralPath elements we build above ( like Shiftr does )
         WalkedPath walkedPath = new WalkedPath( Arrays.asList( lpe, lpe2 ) );
-        List<String> stringPath = shiftrWriter.evaluate( walkedPath );
+        List<String> stringPath = shiftrWriter.evaluate( null, walkedPath );
 
         AssertJUnit.assertEquals( "tuna",   stringPath.get( 0 ) );
         AssertJUnit.assertEquals( "2",      stringPath.get( 1 ) );

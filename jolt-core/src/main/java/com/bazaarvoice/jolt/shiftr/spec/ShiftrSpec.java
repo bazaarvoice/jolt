@@ -21,8 +21,10 @@ import com.bazaarvoice.jolt.common.WalkedPath;
 import com.bazaarvoice.jolt.utils.StringTools;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -59,13 +61,9 @@ public abstract class ShiftrSpec {
     protected final MatchablePathElement pathElement;
 
     public ShiftrSpec(String rawJsonKey) {
-        List<PathElement> pathElements = parse( rawJsonKey );
 
-        if ( pathElements.size() != 1 ){
-            throw new SpecException( "Shiftr invalid LHS:" + rawJsonKey + " can not contain '.'" );
-        }
+        PathElement pe = parseSingleKeyLHS( rawJsonKey );
 
-        PathElement pe =  pathElements.get( 0 );
         if ( ! ( pe instanceof MatchablePathElement ) ) {
             throw new SpecException( "Spec LHS key=" + rawJsonKey + " is not a valid LHS key." );
         }
@@ -73,17 +71,28 @@ public abstract class ShiftrSpec {
         this.pathElement = (MatchablePathElement) pe;
     }
 
-    //  once all the shiftr specific logic is extracted.
-    public static List<PathElement> parse( String key )  {
+    /**
+     * Visible for Testing.
+     *
+     * Inspects the key in a particular order to determine the correct sublass of
+     *  PathElement to create.
+     *
+     * @param key String that should represent a single PathElement
+     * @return a concrete implementation of PathElement
+     */
+    public static PathElement parseSingleKeyLHS( String key )  {
 
-
-        if ( key.contains("@") ) {
-
-            return Arrays.<PathElement>asList( new AtPathElement( key ) );
+        if ( "@".equals( key ) ) {
+            return new AtPathElement( key );
+        }
+        else if ( key.startsWith("@") ) {
+            return new TransposePathElement( key );
+        }
+        else if ( key.contains( "@" ) ) {
+            throw new SpecException( "Invalid key:" + key  + " can not have an @ other than at the front." );
         }
         else if ( key.contains("$") ) {
-
-            return Arrays.<PathElement>asList( new DollarPathElement( key ) );
+            return new DollarPathElement( key );
         }
         else if ( key.contains("[") ) {
 
@@ -91,70 +100,250 @@ public abstract class ShiftrSpec {
                 throw new SpecException( "Invalid key:" + key + " has too many [] references.");
             }
 
-            // is canonical array?
-            if ( key.charAt( 0 ) == '[' && key.charAt( key.length() - 1 ) == ']') {
-                return Arrays.<PathElement>asList( new ArrayPathElement( key ) );
-            }
-
-            // Split syntactic sugar of "photos[]" --> [ "photos", "[]" ]
-            //  or                      "bob-&(3,1)-smith[&0]" --> [ "bob-&(3,1)-smith", "[&(0,0)]" ]
-
-            String canonicalKey = key.replace( "[", ".[" );
-            String[] subkeys = canonicalKey.split( "\\." );
-
-            List<PathElement> subElements = parse(  subkeys ); // at this point each sub key should be a valid key, so just recall parse
-
-            for ( int index = 0; index < subElements.size() - 1; index++ ) {
-                PathElement v = subElements.get( index );
-                if ( v instanceof ArrayPathElement ) {
-                    throw new SpecException( "Array [..] must be the last thing in the key, was:" + key );
-                }
-            }
-
-            return subElements;
+            return new ArrayPathElement( key );
         }
-        else if ( key.contains("&") ) {
+        else if ( key.contains( "&" ) ) {
 
             if ( key.contains("*") )
             {
                 throw new SpecException("Can't mix * with & ) ");
             }
-            return Arrays.<PathElement>asList( new AmpPathElement( key ) );
+            return new AmpPathElement( key );
         }
         else if ( "*".equals( key ) ) {
-            return Arrays.<PathElement>asList( new StarAllPathElement( key ) );
+            return new StarAllPathElement( key );
         }
         else if (key.contains("*" ) ) {
 
             int numOfStars = StringTools.countMatches(key, "*");
 
             if(numOfStars == 1){
-                return Arrays.<PathElement>asList( new StarSinglePathElement( key ) );
+                return new StarSinglePathElement( key );
             }
             else if(numOfStars == 2){
-                return Arrays.<PathElement>asList( new StarDoublePathElement( key ) );
+                return new StarDoublePathElement( key );
             }
             else {
-                return Arrays.<PathElement>asList( new StarRegexPathElement( key ) );
+                return new StarRegexPathElement( key );
             }
         }
         else {
-            return Arrays.<PathElement>asList( new LiteralPathElement( key ) );
+            return new LiteralPathElement( key );
         }
     }
 
-    public static List<PathElement> parse( String[] keys ) {
+
+    /**
+     * Helper method to turn a String into an Iterator<Character>
+     */
+    private static Iterator<Character> stringIterator(final String string) {
+        // Ensure the error is found as soon as possible.
+        if (string == null)
+            throw new NullPointerException();
+
+        return new Iterator<Character>() {
+            private int index = 0;
+
+            public boolean hasNext() {
+                return index < string.length();
+            }
+
+            public Character next() {
+
+                // Throw NoSuchElementException as defined by the Iterator contract,
+                // not IndexOutOfBoundsException.
+                if (!hasNext())
+                    throw new NoSuchElementException();
+                return string.charAt(index++);
+            }
+
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
+    }
+
+    /**
+     * Given a dotNotation style outputPath like "data[2].&(1,1)", this method fixes the syntactic sugar
+     * of "data[2]" --> "data.[2]"
+     *
+     * This makes all the rest of the String processing easier once we know that we can always
+     * split on the '.' character.
+     *
+     * @param dotNotaton Output path dot notation
+     * @return
+     */
+    private static String fixLeadingBracketSugar( String dotNotaton ) {
+
+        if ( dotNotaton == null || dotNotaton.length() == 0 ) {
+            return "";
+        }
+
+        char prev = dotNotaton.charAt( 0 );
+        StringBuilder sb = new StringBuilder();
+        sb.append( prev );
+
+        for ( int index = 1; index < dotNotaton.length(); index++ ) {
+            char curr =  dotNotaton.charAt( index );
+
+            if ( curr == '[' ) {
+                if ( prev == '@' || prev == '.' ) {
+                    // no need to add an extra '.'
+                }
+                else {
+                    sb.append( '.' );
+                }
+            }
+
+            sb.append( curr );
+            prev = curr;
+        }
+
+        return sb.toString();
+    }
+
+
+    /**
+     * Parse RHS Transpose @ logic.
+     * "@(a.b)" or
+     * "@a.b
+     *
+     * This method expects that the the '@' character has already been seen.
+     *
+     * @param iter iterator to pull data from
+     * @param dotNotationRef the original dotNotation string used for error messages
+     */
+    private static String parseAtPathElement( Iterator<Character> iter, String dotNotationRef ) {
+
+        if ( ! iter.hasNext() ) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        boolean isParensAt = false;
+        int atParensCount = 0;
+
+        char c = iter.next();
+        if ( c == '(' ) {
+            isParensAt = true;
+            atParensCount++;
+        }
+        else if ( c == '.' ) {
+            return "";
+        }
+
+        sb.append( c );
+
+        while( iter.hasNext() ) {
+            c = iter.next();
+            sb.append( c );
+
+            // Parsing "@(a.b.[&2])"
+            if ( isParensAt ) {
+                if ( c == '(' ) {
+                    atParensCount++;
+                }
+                else if ( c == ')' ) {
+                    atParensCount--;
+                }
+
+                if ( atParensCount == 0 ) {
+                    return sb.toString();
+                }
+                else if ( atParensCount < 0 ) {
+                    throw new SpecException( "Unable to parse dotNotation, specifically the '@()' part : " + dotNotationRef );
+                }
+            }
+            // Parsing "@abc.def
+            else if ( c == '.' ) {
+                return sb.toString();
+            }
+        }
+
+        // if we got to the end of the String and we have mismatched parenthesis throw an exception.
+        if ( isParensAt && atParensCount != 0 ) {
+            throw new SpecException( "Invalid @() pathElement from : " + dotNotationRef );
+        }
+        // Parsing "@abc"
+        return sb.toString();
+    }
+
+    /**
+     * Method that recursively parses a dotNotation String based on an iterator.
+     *
+     * This method will call out to parseAtPathElement
+     *
+     * @param pathStrings List to store parsed Strings that each represent a PathElement
+     * @param iter the iterator to pull characters from
+     * @param dotNotationRef the original dotNotation string used for error messages
+     * @return
+     */
+    private static List<String> parseDotNotation( List<String> pathStrings, Iterator<Character> iter, String dotNotationRef ) {
+
+        if ( ! iter.hasNext() ) {
+            return pathStrings;
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        char c;
+        while( iter.hasNext() ) {
+
+            c = iter.next();
+
+            if( c == '@' ) {
+                sb.append( '@' );
+                sb.append( parseAtPathElement( iter, dotNotationRef ) );
+                pathStrings.add( sb.toString() );
+                sb = new StringBuilder();
+            }
+            else {
+                if ( c == '.' ) {
+                    if ( sb.length() != 0 ) {
+                        pathStrings.add( sb.toString() );
+                    }
+                    return parseDotNotation( pathStrings, iter, dotNotationRef );
+                }
+
+                sb.append( c );
+            }
+        }
+
+        if ( sb.length() != 0 ) {
+            pathStrings.add( sb.toString() );
+        }
+        return pathStrings;
+    }
+
+    /**
+     * @param refDotNotation the original dotNotation string used for error messages
+     * @return List of PathElements based on the provided List<String> keys
+     */
+    private static List<PathElement> parseList( List<String> keys, String refDotNotation ) {
         ArrayList<PathElement> paths = new ArrayList<PathElement>();
 
         for( String key: keys ) {
-            List<PathElement> subPaths = parse( key );
-            for ( PathElement path : subPaths ) {
-                paths.add( path );
+            PathElement path = parseSingleKeyLHS( key );
+            if ( path instanceof AtPathElement ) {
+                throw new SpecException( "'.@.' is not valid on the RHS: " + refDotNotation );
             }
+            paths.add( path );
         }
 
         return paths;
     }
+
+    /**
+     * Parse the dotNotation of the RHS.
+     */
+    public static List<PathElement> parseDotNotationRHS( String dotNotation ) {
+        String fixedNotation = fixLeadingBracketSugar( dotNotation );
+        List<String> pathStrs = parseDotNotation( new LinkedList<String>(), stringIterator( fixedNotation ), dotNotation );
+
+        return parseList( pathStrs, dotNotation );
+    }
+
 
     /**
      * This is the main recursive method of the Shiftr parallel "spec" and "input" tree walk.

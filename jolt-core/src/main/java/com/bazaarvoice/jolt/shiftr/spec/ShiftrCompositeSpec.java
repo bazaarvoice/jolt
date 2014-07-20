@@ -82,8 +82,9 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
                 literals.put( child.pathElement.getRawKey(), child );
             }
             // special is it is "@" or "$"
-            else if ( child.pathElement instanceof AtPathElement || (
-                    child.pathElement instanceof DollarPathElement ) ) {
+            else if ( child.pathElement instanceof AtPathElement ||
+                      child.pathElement instanceof DollarPathElement ||
+                      child.pathElement instanceof TransposePathElement ) {
                 special.add( child );
             }
             else {   // star || (& with children)

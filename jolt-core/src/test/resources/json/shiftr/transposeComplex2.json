@@ -1,0 +1,24 @@
+{
+    "input": {
+        "data" : {
+            "clientId": "1234",
+            "clientNameStuff" : {
+                "clientName": "Acme",
+                "otherClientStuff" : "pants"
+            }
+        }
+    },
+
+    "spec": {
+        "data" : {
+            // Verify LHS canonical form
+            "@(clientNameStuff.clientName)" : "bookMap.@clientId"
+        }
+    },
+
+    "expected": {
+        "bookMap" : {
+            "1234" : "Acme"
+        }
+    }
+}

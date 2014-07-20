@@ -17,6 +17,8 @@ package com.bazaarvoice.jolt.traversr;
 
 import com.bazaarvoice.jolt.traversr.traversal.TraversalStep;
 
+import java.util.List;
+
 /**
  * Simple Traversr that
  *
@@ -27,6 +29,10 @@ public class SimpleTraversr extends Traversr {
 
     public SimpleTraversr( String humanPath ) {
         super( humanPath );
+    }
+
+    public SimpleTraversr( List<String> paths ) {
+        super( paths );
     }
 
     @Override

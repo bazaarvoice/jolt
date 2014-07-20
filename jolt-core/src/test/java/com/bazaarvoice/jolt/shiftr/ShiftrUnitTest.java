@@ -18,12 +18,17 @@ package com.bazaarvoice.jolt.shiftr;
 import com.bazaarvoice.jolt.JoltTestUtil;
 import com.bazaarvoice.jolt.JsonUtils;
 import com.bazaarvoice.jolt.Shiftr;
+import com.bazaarvoice.jolt.common.pathelement.PathElement;
 import com.bazaarvoice.jolt.exception.SpecException;
+import com.bazaarvoice.jolt.shiftr.spec.ShiftrSpec;
+import com.google.common.base.Joiner;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class ShiftrUnitTest {
@@ -104,8 +109,12 @@ public class ShiftrUnitTest {
                     JsonUtils.jsonToMap( "{ \"tuna-*-marlin-*\" : { \"rating-@\" : \"&(1,2).&.value\" } }" ),
             },
             {
-                    "RHS @",
+                    "RHS @ by itself",
                     JsonUtils.jsonToMap( "{ \"tuna-*-marlin-*\" : { \"rating-*\" : \"&(1,2).@.value\" } }" ),
+            },
+            {
+                    "RHS @ with bad Parens",
+                    JsonUtils.jsonToMap( "{ \"tuna-*-marlin-*\" : { \"rating-*\" : \"&(1,2).@(data.&(1,1).value\" } }" ),
             },
             {
                     "RHS *",
@@ -129,5 +138,59 @@ public class ShiftrUnitTest {
     @Test(dataProvider = "badSpecs", expectedExceptions = SpecException.class)
     public void failureUnitTest(String testName, Object spec) {
         new Shiftr( spec );
+    }
+
+    /**
+     * @return canonical dotNotation String built from the given paths
+     */
+    public String buildCanonicalString( List<PathElement> paths ) {
+
+        List<String> pathStrs = new ArrayList<String>( paths.size() );
+        for( PathElement pe : paths ) {
+            pathStrs.add( pe.getCanonicalForm() );
+        }
+
+        return Joiner.on(".").join( paths );
+    }
+
+
+    @DataProvider
+    public Object[][] validRHS() throws IOException {
+        return new Object[][]{
+            { "@a", "@(a)" },
+            { "@abc", "@(abc)" },
+            { "@a.b.c", "@(a).b.c" },
+            { "@a.b.@c", "@(a).b.@(c)" },
+            { "@(a[2].&).b.@c", "@(a.[2].&(0,0)).b.@(c)" },
+            { "a[&2].@b[1].c", "a.[&(2,0)].@(b).[1].c" }
+        };
+    }
+
+    @Test(dataProvider = "validRHS" )
+    public void validRHSTests( String dotNotation, String expected ) {
+        List<PathElement> paths = ShiftrSpec.parseDotNotationRHS( dotNotation );
+        String actualCanonicalForm = buildCanonicalString( paths );
+
+        Assert.assertEquals( actualCanonicalForm, expected, "TestCase: " + dotNotation );
+    }
+
+
+    @DataProvider
+    public Object[][] badRHS() throws IOException {
+        return new Object[][]{
+                { "@" },
+                { "a@" },
+                { "@a@b" },
+                { "@(a.b.&(2,2)" }, // missing trailing )
+                { "@(a.b.&(2,2).d" }, // missing trailing )
+                { "@(a.b.@c).d" },
+                { "@(a.*.c)" }, // @ can not contain a *
+                { "@(a.$2.c)" }, // @ can not contain a $
+        };
+    }
+
+    @Test(dataProvider = "badRHS", expectedExceptions = SpecException.class)
+    public void failureRHSTests( String dotNotation ) {
+        ShiftrSpec.parseDotNotationRHS( dotNotation );
     }
 }

@@ -1,0 +1,23 @@
+{
+    "input": {
+        "data" : {
+            "clientId": "1234",
+            "clientNameStuff" : {
+                "clientName": "Acme",
+                "otherClientStuff" : "pants"
+            }
+        }
+    },
+
+    "spec": {
+        "data" : {
+            "@clientNameStuff.clientName" : "bookMap.@clientId"
+        }
+    },
+
+    "expected": {
+        "bookMap" : {
+            "1234" : "Acme"
+        }
+    }
+}
