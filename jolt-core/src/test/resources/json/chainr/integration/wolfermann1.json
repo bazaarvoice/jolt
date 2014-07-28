@@ -1,0 +1,54 @@
+{
+    // Test from Jolt Issue 104 : Question one from ThorstenWolfermann
+    // Summary : Take nested input, and "flatten" it
+
+    "input": {
+        "level1": {
+            "L1Attribute": "6643287c-4800-49dd-b5cb-e0cf3ea637a9",
+            "L1SecondAttribtue": 543,
+            "level2": {
+                "L2Attribute": "d1bc9284-3087-4a92-904a-42f041f4fc23",
+                "L2SecondAttribute": 1234,
+                "leveln": {
+                    "L3Attribute": "d1bc9284-3087-4a92-904a-42f041f4fc23",
+                    "L3SecondAttribute": 1234
+                }
+            }
+        }
+    },
+
+    "spec": [
+        {
+            "operation": "shift",
+            "spec": {
+                "level*": {
+                    "*Attribute": "&1.&0",
+                    "*SecondAttribtue": "&1.&0",
+                    "level*": {
+                        "*Attribute": "&1.&0",
+                        "*SecondAttribute": "&1.&0",
+                        "level*": {
+                            "*Attribute": "&1.&0",
+                            "*SecondAttribute": "&1.&0"
+                        }
+                    }
+                }
+            }
+        }
+    ],
+
+    "expected": {
+        "level1": {
+            "L1Attribute": "6643287c-4800-49dd-b5cb-e0cf3ea637a9",
+            "L1SecondAttribtue": 543
+        },
+        "level2": {
+            "L2Attribute": "d1bc9284-3087-4a92-904a-42f041f4fc23",
+            "L2SecondAttribute": 1234
+        },
+        "leveln": {
+            "L3Attribute": "d1bc9284-3087-4a92-904a-42f041f4fc23",
+            "L3SecondAttribute": 1234
+        }
+    }
+}

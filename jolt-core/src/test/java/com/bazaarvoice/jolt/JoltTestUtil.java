@@ -22,16 +22,30 @@ import java.io.IOException;
 public class JoltTestUtil {
 
     private static Diffy diffy = new Diffy();
+    private static Diffy arrayOrderObliviousDiffy = new ArrayOrderObliviousDiffy();
 
     public static void runDiffy( String failureMessage, Object expected, Object actual ) throws IOException {
+        runDiffy( diffy, failureMessage, expected, actual );
+    }
+
+    public static void runDiffy( Object expected, Object actual ) throws IOException {
+        runDiffy( diffy, "Failed", expected, actual );
+    }
+
+    public static void runArrayOrderObliviousDiffy( String failureMessage, Object expected, Object actual ) throws IOException {
+        runDiffy( arrayOrderObliviousDiffy, failureMessage, expected, actual );
+    }
+
+    public static void runArrayOrderObliviousDiffy( Object expected, Object actual ) throws IOException {
+        runDiffy( arrayOrderObliviousDiffy, "Failed", expected, actual );
+    }
+
+
+    private static void runDiffy( Diffy diffy, String failureMessage, Object expected, Object actual ) throws IOException {
 
         Diffy.Result result = diffy.diff( expected, actual );
         if (!result.isEmpty()) {
             AssertJUnit.fail( failureMessage + ".\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
         }
-    }
-
-    public static void runDiffy( Object expected, Object actual ) throws IOException {
-        runDiffy( "Failed", expected, actual );
     }
 }

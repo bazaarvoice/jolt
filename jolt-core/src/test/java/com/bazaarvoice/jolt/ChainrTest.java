@@ -208,6 +208,16 @@ public class ChainrTest {
     public Object[][] getTestCaseNames() {
         return new Object[][] {
             {"firstSample", true},
+            {"wolfermann1", false},
+            {"wolfermann2", false},
+            {"andrewkcarter1", false},
+            // {"andrewkcarter1", false},   // can not support this one yet
+            // Re-read the issue, it is a good idea.
+            // Tasks
+            // 1) Rework the WalkedPath to contain a tuple of the walked path and pointer to the object at each level
+            //  Aka basically a stack of the "inputs"
+            // 2) Make the Canonical form of the @ be @(0,"")
+            //    Allows for things like LHS "@(2,clientId)" which allows for filtering objects up tree, based on leaf info
         };
     }
 

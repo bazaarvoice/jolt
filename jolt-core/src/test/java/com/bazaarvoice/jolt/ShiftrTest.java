@@ -63,6 +63,7 @@ public class ShiftrTest {
             {"transposeLHS3"},
             {"transposeSimple1"},
             {"transposeSimple2"},
+            {"transposeSimple3"},
             {"wildcards"},
             {"wildcardSelfAndRef"},
             {"wildcardsWithOr"}
