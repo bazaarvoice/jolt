@@ -168,7 +168,7 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
         }
 
         // add ourselves to the path, so that our children can reference us
-        walkedPath.add( thisLevel );
+        walkedPath.add( input, thisLevel );
 
         // Handle any special / key based children first, but don't have them block anything
         for( ShiftrSpec subSpec : specialChildren ) {
@@ -182,7 +182,7 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
         walkedPath.removeLast();
 
         // we matched so increment the matchCount of our parent
-        walkedPath.lastElement().incrementHashCount();
+        walkedPath.lastElement().getLiteralPathElement().incrementHashCount();
 
         return true;
     }

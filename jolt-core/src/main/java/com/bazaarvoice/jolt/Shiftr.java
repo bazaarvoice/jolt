@@ -471,7 +471,7 @@ public class Shiftr implements SpecDriven, Transform {
         // Create a root LiteralPathElement so that # is useful at the root level
         LiteralPathElement rootLpe = new LiteralPathElement( ROOT_KEY );
         WalkedPath walkedPath = new WalkedPath();
-        walkedPath.add( rootLpe );
+        walkedPath.add( input, rootLpe );
 
         rootSpec.apply( ROOT_KEY, input, walkedPath, output );
 

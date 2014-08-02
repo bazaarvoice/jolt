@@ -98,12 +98,12 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
                 return arrayIndex;
 
             case HASH:
-                LiteralPathElement element = walkedPath.elementFromEnd( ref.getPathIndex() );
+                LiteralPathElement element = walkedPath.elementFromEnd( ref.getPathIndex() ).getLiteralPathElement();
                 Integer index = element.getHashCount();
                 return index.toString();
 
             case REFERENCE:
-                LiteralPathElement lpe = walkedPath.elementFromEnd( ref.getPathIndex() );
+                LiteralPathElement lpe = walkedPath.elementFromEnd( ref.getPathIndex() ).getLiteralPathElement();
                 String keyPart;
 
                 if ( ref instanceof PathAndGroupReference ) {

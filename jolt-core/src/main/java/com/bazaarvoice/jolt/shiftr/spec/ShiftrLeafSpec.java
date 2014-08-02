@@ -131,7 +131,7 @@ public class ShiftrLeafSpec extends ShiftrSpec {
         }
 
         // Add our the LiteralPathElement for this level, so that write path References can use it as &(0,0)
-        walkedPath.add( thisLevel );
+        walkedPath.add( input, thisLevel );
 
         // Write out the data
         for ( ShiftrWriter outputPath : shiftrWriters ) {
@@ -142,7 +142,7 @@ public class ShiftrLeafSpec extends ShiftrSpec {
 
         if ( realChild ) {
             // we were a "real" child, so increment the matchCount of our parent
-            walkedPath.lastElement().incrementHashCount();
+            walkedPath.lastElement().getLiteralPathElement().incrementHashCount();
         }
 
         return realChild;

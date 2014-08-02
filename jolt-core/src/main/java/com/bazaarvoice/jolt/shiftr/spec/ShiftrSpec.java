@@ -52,7 +52,7 @@ import java.util.Map;
  * The tree structure of formed by the CompositeSpecs is what is used during Shiftr transforms
  *  to do the parallel tree walk with the input data tree.
  *
- * During the parallel tree walk, a Path<Literal PathElements> is maintained, and used when
+ * During the parallel tree walk a stack of data (a WalkedPath) is maintained, and used when
  *  a tree walk encounters an Outputting spec to evaluate the wildcards in the write DotNotationPath.
  */
 public abstract class ShiftrSpec {
