@@ -157,12 +157,12 @@ public class ShiftrUnitTest {
     @DataProvider
     public Object[][] validRHS() throws IOException {
         return new Object[][]{
-            { "@a", "@(a)" },
-            { "@abc", "@(abc)" },
-            { "@a.b.c", "@(a).b.c" },
-            { "@a.b.@c", "@(a).b.@(c)" },
-            { "@(a[2].&).b.@c", "@(a.[2].&(0,0)).b.@(c)" },
-            { "a[&2].@b[1].c", "a.[&(2,0)].@(b).[1].c" }
+            { "@a", "@(0,a)" },
+            { "@abc", "@(0,abc)" },
+            { "@a.b.c", "@(0,a).b.c" },
+            { "@a.b.@c", "@(0,a).b.@(0,c)" },
+            { "@(a[2].&).b.@c", "@(0,a.[2].&(0,0)).b.@(0,c)" },
+            { "a[&2].@b[1].c", "a.[&(2,0)].@(0,b).[1].c" }
         };
     }
 

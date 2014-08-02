@@ -127,25 +127,31 @@ public abstract class PathEvaluatingTraversal {
         List<String> strings = new ArrayList<String>(elements.size());
         for ( PathElement pathElement : elements ) {
 
-            String evaledLeafOutput;
-            if ( pathElement instanceof TransposePathElement ) {
-                TransposePathElement ptpe = (TransposePathElement)  pathElement;
+//            String evaledLeafOutput;
+//            if ( pathElement instanceof TransposePathElement ) {
+//                TransposePathElement ptpe = (TransposePathElement)  pathElement;
+//
+//                // int upLevel = ptpe.get
+//
+//                Object dataFromTranspose = ptpe.getSubPathReader().read( input, walkedPath );
+//                if ( dataFromTranspose == null || ! ( dataFromTranspose instanceof String ) ) {
+//
+//                    // If this output path has a TransposePathElement, and when we evaluate it
+//                    //  it does not resolve to a String, then return null
+//                    return null;
+//                }
+//
+//                evaledLeafOutput = (String) ptpe.getSubPathReader().read( input, walkedPath );
+//            }
+//            else {
 
-                Object dataFromTranspose = ptpe.getSubPathReader().read( input, walkedPath );
-                if ( dataFromTranspose == null || ! ( dataFromTranspose instanceof String ) ) {
-
-                    // If this output path has a TransposePathElement, and when we evaluate it
-                    //  it does not resolve to a String, then return null
-                    return null;
-                }
-
-                evaledLeafOutput = (String) ptpe.getSubPathReader().read( input, walkedPath );
+            EvaluatablePathElement pte = (EvaluatablePathElement) pathElement;
+            String evaledLeafOutput = pte.evaluate( walkedPath );
+            if ( evaledLeafOutput == null ) {
+                // If this output path has a TransposePathElement, and when we evaluate it
+                //  it does not resolve to a String, then return null
+                return null;
             }
-            else {
-                EvaluatablePathElement pte = (EvaluatablePathElement) pathElement;
-                evaledLeafOutput = pte.evaluate( walkedPath );
-            }
-
             strings.add( evaledLeafOutput );
         }
 

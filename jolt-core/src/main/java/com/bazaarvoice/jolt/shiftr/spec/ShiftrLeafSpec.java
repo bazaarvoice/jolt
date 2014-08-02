@@ -117,7 +117,9 @@ public class ShiftrLeafSpec extends ShiftrSpec {
             // We try to walk down the tree to find the value / data we want
             TransposePathElement tpe = (TransposePathElement) this.pathElement;
 
-            data = tpe.getSubPathReader().read( input, walkedPath );
+            // TODO : I think something need to be done here
+            //data = tpe.getSubPathReader().read( input, walkedPath );
+            data = tpe.rawEval( walkedPath );
             if ( data == null ) {
                 // if we could not find the value we want looking down the tree, bail
                 return false;

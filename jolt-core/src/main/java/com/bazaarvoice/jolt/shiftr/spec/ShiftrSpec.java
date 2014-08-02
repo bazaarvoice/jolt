@@ -86,7 +86,7 @@ public abstract class ShiftrSpec {
             return new AtPathElement( key );
         }
         else if ( key.startsWith("@") ) {
-            return new TransposePathElement( key );
+            return TransposePathElement.parse( key );
         }
         else if ( key.contains( "@" ) ) {
             throw new SpecException( "Invalid key:" + key  + " can not have an @ other than at the front." );

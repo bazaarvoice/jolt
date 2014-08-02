@@ -15,13 +15,15 @@
  */
 package com.bazaarvoice.jolt.common.pathelement;
 
+import com.bazaarvoice.jolt.common.PathStep;
 import com.bazaarvoice.jolt.common.WalkedPath;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.shiftr.PathEvaluatingTraversal;
 import com.bazaarvoice.jolt.shiftr.TransposeReader;
+import com.bazaarvoice.jolt.utils.StringTools;
 
 /**
- * This PathElement is used to Shiftr to Transpose data.
+ * This PathElement is used by Shiftr to Transpose data.
  *
  * It can be used on the Left and Right hand sides of the spec.
  *
@@ -43,18 +45,24 @@ import com.bazaarvoice.jolt.shiftr.TransposeReader;
  *     "@author" : "@book"
  * }
  *
- * CanonicalForm
- *  "@author" -> "@(author)"
- *  "@(a.b)" -> "@(a.b)"
- *  "@(a.&2.c)" -> "@(a.&(2,0).c)"
+ * CanonicalForm Expansion
+ *  Sugar
+ *    "@2         -> "@(2,)
+ *    "@(2)       -> "@(2,)
+ *    "@author"   -> "@(0,author)"
+ *    "@(author)" -> "@(0,author)"
+ *
+ *  Splenda
+ *    "@(a.b)"    -> "@(0,a.b)"
+ *    "@(a.&2.c)" -> "@(0,a.&(2,0).c)"
  */
-public class TransposePathElement extends BasePathElement implements MatchablePathElement {
+public class TransposePathElement extends BasePathElement implements MatchablePathElement, EvaluatablePathElement {
 
-    final String canonicalForm;
-    final TransposeReader subPathReader;
+    private final int upLevel;
+    private final TransposeReader subPathReader;
+    private final String canonicalForm;
 
-    public TransposePathElement( String key ) {
-        super(key);
+    public static TransposePathElement parse( String key ) {
 
         if ( key == null || key.length() < 2 ) {
             throw new SpecException( "'Transpose Input' key '@', can not be null or of length 1.  Offending key : " + key );
@@ -63,12 +71,17 @@ public class TransposePathElement extends BasePathElement implements MatchablePa
             throw new SpecException( "'Transpose Input' key must start with an '@'.  Offending key : " + key );
         }
 
+        // Strip off the leading '@' as we don't need it anymore.
         String path = key.substring( 1 );
 
+        if ( path.contains( "@" ) ) {
+            throw new SpecException( "@ pathElement can not contain a nested @." );
+        }
         if ( path.contains( "*" ) || path.contains( "[]" ) ) {
-            throw new SpecException( "'Transpose Input' can not contain wildcards.  Offending key : " + key );
+            throw new SpecException( "'Transpose Input' can not contain expansion wildcards (* and []).  Offending key : " + key );
         }
 
+        // Check to see if the key is wrapped by parens
         if ( path.startsWith( "(" ) ) {
             if ( path.endsWith( ")" ) ) {
                 path = path.substring( 1, path.length() - 1 );
@@ -78,12 +91,95 @@ public class TransposePathElement extends BasePathElement implements MatchablePa
             }
         }
 
-        if ( path.contains( "@" ) ) {
-            throw new SpecException( "@ pathElement can not contain a nested @." );
+        return parse2( key, path );
+    }
+
+    private static TransposePathElement parse2( String originalKey, String meat ) {
+
+        char first = meat.charAt( 0 );
+        if ( Character.isDigit( first ) ) {
+            // loop until we find a comma or end of string
+            StringBuilder sb = new StringBuilder().append( first );
+            for ( int index = 1; index < meat.length(); index++ ) {
+                char c = meat.charAt( index );
+
+                // when we find a / the first comma, stop looking for integers, and just assume the rest is a String path
+                if( ',' == c ) {
+
+                    int upLevel;
+                    try {
+                        upLevel = Integer.valueOf( sb.toString() );
+                    }
+                    catch ( NumberFormatException nfe ) {
+                        // I don't know how this exception would get thrown, as all the chars were checked by isDigit, but oh well
+                        throw new SpecException( "@ path element with non/mixed numeric key is not valid, key=" + originalKey );
+                    }
+
+                    return new TransposePathElement( originalKey, upLevel, meat.substring( index ) );
+                }
+                else if ( Character.isDigit( c ) ) {
+                    sb.append( c );
+                }
+                else {
+                    throw new SpecException( "@ path element with non/mixed numeric key is not valid, key=" + originalKey );
+                }
+            }
+
+            // if we got out of the for loop, then the whole thing was a number.
+            return new TransposePathElement( originalKey, Integer.valueOf( sb.toString() ), null );
+        }
+        else {
+            return new TransposePathElement( originalKey, 0, meat );
+        }
+    }
+
+    private TransposePathElement( String originalKey, int upLevel, String subPath ) {
+        super(originalKey);
+        this.upLevel = upLevel;
+        if ( StringTools.isEmpty( subPath ) ) {
+            this.subPathReader = null;
+            canonicalForm = "@(" + upLevel + ",)";
+        }
+        else {
+            subPathReader = new TransposeReader(subPath);
+            canonicalForm = "@(" + upLevel + "," + subPathReader.getCanonicalForm() + ")";
+        }
+    }
+
+    public Object rawEval( WalkedPath walkedPath ) {
+        // Grap the data we need from however far up the tree we are supposed to go
+        PathStep pathStep = walkedPath.elementFromEnd( upLevel );
+
+        Object treeRef = pathStep.getTreeRef();
+
+        // Now walk down from that day using the subPathReader
+        if ( subPathReader == null ) {
+            return treeRef;
+        }
+        else {
+            return subPathReader.read( treeRef, walkedPath );
+        }
+    }
+
+    @Override
+    public String evaluate( WalkedPath walkedPath ) {
+
+        Object dataFromTranspose = rawEval( walkedPath );
+
+        if ( dataFromTranspose instanceof Number ) {
+            // the idea here being we are looking for an array index value
+            int val = ((Number) dataFromTranspose).intValue();
+            return Integer.toString( val );
         }
 
-        subPathReader = new TransposeReader(path);
-        canonicalForm = "@(" + subPathReader.getCanonicalForm() + ")";
+        if ( dataFromTranspose == null || ! ( dataFromTranspose instanceof String ) ) {
+
+            // If this output path has a TransposePathElement, and when we evaluate it
+            //  it does not resolve to a String, then return null
+            return null;
+        }
+
+        return (String) dataFromTranspose;
     }
 
 
