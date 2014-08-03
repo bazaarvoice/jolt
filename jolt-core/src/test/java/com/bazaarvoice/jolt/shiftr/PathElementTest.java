@@ -15,7 +15,6 @@
  */
 package com.bazaarvoice.jolt.shiftr;
 
-import com.bazaarvoice.jolt.common.PathStep;
 import com.bazaarvoice.jolt.common.WalkedPath;
 import com.bazaarvoice.jolt.common.pathelement.AmpPathElement;
 import com.bazaarvoice.jolt.common.pathelement.ArrayPathElement;
@@ -28,7 +27,6 @@ import com.bazaarvoice.jolt.shiftr.spec.ShiftrSpec;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
 import java.util.List;
 
 // Todo Now that the PathElement classes have been split out (no longer inner classes)
@@ -170,7 +168,7 @@ public class PathElementTest {
         // Evaluate the write path against the LiteralPath elements we build above ( like Shiftr does )
         WalkedPath twoSteps = new WalkedPath( null, lpe );
         twoSteps.add( null, lpe2 );
-        List<String> stringPath = shiftrWriter.evaluate( null, twoSteps );
+        List<String> stringPath = shiftrWriter.evaluate( twoSteps );
 
         AssertJUnit.assertEquals( "tuna",   stringPath.get( 0 ) );
         AssertJUnit.assertEquals( "2",      stringPath.get( 1 ) );

@@ -118,7 +118,7 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
                     return keyPart;
                 }
                 catch ( NumberFormatException nfe ) {
-                    throw new RuntimeException( " Evaluating canonical ReferencePathElement:" + this.getCanonicalForm() + ", and got a non integer result for reference:" + ref.getCanonicalForm() );
+                    throw new RuntimeException( " Evaluating canonical ReferencePathElement:" + this.getCanonicalForm() + ", and got a non integer result:(" + keyPart + "),  for reference:" + ref.getCanonicalForm() );
                 }
             default:
                 throw new IllegalStateException( "ArrayPathType enum added two without updating this switch statement." );

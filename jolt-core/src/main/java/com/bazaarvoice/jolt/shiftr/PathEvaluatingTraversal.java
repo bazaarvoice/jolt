@@ -37,7 +37,7 @@ import java.util.*;
  */
 public abstract class PathEvaluatingTraversal {
 
-    private final List<PathElement> elements;
+    private final List<EvaluatablePathElement> elements;
     private final Traversr traversr;
 
     public PathEvaluatingTraversal( String dotNotation ) {
@@ -73,13 +73,13 @@ public abstract class PathEvaluatingTraversal {
             trav = createTraversr( Arrays.asList( "" ) );
         }
 
-        List<PathElement> evalPaths = new ArrayList<PathElement>( paths.size() );
+        List<EvaluatablePathElement> evalPaths = new ArrayList<EvaluatablePathElement>( paths.size() );
         for( PathElement pe : paths ) {
-            if ( ! ( pe instanceof EvaluatablePathElement || pe instanceof TransposePathElement) ) {
+            if ( ! ( pe instanceof EvaluatablePathElement ) ) {
                 throw new SpecException( "RHS key=" + pe.getRawKey() + " is not a valid RHS key." );
             }
 
-            evalPaths.add( pe );
+            evalPaths.add( (EvaluatablePathElement) pe );
         }
 
         this.elements = Collections.unmodifiableList( evalPaths );
@@ -97,15 +97,15 @@ public abstract class PathEvaluatingTraversal {
      * @param output data structure we are going to write the data to
      * @param walkedPath reference used to lookup reference values like "&1(2)"
      */
-    public void write( Object input, Object data, Map<String, Object> output, WalkedPath walkedPath ) {
-        List<String> evaledPaths = evaluate( input, walkedPath );
+    public void write( Object data, Map<String, Object> output, WalkedPath walkedPath ) {
+        List<String> evaledPaths = evaluate( walkedPath );
         if ( evaledPaths != null ) {
             traversr.set( output, evaledPaths, data );
         }
     }
 
     public Object read( Object data, WalkedPath walkedPath ) {
-        List<String> evaledPaths = evaluate( null, walkedPath );
+        List<String> evaledPaths = evaluate( walkedPath );
         if ( evaledPaths == null ) {
             return null;
         }
@@ -117,39 +117,19 @@ public abstract class PathEvaluatingTraversal {
      *
      * If our PathElements contained a TransposePathElement, we may return null.
      *
-     * @param input
      * @param walkedPath used to lookup/evaluate PathElement references values like "&1(2)"
      * @return null or fully evaluated Strings, possibly with concrete array references like "photos.[3]"
      */
     // Visible for testing
-    List<String> evaluate( Object input, WalkedPath walkedPath ) {
+    List<String> evaluate( WalkedPath walkedPath ) {
 
-        List<String> strings = new ArrayList<String>(elements.size());
-        for ( PathElement pathElement : elements ) {
+        List<String> strings = new ArrayList<String>( elements.size() );
+        for ( EvaluatablePathElement pathElement : elements ) {
 
-//            String evaledLeafOutput;
-//            if ( pathElement instanceof TransposePathElement ) {
-//                TransposePathElement ptpe = (TransposePathElement)  pathElement;
-//
-//                // int upLevel = ptpe.get
-//
-//                Object dataFromTranspose = ptpe.getSubPathReader().read( input, walkedPath );
-//                if ( dataFromTranspose == null || ! ( dataFromTranspose instanceof String ) ) {
-//
-//                    // If this output path has a TransposePathElement, and when we evaluate it
-//                    //  it does not resolve to a String, then return null
-//                    return null;
-//                }
-//
-//                evaledLeafOutput = (String) ptpe.getSubPathReader().read( input, walkedPath );
-//            }
-//            else {
-
-            EvaluatablePathElement pte = (EvaluatablePathElement) pathElement;
-            String evaledLeafOutput = pte.evaluate( walkedPath );
+            String evaledLeafOutput = pathElement.evaluate( walkedPath );
             if ( evaledLeafOutput == null ) {
-                // If this output path has a TransposePathElement, and when we evaluate it
-                //  it does not resolve to a String, then return null
+                // If this output path contains a TransposePathElement, and when evaluated,
+                //  return null, then bail
                 return null;
             }
             strings.add( evaledLeafOutput );

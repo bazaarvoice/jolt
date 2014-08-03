@@ -45,6 +45,14 @@ import com.bazaarvoice.jolt.utils.StringTools;
  *     "@author" : "@book"
  * }
  *
+ *
+ * Secondly, we can look up the tree, and come down a different path to locate data.
+ *
+ * For example of this see the following ShiftrUnit tests :
+ *   LHS Lookup : json/shiftr/filterParents.json
+ *   RHS Lookup : json/shiftr/transposeComplex6_rhs-complex-at.json
+ *
+ *
  * CanonicalForm Expansion
  *  Sugar
  *    "@2         -> "@(2,)
@@ -87,7 +95,7 @@ public class TransposePathElement extends BasePathElement implements MatchablePa
                 path = path.substring( 1, path.length() - 1 );
             }
             else {
-                throw new SpecException( "@ path element that starts with '(' must have a matching ')'." );
+                throw new SpecException( "@ path element that starts with '(' must have a matching ')'.  Offending key : " + key );
             }
         }
 
@@ -115,7 +123,7 @@ public class TransposePathElement extends BasePathElement implements MatchablePa
                         throw new SpecException( "@ path element with non/mixed numeric key is not valid, key=" + originalKey );
                     }
 
-                    return new TransposePathElement( originalKey, upLevel, meat.substring( index ) );
+                    return new TransposePathElement( originalKey, upLevel, meat.substring( index + 1 ) );
                 }
                 else if ( Character.isDigit( c ) ) {
                     sb.append( c );
@@ -157,7 +165,8 @@ public class TransposePathElement extends BasePathElement implements MatchablePa
             return treeRef;
         }
         else {
-            return subPathReader.read( treeRef, walkedPath );
+            Object data = subPathReader.read( treeRef, walkedPath );
+            return data;
         }
     }
 
@@ -182,11 +191,6 @@ public class TransposePathElement extends BasePathElement implements MatchablePa
         return (String) dataFromTranspose;
     }
 
-
-
-    public PathEvaluatingTraversal getSubPathReader() {
-        return subPathReader;
-    }
 
     public LiteralPathElement match( String dataKey, WalkedPath walkedPath ) {
         return walkedPath.lastElement().getLiteralPathElement();  // copy what our parent was so that write keys of &0 and &1 both work.

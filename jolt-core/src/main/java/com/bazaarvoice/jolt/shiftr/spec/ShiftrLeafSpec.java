@@ -137,7 +137,7 @@ public class ShiftrLeafSpec extends ShiftrSpec {
 
         // Write out the data
         for ( ShiftrWriter outputPath : shiftrWriters ) {
-            outputPath.write( input, data, output, walkedPath );
+            outputPath.write( data, output, walkedPath );
         }
 
         walkedPath.removeLast();
