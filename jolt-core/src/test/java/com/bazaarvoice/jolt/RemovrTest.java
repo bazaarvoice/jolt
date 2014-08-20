@@ -27,11 +27,11 @@ public class RemovrTest {
     @DataProvider
     public Object[][] getTestCaseNames() {
         return new Object[][] {
-     //   {"firstSample"},
-      //  {"boundaryConditions"},
-       // {"removrWithWildcardSupport"},
-        //{"multiStarSupport"},
-                {"starDoublePathElementBoundaryConditions"}
+        {"firstSample"},
+        {"boundaryConditions"},
+        {"removrWithWildcardSupport"},
+        {"multiStarSupport"},
+        {"starDoublePathElementBoundaryConditions"}
 
         };
     }
