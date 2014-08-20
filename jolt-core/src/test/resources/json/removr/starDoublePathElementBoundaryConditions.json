@@ -1,0 +1,38 @@
+{
+    "input": {
+        "cdv-2_2$en":"q3",
+        "cdv-BecomeMember$en":"",
+        "cdv-4$en":"",
+        "cdv-4":"",
+        "cdv-":"",
+        "cdv-$":"",
+        "cdv-1$":"",
+        "cdv-$1":"",
+        "":"",
+        "cdv-3_1":"",
+        "tag-DoShoutProductsFreeYouFro$en":"",
+        "tag-DoShoutProductsFreeYouFro":"",
+        "tag-3_2$en": [
+            "Cotton",
+            "Other",
+            "Denim"
+        ]
+    },
+
+    "spec": {
+       "cdv-*$*":"",
+       "tag-*$*":""
+    },
+
+    "expected": {
+        "cdv-$":"",
+        "cdv-1$":"",
+        "cdv-$1":"",
+        "cdv-":"",
+        "":"",
+        "cdv-4":"",
+        "cdv-3_1":"",
+        "tag-DoShoutProductsFreeYouFro":""
+
+    }
+}
