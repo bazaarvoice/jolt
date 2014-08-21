@@ -30,7 +30,9 @@ public class RemovrTest {
         {"firstSample"},
         {"boundaryConditions"},
         {"removrWithWildcardSupport"},
-        {"multiStarSupport"}
+        {"multiStarSupport"},
+        {"starDoublePathElementBoundaryConditions"}
+
         };
     }
 

@@ -86,6 +86,22 @@ public class StarDoublePathElement extends BasePathElement implements StarPathEl
     private int finMidIndex(String literal){
         int startOffset = prefix.length() + 1;
         int endOffset = literal.length() - suffix.length() - 1;
+
+        /**
+         * Found a bug when there is only character after the prefix ends. For eg: if the spec is abc-*$* and the key
+         * we got is abc-1
+         *      prefix -> abc-
+         *      suffix -> ""
+         *      mid    -> $
+         *      startoffset -> 5
+         *      endoffset -> 5 - 0 - 1 = 4
+         *  We are left with no substring to search for the mid. Bail out!
+         */
+        if(startOffset >= endOffset)  {
+
+            return -1;
+
+        }
         int midIndex = literal.substring(startOffset, endOffset).indexOf(mid);
 
         if(midIndex >= 0) {
