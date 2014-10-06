@@ -203,10 +203,16 @@ public class TransposePathElement extends BasePathElement implements MatchablePa
 
         Object dataFromTranspose = objectEvaluate( walkedPath );
 
+        // Coerce a number into a String
         if ( dataFromTranspose instanceof Number ) {
             // the idea here being we are looking for an array index value
             int val = ((Number) dataFromTranspose).intValue();
             return Integer.toString( val );
+        }
+
+        // Coerce a boolean into a String
+        if ( dataFromTranspose instanceof Boolean ) {
+            return Boolean.toString( (Boolean) dataFromTranspose );
         }
 
         if ( dataFromTranspose == null || ! ( dataFromTranspose instanceof String ) ) {
