@@ -27,7 +27,6 @@ import com.bazaarvoice.jolt.shiftr.spec.ShiftrSpec;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
 import java.util.List;
 
 // Todo Now that the PathElement classes have been split out (no longer inner classes)
@@ -105,8 +104,8 @@ public class PathElementTest {
     @Test
     public void calculateOutputTest_refsOnly() {
 
-        MatchablePathElement pe1 = (MatchablePathElement) ShiftrSpec.parse( "tuna-*-marlin-*" ).get( 0 );
-        MatchablePathElement pe2 = (MatchablePathElement) ShiftrSpec.parse( "rating-*" ).get( 0 );
+        MatchablePathElement pe1 = (MatchablePathElement) ShiftrSpec.parseSingleKeyLHS( "tuna-*-marlin-*" );
+        MatchablePathElement pe2 = (MatchablePathElement) ShiftrSpec.parseSingleKeyLHS( "rating-*" );
 
         LiteralPathElement lpe = pe1.match( "tuna-marlin", new WalkedPath() );
         AssertJUnit.assertNull( lpe );
@@ -118,26 +117,28 @@ public class PathElementTest {
         AssertJUnit.assertEquals( "A" , lpe.getSubKeyRef( 1 ) );
         AssertJUnit.assertEquals( "AAA" , lpe.getSubKeyRef( 2 ) );
 
-        LiteralPathElement lpe2 = pe2.match( "rating-BBB", new WalkedPath( Arrays.asList( lpe ) ) );
+        LiteralPathElement lpe2 = pe2.match( "rating-BBB", new WalkedPath( null, lpe ) );
         AssertJUnit.assertEquals(  "rating-BBB", lpe2.getRawKey() );
         AssertJUnit.assertEquals(  "rating-BBB", lpe2.getSubKeyRef( 0 ) );
         AssertJUnit.assertEquals( 2, lpe2.getSubKeyCount() );
         AssertJUnit.assertEquals( "BBB" , lpe2.getSubKeyRef( 1 ) );
 
         ShiftrWriter outputPath = new ShiftrWriter( "&(1,2).&.value" );
+        WalkedPath twoSteps = new WalkedPath( null, lpe );
+        twoSteps.add( null, lpe2 );
         {
             EvaluatablePathElement outputElement = (EvaluatablePathElement) outputPath.get( 0 );
-            String evaledLeafOutput = outputElement.evaluate( new WalkedPath( Arrays.asList( lpe, lpe2 ) ) );
+            String evaledLeafOutput = outputElement.evaluate( twoSteps );
             AssertJUnit.assertEquals( "AAA", evaledLeafOutput );
         }
         {
             EvaluatablePathElement outputElement = (EvaluatablePathElement) outputPath.get( 1 );
-            String evaledLeafOutput = outputElement.evaluate( new WalkedPath( Arrays.asList( lpe, lpe2 ) ) );
+            String evaledLeafOutput = outputElement.evaluate( twoSteps );
             AssertJUnit.assertEquals( "rating-BBB", evaledLeafOutput );
         }
         {
             EvaluatablePathElement outputElement = (EvaluatablePathElement) outputPath.get( 2 );
-            String evaledLeafOutput = outputElement.evaluate( new WalkedPath( Arrays.asList( lpe, lpe2 ) ) );
+            String evaledLeafOutput = outputElement.evaluate( twoSteps );
             AssertJUnit.assertEquals( "value", evaledLeafOutput );
         }
     }
@@ -146,15 +147,15 @@ public class PathElementTest {
     public void calculateOutputTest_arrayIndexes() {
 
         // simulate Shiftr LHS specs
-        MatchablePathElement pe1 = (MatchablePathElement) ShiftrSpec.parse( "tuna-*-marlin-*" ).get( 0 );
-        MatchablePathElement pe2 = (MatchablePathElement) ShiftrSpec.parse( "rating-*" ).get( 0 );
+        MatchablePathElement pe1 = (MatchablePathElement) ShiftrSpec.parseSingleKeyLHS( "tuna-*-marlin-*" );
+        MatchablePathElement pe2 = (MatchablePathElement) ShiftrSpec.parseSingleKeyLHS( "rating-*" );
 
         // match them against some data to get LiteralPathElements with captured values
         LiteralPathElement lpe = pe1.match( "tuna-2-marlin-3", new WalkedPath() );
         AssertJUnit.assertEquals( "2" , lpe.getSubKeyRef( 1 ) );
         AssertJUnit.assertEquals( "3" , lpe.getSubKeyRef( 2 ) );
 
-        LiteralPathElement lpe2 = pe2.match( "rating-BBB", new WalkedPath( Arrays.asList( lpe ) ) );
+        LiteralPathElement lpe2 = pe2.match( "rating-BBB", new WalkedPath( null, lpe ) );
         AssertJUnit.assertEquals( 2, lpe2.getSubKeyCount() );
         AssertJUnit.assertEquals( "BBB" , lpe2.getSubKeyRef( 1 ) );
 
@@ -165,8 +166,9 @@ public class PathElementTest {
         AssertJUnit.assertEquals( "tuna.[&(1,1)].marlin.[&(1,2)].&(0,1)", shiftrWriter.getCanonicalForm() );
 
         // Evaluate the write path against the LiteralPath elements we build above ( like Shiftr does )
-        WalkedPath walkedPath = new WalkedPath( Arrays.asList( lpe, lpe2 ) );
-        List<String> stringPath = shiftrWriter.evaluate( walkedPath );
+        WalkedPath twoSteps = new WalkedPath( null, lpe );
+        twoSteps.add( null, lpe2 );
+        List<String> stringPath = shiftrWriter.evaluate( twoSteps );
 
         AssertJUnit.assertEquals( "tuna",   stringPath.get( 0 ) );
         AssertJUnit.assertEquals( "2",      stringPath.get( 1 ) );

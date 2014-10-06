@@ -35,7 +35,7 @@ public class DollarPathElement extends BasePathElement implements MatchablePathE
 
     @Override
     public String evaluate( WalkedPath walkedPath ) {
-        LiteralPathElement pe = walkedPath.elementFromEnd( dRef.getPathIndex() );
+        LiteralPathElement pe = walkedPath.elementFromEnd( dRef.getPathIndex() ).getLiteralPathElement();
         return pe.getSubKeyRef( dRef.getKeyGroup() );
     }
 

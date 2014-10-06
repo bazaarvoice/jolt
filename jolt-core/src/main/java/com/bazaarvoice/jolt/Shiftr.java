@@ -258,6 +258,7 @@ import java.util.Map;
  *   </pre>
  *
  * '#' Wildcard
+ *   TODO : Doc
  *   Valid only on the RHS of the spec, nested in an array, like "[#2]"
  *   This wildcard is useful if you want to take a JSON map and turn it into a JSON array, and you do not care about the order of the array.
  *
@@ -280,6 +281,7 @@ import java.util.Map;
  * '@' Wildcard
  *   Valid only on the LHS of the spec.
  *   This wildcard is necessary if you want to do put both the input value and the input key somewhere in the output JSON.
+ *   TODO : Update with the new '@' Transpose logic.
  *
  *  Example '@' wildcard usage :
  *  <pre>
@@ -471,7 +473,7 @@ public class Shiftr implements SpecDriven, Transform {
         // Create a root LiteralPathElement so that # is useful at the root level
         LiteralPathElement rootLpe = new LiteralPathElement( ROOT_KEY );
         WalkedPath walkedPath = new WalkedPath();
-        walkedPath.add( rootLpe );
+        walkedPath.add( input, rootLpe );
 
         rootSpec.apply( ROOT_KEY, input, walkedPath, output );
 

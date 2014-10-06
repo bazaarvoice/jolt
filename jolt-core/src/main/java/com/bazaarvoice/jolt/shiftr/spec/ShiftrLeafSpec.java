@@ -16,6 +16,8 @@
 package com.bazaarvoice.jolt.shiftr.spec;
 
 import com.bazaarvoice.jolt.Shiftr;
+import com.bazaarvoice.jolt.common.pathelement.HashPathElement;
+import com.bazaarvoice.jolt.common.pathelement.TransposePathElement;
 import com.bazaarvoice.jolt.shiftr.ShiftrWriter;
 import com.bazaarvoice.jolt.utils.StringTools;
 import com.bazaarvoice.jolt.exception.SpecException;
@@ -68,7 +70,7 @@ public class ShiftrLeafSpec extends ShiftrSpec {
     private static ShiftrWriter parseOutputDotNotation( Object rawObj ) {
 
         if ( ! ( rawObj instanceof String ) ) {
-            throw new SpecException( "Invalid Shiftr spec RHS.  Should be a string or array of Strings.   Value in question : " + rawObj );
+            throw new SpecException( "Invalid Shiftr spec, RHS should be a String or array of Strings.   Value in question : " + rawObj );
         }
 
         // Prepend "root" to each output path.
@@ -99,20 +101,29 @@ public class ShiftrLeafSpec extends ShiftrSpec {
         }
 
         Object data;
-        boolean realChild;
+        boolean realChild = false;  // by default don't block further Shiftr matches
 
-        if ( this.pathElement instanceof DollarPathElement ) {
-            DollarPathElement subRef = (DollarPathElement) this.pathElement;
+        if ( this.pathElement instanceof DollarPathElement ||
+             this.pathElement instanceof HashPathElement ) {
 
-            // The data is the parent key, so evaluate against the parent's path
-            data = subRef.evaluate( walkedPath );
-            realChild = false;  // don't block further Shiftr matches
+            // The data is already encoded in the thisLevel object created by the pathElement.match called above
+            data = thisLevel.getCanonicalForm();
         }
         else if ( this.pathElement instanceof AtPathElement ) {
 
             // The data is our parent's data
             data = input;
-            realChild = false;  // don't block further Shiftr matches
+        }
+        else if ( this.pathElement instanceof TransposePathElement ) {
+            // We try to walk down the tree to find the value / data we want
+            TransposePathElement tpe = (TransposePathElement) this.pathElement;
+
+            // Note the data found may not be a String, thus we have to call the special objectEvaluate
+            data = tpe.objectEvaluate( walkedPath );
+            if ( data == null ) {
+                // if we could not find the value we want looking down the tree, bail
+                return false;
+            }
         }
         else {
             // the data is the input
@@ -122,7 +133,7 @@ public class ShiftrLeafSpec extends ShiftrSpec {
         }
 
         // Add our the LiteralPathElement for this level, so that write path References can use it as &(0,0)
-        walkedPath.add( thisLevel );
+        walkedPath.add( input, thisLevel );
 
         // Write out the data
         for ( ShiftrWriter outputPath : shiftrWriters ) {
@@ -133,7 +144,7 @@ public class ShiftrLeafSpec extends ShiftrSpec {
 
         if ( realChild ) {
             // we were a "real" child, so increment the matchCount of our parent
-            walkedPath.lastElement().incrementHashCount();
+            walkedPath.lastElement().getLiteralPathElement().incrementHashCount();
         }
 
         return realChild;

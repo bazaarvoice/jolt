@@ -98,12 +98,12 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
                 return arrayIndex;
 
             case HASH:
-                LiteralPathElement element = walkedPath.elementFromEnd( ref.getPathIndex() );
+                LiteralPathElement element = walkedPath.elementFromEnd( ref.getPathIndex() ).getLiteralPathElement();
                 Integer index = element.getHashCount();
                 return index.toString();
 
             case REFERENCE:
-                LiteralPathElement lpe = walkedPath.elementFromEnd( ref.getPathIndex() );
+                LiteralPathElement lpe = walkedPath.elementFromEnd( ref.getPathIndex() ).getLiteralPathElement();
                 String keyPart;
 
                 if ( ref instanceof PathAndGroupReference ) {
@@ -118,7 +118,7 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
                     return keyPart;
                 }
                 catch ( NumberFormatException nfe ) {
-                    throw new RuntimeException( " Evaluating canonical ReferencePathElement:" + this.getCanonicalForm() + ", and got a non integer result for reference:" + ref.getCanonicalForm() );
+                    throw new RuntimeException( " Evaluating canonical ReferencePathElement:" + this.getCanonicalForm() + ", and got a non integer result:(" + keyPart + "),  for reference:" + ref.getCanonicalForm() );
                 }
             default:
                 throw new IllegalStateException( "ArrayPathType enum added two without updating this switch statement." );

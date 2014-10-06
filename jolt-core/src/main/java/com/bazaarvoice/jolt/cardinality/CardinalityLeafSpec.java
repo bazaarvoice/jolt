@@ -87,7 +87,7 @@ public class CardinalityLeafSpec extends CardinalitySpec {
     private Object performCardinalityAdjustment( String inputKey, Object input, WalkedPath walkedPath, Map parentContainer, LiteralPathElement thisLevel ) {
 
         // Add our the LiteralPathElement for this level, so that write path References can use it as &(0,0)
-        walkedPath.add( thisLevel );
+        walkedPath.add( input, thisLevel );
 
         Object returnValue = null;
         if ( cardinalityRelationship == CardinalityRelationship.MANY ) {

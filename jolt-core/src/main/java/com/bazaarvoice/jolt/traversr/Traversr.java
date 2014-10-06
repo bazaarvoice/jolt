@@ -82,6 +82,19 @@ public abstract class Traversr {
         root = rooty;
     }
 
+    /**
+     * Constructor where we provide a known good set of pathElement Strings in a list.
+     * Aka, no need to extract it from a "Human Readable" form.
+     */
+    public Traversr( List<String> paths ) {
+        TraversalStep rooty = null;
+        for ( int index = paths.size() -1 ; index >= 0; index--) {
+            rooty = makePathElement( paths.get(index), rooty );
+        }
+        traversalLength = paths.size();
+        root = rooty;
+    }
+
     private TraversalStep makePathElement(String path, TraversalStep child) {
 
         if ( "[]".equals( path ) ) {

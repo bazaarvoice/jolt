@@ -73,7 +73,7 @@ public abstract class BaseTraversalStep<T> implements TraversalStep<T> {
             //    Do nothing
             //    Throw Exception
             //    "make" the type ok by overwriting with a new container object (got list, wanted map, so trash the list by overwriting with a new map)
-            throw new TraversrException( "Type mismatch on parent." );
+            throw new TraversrException( "Type mismatch on parent : " + getStepType().getName() + " is not assignable from " + tree.getClass() );
         }
     }
 }

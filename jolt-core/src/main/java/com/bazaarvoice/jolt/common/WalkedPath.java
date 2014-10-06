@@ -23,6 +23,10 @@ import java.util.Collection;
 /**
  * DataStructure used by a SpecTransform during it's parallel tree walk.
  *
+ * Basically this is Stack that records the steps down the tree that have been taken.
+ * For each level, there is a PathStep, which contains a pointer the data of that level,
+ *  and a pointer to the LiteralPathElement matched at that level.
+ *
  * At any given point in time, it represents where in the tree walk a Spec is operating.
  * It is primarily used to by the ShiftrLeafSpec and CardinalityLeafSpec as a reference
  * to lookup real values for output "&(1,1)" references.
@@ -30,32 +34,43 @@ import java.util.Collection;
  * It is expected that as the SpecTransform navigates down the tree, LiteralElements will be added and then
  *  removed when that subtree has been walked.
  */
-public class WalkedPath extends ArrayList<LiteralPathElement> {
+public class WalkedPath extends ArrayList<PathStep> {
 
     public WalkedPath() {
         super();
     }
 
-    public WalkedPath( Collection<LiteralPathElement> c ) {
-        super( c );
+    public WalkedPath(Collection<PathStep> c) {
+        super(c);
     }
 
-    public LiteralPathElement removeLast() {
-        return remove( size() - 1 );
+    public WalkedPath( Object treeRef, LiteralPathElement literalPathElement ) {
+        super();
+        this.add( new PathStep( treeRef, literalPathElement ) );
+    }
+
+    /**
+     * Convenience method
+     */
+    public boolean add( Object treeRef, LiteralPathElement literalPathElement ) {
+        return super.add( new PathStep( treeRef, literalPathElement ) );
+    }
+
+    public void removeLast() {
+        remove(size() - 1);
     }
 
     /**
      * Method useful to "&", "&1", "&2", etc evaluation.
      */
-    public LiteralPathElement elementFromEnd( int idxFromEnd ) {
-        if ( isEmpty() ) {
+    public PathStep elementFromEnd(int idxFromEnd) {
+        if (isEmpty()) {
             return null;
         }
-        return get( size() - 1 - idxFromEnd );
+        return get(size() - 1 - idxFromEnd);
     }
 
-    public LiteralPathElement lastElement() {
-        return get( size() - 1 );
+    public PathStep lastElement() {
+        return get(size() - 1);
     }
-
 }

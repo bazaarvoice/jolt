@@ -1,0 +1,33 @@
+{
+    "input": {
+        "clients" : {
+            "Acme" : {
+                "clientId": "guid",
+                "enabled" : true
+            },
+            "Axe" : {
+                "clientId": 2,
+                "enabled" : false
+            },
+            "Bob's Burgers" : {
+                "clientId": 3,
+                "enabled" : true
+            }
+        }
+    },
+
+    "spec": {
+        "clients" : {
+            "*": { // clientName
+                "clientId": "clientsById.@(1,enabled)[]"  // coerce the boolean into the string "true" or "false"
+            }
+        }
+    },
+
+    "expected": {
+        "clientsById" : {
+            "true"  : [ "guid", 3 ],  // Note the Ids, whatever they are get passed along, because they are data
+            "false" : [ 2 ]
+        }
+    }
+}

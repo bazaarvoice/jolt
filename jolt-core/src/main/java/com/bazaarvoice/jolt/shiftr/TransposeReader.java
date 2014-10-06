@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Bazaarvoice, Inc.
+ * Copyright 2014 Bazaarvoice, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,26 @@
  */
 package com.bazaarvoice.jolt.shiftr;
 
+import com.bazaarvoice.jolt.traversr.SimpleTraversr;
 import com.bazaarvoice.jolt.traversr.Traversr;
 
 import java.util.List;
 
 /**
- * Shiftr Specific version of a PathEvaluatingTraversal, where we supply a
- * ShiftrTraversr.
+ * The TransposeReader uses a PathEvaluatingTraversal with a SimpleTraversr.
+ *
+ * This means that as it walks a path in a tree structure (PathEvaluatingTraversal),
+ * it uses the behavior of the SimpleTraversr for tree traversal operations like
+ * get, set, and final set.
  */
-public class ShiftrWriter extends PathEvaluatingTraversal {
+public class TransposeReader extends PathEvaluatingTraversal {
 
-    public ShiftrWriter( String dotNotation ) {
+    public TransposeReader( String dotNotation ) {
         super( dotNotation );
     }
 
     @Override
     protected Traversr createTraversr( List<String> paths ) {
-        return new ShiftrTraversr( paths );
+        return new SimpleTraversr( paths );
     }
 }

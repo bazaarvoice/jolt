@@ -82,8 +82,10 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
                 literals.put( child.pathElement.getRawKey(), child );
             }
             // special is it is "@" or "$"
-            else if ( child.pathElement instanceof AtPathElement || (
-                    child.pathElement instanceof DollarPathElement ) ) {
+            else if ( child.pathElement instanceof AtPathElement ||
+                      child.pathElement instanceof HashPathElement ||
+                      child.pathElement instanceof DollarPathElement ||
+                      child.pathElement instanceof TransposePathElement ) {
                 special.add( child );
             }
             else {   // star || (& with children)
@@ -167,7 +169,7 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
         }
 
         // add ourselves to the path, so that our children can reference us
-        walkedPath.add( thisLevel );
+        walkedPath.add( input, thisLevel );
 
         // Handle any special / key based children first, but don't have them block anything
         for( ShiftrSpec subSpec : specialChildren ) {
@@ -181,7 +183,7 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
         walkedPath.removeLast();
 
         // we matched so increment the matchCount of our parent
-        walkedPath.lastElement().incrementHashCount();
+        walkedPath.lastElement().getLiteralPathElement().incrementHashCount();
 
         return true;
     }

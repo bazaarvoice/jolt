@@ -28,7 +28,7 @@ public class AtPathElement extends BasePathElement implements MatchablePathEleme
     }
 
     public LiteralPathElement match( String dataKey, WalkedPath walkedPath ) {
-        return walkedPath.lastElement();  // copy what our parent was so that write keys of &0 and &1 both work.
+        return walkedPath.lastElement().getLiteralPathElement();  // copy what our parent was so that write keys of &0 and &1 both work.
     }
 
     @Override

@@ -1,0 +1,25 @@
+{
+    "input": {
+        "data" : [
+            {
+                "clientId": "1",
+                "clientName": "Acme",
+                "otherStuff" : "Boom"
+            },
+            {
+                "clientId": "2",
+                "clientName": "Bob's",
+                "otherStuff" : "Burgers"
+            }
+        ]
+    },
+
+    "spec": {
+        "data" : {
+            // Verify that if the RHS @ does not find anything, nothing get written
+            "*" : "data.@pants"
+        }
+    },
+
+    "expected": null
+}

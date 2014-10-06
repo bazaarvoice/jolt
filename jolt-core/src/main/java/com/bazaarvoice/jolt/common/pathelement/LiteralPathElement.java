@@ -56,7 +56,7 @@ public class LiteralPathElement extends BasePathElement implements MatchablePath
     }
 
     @Override
-    public com.bazaarvoice.jolt.common.pathelement.LiteralPathElement match( String dataKey, WalkedPath walkedPath ) {
+    public LiteralPathElement match( String dataKey, WalkedPath walkedPath ) {
         return getRawKey().equals( dataKey ) ? this : null ;
     }
 
