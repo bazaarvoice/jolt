@@ -173,6 +173,7 @@ public abstract class ShiftrSpec {
      * @param dotNotaton Output path dot notation
      * @return
      */
+    // TODO Unit Test this
     private static String fixLeadingBracketSugar( String dotNotaton ) {
 
         if ( dotNotaton == null || dotNotaton.length() == 0 ) {
@@ -209,10 +210,12 @@ public abstract class ShiftrSpec {
      * "@a.b
      *
      * This method expects that the the '@' character has already been seen.
+     * Thus if ther are
      *
      * @param iter iterator to pull data from
      * @param dotNotationRef the original dotNotation string used for error messages
      */
+    // TODO Unit Test this
     private static String parseAtPathElement( Iterator<Character> iter, String dotNotationRef ) {
 
         if ( ! iter.hasNext() ) {
@@ -221,6 +224,9 @@ public abstract class ShiftrSpec {
 
         StringBuilder sb = new StringBuilder();
 
+        // Strategy here is to walk thru the string looking for matching parenthesis.
+        // '(' increments the count, while ')' decrements it
+        // If we ever get negative there is a problem.
         boolean isParensAt = false;
         int atParensCount = 0;
 
@@ -230,7 +236,7 @@ public abstract class ShiftrSpec {
             atParensCount++;
         }
         else if ( c == '.' ) {
-            return "";
+            throw new SpecException( "Unable to parse dotNotation, invalid TransposePathElement : " + dotNotationRef );
         }
 
         sb.append( c );
@@ -242,7 +248,7 @@ public abstract class ShiftrSpec {
             // Parsing "@(a.b.[&2])"
             if ( isParensAt ) {
                 if ( c == '(' ) {
-                    atParensCount++;
+                    throw new SpecException( "Unable to parse dotNotation, too many open parens '(' : " + dotNotationRef );
                 }
                 else if ( c == ')' ) {
                     atParensCount--;

@@ -18,7 +18,6 @@ package com.bazaarvoice.jolt.common.pathelement;
 import com.bazaarvoice.jolt.common.PathStep;
 import com.bazaarvoice.jolt.common.WalkedPath;
 import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.shiftr.PathEvaluatingTraversal;
 import com.bazaarvoice.jolt.shiftr.TransposeReader;
 import com.bazaarvoice.jolt.utils.StringTools;
 
@@ -70,6 +69,12 @@ public class TransposePathElement extends BasePathElement implements MatchablePa
     private final TransposeReader subPathReader;
     private final String canonicalForm;
 
+    /**
+     * Parse a text value from a Spec, into a TransposePathElement.
+     *
+     * @param key rawKey from a Jolt Spec file
+     * @return a TransposePathElement
+     */
     public static TransposePathElement parse( String key ) {
 
         if ( key == null || key.length() < 2 ) {
@@ -80,29 +85,37 @@ public class TransposePathElement extends BasePathElement implements MatchablePa
         }
 
         // Strip off the leading '@' as we don't need it anymore.
-        String path = key.substring( 1 );
+        String meat = key.substring( 1 );
 
-        if ( path.contains( "@" ) ) {
+        if ( meat.contains( "@" ) ) {
             throw new SpecException( "@ pathElement can not contain a nested @." );
         }
-        if ( path.contains( "*" ) || path.contains( "[]" ) ) {
+        if ( meat.contains( "*" ) || meat.contains( "[]" ) ) {
             throw new SpecException( "'Transpose Input' can not contain expansion wildcards (* and []).  Offending key : " + key );
         }
 
         // Check to see if the key is wrapped by parens
-        if ( path.startsWith( "(" ) ) {
-            if ( path.endsWith( ")" ) ) {
-                path = path.substring( 1, path.length() - 1 );
+        if ( meat.startsWith( "(" ) ) {
+            if ( meat.endsWith( ")" ) ) {
+                meat = meat.substring( 1, meat.length() - 1 );
             }
             else {
                 throw new SpecException( "@ path element that starts with '(' must have a matching ')'.  Offending key : " + key );
             }
         }
 
-        return parse2( key, path );
+        return innerParse( key, meat );
     }
 
-    private static TransposePathElement parse2( String originalKey, String meat ) {
+    /**
+     * Parse the core of the TransposePathElement key, once basic errors have been checked and
+     *  syntax has been handled.
+     *
+     * @param originalKey The original text for reference.
+     * @param meat The string to actually parse into a TransposePathElement
+     * @return TransposePathElement
+     */
+    private static TransposePathElement innerParse( String originalKey, String meat ) {
 
         char first = meat.charAt( 0 );
         if ( Character.isDigit( first ) ) {
@@ -141,6 +154,13 @@ public class TransposePathElement extends BasePathElement implements MatchablePa
         }
     }
 
+    /**
+     * Private constructor used after parsing is done.
+     *
+     * @param originalKey for reference
+     * @param upLevel How far up the tree to go
+     * @param subPath Where to go down the tree
+     */
     private TransposePathElement( String originalKey, int upLevel, String subPath ) {
         super(originalKey);
         this.upLevel = upLevel;
@@ -154,13 +174,21 @@ public class TransposePathElement extends BasePathElement implements MatchablePa
         }
     }
 
-    public Object rawEval( WalkedPath walkedPath ) {
+    /**
+     * This method is used when the TransposePathElement is used on the LFH as data.
+     *
+     * Aka, normal "evaluate" returns either a Number or a String.
+     *
+     * @param walkedPath WalkedPath to evaluate against
+     * @return The data specified by this TransposePathElement, or null if it can't find anything.
+     */
+    public Object objectEvaluate( WalkedPath walkedPath ) {
         // Grap the data we need from however far up the tree we are supposed to go
         PathStep pathStep = walkedPath.elementFromEnd( upLevel );
 
         Object treeRef = pathStep.getTreeRef();
 
-        // Now walk down from that day using the subPathReader
+        // Now walk down from that level using the subPathReader
         if ( subPathReader == null ) {
             return treeRef;
         }
@@ -173,7 +201,7 @@ public class TransposePathElement extends BasePathElement implements MatchablePa
     @Override
     public String evaluate( WalkedPath walkedPath ) {
 
-        Object dataFromTranspose = rawEval( walkedPath );
+        Object dataFromTranspose = objectEvaluate( walkedPath );
 
         if ( dataFromTranspose instanceof Number ) {
             // the idea here being we are looking for an array index value

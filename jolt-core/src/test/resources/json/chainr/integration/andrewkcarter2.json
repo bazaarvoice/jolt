@@ -1,6 +1,6 @@
 {
     // Test from Jolt Issue 98 : Question two from andrewkcarter
-    // Summary :
+    // Summary : Filter books by there availability type.  In particular just want Paperback.
 
     "input": {
         "books": [

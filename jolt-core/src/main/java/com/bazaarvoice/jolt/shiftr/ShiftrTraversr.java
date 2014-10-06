@@ -21,6 +21,9 @@ import java.util.List;
 import com.bazaarvoice.jolt.traversr.SimpleTraversr;
 import com.bazaarvoice.jolt.traversr.traversal.TraversalStep;
 
+/**
+ * Traverser that does not overwrite data.
+ */
 public class ShiftrTraversr extends SimpleTraversr {
 
     public ShiftrTraversr( String humanPath ) {

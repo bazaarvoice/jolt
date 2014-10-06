@@ -21,11 +21,11 @@ import com.bazaarvoice.jolt.traversr.Traversr;
 import java.util.List;
 
 /**
- * Convenience class for path based off a single dot notation String,
- *  like "rating.&1(2).&.value".
+ * The TransposeReader uses a PathEvaluatingTraversal with a SimpleTraversr.
  *
- * This processes the dot notation path into internal data structures, so
- *  that the String processing only happens once.
+ * This means that as it walks a path in a tree structure (PathEvaluatingTraversal),
+ * it uses the behavior of the SimpleTraversr for tree traversal operations like
+ * get, set, and final set.
  */
 public class TransposeReader extends PathEvaluatingTraversal {
 
