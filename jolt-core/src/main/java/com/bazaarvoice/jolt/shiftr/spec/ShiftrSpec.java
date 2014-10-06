@@ -113,7 +113,7 @@ public abstract class ShiftrSpec {
         else if ( "*".equals( key ) ) {
             return new StarAllPathElement( key );
         }
-        else if (key.contains("*" ) ) {
+        else if ( key.contains("*" ) ) {
 
             int numOfStars = StringTools.countMatches(key, "*");
 
@@ -126,6 +126,9 @@ public abstract class ShiftrSpec {
             else {
                 return new StarRegexPathElement( key );
             }
+        }
+        else if ( key.contains("#" ) ) {
+            return new HashPathElement( key );
         }
         else {
             return new LiteralPathElement( key );

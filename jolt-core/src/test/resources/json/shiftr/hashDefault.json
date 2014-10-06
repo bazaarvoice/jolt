@@ -1,0 +1,36 @@
+{
+    "input": {
+        "data" : {
+            "1234" : {
+                "clientId": "12",
+                "hidden" : true
+            },
+            "1235" : {
+                "clientId": "35",
+                "hidden" : false
+            }
+        }
+    },
+
+    "spec": {
+        "data" : {
+            "*" : {
+                "hidden" : {
+                    "true" : {
+                        "#disabled" : "clients.@(3,clientId)"
+                    },
+                    "false" : {
+                        "#enabled" : "clients.@(3,clientId)"
+                    }
+                }
+            }
+        }
+    },
+
+    "expected": {
+        "clients" : {
+            "12" : "disabled",
+            "35" : "enabled"
+        }
+    }
+}

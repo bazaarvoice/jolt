@@ -36,6 +36,7 @@ public class ShiftrTest {
             {"filterParents1"},
             {"filterParents2"},
             {"firstSample"},
+            {"hashDefault"},
             {"identity"},
             {"inputArrayToPrefix"},
             {"invertMap"},

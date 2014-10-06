@@ -16,6 +16,7 @@
 package com.bazaarvoice.jolt.shiftr.spec;
 
 import com.bazaarvoice.jolt.Shiftr;
+import com.bazaarvoice.jolt.common.pathelement.HashPathElement;
 import com.bazaarvoice.jolt.common.pathelement.TransposePathElement;
 import com.bazaarvoice.jolt.shiftr.ShiftrWriter;
 import com.bazaarvoice.jolt.utils.StringTools;
@@ -102,11 +103,11 @@ public class ShiftrLeafSpec extends ShiftrSpec {
         Object data;
         boolean realChild = false;  // by default don't block further Shiftr matches
 
-        if ( this.pathElement instanceof DollarPathElement ) {
-            DollarPathElement subRef = (DollarPathElement) this.pathElement;
+        if ( this.pathElement instanceof DollarPathElement ||
+             this.pathElement instanceof HashPathElement ) {
 
-            // The data is the parent key, so evaluate against the parent's path
-            data = subRef.evaluate( walkedPath );
+            // The data is already encoded in the thisLevel object created by the pathElement.match called above
+            data = thisLevel.getCanonicalForm();
         }
         else if ( this.pathElement instanceof AtPathElement ) {
 
@@ -117,6 +118,7 @@ public class ShiftrLeafSpec extends ShiftrSpec {
             // We try to walk down the tree to find the value / data we want
             TransposePathElement tpe = (TransposePathElement) this.pathElement;
 
+            // Note the data found may not be a String, thus we have to call the special objectEvaluate
             data = tpe.objectEvaluate( walkedPath );
             if ( data == null ) {
                 // if we could not find the value we want looking down the tree, bail

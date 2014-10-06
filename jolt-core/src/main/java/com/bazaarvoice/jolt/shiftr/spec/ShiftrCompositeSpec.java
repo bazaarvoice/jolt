@@ -83,6 +83,7 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
             }
             // special is it is "@" or "$"
             else if ( child.pathElement instanceof AtPathElement ||
+                      child.pathElement instanceof HashPathElement ||
                       child.pathElement instanceof DollarPathElement ||
                       child.pathElement instanceof TransposePathElement ) {
                 special.add( child );
