@@ -1,0 +1,66 @@
+{
+    // Test from Jolt Issue 98 : Question two from andrewkcarter
+    // Summary : Filter books by there availability type.  In particular just want Paperback books.
+
+    "input": {
+        "books": [
+            {
+                "title": "foo",
+                "availability": [
+                    "online"
+                ]
+            },
+            {
+                "title": "bar",
+                "availability": [
+                    "online",
+                    "paperback"
+                ]
+            },
+            {
+                "title": "baz",
+                "availability": [
+                    "paperback"
+                ]
+            }
+        ]
+    },
+
+    "spec": [
+        {
+            "operation": "shift",
+            "spec": {
+
+                "books": {
+                    "*": {
+                        "availability": {
+                            "*": {
+                                "paperback": {
+                                    "@3": "PaperBooks[]"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ],
+
+    "expected": {
+        "PaperBooks":[
+            {
+                "title":"bar",
+                "availability":[
+                    "online",
+                    "paperback"
+                ]
+            },
+            {
+                "title":"baz",
+                "availability":[
+                    "paperback"
+                ]
+            }
+        ]
+    }
+}

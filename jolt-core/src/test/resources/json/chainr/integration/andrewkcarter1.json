@@ -1,0 +1,53 @@
+{
+    // Test from Jolt Issue 98 : Question one from andrewkcarter
+    // Summary : Bucket data from an Array, based on a leaf level value
+
+    "input": {
+        "entities": [
+            {
+                "type": "alpha",
+                "data": "foo"
+            },
+            {
+                "type": "beta",
+                "data": "bar"
+            },
+            {
+                "type": "alpha",
+                "data": "baz"
+            }
+        ]
+    },
+
+    "spec": [
+        {
+            "operation": "shift",
+            "spec": {
+                "entities": {
+                    // The "*" matches each Map pair of "type" and "data".
+                    // We then write the Map pair, to the value of the "type" key, in a forced array
+                    "*" : "@type[]"
+                }
+            }
+        }
+    ],
+
+    "expected": {
+        "alpha":[
+            {
+                "type":"alpha",
+                "data":"foo"
+            },
+            {
+                "type":"alpha",
+                "data":"baz"
+            }
+        ],
+        "beta":[
+            {
+                "type":"beta",
+                "data":"bar"
+            }
+        ]
+    }
+}

@@ -1,0 +1,25 @@
+{
+    "input": {
+        "states" :   [ "Alabama",    "Alaska", "Arizona",  "Arkansas" ],
+        "capitals" : [ "Montgomery", "Juneau", "Phoenix" , "Little Rock" ]
+    },
+
+    "spec": {             // Level 2 : the root
+        "capitals": {     // Level 1 : capitals
+
+            // Write out the "value" of each array index, aka 0->Montgomery, so the "Montgomery" part
+            // to "states.Alabama" where "Alabama" is 2 levels up the tree,
+            //   then down into the "states" array, indexing using the same index value we matched
+            "*": "states.@(2,states[&])"
+        }
+    },
+
+    "expected": {
+        "states" : {
+            "Alabama"  : "Montgomery",
+            "Alaska"   : "Juneau",
+            "Arizona"  : "Phoenix",
+            "Arkansas" : "Little Rock"
+        }
+    }
+}

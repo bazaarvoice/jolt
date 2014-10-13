@@ -1,0 +1,88 @@
+{
+    // Test from Jolt Issue 104 : Question two from ThorstenWolfermann
+    // Summary : Take nested input with arrays, and "flatten" it
+    //
+    // The first pass gets all the data into a single array, but with extra stuff in each slot.
+    // The second pass extracts and passes thru the desired values in the array.
+    // The "[]" in the Right Hand Side spec means place the data into an auto expanding array.
+
+    "input": {
+        "environment": {
+            "value": 123,
+            "orderLevel": [
+                {
+                    "rate": "low",
+                    "value": 666
+                },
+                {
+                    "rate": "low",
+                    "start": 321,
+                    "orderLevel-1": [
+                        {
+                            "rate1": "OL",
+                            "value": 444
+                        },
+                        {
+                            "rate": "OL3",
+                            "start": 444
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+
+    "spec": [
+        {
+            "operation": "shift",
+            "spec": {
+                "environment": {
+                    "orderLevel": {
+                        "*": {
+                            "@": "Data[]",
+                            "orderLevel-1": {
+                                "*": "Data[]"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "operation": "shift",
+            "spec": {
+                "Data": {
+                    "*": {
+                        "rate": "Data2.Data[&1].rate",
+                        "rate*": "Data2.Data[&1].&",
+                        "value": "Data2.Data[&1].value",
+                        "start": "Data2.Data[&1].start"
+                    }
+                }
+            }
+        }
+    ],
+
+    "expected": {
+        "Data2": {
+            "Data": [
+                {
+                    "rate": "low",
+                    "value": 666
+                },
+                {
+                    "rate": "low",
+                    "start": 321
+                },
+                {
+                    "rate1": "OL",
+                    "value": 444
+                },
+                {
+                    "rate": "OL3",
+                    "start": 444
+                }
+            ]
+        }
+    }
+}

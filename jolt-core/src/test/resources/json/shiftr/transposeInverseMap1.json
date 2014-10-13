@@ -1,0 +1,38 @@
+{
+    "input": {
+        "data" : [
+            {
+                "clientId": "1",
+                "clientName": "Acme",
+                "otherStuff" : "Boom"
+            },
+            {
+                "clientId": "2",
+                "clientName": "Bob's",
+                "otherStuff" : "Burgers"
+            }
+        ]
+    },
+
+    "spec": {
+        "data" : {
+            // We can use the RHS @ sign to look down the tree to find a key for the output
+            "*" : "data.@clientId"
+        }
+    },
+
+    "expected": {
+        "data" : {
+            "1" : {
+                "clientId": "1",
+                "clientName": "Acme",
+                "otherStuff" : "Boom"
+            },
+            "2" : {
+                "clientId": "2",
+                "clientName": "Bob's",
+                "otherStuff" : "Burgers"
+            }
+        }
+    }
+}

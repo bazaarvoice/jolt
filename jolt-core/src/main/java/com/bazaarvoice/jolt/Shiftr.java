@@ -258,11 +258,30 @@ import java.util.Map;
  *   </pre>
  *
  * '#' Wildcard
- *   Valid only on the RHS of the spec, nested in an array, like "[#2]"
- *   This wildcard is useful if you want to take a JSON map and turn it into a JSON array, and you do not care about the order of the array.
+ *   Valid both on the LHS and RHS, but has different behavior / format on either side.
+ *   They way to think of it, is that it allows you to specify a "synthentic" value, aka a value not found in the input data.
  *
- *   While Shiftr is doing its parallel tree walk of the input data and the spec, it tracks how many matched it has processed at each level
- *    of the spec tree.
+ *   On the RHS of the spec, # is only valid in the the context of an array, like "[#2]".
+ *   What "[#2]" means is, go up the three 2 levels and ask that node how many matches it has had, and then use that as an index
+ *    in the arrays.
+ *   This means that, while Shiftr is doing its parallel tree walk of the input data and the spec, it tracks how many matches it
+ *    has processed at each level of the spec tree.
+ *
+ *   This useful if you want to take a JSON map and turn it into a JSON array, and you do not care about the order of the array.
+ *
+ *   On the LHS of the spec, # allows you to specify a hard coded String to be place as a value in the output.
+ *
+ *   The initial use-case for this feature was to be able to process a Boolean input value, and if the value is
+ *    boolean true write out the string "enabled".  Note, this was possible before, but it required two Shiftr steps.
+ *
+ *   <pre>
+ *      Example
+ *      "hidden" : {
+ *          "true" : {                             // if the value of "hidden" is true
+ *              "#disabled" : "clients.clientId"   // write the word "disabled" to the path "clients.clientId"
+ *          }
+ *      }
+ *   </pre>
  *
  *
  * '|' Wildcard
@@ -278,7 +297,10 @@ import java.util.Map;
  *
  *
  * '@' Wildcard
- *   Valid only on the LHS of the spec.
+ *   Valid only on both sides of the spec.
+ *
+ *   The basic '@' on the LHS.
+ *
  *   This wildcard is necessary if you want to do put both the input value and the input key somewhere in the output JSON.
  *
  *  Example '@' wildcard usage :
@@ -297,6 +319,13 @@ import java.util.Map;
  *  }
  *  </pre>
  *  Thus the '@' wildcard is the mean "copy the value of the data at this level in the tree, to the output".
+ *
+ *  Advanced '@' sign wildcard.
+ *  The format is lools like "@(3,title)", where
+ *    "3" means go up the tree 3 levels and then lookup the key
+ *    "title" and use the value at that key.
+ *
+ *  See the filter*.json and transpose*.json Unit Test fixtures.
  *
  *
  * JSON Arrays :
@@ -471,7 +500,7 @@ public class Shiftr implements SpecDriven, Transform {
         // Create a root LiteralPathElement so that # is useful at the root level
         LiteralPathElement rootLpe = new LiteralPathElement( ROOT_KEY );
         WalkedPath walkedPath = new WalkedPath();
-        walkedPath.add( rootLpe );
+        walkedPath.add( input, rootLpe );
 
         rootSpec.apply( ROOT_KEY, input, walkedPath, output );
 

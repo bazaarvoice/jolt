@@ -1,0 +1,34 @@
+{
+    "input": {
+        "data" : {
+            "clientIdStuff" : {
+                "clientId": 1234
+            },
+            "clientNameStuff" : {
+                "clientName": "Acme",
+                "otherClientStuff" : "pants"
+            }
+        }
+    },
+
+    "spec": {
+        "data" : {
+            "clientNameStuff" : {
+                // walk down the tree till we find a clientName
+                //  1) go two levels up the tree the "2" from "@(2,...)"
+                //  2) then walk down to find a clientId : 1234
+                //  3) coerce the number 1234, into a String "1234", and use that as part of the output path
+                "clientName" : "data.@(2,clientIdStuff.clientId).clientName"
+            }
+        }
+    },
+
+    "expected": {
+        "data" : {
+            "1234": {  // in this case we want the clientId (1234) to be a level in the output tree
+                       // rather than just a key/value pair.
+                "clientName": "Acme"
+            }
+        }
+    }
+}

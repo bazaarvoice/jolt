@@ -1,0 +1,23 @@
+{
+    "input": {
+        "sillyPhotoData" : {
+            "captions" : [ "Hi!", "Sunny" ],
+            "fileNames" : [ "hola.jpg", "sunny.jpg"]
+        }
+    },
+
+    "spec": {
+        "sillyPhotoData" : {
+            // This is a rather silly test, but it does prove you can have [0] inside an @()
+            "@(fileNames[0])" : "sillyPhotoData.@(captions[0])",
+            "@(fileNames[1])" : "sillyPhotoData.@(captions[1])"
+        }
+    },
+
+    "expected": {
+        "sillyPhotoData" : {
+            "Hi!" : "hola.jpg",
+            "Sunny" : "sunny.jpg"
+        }
+    }
+}
