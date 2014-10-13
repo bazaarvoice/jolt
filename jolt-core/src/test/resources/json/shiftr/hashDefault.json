@@ -1,0 +1,37 @@
+{
+    "input": {
+        "data" : {
+            "1234" : {
+                "clientId": "12",
+                "hidden" : true
+            },
+            "1235" : {
+                "clientId": "35",
+                "hidden" : false
+            }
+        }
+    },
+
+    "spec": {
+        "data" : {
+            "*" : {
+                "hidden" : {
+                    "true" : { // if hidden is true, then write the value disabled to the RHS output path
+                               // Also @(3,clientId) means go up 3 levels, to the "1234" or "1235" level, then lookup / down the tree for the value of "clientId"
+                        "#disabled" : "clients.@(3,clientId)"
+                    },
+                    "false" : {
+                        "#enabled" : "clients.@(3,clientId)"
+                    }
+                }
+            }
+        }
+    },
+
+    "expected": {
+        "clients" : {
+            "12" : "disabled",
+            "35" : "enabled"
+        }
+    }
+}

@@ -144,7 +144,7 @@ public class CardinalityCompositeSpec extends CardinalitySpec {
             return false;
         }
 
-        walkedPath.add( thisLevel );
+        walkedPath.add( input, thisLevel );
 
         // The specialChild can change the data object that I point to.
         // Aka, my key had a value that was a List, and that gets changed so that my key points to a ONE value

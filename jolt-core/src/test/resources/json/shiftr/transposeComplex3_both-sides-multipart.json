@@ -1,0 +1,29 @@
+{
+    "input": {
+        "data" : {
+            "clientIdStuff" : {
+                "clientId": "1234",
+                "orderIdStuff" : "shoes"
+            },
+            "clientNameStuff" : {
+                "clientName": "Acme",
+                "otherClientStuff" : "pants"
+            }
+        }
+    },
+
+    "spec": {
+        "data" : {
+            // Verify we can write data out to a "literal.@().literal" location
+            "@(clientNameStuff.clientName)" : "data.@(clientIdStuff.clientId).clientName"
+        }
+    },
+
+    "expected": {
+        "data" : {
+            "1234": {
+                "clientName": "Acme"
+            }
+        }
+    }
+}

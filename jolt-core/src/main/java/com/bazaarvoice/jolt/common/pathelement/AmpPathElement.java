@@ -114,7 +114,7 @@ public class AmpPathElement extends BasePathElement implements MatchablePathElem
             }
             else {
                 AmpReference ref = (AmpReference) token;
-                LiteralPathElement literalPathElement = walkedPath.elementFromEnd( ref.getPathIndex() );
+                LiteralPathElement literalPathElement = walkedPath.elementFromEnd( ref.getPathIndex() ).getLiteralPathElement();
                 String value = literalPathElement.getSubKeyRef( ref.getKeyGroup() );
                 output.append( value );
             }

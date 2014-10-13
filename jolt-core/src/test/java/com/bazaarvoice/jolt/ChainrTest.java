@@ -208,6 +208,11 @@ public class ChainrTest {
     public Object[][] getTestCaseNames() {
         return new Object[][] {
             {"firstSample", true},
+            {"wolfermann1", false},
+            {"wolfermann2", false},
+            {"wolfermann2", false},
+            {"andrewkcarter1", false},
+            {"andrewkcarter2", false},
         };
     }
 

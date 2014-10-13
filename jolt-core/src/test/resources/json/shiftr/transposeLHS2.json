@@ -1,0 +1,18 @@
+{
+    "input": {
+        "data" : {
+            "clientId": "1234",
+            "data": "Acme"
+        }
+    },
+
+    "spec": {
+        "data" : {
+            "@&" : "CLIENTNAME"  // verify that we can look down the tree, using refs
+        }
+    },
+
+    "expected": {
+        "CLIENTNAME" : "Acme"
+    }
+}

@@ -1,0 +1,25 @@
+{
+    "input": {
+        "states" :   [ "Alabama",    "Alaska", "Arizona",  "Arkansas" ],
+        "capitals" : [ "Montgomery", "Juneau", "Phoenix" , "Little Rock" ]
+    },
+
+    "spec": {
+        "states": {
+            "*": {
+                "Ar*": { // only match states that start with "Ar"
+                         // for those states, grab the captital, and use that as the output value
+                    "@(3,capitals[&1])": "states.&1"
+                }
+            }
+        }
+    },
+
+
+    "expected": {
+        "states" : {
+            "Arizona"  : "Phoenix",
+            "Arkansas" : "Little Rock"
+        }
+    }
+}

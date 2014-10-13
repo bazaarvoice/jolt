@@ -1,0 +1,14 @@
+{
+    "input": {
+        "clientId": "1234",
+        "clientName": "Acme"
+    },
+
+    "spec": {
+        "@clientName" : "@clientId"   // verify that data can be transposed at the root level
+    },
+
+    "expected": {
+        "1234" : "Acme"
+    }
+}
