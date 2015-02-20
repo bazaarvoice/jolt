@@ -1,0 +1,63 @@
+{
+    // Test based on issue from ismith.
+    // He wants to be able to output a boolean value on the RHS, but Jolt really does not do that.
+    // There is a way to trick it tho, using the new Transpose logic.
+    //
+    // The basic idea is to add true and false boolean values at a known location in the document,
+    //  then reference them as needed.
+
+    // Input data for the unit test
+    "input": {
+        "map": {
+            "foo": "Y",
+            "bar": "N"
+        }
+    },
+
+    "spec": [
+        {
+            // Add a boolean true and false to the document at a known location
+            "operation" : "default",
+            "spec" :
+            {
+                "ref" : {
+                    "True" : true,
+                    "False" : false
+                }
+            }
+        },
+        {
+            "operation" : "shift",
+            "spec" :
+            {
+                "map" : {
+                    "foo" : {
+                        "N" : {
+                            // If the value of Foo was "N" then
+                            // 1) Look up the tree 4 levels, then
+                            // 2) Walk back down the tree to "ref.False"
+                            // 3) Grab the value at "ref.False" and put it in the output with key "output-key"
+                            "@(4,ref.False)" : "output-key"
+                        },
+                        "Y" : {
+                            "@(4,ref.True)" : "output-key"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            // Cleanup the silly boolean references added in the first step
+            "operation" : "remove",
+            "spec" :
+            {
+                "ref" : ""
+            }
+        }
+    ],
+
+    // The expected result
+    "expected": {
+        "output-key" : true
+    }
+}
