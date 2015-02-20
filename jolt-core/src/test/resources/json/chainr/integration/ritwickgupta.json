@@ -1,0 +1,93 @@
+{
+    // Issue from issue #116  Value to Key conversion
+    // Is a good test case for @ "transpose" operator on the Right and Left hand sides
+    // "@quantity": "basket_item.[].@itemName"
+
+    // Input data for the unit test
+    "input": {
+        "orderId": null,
+        "restaurantId": "FY4ORJDY3E",
+        "chainId": "AJRLR932KI",
+        "customerPhoneNumber": "6503301096",
+        "orderItems": [
+            {
+                "id": null,
+                "index": null,
+                "menuItemId": null,
+                "discountId": null,
+                "itemName": "Small Barqs",
+                "quantity": 2,
+                "price1": null,
+                "additionalCost": null,
+                "savings": null,
+                "orderId": null,
+                "categoryId": null,
+                "variantValue": null,
+                "singleSize": false,
+                "deposit": 0,
+                "extra": 0,
+                "selectionTypes": null,
+                "contents": null,
+                "singleOrderItems": null,
+                "special": false,
+                "percentReduction": false,
+                "success": false
+            },
+            {
+                "id": null,
+                "index": null,
+                "menuItemId": null,
+                "discountId": null,
+                "itemName": "Mozzz",
+                "quantity": 1,
+                "price1": null,
+                "additionalCost": null,
+                "savings": null,
+                "orderId": null,
+                "categoryId": null,
+                "variantValue": null,
+                "singleSize": false,
+                "deposit": 0,
+                "extra": 0,
+                "selectionTypes": null,
+                "contents": null,
+                "singleOrderItems": null,
+                "special": false,
+                "percentReduction": false,
+                "success": false
+            }
+        ]
+    },
+
+    // The test uses this Chainr spec, on the input data to produce the "expected" JSON below
+    "spec": [
+        {
+            "operation": "shift",
+            "spec": {
+                "restaurantId": "store_id",
+                "chainId": "retailer_id",
+                "customerPhoneNumber": "phone_num",
+                "orderItems": {
+                    "*": {
+                        "@quantity": "basket_item.[].@itemName"
+                    }
+                }
+            }
+        }
+    ],
+
+    // The expected result
+    "expected": {
+        "phone_num": "6503301096",
+        "retailer_id": "AJRLR932KI",
+        "store_id": "FY4ORJDY3E",
+        "basket_item": [
+            {
+                "Small Barqs": 2
+            },
+            {
+                "Mozzz": 1
+            }
+        ]
+    }
+}
