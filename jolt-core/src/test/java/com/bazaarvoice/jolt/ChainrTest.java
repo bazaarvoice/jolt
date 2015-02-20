@@ -213,6 +213,7 @@ public class ChainrTest {
             {"wolfermann2", false},
             {"andrewkcarter1", false},
             {"andrewkcarter2", false},
+            {"ritwickgupta", false},
         };
     }
 
