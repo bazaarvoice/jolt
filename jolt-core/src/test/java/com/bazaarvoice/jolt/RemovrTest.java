@@ -66,7 +66,7 @@ public class RemovrTest {
         Map<String, Object> testUnit = JsonUtils.classpathToMap( testPath + ".json" );
 
         Object spec = testUnit.get( "spec" );
-        Removr removr = new Removr( spec );
+        new Removr( spec );
     }
 
 }

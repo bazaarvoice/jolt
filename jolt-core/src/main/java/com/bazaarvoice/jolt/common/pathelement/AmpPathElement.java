@@ -38,7 +38,7 @@ public class AmpPathElement extends BasePathElement implements MatchablePathElem
         StringBuilder literal = new StringBuilder();
         StringBuilder canonicalBuilder = new StringBuilder();
 
-        ArrayList<Object> tok = new ArrayList<Object>();
+        ArrayList<Object> tok = new ArrayList<>();
         int index = 0;
         while( index < key.length() ) {
 

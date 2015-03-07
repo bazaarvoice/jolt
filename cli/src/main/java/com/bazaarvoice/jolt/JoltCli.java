@@ -30,7 +30,7 @@ public class JoltCli {
     private static final Map<String, JoltCliProcessor> JOLT_CLI_PROCESSOR_MAP;
 
     static {
-        Map<String, JoltCliProcessor> temp = new HashMap<String, JoltCliProcessor>();
+        Map<String, JoltCliProcessor> temp = new HashMap<>();
         temp.put( JoltCliUtilities.DIFFY_COMMAND_IDENTIFIER, new DiffyCliProcessor() );
         temp.put( JoltCliUtilities.SORT_COMMAND_IDENTIFIER, new SortCliProcessor() );
         temp.put( JoltCliUtilities.TRANSFORM_COMMAND_IDENTIFIER, new TransformCliProcessor() );

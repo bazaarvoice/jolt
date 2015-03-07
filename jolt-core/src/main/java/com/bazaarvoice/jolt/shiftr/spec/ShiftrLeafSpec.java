@@ -54,8 +54,9 @@ public class ShiftrLeafSpec extends ShiftrSpec {
         else if ( rhs instanceof List ) {
             // leaf level list
             // Spec : "foo": ["a", "b"] : Shift the value of "foo" to both "a" and "b"
+            @SuppressWarnings( "unchecked" )
             List<Object> rhsList = (List<Object>) rhs;
-            writers = new ArrayList<ShiftrWriter>( rhsList.size() );
+            writers = new ArrayList<>( rhsList.size() );
             for ( Object dotNotation : rhsList ) {
                 writers.add( parseOutputDotNotation( dotNotation ) );
             }

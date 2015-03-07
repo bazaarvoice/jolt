@@ -27,7 +27,7 @@ public class StarAllPathElement implements StarPathElement {
 
     public StarAllPathElement( String key ) {
         if ( ! "*".equals( key ) ) {
-            throw new IllegalArgumentException( "StarAllPathElement key should just be a single '*'" );
+            throw new IllegalArgumentException( "StarAllPathElement key should just be a single '*'.  Was: " + key );
         }
     }
 

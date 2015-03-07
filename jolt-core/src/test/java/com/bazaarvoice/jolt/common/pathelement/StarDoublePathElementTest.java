@@ -15,7 +15,7 @@
  */
 package com.bazaarvoice.jolt.common.pathelement;
 
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class StarDoublePathElementTest {
@@ -25,18 +25,18 @@ public class StarDoublePathElementTest {
 
         StarPathElement star = new StarDoublePathElement( "*a*" );
 
-        AssertJUnit.assertTrue( star.stringMatch( "bbbaaccccc" )  );
-        AssertJUnit.assertFalse( star.stringMatch( "abbbbbbbbcc" )  );
-        AssertJUnit.assertFalse( star.stringMatch( "bbba" )  );
+        Assert.assertTrue( star.stringMatch( "bbbaaccccc" )  );
+        Assert.assertFalse( star.stringMatch( "abbbbbbbbcc" )  );
+        Assert.assertFalse( star.stringMatch( "bbba" )  );
 
         LiteralPathElement lpe = star.match( "bbbaccc", null );
         // * -> bbb
         // a -> a
         // * -> ccc
-        AssertJUnit.assertEquals( "bbbaccc", lpe.getSubKeyRef( 0 ) );
-        AssertJUnit.assertEquals( "bbb", lpe.getSubKeyRef( 1 ) );
-        AssertJUnit.assertEquals( "ccc", lpe.getSubKeyRef( 2 ) );
-        AssertJUnit.assertEquals( 3, lpe.getSubKeyCount() );
+        Assert.assertEquals( "bbbaccc", lpe.getSubKeyRef( 0 ) );
+        Assert.assertEquals( "bbb", lpe.getSubKeyRef( 1 ) );
+        Assert.assertEquals( "ccc", lpe.getSubKeyRef( 2 ) );
+        Assert.assertEquals( 3, lpe.getSubKeyCount() );
 
     }
 
@@ -45,20 +45,20 @@ public class StarDoublePathElementTest {
 
         StarPathElement star = new StarDoublePathElement( "*a*c" );
 
-        AssertJUnit.assertTrue( star.stringMatch( "bbbbadddc" )  );
-        AssertJUnit.assertTrue( star.stringMatch( "bacc" )  );
-        AssertJUnit.assertFalse( star.stringMatch( "bac" )  );
-        AssertJUnit.assertFalse( star.stringMatch( "baa" )  );
+        Assert.assertTrue( star.stringMatch( "bbbbadddc" )  );
+        Assert.assertTrue( star.stringMatch( "bacc" )  );
+        Assert.assertFalse( star.stringMatch( "bac" )  );
+        Assert.assertFalse( star.stringMatch( "baa" )  );
 
         LiteralPathElement lpe = star.match( "abcadefc", null );
         // * -> abc
         // a -> a index 4
         // * -> def
         // c -> c
-        AssertJUnit.assertEquals( "abcadefc", lpe.getSubKeyRef( 0 ) );
-        AssertJUnit.assertEquals( "abc", lpe.getSubKeyRef( 1 ) );
-        AssertJUnit.assertEquals( "def", lpe.getSubKeyRef( 2 ) );
-        AssertJUnit.assertEquals( 3, lpe.getSubKeyCount() );
+        Assert.assertEquals( "abcadefc", lpe.getSubKeyRef( 0 ) );
+        Assert.assertEquals( "abc", lpe.getSubKeyRef( 1 ) );
+        Assert.assertEquals( "def", lpe.getSubKeyRef( 2 ) );
+        Assert.assertEquals( 3, lpe.getSubKeyCount() );
 
     }
 
@@ -67,11 +67,11 @@ public class StarDoublePathElementTest {
 
         StarPathElement star = new StarDoublePathElement( "a*b*" );
 
-        AssertJUnit.assertTrue( star.stringMatch( "adbc" )  );
-        AssertJUnit.assertTrue( star.stringMatch( "abbc" )  );
-        AssertJUnit.assertFalse( star.stringMatch( "adddddd" )  );
-        AssertJUnit.assertFalse( star.stringMatch( "addb" )  );
-        AssertJUnit.assertFalse( star.stringMatch( "abc" )  );
+        Assert.assertTrue( star.stringMatch( "adbc" )  );
+        Assert.assertTrue( star.stringMatch( "abbc" )  );
+        Assert.assertFalse( star.stringMatch( "adddddd" )  );
+        Assert.assertFalse( star.stringMatch( "addb" )  );
+        Assert.assertFalse( star.stringMatch( "abc" )  );
 
         LiteralPathElement lpe = star.match( "abcbbac", null );
         // a -> a
@@ -79,10 +79,10 @@ public class StarDoublePathElementTest {
         // b -> b   index 3
         // * -> bac index 4
         // c -> c
-        AssertJUnit.assertEquals( "abcbbac", lpe.getSubKeyRef( 0 ) );
-        AssertJUnit.assertEquals( "bc", lpe.getSubKeyRef( 1 ) );
-        AssertJUnit.assertEquals( "bac", lpe.getSubKeyRef( 2 ) );
-        AssertJUnit.assertEquals( 3, lpe.getSubKeyCount() );
+        Assert.assertEquals( "abcbbac", lpe.getSubKeyRef( 0 ) );
+        Assert.assertEquals( "bc", lpe.getSubKeyRef( 1 ) );
+        Assert.assertEquals( "bac", lpe.getSubKeyRef( 2 ) );
+        Assert.assertEquals( 3, lpe.getSubKeyCount() );
 
     }
 
@@ -92,8 +92,8 @@ public class StarDoublePathElementTest {
 
         StarPathElement star = new StarDoublePathElement( "a*b*c" );
 
-        AssertJUnit.assertTrue( star.stringMatch( "a123b456c" )  );
-        AssertJUnit.assertTrue( star.stringMatch( "abccbcc" )  );
+        Assert.assertTrue( star.stringMatch( "a123b456c" )  );
+        Assert.assertTrue( star.stringMatch( "abccbcc" )  );
 
         LiteralPathElement lpe = star.match( "abccbcc", null );
         // a -> a
@@ -101,10 +101,10 @@ public class StarDoublePathElementTest {
         // b -> b
         // * -> c index 2
         // c -> c
-        AssertJUnit.assertEquals( "abccbcc", lpe.getSubKeyRef( 0 ) );
-        AssertJUnit.assertEquals( "bcc", lpe.getSubKeyRef( 1 ) );
-        AssertJUnit.assertEquals( "c", lpe.getSubKeyRef( 2 ) );
-        AssertJUnit.assertEquals( 3, lpe.getSubKeyCount() );
+        Assert.assertEquals( "abccbcc", lpe.getSubKeyRef( 0 ) );
+        Assert.assertEquals( "bcc", lpe.getSubKeyRef( 1 ) );
+        Assert.assertEquals( "c", lpe.getSubKeyRef( 2 ) );
+        Assert.assertEquals( 3, lpe.getSubKeyCount() );
 
     }
 
@@ -120,10 +120,10 @@ public class StarDoublePathElementTest {
         // b -> b
         // * -> ccbcc index 2
         // c -> c
-        AssertJUnit.assertEquals( "abbccbccc", lpe.getSubKeyRef( 0 ) );
-        AssertJUnit.assertEquals( "b", lpe.getSubKeyRef( 1 ) );
-        AssertJUnit.assertEquals( "ccbcc", lpe.getSubKeyRef( 2 ) );
-        AssertJUnit.assertEquals( 3, lpe.getSubKeyCount() );
+        Assert.assertEquals( "abbccbccc", lpe.getSubKeyRef( 0 ) );
+        Assert.assertEquals( "b", lpe.getSubKeyRef( 1 ) );
+        Assert.assertEquals( "ccbcc", lpe.getSubKeyRef( 2 ) );
+        Assert.assertEquals( 3, lpe.getSubKeyCount() );
 
     }
 }

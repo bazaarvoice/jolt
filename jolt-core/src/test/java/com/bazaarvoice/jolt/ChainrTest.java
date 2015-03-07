@@ -22,7 +22,6 @@ import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.exception.TransformException;
 import com.bazaarvoice.jolt.chainr.transforms.ExplodingTestTransform;
 import org.testng.Assert;
-import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -35,17 +34,17 @@ import java.util.Map;
 public class ChainrTest {
 
     private List<Map<String,Object>> newChainrSpec() {
-        return new ArrayList<Map<String, Object>>();
+        return new ArrayList<>();
     }
 
     private Map<String, Object> newActivity( String opname ) {
-        Map<String, Object> activity = new HashMap<String, Object>();
+        Map<String, Object> activity = new HashMap<>();
         activity.put( ChainrEntry.OPERATION_KEY, opname );
         return activity;
     }
 
     private Map<String, Object> newActivity( String operation, Object spec ) {
-        Map<String, Object> activity = new HashMap<String, Object>();
+        Map<String, Object> activity = new HashMap<>();
         activity.put( ChainrEntry.OPERATION_KEY, operation );
         if ( spec != null ) {
             activity.put( ChainrEntry.SPEC_KEY, spec );
@@ -54,7 +53,7 @@ public class ChainrTest {
     }
 
     private Map<String, Object> newCustomJavaActivity( Class cls, Object spec ) {
-        Map<String, Object> activity = new HashMap<String, Object>();
+        Map<String, Object> activity = new HashMap<>();
         activity.put( ChainrEntry.OPERATION_KEY, cls.getName() );
         if ( spec != null ) {
             activity.put( ChainrEntry.SPEC_KEY, spec );
@@ -154,7 +153,7 @@ public class ChainrTest {
         JoltTestUtil.runDiffy( "failed Sortr call.", expected, actual );
 
         String orderErrorMessage = SortrTest.verifyOrder( actual, expected );
-        AssertJUnit.assertNull( orderErrorMessage, orderErrorMessage );
+        Assert.assertNull( orderErrorMessage, orderErrorMessage );
     }
 
     @Test
@@ -167,8 +166,8 @@ public class ChainrTest {
         Chainr unit = Chainr.fromSpec( spec );
         TransformTestResult actual = (TransformTestResult) unit.transform( input, null );
 
-        AssertJUnit.assertEquals( input, actual.input );
-        AssertJUnit.assertEquals( delegateSpec, actual.spec );
+        Assert.assertEquals( input, actual.input );
+        Assert.assertEquals( delegateSpec, actual.spec );
     }
 
     @DataProvider
@@ -184,7 +183,7 @@ public class ChainrTest {
     @Test(dataProvider = "failureSpecCases", expectedExceptions = SpecException.class)
     public void process_itBlowsUp_fromSpec(Object spec) {
         Chainr.fromSpec( spec );
-        AssertJUnit.fail("Should have failed during spec initialization.");
+        Assert.fail("Should have failed during spec initialization.");
     }
 
     @DataProvider
@@ -198,7 +197,7 @@ public class ChainrTest {
     public void process_itBlowsUp_fromTransform(Object spec) {
         Chainr unit = Chainr.fromSpec( spec );
         unit.transform( new HashMap(), null );
-        AssertJUnit.fail("Should have failed during transform.");
+        Assert.fail("Should have failed during transform.");
     }
 
 
@@ -239,7 +238,7 @@ public class ChainrTest {
         if ( sorted ) {
             // Make sure the sort actually worked.
             String orderErrorMessage = SortrTest.verifyOrder( actual, expected );
-            AssertJUnit.assertNull( orderErrorMessage, orderErrorMessage );
+            Assert.assertNull( orderErrorMessage, orderErrorMessage );
         }
     }
 }

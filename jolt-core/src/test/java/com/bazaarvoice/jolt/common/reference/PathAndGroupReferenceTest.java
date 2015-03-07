@@ -16,7 +16,7 @@
 package com.bazaarvoice.jolt.common.reference;
 
 import com.bazaarvoice.jolt.exception.SpecException;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -36,18 +36,18 @@ public class PathAndGroupReferenceTest {
     public void validAmpReferencePatternTest(String key, int pathIndex, int keyGroup, String canonicalForm) {
 
         PathAndGroupReference amp = new AmpReference( "&" + key );
-        AssertJUnit.assertEquals( pathIndex, amp.getPathIndex() );
-        AssertJUnit.assertEquals( keyGroup, amp.getKeyGroup() );
-        AssertJUnit.assertEquals( "&" + canonicalForm, amp.getCanonicalForm() );
+        Assert.assertEquals( pathIndex, amp.getPathIndex() );
+        Assert.assertEquals( keyGroup, amp.getKeyGroup() );
+        Assert.assertEquals( "&" + canonicalForm, amp.getCanonicalForm() );
     }
 
     @Test( dataProvider = "getValidReferenceTests" )
     public void validDollarReferencePatternTest(String key, int pathIndex, int keyGroup, String canonicalForm) {
 
         PathAndGroupReference amp = new DollarReference( "$" + key );
-        AssertJUnit.assertEquals( pathIndex, amp.getPathIndex() );
-        AssertJUnit.assertEquals( keyGroup, amp.getKeyGroup() );
-        AssertJUnit.assertEquals( "$" + canonicalForm, amp.getCanonicalForm() );
+        Assert.assertEquals( pathIndex, amp.getPathIndex() );
+        Assert.assertEquals( keyGroup, amp.getKeyGroup() );
+        Assert.assertEquals( "$" + canonicalForm, amp.getCanonicalForm() );
     }
 
 

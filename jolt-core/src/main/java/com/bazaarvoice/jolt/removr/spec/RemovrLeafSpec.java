@@ -36,8 +36,9 @@ public class RemovrLeafSpec extends RemovrSpec {
      */
     @Override
     public void remove(Map<String, Object> input ){
-       if(!(input instanceof Map))
+       if( input == null ) {
            return;
+       }
 
        List<String> keysToBeRemoved = findKeysToBeRemoved(input);
         for (String key : keysToBeRemoved){

@@ -42,6 +42,7 @@ public class Sortr implements Transform {
         return sortJson( input );
     }
 
+    @SuppressWarnings( "unchecked" )
     public static Object sortJson( Object obj ) {
         if ( obj instanceof Map ) {
             return sortMap( (Map<String, Object>) obj );
@@ -53,10 +54,10 @@ public class Sortr implements Transform {
     }
 
     private static Map<String, Object> sortMap( Map<String, Object> map ) {
-        List<String> keys = new ArrayList<String>( map.keySet() );
+        List<String> keys = new ArrayList<>( map.keySet() );
         Collections.sort( keys, jsonKeyComparator );
 
-        LinkedHashMap<String,Object> orderedMap = new LinkedHashMap<String, Object>( map.size() );
+        LinkedHashMap<String,Object> orderedMap = new LinkedHashMap<>( map.size() );
         for ( String key : keys ) {
             orderedMap.put( key, sortJson( map.get(key) ) );
         }
@@ -66,14 +67,14 @@ public class Sortr implements Transform {
     private static List<Object> ordered( List<Object> list ) {
         // Don't sort the list because that would change intent, but sort its components
         // Additionally, make a copy of the List in-case the provided list is Immutable / Unmodifiable
-        List<Object> newList = new ArrayList<Object>( list.size() );
+        List<Object> newList = new ArrayList<>( list.size() );
         for ( Object obj : list ) {
             newList.add( sortJson( obj ) );
         }
         return newList;
     }
 
-    private static JsonKeyComparator jsonKeyComparator = new JsonKeyComparator();
+    private final static JsonKeyComparator jsonKeyComparator = new JsonKeyComparator();
 
     /**
      * Standard alphabetical sort, with a special case for keys beginning with "~".

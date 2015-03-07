@@ -21,7 +21,6 @@ import com.bazaarvoice.jolt.chainr.instantiator.ChainrInstantiator;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 
 /**
  * A factory class with various static methods that return instances of Chainr.

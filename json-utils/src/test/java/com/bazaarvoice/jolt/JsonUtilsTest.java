@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.testng.Assert;
-import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -120,7 +119,7 @@ public class JsonUtilsTest {
 
         Diffy.Result result = diffy.diff( expected, json );
         if (!result.isEmpty()) {
-            AssertJUnit.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString( result.expected ) + "\n  actual: " + JsonUtils.toJsonString( result.actual ) );
+            Assert.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString( result.expected ) + "\n  actual: " + JsonUtils.toJsonString( result.actual ) );
         }
     }
 
@@ -141,7 +140,7 @@ public class JsonUtilsTest {
 
             Diffy.Result result = diffy.diff( expected, data );
             if (!result.isEmpty()) {
-                AssertJUnit.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
+                Assert.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
             }
         }
     }
@@ -155,7 +154,7 @@ public class JsonUtilsTest {
 
         Diffy.Result result = diffy.diff( expected, top );
         if (!result.isEmpty()) {
-            AssertJUnit.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
+            Assert.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
         }
     }
 
@@ -168,7 +167,7 @@ public class JsonUtilsTest {
     @Test
     public void validateJacksonClosesInputStreams() {
 
-        final Set<String> closedSet = new HashSet<String>();
+        final Set<String> closedSet = new HashSet<>();
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream( "{ \"a\" : \"b\" }".getBytes() ) {
             @Override
             public void close() throws IOException {
@@ -181,11 +180,11 @@ public class JsonUtilsTest {
         Map<String,Object> map = JsonUtils.jsonToMap( byteArrayInputStream );
 
         // Verify that we in fact loaded some data
-        AssertJUnit.assertNotNull( map );
-        AssertJUnit.assertEquals( 1, map.size() );
+        Assert.assertNotNull( map );
+        Assert.assertEquals( 1, map.size() );
 
         // Verify that the close method was in fact called on the InputStream
-        AssertJUnit.assertEquals( 1, closedSet.size() );
+        Assert.assertEquals( 1, closedSet.size() );
     }
 
     @DataProvider (parallel = true)

@@ -50,7 +50,7 @@ public abstract class Key {
 
         // TODO switch to List<Key> and sort before returning
 
-        Set<Key> result = new HashSet<Key>();
+        Set<Key> result = new HashSet<>();
 
         for ( String key : spec.keySet() ) {
             Object subSpec = spec.get( key );
@@ -144,6 +144,7 @@ public abstract class Key {
         //  this key being the parent of an Array in the output.
         if ( isArrayOutput() && defaultee instanceof List) {
 
+            @SuppressWarnings( "unchecked" )
             List<Object> defaultList = (List<Object>) defaultee;
 
             // Extend the defaultee list if needed
@@ -153,7 +154,7 @@ public abstract class Key {
         }
 
         // Find and sort the children DefaultrKeys by precedence: literals, |, then *
-        ArrayList<Key> sortedChildren = new ArrayList<Key>();
+        ArrayList<Key> sortedChildren = new ArrayList<>();
         sortedChildren.addAll( children );
         Collections.sort( sortedChildren, keyComparator );
 
@@ -189,7 +190,7 @@ public abstract class Key {
 
     public Object createOutputContainerObject() {
         if ( isArrayOutput() ) {
-            return new ArrayList<Object>();
+            return new ArrayList<>();
         } else {
             return new LinkedHashMap<String, Object>();
         }
@@ -197,7 +198,7 @@ public abstract class Key {
 
     public static class KeyPrecedenceComparator implements Comparator<Key> {
 
-        private OPS.OpsPrecedenceComparator opsComparator = new OPS.OpsPrecedenceComparator();
+        private final OPS.OpsPrecedenceComparator opsComparator = new OPS.OpsPrecedenceComparator();
 
         @Override
         public int compare(Key a, Key b) {

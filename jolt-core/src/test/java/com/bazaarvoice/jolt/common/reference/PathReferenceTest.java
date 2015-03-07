@@ -16,7 +16,7 @@
 package com.bazaarvoice.jolt.common.reference;
 
 import com.bazaarvoice.jolt.exception.SpecException;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -35,8 +35,8 @@ public class PathReferenceTest {
     public void validAmpReferencePatternTest(String key, int pathIndex, String canonicalForm) {
 
         PathReference ref = new HashReference( "#" + key );
-        AssertJUnit.assertEquals( pathIndex, ref.getPathIndex() );
-        AssertJUnit.assertEquals( "#" + canonicalForm, ref.getCanonicalForm() );
+        Assert.assertEquals( pathIndex, ref.getPathIndex() );
+        Assert.assertEquals( "#" + canonicalForm, ref.getCanonicalForm() );
     }
 
 

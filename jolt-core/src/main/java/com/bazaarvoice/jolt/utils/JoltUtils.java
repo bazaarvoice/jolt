@@ -180,7 +180,7 @@ public class JoltUtils {
      */
     public static List<Object[]> listKeyChains(final Object source) {
 
-        List<Object[]> keyChainList = new LinkedList<Object[]>();
+        List<Object[]> keyChainList = new LinkedList<>();
 
         if(source instanceof Map) {
             Map sourceMap = (Map) source;
@@ -211,7 +211,7 @@ public class JoltUtils {
      * @return list of Object[] representing path to every leaf element starting with provided root key
      */
     public static List<Object[]> listKeyChains(final Object key, final Object value) {
-        List<Object[]> keyChainList = new LinkedList<Object[]>();
+        List<Object[]> keyChainList = new LinkedList<>();
         List<Object[]> childKeyChainList = listKeyChains(value);
         if(childKeyChainList.size() > 0) {
             for(Object[] childKeyChain: childKeyChainList) {

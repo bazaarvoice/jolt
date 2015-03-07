@@ -15,7 +15,7 @@
  */
 package com.bazaarvoice.jolt;
 
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -42,15 +42,15 @@ public class JoltCliTest {
         }
 
         // diffy: Input with no differences should return true
-        AssertJUnit.assertTrue( JoltCli.runJolt( new String[] {"diffy", path + "input1.json", path + "input1.json", "-s"} ) );
+        Assert.assertTrue( JoltCli.runJolt( new String[] {"diffy", path + "input1.json", path + "input1.json", "-s"} ) );
 
         // diffy: Input with differences should return false
-        AssertJUnit.assertFalse( JoltCli.runJolt( new String[] {"diffy", path + "input1.json", path + "input2.json", "-s"} ) );
+        Assert.assertFalse( JoltCli.runJolt( new String[] {"diffy", path + "input1.json", path + "input2.json", "-s"} ) );
 
         // sort: well formed input should return true
-        AssertJUnit.assertTrue( JoltCli.runJolt( new String[] {"sort", path + "input1.json"} ) );
+        Assert.assertTrue( JoltCli.runJolt( new String[] {"sort", path + "input1.json"} ) );
 
         // transform: well formed input should return true
-        AssertJUnit.assertTrue( JoltCli.runJolt( new String[] {"transform", path + "spec.json", path + "transformInput.json"} ) );
+        Assert.assertTrue( JoltCli.runJolt( new String[] {"transform", path + "spec.json", path + "transformInput.json"} ) );
     }
 }

@@ -28,7 +28,7 @@ import java.util.Map;
 public class ChainrContextTest {
 
     @DataProvider
-    public Iterator<Object[]> getTests() throws IOException {
+    public Iterator<Object[]> getTests() {
 
         String testPath = "/json/chainr/context/spec_with_context.json";
         Map<String, Object> testSuite = JsonUtils.classpathToMap( testPath );

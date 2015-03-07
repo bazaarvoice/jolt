@@ -99,11 +99,7 @@ public class JoltCliUtilities {
             try {
                 jsonObject = JsonUtils.jsonToMap( System.in );
             } catch ( Exception e ) {
-                if ( e instanceof JsonParseException ) {
-                    printToStandardOut( "Standard input did not contain properly formatted JSON.", suppressOutput );
-                } else {
-                    printToStandardOut( "Failed to process standard input.", suppressOutput );
-                }
+                printToStandardOut( "Failed to process standard input.", suppressOutput );
                 return null;
             }
         } else {

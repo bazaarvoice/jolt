@@ -49,6 +49,7 @@ public class Diffy {
         return diffHelper( expectedCopy, actualCopy );
     }
 
+    @SuppressWarnings( "unchecked" )
     protected Result diffHelper(Object expected, Object actual) {
         if (expected instanceof Map) {
             if (!(actual instanceof Map)) {
@@ -99,10 +100,10 @@ public class Diffy {
             if (actual == null) {
                 return new Result();                    // both null, isEmpty diff
             }
-            return new Result( expected, actual );      // one is null, full diff
+            return new Result( null, actual );      // one is null, full diff
         }
         if (actual == null) {
-            return new Result( expected, actual );      // one is null, full diff
+            return new Result( expected, null );      // one is null, full diff
         }
         if (scalarEquals( expected, actual ) ) {
             return new Result();                        // equivalent, isEmpty diff

@@ -20,10 +20,7 @@ import com.bazaarvoice.jolt.common.pathelement.AmpPathElement;
 import com.bazaarvoice.jolt.common.pathelement.AtPathElement;
 import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.common.pathelement.PathElement;
-import com.bazaarvoice.jolt.common.pathelement.StarAllPathElement;
 import com.bazaarvoice.jolt.common.pathelement.StarPathElement;
-import com.bazaarvoice.jolt.common.pathelement.StarRegexPathElement;
-import com.bazaarvoice.jolt.common.pathelement.StarSinglePathElement;
 import com.bazaarvoice.jolt.exception.SpecException;
 
 import java.util.ArrayList;
@@ -50,8 +47,8 @@ public class CardinalityCompositeSpec extends CardinalitySpec {
     public CardinalityCompositeSpec( String rawKey, Map<String, Object> spec ) {
         super( rawKey );
 
-        Map<String, CardinalitySpec> literals = new HashMap<String, CardinalitySpec>();
-        ArrayList<CardinalitySpec> computed = new ArrayList<CardinalitySpec>();
+        Map<String, CardinalitySpec> literals = new HashMap<>();
+        ArrayList<CardinalitySpec> computed = new ArrayList<>();
 
         specialChild = null;
 
@@ -98,8 +95,8 @@ public class CardinalityCompositeSpec extends CardinalitySpec {
      */
     private static List<CardinalitySpec> createChildren( Map<String, Object> rawSpec ) {
 
-        List<CardinalitySpec> children = new ArrayList<CardinalitySpec>();
-        Set<String> actualKeys = new HashSet<String>();
+        List<CardinalitySpec> children = new ArrayList<>();
+        Set<String> actualKeys = new HashSet<>();
 
         for ( String keyString : rawSpec.keySet() ) {
 
@@ -159,12 +156,13 @@ public class CardinalityCompositeSpec extends CardinalitySpec {
         return true;
     }
 
+    @SuppressWarnings( "unchecked" )
     private void process( Object input, WalkedPath walkedPath ) {
 
         if ( input instanceof Map ) {
 
             // Iterate over the whole entrySet rather than the keyset with follow on gets of the values
-            Set<Map.Entry<String, Object>> entrySet = new HashSet<Map.Entry<String, Object>>( ( (Map<String, Object>) input ).entrySet() );
+            Set<Map.Entry<String, Object>> entrySet = new HashSet<>( ( (Map<String, Object>) input ).entrySet() );
             for ( Map.Entry<String, Object> inputEntry : entrySet ) {
                 applyKeyToLiteralAndComputed( this, inputEntry.getKey(), inputEntry.getValue(), walkedPath, input );
             }
@@ -213,7 +211,7 @@ public class CardinalityCompositeSpec extends CardinalitySpec {
 
     public static class ComputedKeysComparator implements Comparator<CardinalitySpec> {
 
-        private static HashMap<Class, Integer> orderMap = new HashMap<Class, Integer>();
+        private static final HashMap<Class, Integer> orderMap = new HashMap<>();
 
         static {
             orderMap.put( AmpPathElement.class, 1 );

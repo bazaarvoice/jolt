@@ -40,7 +40,7 @@ public class SimpleTraversal<K> {
      * Google Maps.newHashMap() trick to fill in generic type
      */
     public static <T> SimpleTraversal<T> newTraversal(String humanReadablePath) {
-        return new SimpleTraversal<T>( humanReadablePath );
+        return new SimpleTraversal<>( humanReadablePath );
     }
 
     public SimpleTraversal( String humanReadablePath ) {

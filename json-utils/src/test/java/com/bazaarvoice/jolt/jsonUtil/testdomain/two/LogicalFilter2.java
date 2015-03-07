@@ -31,13 +31,13 @@ import java.util.Map;
  */
 public class LogicalFilter2 implements QueryFilter {
 
-    private QueryParam queryParam;
-    private Map<QueryParam, QueryFilter> filters;
+    private final QueryParam queryParam;
+    private final Map<QueryParam, QueryFilter> filters;
 
     public LogicalFilter2( QueryParam queryParam, List<QueryFilter> filters ) {
         this.queryParam = queryParam;
 
-        this.filters = new LinkedHashMap<QueryParam, QueryFilter>();
+        this.filters = new LinkedHashMap<>();
         for ( QueryFilter queryFilter : filters ) {
             this.filters.put( queryFilter.getQueryParam(), queryFilter );
         }

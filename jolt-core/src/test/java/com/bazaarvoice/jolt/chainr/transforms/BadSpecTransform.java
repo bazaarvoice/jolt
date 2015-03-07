@@ -18,8 +18,6 @@ package com.bazaarvoice.jolt.chainr.transforms;
 import com.bazaarvoice.jolt.SpecDriven;
 import com.bazaarvoice.jolt.Transform;
 
-import java.util.Map;
-
 /**
  * Chainr should barf on this class, as it is a SpecTransform without a single arg constructor.
  * This class is reference from a JSON test fixture.

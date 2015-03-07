@@ -41,7 +41,7 @@ public class ChainrEntry {
      */
     public static final Map<String, String> STOCK_TRANSFORMS;
     static {
-        HashMap<String, String> temp = new HashMap<String, String>();
+        HashMap<String, String> temp = new HashMap<>();
         temp.put( "shift", Shiftr.class.getCanonicalName() );
         temp.put( "default", Defaultr.class.getCanonicalName() );
         temp.put( "remove", Removr.class.getCanonicalName() );
@@ -79,7 +79,7 @@ public class ChainrEntry {
 
         this.index = index;
 
-        String opString = extractOperationString( ChainrEntry.OPERATION_KEY, chainrEntryMap );
+        String opString = extractOperationString( chainrEntryMap );
 
         if ( opString == null ) {
             throw new SpecException( "JOLT Chainr 'operation' must implement Transform or ContextualTransform" + getErrorMessageIndexSuffix() );
@@ -102,9 +102,9 @@ public class ChainrEntry {
         }
     }
 
-    private String extractOperationString( String key, Map<String, Object> chainrEntryMap ) {
+    private String extractOperationString( Map<String, Object> chainrEntryMap ) {
 
-        Object operationNameObj = chainrEntryMap.get( key );
+        Object operationNameObj = chainrEntryMap.get( ChainrEntry.OPERATION_KEY );
         if ( operationNameObj == null ) {
             return null;
         }

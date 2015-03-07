@@ -58,7 +58,7 @@ public class ChainrBuilder {
 
     public Chainr build() {
 
-        List<JoltTransform> transforms = new ArrayList<JoltTransform>( chainrSpec.getChainrEntries().size() );
+        List<JoltTransform> transforms = new ArrayList<>( chainrSpec.getChainrEntries().size() );
         for ( ChainrEntry entry : chainrSpec.getChainrEntries() ) {
 
             JoltTransform transform = chainrInstantiator.hydrateTransform( entry );

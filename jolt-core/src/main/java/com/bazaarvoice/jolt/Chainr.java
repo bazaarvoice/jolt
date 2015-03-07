@@ -120,8 +120,8 @@ public class Chainr implements Transform, ContextualTransform {
             throw new IllegalArgumentException( "Chainr requires a list of JoltTransforms." );
         }
 
-        transformsList = new ArrayList<ContextualTransform>( joltTransforms.size() );
-        List<ContextualTransform> realContextualTransforms = new LinkedList<ContextualTransform>();
+        transformsList = new ArrayList<>( joltTransforms.size() );
+        List<ContextualTransform> realContextualTransforms = new LinkedList<>();
 
         for ( JoltTransform joltTransform : joltTransforms ) {
 

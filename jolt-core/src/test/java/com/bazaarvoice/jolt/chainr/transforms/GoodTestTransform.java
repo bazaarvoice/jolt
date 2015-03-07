@@ -22,7 +22,7 @@ import javax.inject.Inject;
 
 public class GoodTestTransform implements SpecDriven, Transform {
 
-    private Object spec;
+    private final Object spec;
 
     @Inject
     public GoodTestTransform( Object spec ) {

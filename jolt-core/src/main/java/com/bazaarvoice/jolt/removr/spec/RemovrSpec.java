@@ -68,13 +68,13 @@ public abstract class RemovrSpec {
         }
     }
 
-    /** +
-     * @input : Input map from which the literal/computed keys that match the Spec needs to be removed.
+    /**
+     * @param input : Input map from which the literal/computed keys that match the Spec needs to be removed.
      * For starpathelements, go through all the input keys and check whether this pathelement key is a match.
      */
 
     public List<String> findKeysToBeRemoved(Map<String, Object> input) {
-        ArrayList<String> keysToBeRemoved = new ArrayList<String>();
+        ArrayList<String> keysToBeRemoved = new ArrayList<>();
         boolean isStarPathElement = pathElement instanceof StarPathElement;
         for (String ipkey : input.keySet()) {
             if (isStarPathElement) {
@@ -92,5 +92,4 @@ public abstract class RemovrSpec {
     public abstract void remove(Map<String, Object> input);
 
     public abstract void removeByKey(Map<String, Object> inputMap, String key);
-
 }

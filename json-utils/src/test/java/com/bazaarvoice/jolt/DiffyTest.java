@@ -15,7 +15,7 @@
  */
 package com.bazaarvoice.jolt;
 
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -43,8 +43,8 @@ public class DiffyTest {
     private void testScalars(Object expected, Object actual, boolean expectDiff) {
         Diffy.Result result = this.unit.diff( expected, actual );
         if (expectDiff) {
-            AssertJUnit.assertEquals( expected, result.expected );
-            AssertJUnit.assertEquals( actual, result.actual );
+            Assert.assertEquals( expected, result.expected );
+            Assert.assertEquals( actual, result.actual );
         }
     }
 
@@ -67,34 +67,34 @@ public class DiffyTest {
         List list1 = Arrays.asList( stuff );
         List list2 = Arrays.asList( stuff );
         Diffy.Result result = this.unit.diff( list1, list2 );
-        AssertJUnit.assertTrue( result.isEmpty() );
+        Assert.assertTrue( result.isEmpty() );
     }
 
     @Test
     public void diff_itRecognizesDifferingElementsInArrays() {
         Diffy.Result result = this.unit.diff(
-                Arrays.asList( new Object[] {"foo", 3, null} ),
-                Arrays.asList( new Object[] {"foo", 3, "apple"} ) );
-        AssertJUnit.assertEquals( Arrays.asList( new Object[] {null, null, null} ), result.expected );
-        AssertJUnit.assertEquals( Arrays.asList( new Object[] { null, null, "apple" } ), result.actual );
+                Arrays.asList( "foo", 3, null ),
+                Arrays.asList( "foo", 3, "apple" ) );
+        Assert.assertEquals( Arrays.asList( new Object[] {null, null, null} ), result.expected );
+        Assert.assertEquals( Arrays.asList( new Object[] { null, null, "apple" } ), result.actual );
     }
 
     @Test
     public void diff_itHandlesLongerExpectedArray() {
         Diffy.Result result = this.unit.diff(
-                Arrays.asList( new Object[] { "foo", 3, true } ),
-                Arrays.asList( new Object[] { "foo", 3 } ) );
-        AssertJUnit.assertEquals( Arrays.asList( new Object[] {null, null, true} ), result.expected );
-        AssertJUnit.assertEquals( Arrays.asList( new Object[] {null, null} ), result.actual );
+                Arrays.asList( "foo", 3, true ),
+                Arrays.asList( "foo", 3 ) );
+        Assert.assertEquals( Arrays.asList( new Object[] {null, null, true} ), result.expected );
+        Assert.assertEquals( Arrays.asList( new Object[] {null, null} ), result.actual );
     }
 
     @Test
     public void diff_itHandlesLongerActualArray() {
         Diffy.Result result = this.unit.diff(
-                Arrays.asList( new Object[] {"foo", 3} ),
-                Arrays.asList( new Object[] {"foo", 3, false} ) );
-        AssertJUnit.assertEquals( Arrays.asList( new Object[] {null, null} ), result.expected );
-        AssertJUnit.assertEquals( Arrays.asList( new Object[] {null, null, false} ), result.actual );
+                Arrays.asList( "foo", 3 ),
+                Arrays.asList( "foo", 3, false ) );
+        Assert.assertEquals( Arrays.asList( new Object[] {null, null} ), result.expected );
+        Assert.assertEquals( Arrays.asList( new Object[] {null, null, false} ), result.actual );
     }
 
     @Test
@@ -103,7 +103,7 @@ public class DiffyTest {
         Diffy.Result result = this.unit.diff(
                 JsonUtils.jsonToMap( "{\"foo\":1, \"bar\":\"baz\"}" ),
                 JsonUtils.jsonToMap( "{\"foo\":1, \"bar\":\"baz\"}" ) );
-        AssertJUnit.assertTrue( result.isEmpty() );
+        Assert.assertTrue( result.isEmpty() );
     }
 
     @Test
@@ -112,8 +112,8 @@ public class DiffyTest {
         Diffy.Result result = this.unit.diff(
                 JsonUtils.jsonToMap( "{\"foo\":1, \"bar\":\"baz\"}" ),
                 JsonUtils.jsonToMap( "{\"foo\":1, \"bar\":\"baz\", \"extra\":null}" ) );
-        AssertJUnit.assertEquals( new HashMap(), result.expected );
-        AssertJUnit.assertEquals( JsonUtils.jsonToMap( "{\"extra\":null}" ) , result.actual );
+        Assert.assertEquals( new HashMap(), result.expected );
+        Assert.assertEquals( JsonUtils.jsonToMap( "{\"extra\":null}" ) , result.actual );
     }
 
     @Test
@@ -122,8 +122,8 @@ public class DiffyTest {
         Diffy.Result result = this.unit.diff(
                 JsonUtils.jsonToMap( "{\"foo\":1, \"bar\":\"baz\", \"extra\":42}" ),
                 JsonUtils.jsonToMap( "{\"foo\":1, \"bar\":\"baz\"}" ) );
-        AssertJUnit.assertEquals( JsonUtils.jsonToMap( "{\"extra\":42}" ), result.expected );
-        AssertJUnit.assertEquals( new HashMap(), result.actual );
+        Assert.assertEquals( JsonUtils.jsonToMap( "{\"extra\":42}" ), result.expected );
+        Assert.assertEquals( new HashMap(), result.actual );
     }
 
     @Test
@@ -132,8 +132,8 @@ public class DiffyTest {
         Diffy.Result result = this.unit.diff(
                 JsonUtils.jsonToMap( "{\"foo\":1, \"bar\":\"baz\"}" ),
                 JsonUtils.jsonToMap( "{\"foo\":\"apple\", \"bar\":\"baz\"}" ) );
-        AssertJUnit.assertEquals( JsonUtils.jsonToMap( "{\"foo\":1}" ), result.expected );
-        AssertJUnit.assertEquals( JsonUtils.jsonToMap( "{\"foo\":\"apple\"}" ), result.actual );
+        Assert.assertEquals( JsonUtils.jsonToMap( "{\"foo\":1}" ), result.expected );
+        Assert.assertEquals( JsonUtils.jsonToMap( "{\"foo\":\"apple\"}" ), result.actual );
     }
 
 }

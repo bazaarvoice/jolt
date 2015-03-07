@@ -30,7 +30,7 @@ public class LiteralPathElement extends BasePathElement implements MatchablePath
     public LiteralPathElement( String key ) {
         super(key);
 
-        List<String> keys = new ArrayList<String>(1);
+        List<String> keys = new ArrayList<>(1);
         keys.add( key ); // always add the full key to index 0
 
         this.subKeys = Collections.unmodifiableList( keys );
@@ -43,7 +43,7 @@ public class LiteralPathElement extends BasePathElement implements MatchablePath
             throw new IllegalArgumentException( "LiteralPathElement for key:" + key + " got null list of subKeys" );
         }
 
-        List<String> keys = new ArrayList<String>( 1 + subKeys.size() );
+        List<String> keys = new ArrayList<>( 1 + subKeys.size() );
         keys.add( key ); // always add the full key to index 0
         keys.addAll( subKeys );
 

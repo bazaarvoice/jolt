@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.bazaarvoice.commons</groupId>
         <artifactId>bv-opensource-super-pom</artifactId>
-        <version>1.1</version>
+        <version>1.3</version>
         <relativePath />
         <!--an empty relativePath for the super-pom, makes maven happy -->
     </parent>
@@ -24,18 +24,21 @@
     </scm>
 
     <properties>
+        <!-- Override Java compiler version from the parent super-pom. -->
+        <java.minimum.version>1.7</java.minimum.version>
+
         <!-- core -->
-        <commons-lang.version>2.6</commons-lang.version>
+        <commons-lang3.version>3.3.2</commons-lang3.version>
         <javax-inject.version>1</javax-inject.version>
 
         <!-- module dependencies -->
-        <jackson.version>2.2.3</jackson.version>
+        <jackson.version>2.5.0</jackson.version>
         <guice.version>3.0</guice.version>
-        <argparse4j.version>0.4.2</argparse4j.version>
+        <argparse4j.version>0.4.4</argparse4j.version>
 
         <!-- TEST -->
-        <guava.version>16.0.1</guava.version>
-        <testng.version>6.8.7</testng.version>
+        <guava.version>18.0</guava.version>
+        <testng.version>6.8.21</testng.version>
     </properties>
 
     <dependencyManagement>
@@ -43,9 +46,9 @@
 
             <!-- Core -->
             <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>${commons-lang.version}</version>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.inject</groupId>
@@ -127,7 +130,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 

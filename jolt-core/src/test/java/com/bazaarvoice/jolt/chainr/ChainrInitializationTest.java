@@ -24,7 +24,7 @@ import com.bazaarvoice.jolt.chainr.transforms.TransformTestResult;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.exception.TransformException;
 import com.beust.jcommander.internal.Lists;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -36,7 +36,7 @@ import java.util.Map;
 public class ChainrInitializationTest {
 
     @DataProvider
-    public Object[][] badTransforms() throws IOException {
+    public Object[][] badTransforms() {
         return new Object[][] {
             {JsonUtils.classpathToObject(  "/json/chainr/transforms/bad_transform_loadsExplodingTransform.json" )}
         };
@@ -46,11 +46,11 @@ public class ChainrInitializationTest {
     public void testBadTransforms(Object chainrSpec) {
         Chainr unit = Chainr.fromSpec( chainrSpec );
         unit.transform( new HashMap(), null );// should fail here
-        AssertJUnit.fail( "Should not have gotten here" );
+        Assert.fail( "Should not have gotten here" );
     }
 
     @DataProvider
-    public Object[][] passingTestCases() throws IOException {
+    public Object[][] passingTestCases() {
         return new Object[][] {
             {new Object(), JsonUtils.classpathToObject( "/json/chainr/transforms/loadsGoodTransform.json" )}
         };
@@ -59,15 +59,14 @@ public class ChainrInitializationTest {
     @Test(dataProvider = "passingTestCases" )
     public void testPassing(Object input, Object spec) {
         Chainr unit = Chainr.fromSpec( spec );
-        TransformTestResult actual = null;
-        actual = (TransformTestResult) unit.transform( input, null );
+        TransformTestResult actual = (TransformTestResult) unit.transform( input, null );
 
-        AssertJUnit.assertEquals( input, actual.input );
-        AssertJUnit.assertNotNull( actual.spec );
+        Assert.assertEquals( input, actual.input );
+        Assert.assertNotNull( actual.spec );
     }
 
     @Test( expectedExceptions = IllegalArgumentException.class )
-    public void chainrBuilderFailsOnNullLoader() throws IOException {
+    public void chainrBuilderFailsOnNullLoader() {
 
         Object validSpec = JsonUtils.classpathToObject( "/json/chainr/transforms/loadsGoodTransform.json" );
         new ChainrBuilder( validSpec ).loader( null );

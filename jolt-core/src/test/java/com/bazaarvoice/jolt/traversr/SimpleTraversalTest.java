@@ -17,7 +17,7 @@ package com.bazaarvoice.jolt.traversr;
 
 import com.bazaarvoice.jolt.JoltTestUtil;
 import com.bazaarvoice.jolt.JsonUtils;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -71,7 +71,7 @@ public class SimpleTraversalTest {
 
         Object actual = simpleTraversal.get( tree );
 
-        AssertJUnit.assertEquals( expected, actual );
+        Assert.assertEquals( expected, actual );
         JoltTestUtil.runDiffy( "Get should not have modified the input", original, tree );
     }
 
@@ -80,9 +80,9 @@ public class SimpleTraversalTest {
 
         Object actual = JsonUtils.cloneJson( start );
 
-        AssertJUnit.assertEquals( toSet, simpleTraversal.set( actual, toSet ) ); // set should be successful
+        Assert.assertEquals( toSet, simpleTraversal.set( actual, toSet ) ); // set should be successful
 
-        AssertJUnit.assertEquals( expected, actual );
+        Assert.assertEquals( expected, actual );
     }
 
     @Test
@@ -94,12 +94,12 @@ public class SimpleTraversalTest {
 
         Object actual = new HashMap();
 
-        AssertJUnit.assertNull( traversal.get( actual ) );
-        AssertJUnit.assertEquals( 0, ((HashMap) actual).size() ); // get didn't add anything
+        Assert.assertNull( traversal.get( actual ) );
+        Assert.assertEquals( 0, ((HashMap) actual).size() ); // get didn't add anything
 
         // Add two things and validate the Auto Expand array
-        AssertJUnit.assertEquals( "one", traversal.set( actual, "one" ) );
-        AssertJUnit.assertEquals( "two", traversal.set( actual, "two" ) );
+        Assert.assertEquals( "one", traversal.set( actual, "one" ) );
+        Assert.assertEquals( "two", traversal.set( actual, "two" ) );
 
         JoltTestUtil.runDiffy( expected, actual );
     }
@@ -113,13 +113,13 @@ public class SimpleTraversalTest {
         Object expectedOne = JsonUtils.jsonToMap( "{ \"a\" : { \"b\" : \"one\" } }" );
         Object expectedTwo = JsonUtils.jsonToMap( "{ \"a\" : { \"b\" : \"two\" } }" );
 
-        AssertJUnit.assertEquals( "tuna", traversal.get( actual ) );
+        Assert.assertEquals( "tuna", traversal.get( actual ) );
 
         // Set twice and verify that the sets did in fact overwrite
-        AssertJUnit.assertEquals( "one", traversal.set( actual, "one" ) );
+        Assert.assertEquals( "one", traversal.set( actual, "one" ) );
         JoltTestUtil.runDiffy( expectedOne, actual );
 
-        AssertJUnit.assertEquals( "two", traversal.set( actual, "two" ) );
+        Assert.assertEquals( "two", traversal.set( actual, "two" ) );
         JoltTestUtil.runDiffy( expectedTwo, actual );
     }
 
@@ -176,6 +176,7 @@ public class SimpleTraversalTest {
 
         SimpleTraversal<List> trav = SimpleTraversal.newTraversal( "__queryContext" );
         // barfs here, needs the 'List list =' part to trigger it
+        @SuppressWarnings( "unused" )
         List list = trav.get( tree );
     }
 
@@ -186,10 +187,11 @@ public class SimpleTraversalTest {
 
         SimpleTraversal<Map> trav = SimpleTraversal.newTraversal( "__queryContext.catalogLin" );
         // barfs here, needs the 'Map map =' part to trigger it
+        @SuppressWarnings( "unused" )
         Map map = trav.get( tree );
     }
 
-    @Test()
+    @Test(expectedExceptions = ClassCastException.class)
     public void exceptionTestListIsMapErasure() throws Exception
     {
         Object tree = JsonUtils.javason( "{ 'Id' : '1234', '__queryContext' : { 'catalogLin' : [ 'a', 'b' ] } }" );
@@ -198,15 +200,13 @@ public class SimpleTraversalTest {
         // this works
         Map<String,Map> queryContext = trav.get( tree );
 
-        try {
-            // this does not
-            Map catalogLin = queryContext.get( "catalogLin" );
-            AssertJUnit.fail( "Expected ClassCast Exception");
-        }
-        catch( ClassCastException cce ) { }
+        // this does not
+        @SuppressWarnings( "unused" )
+        Map catalogLin = queryContext.get( "catalogLin" );
+        Assert.fail( "Expected ClassCast Exception");
     }
 
-    @Test()
+    @Test(expectedExceptions = ClassCastException.class)
     public void exceptionTestLMapIsListErasure() throws Exception
     {
         Object tree = JsonUtils.javason( "{ 'Id' : '1234', '__queryContext' : { 'catalogLin' : { 'a' : 'b' } } }" );
@@ -215,11 +215,9 @@ public class SimpleTraversalTest {
         // this works
         Map<String,List> queryContext = trav.get( tree );
 
-        try {
-            // this does not
-            List catalogLin = queryContext.get( "catalogLin" );
-            AssertJUnit.fail( "Expected ClassCast Exception");
-        }
-        catch( ClassCastException cce ) { }
+        // this does not
+        @SuppressWarnings( "unused" )
+        List catalogLin = queryContext.get( "catalogLin" );
+        Assert.fail( "Expected ClassCast Exception");
     }
 }

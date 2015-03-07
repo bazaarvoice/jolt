@@ -33,10 +33,10 @@ public class StarSinglePathElement extends BasePathElement implements StarPathEl
         super(key);
 
         if ( StringTools.countMatches(key, "*") != 1 ) {
-            throw new IllegalArgumentException( "StarSinglePathElement should only have one '*' in its key." );
+            throw new IllegalArgumentException( "StarSinglePathElement should only have one '*' in its key. Was: " + key );
         }
         else if ( "*".equals( key ) ) {
-            throw new IllegalArgumentException( "StarSinglePathElement should have a key that is just '*'." );
+            throw new IllegalArgumentException( "StarSinglePathElement should have a key that is just '*'. Was: " + key );
         }
 
         if ( key.startsWith( "*" ) ) {
@@ -69,7 +69,7 @@ public class StarSinglePathElement extends BasePathElement implements StarPathEl
     public LiteralPathElement match( String dataKey, WalkedPath walkedPath ) {
 
         if ( stringMatch( dataKey ) )  {
-            List<String> subKeys = new ArrayList<String>(1);
+            List<String> subKeys = new ArrayList<>(1);
 
             String starPart = dataKey.substring( prefix.length(), dataKey.length() - suffix.length() );
             subKeys.add( starPart );

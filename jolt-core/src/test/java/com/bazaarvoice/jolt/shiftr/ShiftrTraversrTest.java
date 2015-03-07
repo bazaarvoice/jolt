@@ -101,7 +101,7 @@ public class ShiftrTraversrTest {
     @Test(dataProvider = "inAndOutTestCases")
     public void setTest(String testCaseName, List<String> outputs, Object notUsedInThisTest, String traversrPath, List<String> keys, Map<String, Object> expected) throws Exception
     {
-        Map<String, Object> actual = new HashMap<String, Object>();
+        Map<String, Object> actual = new HashMap<>();
 
         Traversr traversr = new ShiftrTraversr( traversrPath );
         for ( String output : outputs ) {

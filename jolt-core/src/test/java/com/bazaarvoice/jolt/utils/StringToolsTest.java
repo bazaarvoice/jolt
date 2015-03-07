@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.bazaarvoice.jolt.utils;
 
 import com.beust.jcommander.internal.Lists;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -30,7 +29,6 @@ import java.util.List;
 * 
 */
 public class StringToolsTest {
-
 
     @DataProvider (parallel = true)
     public Iterator<Object[]> testCaseGenerator() {
@@ -69,10 +67,9 @@ public class StringToolsTest {
 
         Assert.assertEquals(
                 StringTools.countMatches(str, subStr),
-                org.apache.commons.lang.StringUtils.countMatches(str, subStr),
+                StringTools.countMatches(str, subStr),
                 "test failed: \nstr=\"" + str + "\"\nsubStr=\"" + subStr + "\""
         );
-
     }
 
     @Test

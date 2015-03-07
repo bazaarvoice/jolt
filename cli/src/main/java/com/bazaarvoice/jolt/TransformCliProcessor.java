@@ -75,7 +75,7 @@ public class TransformCliProcessor implements JoltCliProcessor {
             return false;
         }
 
-        File file = (File) ns.get( "input" );
+        File file = ns.get( "input" );
         Object input = JoltCliUtilities.readJsonInput( file, SUPPRESS_OUTPUT );
 
         Object output;

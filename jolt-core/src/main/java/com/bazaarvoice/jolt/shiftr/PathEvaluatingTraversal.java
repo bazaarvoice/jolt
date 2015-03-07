@@ -42,7 +42,7 @@ public abstract class PathEvaluatingTraversal {
     public PathEvaluatingTraversal( String dotNotation ) {
 
         if ( dotNotation.contains("*") || dotNotation.contains("$")) {
-            throw new SpecException("DotNotation (write key) can not contain '*' or '$'.");
+            throw new SpecException("DotNotation (write key) can not contain '*' or '$' : write key: " + dotNotation );
         }
 
         List<PathElement> paths;
@@ -54,7 +54,7 @@ public abstract class PathEvaluatingTraversal {
             paths = ShiftrSpec.parseDotNotationRHS( dotNotation );
 
             // Use the canonical versions of the path elements to create the Traversr
-            List<String> traversrPaths = new ArrayList<String>( paths.size() );
+            List<String> traversrPaths = new ArrayList<>( paths.size() );
             for ( PathElement pe : paths ) {
                 traversrPaths.add( pe.getCanonicalForm() );
             }
@@ -65,7 +65,7 @@ public abstract class PathEvaluatingTraversal {
             trav = createTraversr( Arrays.asList( "" ) );
         }
 
-        List<EvaluatablePathElement> evalPaths = new ArrayList<EvaluatablePathElement>( paths.size() );
+        List<EvaluatablePathElement> evalPaths = new ArrayList<>( paths.size() );
         for( PathElement pe : paths ) {
             if ( ! ( pe instanceof EvaluatablePathElement ) ) {
                 throw new SpecException( "RHS key=" + pe.getRawKey() + " is not a valid RHS key." );
@@ -115,7 +115,7 @@ public abstract class PathEvaluatingTraversal {
     // Visible for testing
     List<String> evaluate( WalkedPath walkedPath ) {
 
-        List<String> strings = new ArrayList<String>( elements.size() );
+        List<String> strings = new ArrayList<>( elements.size() );
         for ( EvaluatablePathElement pathElement : elements ) {
 
             String evaledLeafOutput = pathElement.evaluate( walkedPath );

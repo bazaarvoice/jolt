@@ -15,14 +15,14 @@
  */
 package com.bazaarvoice.jolt;
 
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 
 import java.io.IOException;
 
 public class JoltTestUtil {
 
-    private static Diffy diffy = new Diffy();
-    private static Diffy arrayOrderObliviousDiffy = new ArrayOrderObliviousDiffy();
+    private static final Diffy diffy = new Diffy();
+    private static final Diffy arrayOrderObliviousDiffy = new ArrayOrderObliviousDiffy();
 
     public static void runDiffy( String failureMessage, Object expected, Object actual ) throws IOException {
         runDiffy( diffy, failureMessage, expected, actual );
@@ -41,11 +41,11 @@ public class JoltTestUtil {
     }
 
 
-    private static void runDiffy( Diffy diffy, String failureMessage, Object expected, Object actual ) throws IOException {
+    private static void runDiffy( Diffy diffy, String failureMessage, Object expected, Object actual ) {
 
         Diffy.Result result = diffy.diff( expected, actual );
         if (!result.isEmpty()) {
-            AssertJUnit.fail( failureMessage + ".\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
+            Assert.fail( failureMessage + ".\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
         }
     }
 }
