@@ -109,6 +109,10 @@ public class JsonUtils {
     public static Object jsonToObject( String json ) {
         return util.jsonToObject( json );
     }
+    
+    public static Object jsonToObject( String json, String charset ) {
+        return util.jsonToObject( json, charset );
+    }
 
     public static Object jsonToObject( InputStream in ) {
         return util.jsonToObject( in );
@@ -118,12 +122,20 @@ public class JsonUtils {
         return util.jsonToMap( json );
     }
 
+    public static Map<String, Object> jsonToMap( String json, String charset ) {
+        return util.jsonToMap( json, charset );
+    }
+
     public static Map<String, Object> jsonToMap( InputStream in ) {
         return util.jsonToMap( in );
     }
 
     public static List<Object> jsonToList( String json ) {
         return util.jsonToList( json );
+    }
+
+    public static List<Object> jsonToList( String json, String charset ) {
+        return util.jsonToList( json, charset );
     }
 
     public static List<Object> jsonToList( InputStream in ) {

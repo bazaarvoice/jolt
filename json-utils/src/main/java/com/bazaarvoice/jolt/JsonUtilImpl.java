@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,10 +38,12 @@ import java.util.Map;
  * All IOExceptions are caught, wrapped with context, and rethrown as RuntimeExceptions.
  */
 public class JsonUtilImpl implements JsonUtil {
-
     // thread safe: http://wiki.fasterxml.com/JacksonFAQThreadSafety
     private final ObjectMapper objectMapper;
     private final ObjectWriter prettyPrintWriter;
+
+    // Default Encoding for String to JSON operations
+    public static final String DEFAULT_ENCODING_UTF_8 = "utf-8";
 
     private static final TypeReference<Map<String, Object>> mapTypeReference =
             new TypeReference<Map<String, Object>>() {};
@@ -80,7 +83,17 @@ public class JsonUtilImpl implements JsonUtil {
     // DE-SERIALIZATION
     @Override
     public Object jsonToObject( String json ) {
-        return jsonToObject( new ByteArrayInputStream( json.getBytes() ) );
+        return jsonToObject( json, DEFAULT_ENCODING_UTF_8 );
+    }
+
+    @Override
+    public Object jsonToObject( String json, String charset ) {
+        try {
+            return jsonToObject( new ByteArrayInputStream( json.getBytes(charset) ) );
+        }
+        catch ( UnsupportedEncodingException e ) {
+            throw new RuntimeException( e );
+        }
     }
 
     @Override
@@ -94,8 +107,18 @@ public class JsonUtilImpl implements JsonUtil {
     }
 
     @Override
-    public Map<String, Object> jsonToMap( String json ) {
-        return jsonToMap( new ByteArrayInputStream( json.getBytes() ) );
+    public Map<String, Object> jsonToMap( String json) {
+        return jsonToMap( json, DEFAULT_ENCODING_UTF_8 );
+    }
+
+    @Override
+    public Map<String, Object> jsonToMap( String json, String charset ) {
+        try {
+            return jsonToMap( new ByteArrayInputStream( json.getBytes(charset) ) );
+        }
+        catch ( UnsupportedEncodingException e ) {
+            throw new RuntimeException( e );
+        }
     }
 
     @Override
@@ -109,8 +132,18 @@ public class JsonUtilImpl implements JsonUtil {
     }
 
     @Override
-    public List<Object> jsonToList( String json ) {
-        return jsonToList( new ByteArrayInputStream( json.getBytes() ) );
+    public List<Object> jsonToList( String json) {
+        return jsonToList( json, DEFAULT_ENCODING_UTF_8 );
+    }
+
+    @Override
+    public List<Object> jsonToList( String json, String charset ) {
+        try {
+            return jsonToList( new ByteArrayInputStream( json.getBytes(charset) ) );
+        }
+        catch ( UnsupportedEncodingException e ) {
+            throw new RuntimeException( e );
+        }
     }
 
     @Override
