@@ -35,12 +35,15 @@ public interface JsonUtil {
 
     // DE-SERIALIZATION
     Object jsonToObject( String json );
+    Object jsonToObject( String json , String charset );
     Object jsonToObject( InputStream in );
 
     Map<String, Object> jsonToMap( String json );
+    Map<String, Object> jsonToMap( String json, String charset );
     Map<String, Object> jsonToMap( InputStream in );
 
-    List<Object> jsonToList( String json );
+    List<Object> jsonToList( String json);
+    List<Object> jsonToList( String json , String charset );
     List<Object> jsonToList( InputStream in );
 
     Object           filepathToObject( String filePath );
