@@ -22,7 +22,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.testng.Assert;
-import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -133,7 +132,7 @@ public class JoltUtilsTest {
 
         Diffy.Result result = diffy.diff( expected, json );
         if (!result.isEmpty()) {
-            AssertJUnit.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString( result.expected ) + "\n  actual: " + JsonUtils.toJsonString( result.actual ) );
+            Assert.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString( result.expected ) + "\n  actual: " + JsonUtils.toJsonString( result.actual ) );
         }
     }
 
@@ -154,7 +153,7 @@ public class JoltUtilsTest {
 
             Diffy.Result result = diffy.diff( expected, data );
             if (!result.isEmpty()) {
-                AssertJUnit.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
+                Assert.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
             }
         }
     }
@@ -168,7 +167,7 @@ public class JoltUtilsTest {
 
         Diffy.Result result = diffy.diff( expected, top );
         if (!result.isEmpty()) {
-            AssertJUnit.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
+            Assert.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
         }
     }
 
@@ -180,7 +179,7 @@ public class JoltUtilsTest {
 
     @DataProvider (parallel = true)
     public Iterator<Object[]> coordinates() throws IOException {
-        List<Object[]> testCases = new ArrayList<Object[]>();
+        List<Object[]> testCases = new ArrayList<>();
 
         testCases.add(new Object[] { 0, new Object[] {"a", "b", 0}} );
         testCases.add(new Object[] { 1, new Object[] {"a", "b", 1}} );
@@ -222,7 +221,7 @@ public class JoltUtilsTest {
 
     @DataProvider (parallel = true)
     public Iterator<Object[]> coordinates_simple() throws IOException {
-        List<Object[]> testCases = new ArrayList<Object[]>();
+        List<Object[]> testCases = new ArrayList<>();
 
         testCases.add(new Object[] { 0, new Object[] {"a", "b", 0}} );
         testCases.add(new Object[] { 1, new Object[] {"a", "b", 1}} );
@@ -276,7 +275,7 @@ public class JoltUtilsTest {
     @Test(dataProvider = "pathProvider")
     public void testToSimpleTraversrPath(Object... paths) {
         String humanReadablePath = JoltUtils.toSimpleTraversrPath(paths);
-        Assert.assertEquals(new SimpleTraversal<Object>(humanReadablePath).get(jsonSource), navigate(jsonSource, paths));
+        Assert.assertEquals(new SimpleTraversal<>(humanReadablePath).get(jsonSource), navigate(jsonSource, paths));
     }
 
     @Test
@@ -284,7 +283,7 @@ public class JoltUtilsTest {
         Object duplicate = Maps.newHashMap();
         for(Object[] paths : JoltUtils.listKeyChains(jsonSource)) {
             String humanReadablePath = JoltUtils.toSimpleTraversrPath(paths);
-            new SimpleTraversal<Object>(humanReadablePath).set(duplicate, navigate(jsonSource, paths));
+            new SimpleTraversal<>(humanReadablePath).set(duplicate, navigate(jsonSource, paths));
         }
         Assert.assertTrue(diffy.diff(jsonSource, duplicate).isEmpty());
     }

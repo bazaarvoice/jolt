@@ -163,7 +163,6 @@ import java.util.Map;
  */
 public class Removr implements SpecDriven, Transform {
 
-    private final Map<String, Object> spec;
     private static final String ROOT_KEY = "root";
     private final RemovrCompositeSpec rootSpec;
 
@@ -175,8 +174,8 @@ public class Removr implements SpecDriven, Transform {
         if ( ! ( spec instanceof Map ) ) {
             throw new SpecException( "Removr expected a spec of Map type, got " + spec.getClass().getSimpleName() );
         }
+
         rootSpec = new RemovrCompositeSpec( ROOT_KEY, (Map<String, Object>) spec );
-        this.spec = (Map<String, Object>) spec;
     }
 
     /**
@@ -191,11 +190,10 @@ public class Removr implements SpecDriven, Transform {
 
     private  Object transformInternal(Object input)
     {
-        // Wrap the input in a map to fool the compositespec to recurse itself.
-        Map<String,Object> wrappedMap = new HashMap<String, Object>();
+        // Wrap the input in a map to fool the CompositeSpec to recurse itself.
+        Map<String,Object> wrappedMap = new HashMap<>();
         wrappedMap.put(ROOT_KEY, input);
         rootSpec.remove(wrappedMap);
         return input;
-
     }
 }

@@ -25,8 +25,8 @@ import java.util.Map;
 
 public class LogicalFilter1 implements QueryFilter {
 
-    private QueryParam queryParam;
-    private Map<QueryParam, QueryFilter> filters;
+    private final QueryParam queryParam;
+    private final Map<QueryParam, QueryFilter> filters;
 
     @JsonCreator
     public LogicalFilter1( @JsonProperty( "queryParam" ) QueryParam queryParam,

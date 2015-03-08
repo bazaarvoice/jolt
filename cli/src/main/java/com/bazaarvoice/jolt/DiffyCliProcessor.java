@@ -21,7 +21,6 @@ import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * The JoltCliProcessor for Diffy. See https://github.com/bazaarvoice/jolt/blob/master/json-utils/src/main/java/com/bazaarvoice/jolt/Diffy.java
@@ -68,7 +67,7 @@ public class DiffyCliProcessor implements JoltCliProcessor {
         boolean suppressOutput = ns.getBoolean( "s" );
 
         Object jsonObject1 = JoltCliUtilities.createJsonObjectFromFile( (File) ns.get( "filePath1" ), suppressOutput );
-        File file = (File) ns.get( "filePath2" );
+        File file = ns.get( "filePath2" );
         Object jsonObject2 = JoltCliUtilities.readJsonInput( file, suppressOutput );
 
         Diffy diffy;
@@ -88,11 +87,12 @@ public class DiffyCliProcessor implements JoltCliProcessor {
                         JsonUtils.toPrettyJsonString( result.expected ) + "\n" +
                         "Input #2 contained this:\n" +
                         JsonUtils.toPrettyJsonString( result.actual ), suppressOutput );
-            } catch ( Exception e ) {
-                JoltCliUtilities.printToStandardOut( "Differences found, but diffy encountered an error while writing the result.", suppressOutput );
-            } finally {
-                return false;
+
             }
+            catch ( Exception e ) {
+                JoltCliUtilities.printToStandardOut( "Differences found, but diffy encountered an error while writing the result.", suppressOutput );
+            }
+            return false;
         }
     }
 }

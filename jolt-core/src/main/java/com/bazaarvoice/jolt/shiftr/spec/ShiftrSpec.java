@@ -330,7 +330,7 @@ public abstract class ShiftrSpec {
      * @return List of PathElements based on the provided List<String> keys
      */
     private static List<PathElement> parseList( List<String> keys, String refDotNotation ) {
-        ArrayList<PathElement> paths = new ArrayList<PathElement>();
+        ArrayList<PathElement> paths = new ArrayList<>();
 
         for( String key: keys ) {
             PathElement path = parseSingleKeyLHS( key );

@@ -37,7 +37,7 @@ public class StarDoublePathElement extends BasePathElement implements StarPathEl
         super(key);
 
         if ( StringTools.countMatches(key, "*") != 2 ) {
-            throw new IllegalArgumentException( "StarDoublePathElement should have two '*' in its key." );
+            throw new IllegalArgumentException( "StarDoublePathElement should have two '*' in its key. Was: " + key );
         }
 
         String[] split = key.split("\\*");
@@ -115,7 +115,7 @@ public class StarDoublePathElement extends BasePathElement implements StarPathEl
     @Override
     public LiteralPathElement match(String dataKey, WalkedPath walkedPath) {
         if ( stringMatch( dataKey ) )  {
-            List<String> subKeys = new ArrayList<String>(2);
+            List<String> subKeys = new ArrayList<>(2);
 
             int midStart = finMidIndex(dataKey);
             int midEnd = midStart + mid.length();

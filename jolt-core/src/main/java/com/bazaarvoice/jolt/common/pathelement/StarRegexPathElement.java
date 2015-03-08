@@ -73,7 +73,7 @@ public class StarRegexPathElement extends BasePathElement implements StarPathEle
         // For ex: if a key as 2 '5star.rating.1', it would escape it twice resulting in 5star//.rating//.1.
         // So, we keep an list of already seen characters.
 
-        Set<Character> charsAlreadySeen = new HashSet<Character>();
+        Set<Character> charsAlreadySeen = new HashSet<>();
 
         for(char keychar: keyChars) {
 
@@ -128,7 +128,7 @@ public class StarRegexPathElement extends BasePathElement implements StarPathEle
 
         int groupCount = matcher.groupCount();
 
-        List<String> subKeys = new ArrayList<String>(groupCount);
+        List<String> subKeys = new ArrayList<>(groupCount);
         for ( int index = 1; index <= groupCount; index++) {
             subKeys.add( matcher.group( index ) );
         }

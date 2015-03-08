@@ -17,8 +17,8 @@ package com.bazaarvoice.jolt.chainr.transforms;
 
 public class TransformTestResult {
 
-    public Object input;
-    public Object spec;
+    public final Object input;
+    public final Object spec;
 
     TransformTestResult( Object input, Object spec ) {
         this.input = input;

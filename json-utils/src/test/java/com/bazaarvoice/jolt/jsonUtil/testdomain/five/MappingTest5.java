@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -94,32 +94,32 @@ public class MappingTest5 {
         QueryFilter5 queryFilter = jsonUtil.classpathToType( testFixture, new TypeReference<QueryFilter5>() {} );
 
         // Make sure the hydrated QFilter looks right
-        AssertJUnit.assertTrue( queryFilter instanceof LogicalFilter5);
+        Assert.assertTrue( queryFilter instanceof LogicalFilter5);
         LogicalFilter5 andFilter = (LogicalFilter5) queryFilter;
-        AssertJUnit.assertEquals( Operator.AND, andFilter.getOperator() );
-        AssertJUnit.assertNotNull(andFilter.getValues());
-        AssertJUnit.assertEquals(3, andFilter.getValues().size());
+        Assert.assertEquals( Operator.AND, andFilter.getOperator() );
+        Assert.assertNotNull(andFilter.getValues());
+        Assert.assertEquals(3, andFilter.getValues().size());
 
         // Make sure one of the top level RealFilters looks right
         QueryFilter5 productIdFilter = andFilter.getValues().get(1);
-        AssertJUnit.assertTrue( productIdFilter instanceof StringRealFilter5);
+        Assert.assertTrue( productIdFilter instanceof StringRealFilter5);
         StringRealFilter5 stringRealProductIdFilter = (StringRealFilter5) productIdFilter;
-        AssertJUnit.assertEquals( Field.PRODUCTID, stringRealProductIdFilter.getField() );
-        AssertJUnit.assertEquals( Operator.EQ, stringRealProductIdFilter.getOperator() );
-        AssertJUnit.assertEquals( "Acme-1234", stringRealProductIdFilter.getValues().get(0) );
+        Assert.assertEquals( Field.PRODUCTID, stringRealProductIdFilter.getField() );
+        Assert.assertEquals( Operator.EQ, stringRealProductIdFilter.getOperator() );
+        Assert.assertEquals( "Acme-1234", stringRealProductIdFilter.getValues().get(0) );
 
         // Make sure the nested OR looks right
         QueryFilter5 orFilter = andFilter.getValues().get(2);
-        AssertJUnit.assertTrue( orFilter instanceof LogicalFilter5 );
+        Assert.assertTrue( orFilter instanceof LogicalFilter5 );
         LogicalFilter5 realOrFilter = (LogicalFilter5) orFilter;
-        AssertJUnit.assertEquals( Operator.OR, realOrFilter.getOperator() );
-        AssertJUnit.assertEquals( 2, realOrFilter.getValues().size() );
+        Assert.assertEquals( Operator.OR, realOrFilter.getOperator() );
+        Assert.assertEquals( 2, realOrFilter.getValues().size() );
 
         // Make sure nested AND looks right
         QueryFilter5 nestedAndFilter = realOrFilter.getValues().get(1);
-        AssertJUnit.assertTrue( nestedAndFilter instanceof LogicalFilter5 );
-        AssertJUnit.assertEquals( Operator.AND, nestedAndFilter.getOperator() );
-        AssertJUnit.assertEquals( 3, nestedAndFilter.getValues().size() );
+        Assert.assertTrue( nestedAndFilter instanceof LogicalFilter5 );
+        Assert.assertEquals( Operator.AND, nestedAndFilter.getOperator() );
+        Assert.assertEquals( 3, nestedAndFilter.getValues().size() );
 
 
         // SERIALIZE TO STRING to test serialization logic
@@ -132,7 +132,7 @@ public class MappingTest5 {
         // Diffy the vanilla versions
         Diffy.Result result = diffy.diff( expected, actual );
         if (!result.isEmpty()) {
-            AssertJUnit.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString( result.expected ) + "\n  actual: " + JsonUtils.toJsonString( result.actual ) );
+            Assert.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString( result.expected ) + "\n  actual: " + JsonUtils.toJsonString( result.actual ) );
         }
     }
 }

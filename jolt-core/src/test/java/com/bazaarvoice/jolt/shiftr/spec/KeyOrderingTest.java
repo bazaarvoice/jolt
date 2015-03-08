@@ -17,7 +17,7 @@ package com.bazaarvoice.jolt.shiftr.spec;
 
 import com.bazaarvoice.jolt.JsonUtils;
 import com.bazaarvoice.jolt.Shiftr;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -61,7 +61,7 @@ public class KeyOrderingTest {
 
         for ( int index = 0; index < expectedOrder.size(); index++) {
             String expected = expectedOrder.get( index );
-            AssertJUnit.assertEquals( testName, expected, root.getComputedChildren().get( index ).pathElement.getCanonicalForm() );
+            Assert.assertEquals( expected, root.getComputedChildren().get( index ).pathElement.getCanonicalForm(), testName );
         }
     }
 }

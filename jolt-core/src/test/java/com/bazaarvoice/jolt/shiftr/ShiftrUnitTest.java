@@ -94,7 +94,7 @@ public class ShiftrUnitTest {
             },
             {
                     "List Spec",
-                    new ArrayList<Object>(),
+                    new ArrayList<>(),
             },
             {
                     "Empty spec",
@@ -145,12 +145,12 @@ public class ShiftrUnitTest {
      */
     public String buildCanonicalString( List<PathElement> paths ) {
 
-        List<String> pathStrs = new ArrayList<String>( paths.size() );
+        List<String> pathStrs = new ArrayList<>( paths.size() );
         for( PathElement pe : paths ) {
             pathStrs.add( pe.getCanonicalForm() );
         }
 
-        return Joiner.on(".").join( paths );
+        return Joiner.on(".").join( pathStrs );
     }
 
 

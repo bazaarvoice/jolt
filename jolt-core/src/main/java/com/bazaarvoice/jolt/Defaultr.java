@@ -177,8 +177,8 @@ public class Defaultr implements SpecDriven, Transform {
         public static final String ARRAY = "[]";
     }
 
-    private Key mapRoot;
-    private Key arrayRoot;
+    private final Key mapRoot;
+    private final Key arrayRoot;
 
     /**
      * Configure an instance of Defaultr with a spec.
@@ -196,22 +196,24 @@ public class Defaultr implements SpecDriven, Transform {
         // TODO : Handle arrays better, maybe by having a parent reference in the keys, or ditch the feature of having input that is at top level an array
 
         {
-            Map<String, Object> rootSpec = new LinkedHashMap<String, Object>();
+            Map<String, Object> rootSpec = new LinkedHashMap<>();
             rootSpec.put( rootKey, spec );
             mapRoot = Key.parseSpec( rootSpec ).iterator().next();
         }
 
         //  Thus we check the top level type of the input.
         {
-            Map<String, Object> rootSpec = new LinkedHashMap<String, Object>();
+            Map<String, Object> rootSpec = new LinkedHashMap<>();
             rootSpec.put( rootKey + WildCards.ARRAY, spec );
+            Key tempKey = null;
             try {
-                arrayRoot = Key.parseSpec( rootSpec ).iterator().next();
+                tempKey = Key.parseSpec( rootSpec ).iterator().next();
             }
             catch ( NumberFormatException nfe ) {
                 // this is fine, it means the top level spec has non numeric keys
                 //  if someone passes a top level array as input later we will error then
             }
+            arrayRoot = tempKey;
         }
     }
 

@@ -96,8 +96,10 @@ public class CardinalityLeafSpec extends CardinalitySpec {
             }
             else if ( input instanceof Map || input instanceof String || input instanceof Number || input instanceof Boolean ) {
                 Object one = parentContainer.remove( inputKey );
-                returnValue = new ArrayList<Object>();
-                ( (List) returnValue ).add( one );
+                List<Object> tempList =  new ArrayList<>();
+                tempList.add( one );
+                returnValue = tempList;
+
             }
             else if ( input == null ) {
                 returnValue = Collections.emptyList();

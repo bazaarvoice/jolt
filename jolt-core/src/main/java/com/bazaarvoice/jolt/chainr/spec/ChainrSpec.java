@@ -59,7 +59,7 @@ public class ChainrSpec {
             throw new SpecException( "JOLT Chainr passed an empty JSON array.");
         }
 
-        List<ChainrEntry> entries = new ArrayList<ChainrEntry>(operations.size());
+        List<ChainrEntry> entries = new ArrayList<>(operations.size());
 
         for ( int index = 0; index < operations.size(); index++ ) {
 

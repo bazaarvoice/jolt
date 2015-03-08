@@ -62,7 +62,7 @@ public class SortCliProcessor implements JoltCliProcessor {
     @Override
     public boolean process( Namespace ns ) {
 
-        File file = (File) ns.get( "input" );
+        File file = ns.get( "input" );
         Object jsonObject = JoltCliUtilities.readJsonInput( file, SUPPRESS_OUTPUT );
         if ( jsonObject == null ) {
             return false;

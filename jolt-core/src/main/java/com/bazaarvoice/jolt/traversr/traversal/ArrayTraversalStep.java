@@ -34,7 +34,7 @@ public class ArrayTraversalStep extends BaseTraversalStep<List<Object>> {
     }
 
     public Object newContainer() {
-        return new ArrayList<Object>();
+        return new ArrayList<>();
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ArrayTraversalStep extends BaseTraversalStep<List<Object>> {
     }
 
 
-    public static void ensureArraySize( List<Object> list, Integer upperIndex ) {
+    private static void ensureArraySize( List<Object> list, Integer upperIndex ) {
         for ( int sizing = list.size(); sizing <= upperIndex; sizing++ ) {
             list.add( null );
         }

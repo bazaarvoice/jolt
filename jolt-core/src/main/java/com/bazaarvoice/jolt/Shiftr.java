@@ -495,7 +495,7 @@ public class Shiftr implements SpecDriven, Transform {
     @Override
     public Object transform( Object input ) {
 
-        Map<String,Object> output = new HashMap<String,Object>();
+        Map<String,Object> output = new HashMap<>();
 
         // Create a root LiteralPathElement so that # is useful at the root level
         LiteralPathElement rootLpe = new LiteralPathElement( ROOT_KEY );

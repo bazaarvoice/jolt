@@ -38,7 +38,7 @@ public class DefaultChainrInstantiator implements ChainrInstantiator {
 
                 try {
                     // Lookup a Constructor with a Single "Object" arg.
-                    Constructor constructor = transformClass.getConstructor( new Class[] {Object.class} );
+                    Constructor constructor = transformClass.getConstructor( Object.class );
 
                     return (JoltTransform) constructor.newInstance( spec );
 

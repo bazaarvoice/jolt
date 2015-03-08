@@ -17,7 +17,7 @@ package com.bazaarvoice.jolt;
 
 import com.bazaarvoice.jolt.chainr.instantiator.DefaultChainrInstantiator;
 import com.bazarvoice.jolt.ChainrFactory;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -43,8 +43,8 @@ public class ChainrFactoryTest {
     @Test
     public void testGetChainrInstanceFromClassPath_success()
             throws Exception {
-        Object result = ChainrFactory.fromClassPath( CLASSPATH + WELLFORMED_INPUT_FILENAME );
-        AssertJUnit.assertTrue( "ChainrFactory did not return an instance of Chainr.", result instanceof Chainr );
+        Chainr result = ChainrFactory.fromClassPath( CLASSPATH + WELLFORMED_INPUT_FILENAME );
+        Assert.assertNotNull( result, "ChainrFactory did not return an instance of Chainr." );
     }
 
     @Test( expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = "Unable to load JSON.*" )
@@ -56,8 +56,8 @@ public class ChainrFactoryTest {
     @Test
     public void testGetChainrInstanceFromClassPathWithInstantiator_success()
             throws Exception {
-        Object result = ChainrFactory.fromClassPath( CLASSPATH + WELLFORMED_INPUT_FILENAME, new DefaultChainrInstantiator() );
-        AssertJUnit.assertTrue( "ChainrFactory did not return an instance of Chainr.", result instanceof Chainr );
+        Chainr result = ChainrFactory.fromClassPath( CLASSPATH + WELLFORMED_INPUT_FILENAME, new DefaultChainrInstantiator() );
+        Assert.assertNotNull( result, "ChainrFactory did not return an instance of Chainr." );
     }
 
     @Test( expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = "Unable to load JSON.*" )
@@ -69,8 +69,8 @@ public class ChainrFactoryTest {
     @Test
     public void testGetChainrInstanceFromFileSystem_success()
             throws Exception {
-        Object result = ChainrFactory.fromFileSystem( fileSystemPath + WELLFORMED_INPUT_FILENAME );
-        AssertJUnit.assertTrue( "ChainrFactory did not return an instance of Chainr.", result instanceof Chainr );
+        Chainr result = ChainrFactory.fromFileSystem( fileSystemPath + WELLFORMED_INPUT_FILENAME );
+        Assert.assertNotNull( result, "ChainrFactory did not return an instance of Chainr." );
     }
 
     @Test( expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = "Unable to load JSON.*" )
@@ -82,8 +82,8 @@ public class ChainrFactoryTest {
     @Test
     public void testGetChainrInstanceFromFileSystemWithInstantiator_success()
             throws Exception {
-        Object result = ChainrFactory.fromFileSystem( fileSystemPath + WELLFORMED_INPUT_FILENAME, new DefaultChainrInstantiator() );
-        AssertJUnit.assertTrue( "ChainrFactory did not return an instance of Chainr.", result instanceof Chainr );
+        Chainr result = ChainrFactory.fromFileSystem( fileSystemPath + WELLFORMED_INPUT_FILENAME, new DefaultChainrInstantiator() );
+        Assert.assertNotNull( result, "ChainrFactory did not return an instance of Chainr." );
     }
 
     @Test(expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = "Unable to load JSON.*")
@@ -95,8 +95,8 @@ public class ChainrFactoryTest {
     @Test
     public void testGetChainrInstanceFromFile_success()
             throws Exception {
-        Object result = ChainrFactory.fromFile( wellformedFile );
-        AssertJUnit.assertTrue( "ChainrFactory did not return an instance of Chainr.", result instanceof Chainr );
+        Chainr result = ChainrFactory.fromFile( wellformedFile );
+        Assert.assertNotNull( result, "ChainrFactory did not return an instance of Chainr." );
     }
 
     @Test( expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = "Unable to load chainr spec file.*" )
@@ -108,8 +108,8 @@ public class ChainrFactoryTest {
     @Test
     public void testGetChainrInstanceFromFileWithInstantiator_success()
             throws Exception {
-        Object result = ChainrFactory.fromFile( wellformedFile, new DefaultChainrInstantiator() );
-        AssertJUnit.assertTrue( "ChainrFactory did not return an instance of Chainr.", result instanceof Chainr );
+        Chainr result = ChainrFactory.fromFile( wellformedFile, new DefaultChainrInstantiator() );
+        Assert.assertNotNull( result, "ChainrFactory did not return an instance of Chainr." );
     }
 
     @Test(expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = "Unable to load chainr spec file.*")

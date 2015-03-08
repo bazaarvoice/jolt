@@ -59,9 +59,9 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
     public ShiftrCompositeSpec(String rawKey, Map<String, Object> spec ) {
         super( rawKey );
 
-        ArrayList<ShiftrSpec> special = new ArrayList<ShiftrSpec>();
-        Map<String, ShiftrSpec> literals = new LinkedHashMap<String, ShiftrSpec>();
-        ArrayList<ShiftrSpec> computed = new ArrayList<ShiftrSpec>();
+        ArrayList<ShiftrSpec> special = new ArrayList<>();
+        Map<String, ShiftrSpec> literals = new LinkedHashMap<>();
+        ArrayList<ShiftrSpec> computed = new ArrayList<>();
 
         // self check
         if ( pathElement instanceof AtPathElement ) {
@@ -112,8 +112,8 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
      */
     private static List<ShiftrSpec> createChildren( Map<String, Object> rawSpec ) {
 
-        List<ShiftrSpec> result = new ArrayList<ShiftrSpec>();
-        Set<String> actualKeys = new HashSet<String>();
+        List<ShiftrSpec> result = new ArrayList<>();
+        Set<String> actualKeys = new HashSet<>();
 
         for ( String rawLhsStr : rawSpec.keySet() ) {
 
@@ -331,6 +331,7 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
             }
         };
 
+        @SuppressWarnings( "unchecked" )
         public void process( ShiftrCompositeSpec spec, Object input, WalkedPath walkedPath, Map<String,Object> output ) {
             if ( input instanceof Map) {
                 processMap( spec, (Map<String, Object>) input, walkedPath, output );
@@ -414,7 +415,7 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
 
     public static class ComputedKeysComparator implements Comparator<ShiftrSpec> {
 
-        private static HashMap<Class, Integer> orderMap = new HashMap<Class, Integer>();
+        private final static HashMap<Class, Integer> orderMap = new HashMap<>();
 
         static {
             orderMap.put( AmpPathElement.class, 1 );

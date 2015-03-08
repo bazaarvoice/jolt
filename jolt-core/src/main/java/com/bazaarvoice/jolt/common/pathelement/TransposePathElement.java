@@ -88,7 +88,7 @@ public class TransposePathElement extends BasePathElement implements MatchablePa
         String meat = key.substring( 1 );
 
         if ( meat.contains( "@" ) ) {
-            throw new SpecException( "@ pathElement can not contain a nested @." );
+            throw new SpecException( "@ pathElement can not contain a nested @. Was: " + meat );
         }
         if ( meat.contains( "*" ) || meat.contains( "[]" ) ) {
             throw new SpecException( "'Transpose Input' can not contain expansion wildcards (* and []).  Offending key : " + key );

@@ -16,7 +16,6 @@
 package com.bazaarvoice.jolt.traversr.traversal;
 
 import com.bazaarvoice.jolt.traversr.Traversr;
-import com.bazaarvoice.jolt.traversr.TraversrException;
 
 import java.util.Iterator;
 

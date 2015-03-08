@@ -28,7 +28,7 @@ import java.util.HashMap;
 public class ChainrIncrementTest {
 
     @DataProvider
-    public Object[][] fromToTests() throws IOException {
+    public Object[][] fromToTests() {
 
         Object chainrSpec = JsonUtils.classpathToObject( "/json/chainr/increments/spec.json" );
 
@@ -53,7 +53,7 @@ public class ChainrIncrementTest {
 
 
     @DataProvider
-    public Object[][] toTests() throws IOException {
+    public Object[][] toTests() {
 
         Object chainrSpec = JsonUtils.classpathToObject(  "/json/chainr/increments/spec.json" );
 
@@ -76,7 +76,7 @@ public class ChainrIncrementTest {
     }
 
     @DataProvider
-    public Object[][] failTests() throws IOException {
+    public Object[][] failTests() {
 
         Object chainrSpec = JsonUtils.classpathToObject( "/json/chainr/increments/spec.json" );
 

@@ -55,7 +55,7 @@ public class ShiftrTraversr extends SimpleTraversr {
         }
         else {
             // take whatever is there and make it the first element in an Array
-            List<Object> temp = new ArrayList<Object>();
+            List<Object> temp = new ArrayList<>();
             temp.add( sub );
             temp.add( data );
 

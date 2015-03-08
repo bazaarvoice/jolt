@@ -16,7 +16,6 @@
 package com.bazaarvoice.jolt;
 
 import org.testng.Assert;
-import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,10 +66,10 @@ public class TestInstanceOfVSEnumSwitch {
     }
     class LogicalEnum implements EnumBaseInterface<EnumBaseInterface> {
         public Type getType() { return Type.LOGICAL; }
-        public List<EnumBaseInterface> getValues() { return new ArrayList<EnumBaseInterface>(); }
+        public List<EnumBaseInterface> getValues() { return new ArrayList<>(); }
     }
 
-    private static int LOOP_COUNT = 1000 * 1000 * 50;
+    private static final int LOOP_COUNT = 1000 * 1000 * 50;
 
     //@Test
     public void testTyped () {
@@ -148,7 +147,7 @@ public class TestInstanceOfVSEnumSwitch {
         public List<String> getValues() { return Arrays.asList("10", "11"); }
     }
     class LogicalInstanceOf implements InstanceOfInterface<InstanceOfInterface> {
-        public List<InstanceOfInterface> getValues() { return new ArrayList<InstanceOfInterface>(); }
+        public List<InstanceOfInterface> getValues() { return new ArrayList<>(); }
     }
 
 

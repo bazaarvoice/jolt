@@ -5,3 +5,7 @@ target
 *.iml
 *.ipr
 *.iws
+.project
+.classpath
+.settings
+test-output

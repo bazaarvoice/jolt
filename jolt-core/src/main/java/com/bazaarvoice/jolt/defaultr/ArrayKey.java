@@ -34,7 +34,7 @@ public class ArrayKey extends Key {
         // Handle ArrayKey specific stuff
         switch( getOp() ){
             case OR :
-                keyInts = new ArrayList<Integer>();
+                keyInts = new ArrayList<>();
                 for( String orLiteral : keyStrings ) {
                     int orInt = Integer.parseInt( orLiteral );
                     keyInts.add( orInt );
@@ -61,6 +61,7 @@ public class ArrayKey extends Key {
     protected void applyChild( Object container ) {
 
         if ( container instanceof List ) {
+            @SuppressWarnings( "unchecked" )
             List<Object> defaultList = (List<Object>) container;
 
             // Find all defaultee keys that match the childKey spec.  Simple for Literal keys, more work for * and |.
@@ -102,7 +103,7 @@ public class ArrayKey extends Key {
                 // Identify all its keys
                 // this assumes the container list has already been expanded to the right size
                 List defaultList = (List) container;
-                List<Integer> allIndexes = new ArrayList<Integer>( defaultList.size() );
+                List<Integer> allIndexes = new ArrayList<>( defaultList.size() );
                 for ( int index = 0; index < defaultList.size(); index++ ) {
                     allIndexes.add( index );
                 }
@@ -110,7 +111,7 @@ public class ArrayKey extends Key {
                 return allIndexes;
             case OR:
                 // Identify the intersection between the container "keys" and the OR values
-                List<Integer> indexesInRange = new ArrayList<Integer>();
+                List<Integer> indexesInRange = new ArrayList<>();
 
                 for ( Integer orValue : keyInts ) {
                     if ( orValue < ((List) container ).size() ) {

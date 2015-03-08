@@ -15,7 +15,7 @@
  */
 package com.bazaarvoice.jolt.common.pathelement;
 
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -38,10 +38,10 @@ public class StarRegexPathElementTest {
 
         LiteralPathElement lpe = star.match( dataKey, null );
 
-        AssertJUnit.assertEquals( 3, lpe.getSubKeyCount() );
-        AssertJUnit.assertEquals( dataKey,   lpe.getSubKeyRef( 0 ) );
-        AssertJUnit.assertEquals( expected1, lpe.getSubKeyRef( 1 ) );
-        AssertJUnit.assertEquals( expected2, lpe.getSubKeyRef( 2 ) );
+        Assert.assertEquals( 3, lpe.getSubKeyCount() );
+        Assert.assertEquals( dataKey,   lpe.getSubKeyRef( 0 ) );
+        Assert.assertEquals( expected1, lpe.getSubKeyRef( 1 ) );
+        Assert.assertEquals( expected2, lpe.getSubKeyRef( 2 ) );
     }
 
     @Test
@@ -49,16 +49,14 @@ public class StarRegexPathElementTest {
 
         StarPathElement star = new StarRegexPathElement( "tuna-*-*");
 
-        AssertJUnit.assertNull( star.match( "tuna--", null ) );
-        AssertJUnit.assertNull( star.match( "tuna-bob-", null ) );
-        AssertJUnit.assertNull( star.match( "tuna--bob", null ) );
+        Assert.assertNull( star.match( "tuna--", null ) );
+        Assert.assertNull( star.match( "tuna-bob-", null ) );
+        Assert.assertNull( star.match( "tuna--bob", null ) );
 
         StarPathElement multiMetacharStarpathelement = new StarRegexPathElement( "rating-$-*-*");
 
-        AssertJUnit.assertNull( multiMetacharStarpathelement.match( "rating-capGrp1-capGrp2", null ) );
-        AssertJUnit.assertNull( multiMetacharStarpathelement.match( "rating-$capGrp1-capGrp2", null ) );
-        AssertJUnit.assertNotNull(multiMetacharStarpathelement.match( "rating-$-capGrp1-capGrp2",null) );
-
-
+        Assert.assertNull( multiMetacharStarpathelement.match( "rating-capGrp1-capGrp2", null ) );
+        Assert.assertNull( multiMetacharStarpathelement.match( "rating-$capGrp1-capGrp2", null ) );
+        Assert.assertNotNull(multiMetacharStarpathelement.match( "rating-$-capGrp1-capGrp2",null) );
     }
 }

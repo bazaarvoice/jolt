@@ -18,12 +18,11 @@ package com.bazaarvoice.jolt.sample;
 import com.bazaarvoice.jolt.Chainr;
 import com.bazaarvoice.jolt.JsonUtils;
 
-import java.io.IOException;
 import java.util.List;
 
 public class JoltSample {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
         List chainrSpecJSON = JsonUtils.classpathToList( "/json/sample/spec.json" );
         Chainr chainr = Chainr.fromSpec( chainrSpecJSON );

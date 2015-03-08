@@ -91,10 +91,8 @@ public class JsonUtils {
      *
      * @param javason JSON-ish string you want to turn into Maps-of-Maps
      * @return Maps-of-Maps
-     * @throws IOException
      */
-    public static Map<String, Object> javason( String javason )
-            throws IOException {
+    public static Map<String, Object> javason( String javason ) {
 
         String json = javason.replace( '\'', '"' );
 

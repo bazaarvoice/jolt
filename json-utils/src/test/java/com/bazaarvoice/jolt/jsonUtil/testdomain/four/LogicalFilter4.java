@@ -18,7 +18,6 @@ package com.bazaarvoice.jolt.jsonUtil.testdomain.four;
 import com.bazaarvoice.jolt.jsonUtil.testdomain.QueryParam;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
@@ -49,7 +48,7 @@ public class LogicalFilter4 implements QueryFilter4 {
     public static class LogicalFilter4Deserializer extends JsonDeserializer<LogicalFilter4> {
 
         @Override
-        public LogicalFilter4 deserialize( JsonParser jp, DeserializationContext ctxt ) throws IOException, JsonProcessingException {
+        public LogicalFilter4 deserialize( JsonParser jp, DeserializationContext ctxt ) throws IOException {
 
             ObjectCodec objectCodec = jp.getCodec();
             ObjectNode root = jp.readValueAsTree();
@@ -71,13 +70,13 @@ public class LogicalFilter4 implements QueryFilter4 {
         }
     }
 
-    private QueryParam queryParam;
-    private Map<QueryParam, QueryFilter4> filters;
+    private final QueryParam queryParam;
+    private final Map<QueryParam, QueryFilter4> filters;
 
     public LogicalFilter4(QueryParam queryParam, List<QueryFilter4> filters) {
         this.queryParam = queryParam;
 
-        this.filters = new LinkedHashMap<QueryParam, QueryFilter4>();
+        this.filters = new LinkedHashMap<>();
         for ( QueryFilter4 queryFilter : filters ) {
             this.filters.put( queryFilter.getQueryParam(), queryFilter );
         }

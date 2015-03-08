@@ -15,9 +15,8 @@
  */
 package com.bazaarvoice.jolt;
 
-import junit.framework.Assert;
-import org.apache.commons.lang.StringUtils;
-import org.testng.AssertJUnit;
+import org.apache.commons.lang3.StringUtils;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -56,7 +55,7 @@ public class SortrTest {
 
         // Make sure the sort actually worked.
         String orderErrorMessage = verifyOrder( actual, expected );
-        AssertJUnit.assertNull( orderErrorMessage, orderErrorMessage );
+        Assert.assertNull( orderErrorMessage, orderErrorMessage );
     }
 
     public static String verifyOrder( Object actual, Object expected ) {
@@ -105,12 +104,12 @@ public class SortrTest {
 
     @Test
     public void testDoesNotBlowUpOnUnmodifiableArray() {
-        List<Object> hasNan = new ArrayList<Object>();
+        List<Object> hasNan = new ArrayList<>();
         hasNan.add( 1 );
         hasNan.add( Double.NaN );
         hasNan.add( 2 );
 
-        Map map = new HashMap();
+        Map<String,Object> map = new HashMap<>();
         map.put("a", "shouldBeFirst");
         map.put("hasNan", Collections.unmodifiableList( hasNan ) );
 

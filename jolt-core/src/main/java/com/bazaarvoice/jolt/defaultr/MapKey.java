@@ -18,7 +18,6 @@ package com.bazaarvoice.jolt.defaultr;
 import com.bazaarvoice.jolt.common.DeepCopy;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -77,10 +76,10 @@ public class MapKey extends Key {
                 return keyStrings;
             case STAR:
                 // Identify all its keys
-                return ( (Map) container ).keySet();
+                return container.keySet();
             case OR:
                 // Identify the intersection between its keys and the OR values
-                Set<String> intersection = new HashSet<String>( ( (Map) container ).keySet() );
+                Set<String> intersection = new HashSet<>( container.keySet() );
                 intersection.retainAll( keyStrings );
                 return intersection;
             default :
