@@ -57,7 +57,10 @@ public class LiteralPathElement extends BasePathElement implements MatchablePath
 
     @Override
     public LiteralPathElement match( String dataKey, WalkedPath walkedPath ) {
-        return getRawKey().equals( dataKey ) ? this : null ;
+        if ( getRawKey().equals( dataKey ) ) {
+            return new LiteralPathElement( getRawKey(), subKeys );
+        }
+        return null;
     }
 
     @Override

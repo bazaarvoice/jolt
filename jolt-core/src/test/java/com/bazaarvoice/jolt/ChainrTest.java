@@ -21,6 +21,8 @@ import com.bazaarvoice.jolt.chainr.transforms.GoodTestTransform;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.exception.TransformException;
 import com.bazaarvoice.jolt.chainr.transforms.ExplodingTestTransform;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -65,7 +67,7 @@ public class ChainrTest {
     private List<Map<String,Object>> newCustomJavaChainrSpec( Class cls, Object delegateSpec )
     {
         List<Map<String,Object>> retvalue = this.newChainrSpec();
-        retvalue.add( newCustomJavaActivity( cls, delegateSpec ));
+        retvalue.add( newCustomJavaActivity( cls, delegateSpec ) );
         return retvalue;
     }
 
@@ -240,5 +242,54 @@ public class ChainrTest {
             String orderErrorMessage = SortrTest.verifyOrder( actual, expected );
             Assert.assertNull( orderErrorMessage, orderErrorMessage );
         }
+    }
+
+
+
+
+    @Test
+    public void testReuseChainr() {
+        // Spec which moves "attributeMap"'s keys to a root "attributes" list.
+        Map<String,Object> specShift = JsonUtils.javason(
+                "{" +
+                        "'operation':'shift'," +
+                        "'spec' : { 'attributeMap' : { '*' : { '$' : 'attributes[#2]' } } }" +
+                "}"
+        );
+
+        List<Map<String, Object>> chainrSpec = ImmutableList.of( specShift );
+
+        // Create a single Chainr from the spec
+        Chainr chainr = Chainr.fromSpec(chainrSpec);
+
+        // Test input with three attributes
+        Map<String,Object> content = JsonUtils.javason(
+                "{ 'attributeMap' : { " +
+                        "'attribute1' : 1, 'attribute2' : 2, 'attribute3' : 3 }" +
+                "}"
+        );
+
+        Object transformed = chainr.transform(content);
+
+        // First time everything checks out
+        Assert.assertTrue( transformed instanceof Map );
+        Map transformedMap = (Map) transformed;
+        Assert.assertEquals( transformedMap.get( "attributes" ), ImmutableList.of( "attribute1", "attribute2", "attribute3" ) );
+
+        // Create a new identical input
+        content = JsonUtils.javason(
+                "{ 'attributeMap' : { " +
+                        "'attribute1' : 1, 'attribute2' : 2, 'attribute3' : 3 }" +
+                        "}"
+        );
+
+        // Create a new transform from the same Chainr
+        transformed = chainr.transform(content);
+
+        Assert.assertTrue( transformed instanceof Map );
+        transformedMap = (Map) transformed;
+        // The following assert fails because attributes will have three leading null values:
+        // transformedMap["attributes"] == [null, null, null, "attribute1", "attribute2", "attribute3"]
+        Assert.assertEquals( transformedMap.get( "attributes" ), ImmutableList.of( "attribute1", "attribute2", "attribute3" ) );
     }
 }
