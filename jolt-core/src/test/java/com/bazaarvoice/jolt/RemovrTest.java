@@ -31,7 +31,8 @@ public class RemovrTest {
         {"boundaryConditions"},
         {"removrWithWildcardSupport"},
         {"multiStarSupport"},
-        {"starDoublePathElementBoundaryConditions"}
+        {"starDoublePathElementBoundaryConditions"},
+        {"removeJsonArrayFields"}
 
         };
     }

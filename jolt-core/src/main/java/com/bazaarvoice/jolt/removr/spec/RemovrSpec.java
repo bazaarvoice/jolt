@@ -26,10 +26,7 @@ import com.bazaarvoice.jolt.common.pathelement.StarPathElement;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.utils.StringTools;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class RemovrSpec {
 
@@ -89,7 +86,15 @@ public abstract class RemovrSpec {
         return keysToBeRemoved;
     }
 
+    public Map<String, Object> createMapForList(LinkedHashMap<String, Object> listInput) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("root", listInput);
+        return map;
+    }
+
     public abstract void remove(Map<String, Object> input);
+
+    public abstract void removeJsonArrayFields(List<LinkedHashMap<String, Object>> input);
 
     public abstract void removeByKey(Map<String, Object> inputMap, String key);
 }

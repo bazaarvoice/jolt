@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.removr.spec;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +44,19 @@ public class RemovrLeafSpec extends RemovrSpec {
        List<String> keysToBeRemoved = findKeysToBeRemoved(input);
         for (String key : keysToBeRemoved){
             removeByKey(input, key);
+        }
+    }
+
+    @Override
+    public void removeJsonArrayFields(List<LinkedHashMap<String, Object>> input) {
+        if(input == null) {
+            return;
+        }
+        for (LinkedHashMap<String, Object> list : input) {
+            List<String> keysToBeRemoved = findKeysToBeRemoved(list);
+            for (String key : keysToBeRemoved) {
+                removeByKey(list, key);
+            }
         }
     }
 
