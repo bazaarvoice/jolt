@@ -17,10 +17,7 @@ package com.bazaarvoice.jolt.removr.spec;
 import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.exception.SpecException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /*
     Sample Spec
@@ -86,6 +83,19 @@ public class RemovrCompositeSpec extends RemovrSpec {
         }
     }
 
+    @Override
+    public void removeJsonArrayFields(List<LinkedHashMap<String, Object>> input) {
+        if (pathElement instanceof  LiteralPathElement) {
+            for (LinkedHashMap<String, Object> list : input) {
+                handleLiterals(list);
+            }
+        } else {
+            for (LinkedHashMap<String, Object> list : input) {
+                handleComputed(createMapForList(list));
+            }
+        }
+    }
+
     /** +
      *
      * @param inputMap : Input map from which the spec keys need to be removed
@@ -98,6 +108,10 @@ public class RemovrCompositeSpec extends RemovrSpec {
             for(RemovrSpec childSpec : allChildren){
                 // Recursive call if composite spec, else removes the element from the map if it is a leaf spec.
                 childSpec.remove((Map<String, Object>) subInput);
+            }
+        } else if (subInput instanceof List) {
+            for(RemovrSpec childSpec : allChildren) {
+                childSpec.removeJsonArrayFields((List<LinkedHashMap<String, Object>>) subInput);
             }
         }
     }
