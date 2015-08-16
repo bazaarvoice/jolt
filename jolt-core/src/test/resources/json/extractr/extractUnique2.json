@@ -1,0 +1,43 @@
+{
+    "input": {
+        "book": [
+            {
+                "title": "Altered Carbon",
+                "author": "Richard K Morgan"
+            },
+            {
+                "title": "Broken Angels",
+                "author": "Richard K Morgan"
+            },
+            {
+                "title": "Snow Crash",
+                "author": "Neal Stephenson"
+            },
+            {
+                "title": "In the Beginning was the Command Line",
+                "author": "Neal Stephenson"
+            },
+            {
+                "title": "Old Man's War",
+                "author": "John Scalzi"
+            }
+        ]
+    },
+
+    // Same as extractUnique, but with additional trickyness I can get the unique authors,
+    //  and sort of a count of how many books they wrote.
+    // Here, I use the LHS $ wildcard to capture the key to use as output.
+    //
+    // Now each author will end up with, an array, and I could count the number of elements in it.
+    "spec": {
+        "book.*.author.*.$": "authors.&1[]"
+    },
+
+    "expected": {
+        "authors": {
+            "Richard K Morgan": ["Richard K Morgan", "Richard K Morgan"],
+            "Neal Stephenson": ["Neal Stephenson", "Neal Stephenson"],
+            "John Scalzi": ["John Scalzi"]
+        }
+    }
+}
