@@ -1,0 +1,67 @@
+{
+    "TagDistributionOrder": [ "ConsGames", "ProsGames" ],
+    "TagDistribution": {
+        "ConsGames": {
+            "Id": "ConsGames",
+            "Label": "ConsGames",
+            "Values": [
+                {
+                    "Count": 3,
+                    "Value": "Visually Unpleasing"
+
+                },
+                {
+                    "Count": 2,
+                    "Value": "Poor Quality"
+
+                },
+                {
+                    "Count": 2,
+                    "Value": "Difficult Instructions"
+                },
+                {
+                    "Count": 2,
+                    "Value": "Boring"
+                },
+                {
+                    "Count": 1,
+                    "Value": "Unoriginal"
+                }
+            ]
+        },
+        "ProsGames": {
+            "Id": "ProsGames",
+            "Label": "ProsGames",
+            "Values": [
+                {
+                    "Value": "Thought Provoking",
+                    "Count": 3
+                },
+                {
+                    "Value": "Interactive",
+                    "Count": 3
+                },
+                {
+                    "Value": "Entertaining",
+                    "Count": 3
+                },
+                {
+                    "Value": "Can Withstand Use",
+                    "Count": 3
+                },
+                {
+                    "Value": "Fun",
+                    "Count": 2
+                },
+                {
+                    "Value": "Easy To Play",
+                    "Count": 2
+                },
+                {
+                    "Value": "Educational",
+                    "Count": 1
+                }
+            ]
+        }
+    }
+}
