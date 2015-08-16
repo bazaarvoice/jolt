@@ -27,13 +27,17 @@ public class RemovrTest {
     @DataProvider
     public Object[][] getTestCaseNames() {
         return new Object[][] {
-        {"firstSample"},
-        {"boundaryConditions"},
-        {"removrWithWildcardSupport"},
-        {"multiStarSupport"},
-        {"starDoublePathElementBoundaryConditions"},
-        {"removeJsonArrayFields"}
-
+            {"firstSample"},
+            {"boundaryConditions"},
+            {"removrWithWildcardSupport"},
+            {"multiStarSupport"},
+            {"starDoublePathElementBoundaryConditions"},
+            // Array tests
+            {"array_canPassThruNestedArrays"},
+            {"array_canHandleTopLevelArray"},
+            {"array_nonStarInArrayDoesNotDie"},
+            {"array_removeAnArrayIndex"},
+            {"array_removeJsonArrayFields"}
         };
     }
 

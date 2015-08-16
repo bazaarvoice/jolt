@@ -16,7 +16,6 @@
 package com.bazaarvoice.jolt;
 
 import com.bazaarvoice.jolt.chainr.instantiator.DefaultChainrInstantiator;
-import com.bazarvoice.jolt.ChainrFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

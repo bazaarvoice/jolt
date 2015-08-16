@@ -1,0 +1,57 @@
+{
+  "input": {
+    "arrayObjects": [
+      [
+        {
+          "removeThis": "gone",
+          "testStay": "firstArray"
+        },
+        {
+          "removeThis": "gone",
+          "testStay": "still here firstArray"
+        }
+      ],
+      [
+        {
+          "removeThis": "gone",
+          "testStay": "secondaryArray"
+        },
+        {
+          "removeThis": "gone",
+          "testStay": "still here secondArray"
+        }
+      ]
+    ]
+  },
+
+  "spec": {
+    "arrayObjects": {
+      "*": {
+        "*" : {
+          "removeThis": ""
+        }
+      }
+    }
+  },
+
+  "expected": {
+    "arrayObjects": [
+      [
+        {
+          "testStay": "firstArray"
+        },
+        {
+          "testStay": "still here firstArray"
+        }
+      ],
+      [
+        {
+          "testStay": "secondaryArray"
+        },
+        {
+          "testStay": "still here secondArray"
+        }
+      ]
+    ]
+  }
+}

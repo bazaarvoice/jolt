@@ -15,7 +15,6 @@
  */
 package com.bazaarvoice.jolt;
 
-import com.bazarvoice.jolt.ChainrFactory;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;

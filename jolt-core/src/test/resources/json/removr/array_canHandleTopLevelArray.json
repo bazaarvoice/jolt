@@ -1,0 +1,51 @@
+{
+  "input": [
+    [
+      {
+        "removeThis": "gone",
+        "testStay": "firstArray"
+      },
+      {
+        "removeThis": "gone",
+        "testStay": "still here firstArray"
+      }
+    ],
+    [
+      {
+        "removeThis": "gone",
+        "testStay": "secondaryArray"
+      },
+      {
+        "removeThis": "gone",
+        "testStay": "still here secondArray"
+      }
+    ]
+  ],
+
+  "spec": {
+    "*": {
+      "*" : {
+        "removeThis": ""
+      }
+    }
+  },
+
+  "expected": [
+    [
+      {
+        "testStay": "firstArray"
+      },
+      {
+        "testStay": "still here firstArray"
+      }
+    ],
+    [
+      {
+        "testStay": "secondaryArray"
+      },
+      {
+        "testStay": "still here secondArray"
+      }
+    ]
+  ]
+}
