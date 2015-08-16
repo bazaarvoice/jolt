@@ -15,58 +15,103 @@
  */
 package com.bazaarvoice.jolt.removr.spec;
 
-import java.util.LinkedHashMap;
+import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
+import com.bazaarvoice.jolt.common.pathelement.StarAllPathElement;
+import com.bazaarvoice.jolt.common.pathelement.StarPathElement;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 /** +
  * Spec for handling the leaf spec in Removr Transforms.
  */
-
 public class RemovrLeafSpec extends RemovrSpec {
-
 
     public RemovrLeafSpec( String rawKey ) {
         super( rawKey );
     }
 
-
-    /** +
-     *
+    /**
      * @param input : Input map from which the spec key needs to be removed.
      */
     @Override
-    public void remove(Map<String, Object> input ){
-       if( input == null ) {
-           return;
-       }
-
-       List<String> keysToBeRemoved = findKeysToBeRemoved(input);
-        for (String key : keysToBeRemoved){
-            removeByKey(input, key);
+    public List<Integer> applySpec( Object input ) {
+        if ( input == null ) {
+            return null;
         }
-    }
 
-    @Override
-    public void removeJsonArrayFields(List<LinkedHashMap<String, Object>> input) {
-        if(input == null) {
-            return;
-        }
-        for (LinkedHashMap<String, Object> list : input) {
-            List<String> keysToBeRemoved = findKeysToBeRemoved(list);
-            for (String key : keysToBeRemoved) {
-                removeByKey(list, key);
+        if ( input instanceof Map ) {
+            Map<String,Object> inputMap = (Map<String,Object>) input;
+
+            if ( pathElement instanceof LiteralPathElement ) {
+                inputMap.remove( pathElement.getRawKey() );
+            }
+            else if ( pathElement instanceof StarPathElement ) {
+
+                List<String> keysToBeRemoved = new LinkedList<>();
+                for( Map.Entry<String,Object> entry : inputMap.entrySet() ) {
+
+                    StarPathElement star = (StarPathElement) pathElement;
+
+                    if ( star.stringMatch( entry.getKey() ) ) {
+                        keysToBeRemoved.add( entry.getKey() );
+                    }
+                }
+
+                for ( String key : keysToBeRemoved ) {
+                    inputMap.remove( key );
+                }
             }
         }
+        else if ( input instanceof List ) {
+            List<Object> inputList = (List<Object>) input;
+
+            if ( pathElement instanceof LiteralPathElement ) {
+
+                Integer pathElementInt = getIntegerFromLiteralPathElement();
+
+                if ( pathElementInt != null && pathElementInt < inputList.size() ) {
+                    return Collections.singletonList( pathElementInt );
+                }
+            }
+            else if ( pathElement instanceof StarAllPathElement ) {
+
+                // To be clear, this is kinda silly.
+                // If you just wanted to remove the whole list just remove it.
+                // The effectively clears the list.
+                List<Integer> toReturn = new ArrayList<>( inputList.size() );
+                for( int index = 0; index < inputList.size(); index++ ) {
+                    toReturn.add( index );
+                }
+
+                return toReturn;
+            }
+        }
+
+        return Collections.emptyList();
     }
 
-    /** +
-     *
-     * @param inputMap: Input map
-     * @param key: Key that needs to be removed from the key.
+    /**
+     * @param input : Input map from which the literal/computed keys that match the Spec needs to be removed.
+     * For starpathelements, go through all the input keys and check whether this pathelement key is a match.
      */
-    @Override
-    public void removeByKey(Map<String, Object> inputMap, String key) {
-        inputMap.remove(key);
+    public List<String> findKeysToRecurseOn( Map<String, Object> input ) {
+
+        ArrayList<String> keysToBeRemoved = new ArrayList<>();
+        boolean isStarPathElement = pathElement instanceof StarPathElement;
+        for (String ipkey : input.keySet()) {
+            if (isStarPathElement) {
+                if ( ( (StarPathElement) pathElement).stringMatch( ipkey ) ) {
+                    keysToBeRemoved.add(ipkey);
+                }
+            } else {
+
+                keysToBeRemoved.add(pathElement.getRawKey());
+            }
+        }
+        return keysToBeRemoved;
     }
 }

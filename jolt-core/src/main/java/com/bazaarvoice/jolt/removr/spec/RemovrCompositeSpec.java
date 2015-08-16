@@ -15,9 +15,17 @@
 */
 package com.bazaarvoice.jolt.removr.spec;
 import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
+import com.bazaarvoice.jolt.common.pathelement.StarAllPathElement;
+import com.bazaarvoice.jolt.common.pathelement.StarPathElement;
 import com.bazaarvoice.jolt.exception.SpecException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /*
     Sample Spec
@@ -48,7 +56,7 @@ public class RemovrCompositeSpec extends RemovrSpec {
 
     public RemovrCompositeSpec(String rawKey, Map<String, Object> spec ) {
         super( rawKey );
-        ArrayList<RemovrSpec> all = new ArrayList<>();
+        List<RemovrSpec> all = new ArrayList<>();
 
         for ( String rawLhsStr : spec.keySet() ) {
             Object rawRhs = spec.get( rawLhsStr );
@@ -70,63 +78,85 @@ public class RemovrCompositeSpec extends RemovrSpec {
         allChildren = Collections.unmodifiableList( all );
     }
 
-    /** +
-     *
+    /**
      * @param input : Pass in the input map from which the spec raw key has to remove itself if it matches.
      */
     @Override
-    public void remove(Map<String, Object> input){
-        if(pathElement instanceof LiteralPathElement){
-            handleLiterals(input);
-        }else{
-            handleComputed(input);
-        }
-    }
+    public List<Integer> applySpec( Object input ) {
 
-    @Override
-    public void removeJsonArrayFields(List<LinkedHashMap<String, Object>> input) {
-        if (pathElement instanceof  LiteralPathElement) {
-            for (LinkedHashMap<String, Object> list : input) {
-                handleLiterals(list);
-            }
-        } else {
-            for (LinkedHashMap<String, Object> list : input) {
-                handleComputed(createMapForList(list));
-            }
-        }
-    }
+        if ( input instanceof Map ) {
 
-    /** +
-     *
-     * @param inputMap : Input map from which the spec keys need to be removed
-     * @param literalKey : Literal Key to be removed from the map
-     */
-    @Override
-    public void removeByKey(Map<String, Object> inputMap, String literalKey){
-        Object subInput = inputMap.get(literalKey);
-        if(subInput instanceof Map){
-            for(RemovrSpec childSpec : allChildren){
-                // Recursive call if composite spec, else removes the element from the map if it is a leaf spec.
-                childSpec.remove((Map<String, Object>) subInput);
+            Map<String, Object> inputMap = (Map<String, Object>) input;
+
+            if ( pathElement instanceof LiteralPathElement ) {
+                Object subInput = inputMap.get( pathElement.getRawKey() );
+                callChildren( allChildren, subInput );
             }
-        } else if (subInput instanceof List) {
-            for(RemovrSpec childSpec : allChildren) {
-                childSpec.removeJsonArrayFields((List<LinkedHashMap<String, Object>>) subInput);
+            else if ( pathElement instanceof StarPathElement ) {
+
+                for( Map.Entry<String,Object> entry : inputMap.entrySet() ) {
+
+                    StarPathElement star = (StarPathElement) pathElement;
+
+                    if ( star.stringMatch( entry.getKey() ) ) {
+                        callChildren( allChildren, entry.getValue() );
+                    }
+                }
             }
         }
+        else if ( input instanceof List ) {
+            List<Object> inputList = (List<Object>) input;
+
+            // IF the input is a List, the only thing that will match is a Literal or a "*"
+            if ( pathElement instanceof LiteralPathElement ) {
+
+                Integer pathElementInt = getIntegerFromLiteralPathElement();
+
+                if ( pathElementInt != null && pathElementInt < inputList.size() ) {
+                    Object subObj = inputList.get( pathElementInt );
+                    callChildren( allChildren, subObj );
+                }
+            }
+            else if ( pathElement instanceof StarAllPathElement ) {
+                for( Object entry : inputList ) {
+                    callChildren( allChildren, entry );
+                }
+            }
+        }
+
+        // Composite Nodes always return an empty list, as they dont actually remove anything.
+        return Collections.emptyList();
     }
 
-    private void handleLiterals(Map<String, Object> input){
-        if(input == null)
-            return;
-        removeByKey(input, pathElement.getRawKey());
-    }
+    public void callChildren( List<RemovrSpec> children, Object subInput ) {
 
-    private void handleComputed(Map<String, Object> input){
-        List<String> keysToBeRemoved = findKeysToBeRemoved(input);
-        for(String key:keysToBeRemoved){
-            if(input.get(key) instanceof Map){
-                removeByKey(input,key);
+        if (subInput != null ) {
+
+            if( subInput instanceof List ) {
+
+                Set<Integer> indiciesToRemove = new HashSet<>();
+
+                for(RemovrSpec childSpec : children) {
+                    indiciesToRemove.addAll( childSpec.applySpec( subInput ) );
+                }
+
+                List<Integer> uniqueIndiciesToRemove = new ArrayList<>( indiciesToRemove );
+                Collections.sort( uniqueIndiciesToRemove, new Comparator<Integer>() {
+                    @Override
+                    public int compare( Integer o1, Integer o2 ) {
+                        return o2.compareTo( o1 );
+                    }
+                } );
+
+                List<Object> subList = (List<Object>) subInput;
+                for ( int index : uniqueIndiciesToRemove ) {
+                    subList.remove( index );
+                }
+            }
+            else {
+                for(RemovrSpec childSpec : children) {
+                    childSpec.applySpec( subInput );
+                }
             }
         }
     }
