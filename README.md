@@ -66,7 +66,7 @@ Javadoc explaining each transform DSL :
 
 Running a Jolt transform means creating an instance of [Chainr](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Chainr.java)  with a list of transforms.
 
-The JSON spec for Chainr looks like : [unit test](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/test/resources/json/chainr/firstSample.json).
+The JSON spec for Chainr looks like : [unit test](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/test/resources/json/chainr/integration/firstSample.json).
 
 The Java side looks like :
 
