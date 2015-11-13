@@ -1,0 +1,991 @@
+[
+    {
+        "description": "src: simple map, path: simple, value: string ",
+        "source": {
+            "1": 1,
+            "2": 2,
+            "a": "A",
+            "x": "X"
+        },
+        "path": ["a"],
+        "value": "ABC",
+        "output": {
+            "1": 1,
+            "2": 2,
+            "x": "X"
+        }
+    },
+    {
+        "description": "src: simple map, path: simple, value: int",
+        "source": {
+            "1": 1,
+            "2": 2,
+            "a": "A",
+            "x": "X"
+        },
+        "path": ["a"],
+        "value": 24,
+        "output": {
+            "1": 1,
+            "2": 2,
+            "x": "X"
+        }
+    },
+    {
+        "description": "src: simple map, path: simple, value: map",
+        "source": {
+            "1": 1,
+            "2": 2,
+            "a": "A",
+            "x": "X"
+        },
+        "path": ["a"],
+        "value": { "ABC": "abc", "42": 42 },
+        "output": {
+            "1": 1,
+            "2": 2,
+            "x": "X"
+        }
+    },
+    {
+        "description": "src: simple map, path: simple, value: list",
+        "source": {
+            "1": 1,
+            "2": 2,
+            "a": "A",
+            "x": "X"
+        },
+        "path": ["a"],
+        "value": [24, "abc"],
+        "output": {
+            "1": 1,
+            "2": 2,
+            "x": "X"
+        }
+    },
+
+    {
+        "description": "src: simple list, path: simple, value: string",
+        "source": [ "zero", 1, "two", 3, "four", 5, "six"],
+        "path": [5],
+        "value": "ABC",
+        "output": [ "zero", 1, "two", 3, "four", "six" ]
+    },
+    {
+        "description": "src: simple list, path: simple, value: int",
+        "source": [ "zero", 1, "two", 3, "four", 5, "six"],
+        "path": [5],
+        "value": 42,
+        "output": [ "zero", 1, "two", 3, "four", "six" ]
+    },
+    {
+        "description": "src: simple list, path: simple, value: map",
+        "source": [ "zero", 1, "two", 3, "four", 5, "six"],
+        "path": [5],
+        "value": {"ABC": "abc", "42": 42},
+        "output": [ "zero", 1, "two", 3, "four", "six" ]
+    },
+    {
+        "description": "src: simple list, path: simple, value: list",
+        "source": [ "zero", 1, "two", 3, "four", 5, "six"],
+        "path": [5],
+        "value": ["ABC", 42],
+        "output": [ "zero", 1, "two", 3, "four", "six"]
+    },
+
+    {
+        "description": "src: complex map, path: simple, value: string",
+        "source": {
+            "must": [
+                {
+                    "bool": {
+                        "should": [
+
+                            {
+                                "bool": {
+                                    "must": [
+
+                                        {
+                                            "range": {
+                                                "firstPublishTime": {
+                                                    "to": "to"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "path": ["a"],
+        "value": "ABC",
+        "output": {
+            "must": [
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "bool": {
+                                    "must": [
+                                        {
+                                            "range": {
+                                                "firstPublishTime": {
+                                                    "to": "to"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "description": "src: complex map, path: simple, value: int",
+        "source": {
+            "must": [
+                {
+                    "bool": {
+                        "should": [
+
+                            {
+                                "bool": {
+                                    "must": [
+
+                                        {
+                                            "range": {
+                                                "firstPublishTime": {
+                                                    "to": "to"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "path": ["a"],
+        "value": 42,
+        "output": {
+            "must": [
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "bool": {
+                                    "must": [
+                                        {
+                                            "range": {
+                                                "firstPublishTime": {
+                                                    "to": "to"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "description": "src: complex map, path: simple, value: map",
+        "source": {
+            "must": [
+                {
+                    "bool": {
+                        "should": [
+
+                            {
+                                "bool": {
+                                    "must": [
+
+                                        {
+                                            "range": {
+                                                "firstPublishTime": {
+                                                    "to": "to"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "path": ["a"],
+        "value": {"ABC": "abc", "42": 24},
+        "output": {
+            "must": [
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "bool": {
+                                    "must": [
+                                        {
+                                            "range": {
+                                                "firstPublishTime": {
+                                                    "to": "to"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "description": "src: complex map, path: simple, value: list",
+        "source": {
+            "must": [
+                {
+                    "bool": {
+                        "should": [
+
+                            {
+                                "bool": {
+                                    "must": [
+
+                                        {
+                                            "range": {
+                                                "firstPublishTime": {
+                                                    "to": "to"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "path": ["a"],
+        "value": ["ABC", 42],
+        "output": {
+            "must": [
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "bool": {
+                                    "must": [
+                                        {
+                                            "range": {
+                                                "firstPublishTime": {
+                                                    "to": "to"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+
+    {
+        "description": "src: complex map, path: complex, value: string",
+        "source": {
+            "must": [
+                {
+                    "bool": {
+                        "should": [
+
+                            {
+                                "bool": {
+                                    "must": [
+
+                                        {
+                                            "range": {
+                                                "firstPublishTime": {
+                                                    "to": "to"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "path": ["a", 3, "b", 4, "c", 5],
+        "value": "ABC",
+        "output": {
+            "must": [
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "bool": {
+                                    "must": [
+                                        {
+                                            "range": {
+                                                "firstPublishTime": {
+                                                    "to": "to"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ],
+            "a": [
+                {
+                    "b": [
+                        {
+                            "c": [ ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "description": "src: complex map, path: complex, value: int",
+        "source": {
+            "must": [
+                {
+                    "bool": {
+                        "should": [
+
+                            {
+                                "bool": {
+                                    "must": [
+
+                                        {
+                                            "range": {
+                                                "firstPublishTime": {
+                                                    "to": "to"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "path": ["a", 3, "b", 4, "c", 5],
+        "value": 42,
+        "output": {
+            "must": [
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "bool": {
+                                    "must": [
+                                        {
+                                            "range": {
+                                                "firstPublishTime": {
+                                                    "to": "to"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ],
+            "a": [
+                {
+                    "b": [
+                        {
+                            "c": [ ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "description": "src: complex map, path: complex, value: map",
+        "source": {
+            "must": [
+                {
+                    "bool": {
+                        "should": [
+
+                            {
+                                "bool": {
+                                    "must": [
+
+                                        {
+                                            "range": {
+                                                "firstPublishTime": {
+                                                    "to": "to"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "path": ["a", 3, "b", 4, "c", 5],
+        "value": {"ABC": "abc", "42": 42},
+        "output": {
+            "must": [
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "bool": {
+                                    "must": [
+                                        {
+                                            "range": {
+                                                "firstPublishTime": {
+                                                    "to": "to"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ],
+            "a": [
+                {
+                    "b": [
+                        {
+                            "c": [ ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "description": "src: complex map, path: complex, value: list",
+        "source": {
+            "must": [
+                {
+                    "bool": {
+                        "should": [
+
+                            {
+                                "bool": {
+                                    "must": [
+
+                                        {
+                                            "range": {
+                                                "firstPublishTime": {
+                                                    "to": "to"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "path": ["a", 3, "b", 4, "c", 5],
+        "value": ["ABC", 42],
+        "output": {
+            "must": [
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "bool": {
+                                    "must": [
+                                        {
+                                            "range": {
+                                                "firstPublishTime": {
+                                                    "to": "to"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ],
+            "a": [
+                {
+                    "b": [
+                        {
+                            "c": [ ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+
+    {
+        "description": "src: complex list, path: simple, value: string",
+        "source": [
+            {
+                "bool": {
+                    "should": [
+
+                        {
+                            "bool": {
+                                "must": [
+
+                                    {
+                                        "range": {
+                                            "firstPublishTime": {
+                                                "to": "to"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "path": [5],
+        "value": "ABC",
+        "output": [
+            {
+                "bool": {
+                    "should": [
+                        {
+                            "bool": {
+                                "must": [
+                                    {
+                                        "range": {
+                                            "firstPublishTime": {
+                                                "to": "to"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "description": "src: complex list, path: simple, value: int",
+        "source": [
+            {
+                "bool": {
+                    "should": [
+
+                        {
+                            "bool": {
+                                "must": [
+
+                                    {
+                                        "range": {
+                                            "firstPublishTime": {
+                                                "to": "to"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "path": [5],
+        "value": 42,
+        "output": [
+            {
+                "bool": {
+                    "should": [
+                        {
+                            "bool": {
+                                "must": [
+                                    {
+                                        "range": {
+                                            "firstPublishTime": {
+                                                "to": "to"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "description": "src: complex list, path: simple, value: map",
+        "source": [
+            {
+                "bool": {
+                    "should": [
+
+                        {
+                            "bool": {
+                                "must": [
+
+                                    {
+                                        "range": {
+                                            "firstPublishTime": {
+                                                "to": "to"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "path": [5],
+        "value": {"ABC": "abc", "42": 42},
+        "output": [
+            {
+                "bool": {
+                    "should": [
+                        {
+                            "bool": {
+                                "must": [
+                                    {
+                                        "range": {
+                                            "firstPublishTime": {
+                                                "to": "to"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "description": "src: complex list, path: simple, value: list",
+        "source": [
+            {
+                "bool": {
+                    "should": [
+
+                        {
+                            "bool": {
+                                "must": [
+
+                                    {
+                                        "range": {
+                                            "firstPublishTime": {
+                                                "to": "to"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "path": [5],
+        "value": ["ABC", 42],
+        "output": [
+            {
+                "bool": {
+                    "should": [
+                        {
+                            "bool": {
+                                "must": [
+                                    {
+                                        "range": {
+                                            "firstPublishTime": {
+                                                "to": "to"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+
+    {
+        "description": "src: complex list, path: complex, value: string",
+        "source": [
+            {
+                "bool": {
+                    "should": [
+
+                        {
+                            "bool": {
+                                "must": [
+
+                                    {
+                                        "range": {
+                                            "firstPublishTime": {
+                                                "to": "to"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+
+        ],
+        "path": [2, "a", 3, "b", 4, "c"],
+        "value": "ABC",
+        "output": [
+            {
+                "bool": {
+                    "should": [
+                        {
+                            "bool": {
+                                "must": [
+                                    {
+                                        "range": {
+                                            "firstPublishTime": {
+                                                "to": "to"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "a": [
+                    {
+                        "b": [
+                            { } // "c": null is nuked
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "description": "src: complex list, path: complex, value: int",
+        "source": [
+            {
+                "bool": {
+                    "should": [
+
+                        {
+                            "bool": {
+                                "must": [
+
+                                    {
+                                        "range": {
+                                            "firstPublishTime": {
+                                                "to": "to"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+
+        ],
+        "path": [2, "a", 3, "b", 4, "c"],
+        "value": 42,
+        "output": [
+            {
+                "bool": {
+                    "should": [
+                        {
+                            "bool": {
+                                "must": [
+                                    {
+                                        "range": {
+                                            "firstPublishTime": {
+                                                "to": "to"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "a": [
+                    {
+                        "b": [
+                            { } // "c": null is nuked
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "description": "src: complex list, path: complex, value: map",
+        "source": [
+            {
+                "bool": {
+                    "should": [
+
+                        {
+                            "bool": {
+                                "must": [
+
+                                    {
+                                        "range": {
+                                            "firstPublishTime": {
+                                                "to": "to"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+
+        ],
+        "path": [2, "a", 3, "b", 4, "c"],
+        "value": {"ABC": "abc", "42": 42},
+        "output": [
+            {
+                "bool": {
+                    "should": [
+                        {
+                            "bool": {
+                                "must": [
+                                    {
+                                        "range": {
+                                            "firstPublishTime": {
+                                                "to": "to"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "a": [
+                    {
+                        "b": [
+                            { } // "c": null is nuked
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "description": "src: complex list, path: complex, value: list",
+        "source": [
+            {
+                "bool": {
+                    "should": [
+
+                        {
+                            "bool": {
+                                "must": [
+
+                                    {
+                                        "range": {
+                                            "firstPublishTime": {
+                                                "to": "to"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+
+        ],
+        "path": [2, "a", 3, "b", 4, "c"],
+        "value": ["ABC", 42],
+        "output": [
+            {
+                "bool": {
+                    "should": [
+                        {
+                            "bool": {
+                                "must": [
+                                    {
+                                        "range": {
+                                            "firstPublishTime": {
+                                                "to": "to"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "a": [
+                    {
+                        "b": [
+                            { } // "c": null is nuked
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

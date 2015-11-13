@@ -29,11 +29,15 @@ import org.testng.collections.Lists;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static com.bazaarvoice.jolt.utils.JoltUtils.isBlankJson;
 import static com.bazaarvoice.jolt.utils.JoltUtils.isEmptyJson;
+import static com.bazaarvoice.jolt.utils.JoltUtils.isVacantJson;
 import static com.bazaarvoice.jolt.utils.JoltUtils.navigate;
 import static com.bazaarvoice.jolt.utils.JoltUtils.navigateSafe;
 
@@ -246,8 +250,16 @@ public class JoltUtilsTest {
 
     @Test
     public void testIsEmptyJson() {
-        Assert.assertFalse(isEmptyJson(jsonSource));
-        Assert.assertTrue(isEmptyJson(jsonSource_empty));
+        Assert.assertFalse(isVacantJson(jsonSource));
+        Assert.assertFalse(isBlankJson(jsonSource));
+
+        Assert.assertTrue(isVacantJson(jsonSource_empty));
+        Assert.assertFalse(isBlankJson(jsonSource_empty));
+
+        Assert.assertTrue(isBlankJson(ImmutableMap.of()));
+        Assert.assertTrue(isBlankJson(ImmutableList.of()));
+        Assert.assertTrue(isVacantJson(ImmutableMap.of()));
+        Assert.assertTrue(isVacantJson(ImmutableList.of()));
     }
 
     @Test
@@ -286,5 +298,47 @@ public class JoltUtilsTest {
             new SimpleTraversal<>(humanReadablePath).set(duplicate, navigate(jsonSource, paths));
         }
         Assert.assertTrue(diffy.diff(jsonSource, duplicate).isEmpty());
+    }
+
+    @DataProvider
+    public Iterator<Object[]> storeTestCases() {
+
+        String testFixture = "/json/utils/joltUtils-store-remove-compact.json";
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> tests = (List<Map<String, Object>>) JsonUtils.classpathToObject( testFixture );
+
+        List<Object[]> testCases = new LinkedList<>();
+
+        for(Map<String, Object> testCase: tests) {
+            testCases.add(new Object[] {
+                    testCase.get("description"),
+                    testCase.get("source"),
+                    ((List)testCase.get("path")).toArray(),
+                    testCase.get("value"),
+                    testCase.get("output")
+            });
+        }
+
+        return testCases.iterator();
+    }
+
+    /**
+     * Given a source, an output, and a pair of path-to-values, stores-then-validates-then-removes those
+     * resulting in a mutated source, which is finally compacted and matched with given output
+     */
+    @Test (dataProvider = "storeTestCases")
+    public void testStoreRemoveCompact(String description, Object source, Object[] path, Object value, Object output) {
+
+        Object existingValue = JoltUtils.navigateSafe(null, source, path);
+        Assert.assertEquals(JoltUtils.store(source, value, path), existingValue);
+        Assert.assertEquals( JoltUtils.remove( source, path ), value );
+
+        // check the json object
+        int noCompactionSize = JoltUtils.listKeyChains(source).size();
+        JoltUtils.compactJson(source); // source is compacted now
+        int compactedSize = JoltUtils.listKeyChains(source).size();
+
+        Assert.assertTrue(noCompactionSize >= compactedSize);
+        Assert.assertTrue(diffy.diff(output, source).isEmpty());
     }
 }
