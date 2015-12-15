@@ -62,7 +62,7 @@ public class RemovrCompositeSpec extends RemovrSpec {
                     childSpec = new RemovrLeafSpec(keyString);
                 }
                 else{
-                    throw new SpecException("Invalid Removr spec RHS. Should be a non-empty string or Map");
+                    throw new SpecException("Invalid Removr spec RHS. Should be an empty string or Map");
                 }
                 all.add(childSpec);
             }
