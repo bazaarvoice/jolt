@@ -91,7 +91,7 @@ import java.util.Map;
  *      },
  *    }
  *    //desired output
- *     {
+ *    {
  *     "ratings":{
  *        "Set1":{
  *           "a":"a"
@@ -153,12 +153,30 @@ import java.util.Map;
  *              "Set1":""
  *       }
  *    </pre>
- *
- *
  * <p/>
- * The Spec file format for Removr is a tree Map<String, Object> objects.
- * The "Right hand side" of the of each entry is ignored/irrelevant unless it is a map,
- *  in which case Removr will recursively walk down the tree.
+ *
+ * <p>
+ *  * Arrays
+ *
+ * Removr can also handle data in Arrays.
+ *
+ *  It can walk thru all the elements of an array with the "*" wildcard.
+ *
+ *  Additionally, it can remove individual array indicies.  To do this the LHS key
+ *   must be a number but in String format.
+ *
+ *  Example
+ *  <pre>
+ *  "spec": {
+ *    "array": {
+ *      "0" : ""
+ *    }
+ *  }
+ *  </pre>
+ *
+ *  In this case, Removr will remove the zero-th item from the input "array", which will cause data at
+ *   index "1" to become the new "0".  Because of this, Remover matches all the literal/explicit
+ *   indices first, sorts them from Biggest to Smallest, then does the removing.
  * <p/>
  */
 public class Removr implements SpecDriven, Transform {
@@ -193,7 +211,7 @@ public class Removr implements SpecDriven, Transform {
         // Wrap the input in a map to fool the CompositeSpec to recurse itself.
         Map<String,Object> wrappedMap = new HashMap<>();
         wrappedMap.put(ROOT_KEY, input);
-        rootSpec.remove(wrappedMap);
+        rootSpec.applySpec(wrappedMap);
         return input;
     }
 }

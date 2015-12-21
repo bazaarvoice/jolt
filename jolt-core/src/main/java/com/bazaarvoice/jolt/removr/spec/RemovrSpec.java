@@ -59,20 +59,30 @@ public abstract class RemovrSpec {
         }
     }
 
-    protected Integer getIntegerFromLiteralPathElement() {
+    protected Integer getNonNegativeIntegerFromLiteralPathElement() {
 
         Integer pathElementInt = null;
 
         try {
             pathElementInt = Integer.parseInt( pathElement.getRawKey() );
+
+            if ( pathElementInt < 0 ) {
+                return null;
+            }
         }
         catch( NumberFormatException nfe ) {
             // If the data is an Array, but the spec keys are Non-Integer Strings,
             //  we are annoyed, but we don't stop the whole transform.
             // Just this part of the Transform won't work.
         }
+
         return pathElementInt;
     }
 
+    /**
+     *
+     * @param input
+     * @return If the input was a list, this the indicies to remove, otherwise empty List.
+     */
     public abstract List<Integer> applySpec(Object input);
 }

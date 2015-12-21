@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 /** +
- * Spec for handling the leaf spec in Removr Transforms.
+ * Spec for handling the leaf spec of the Removr Transform.
  */
 public class RemovrLeafSpec extends RemovrSpec {
 
@@ -71,7 +71,7 @@ public class RemovrLeafSpec extends RemovrSpec {
 
             if ( pathElement instanceof LiteralPathElement ) {
 
-                Integer pathElementInt = getIntegerFromLiteralPathElement();
+                Integer pathElementInt = getNonNegativeIntegerFromLiteralPathElement();
 
                 if ( pathElementInt != null && pathElementInt < inputList.size() ) {
                     return Collections.singletonList( pathElementInt );
@@ -80,8 +80,8 @@ public class RemovrLeafSpec extends RemovrSpec {
             else if ( pathElement instanceof StarAllPathElement ) {
 
                 // To be clear, this is kinda silly.
-                // If you just wanted to remove the whole list just remove it.
-                // The effectively clears the list.
+                // If you just wanted to remove the whole list, you could have just
+                //  directly removed it, instead of stepping into it and using the "*".
                 List<Integer> toReturn = new ArrayList<>( inputList.size() );
                 for( int index = 0; index < inputList.size(); index++ ) {
                     toReturn.add( index );
@@ -92,26 +92,5 @@ public class RemovrLeafSpec extends RemovrSpec {
         }
 
         return Collections.emptyList();
-    }
-
-    /**
-     * @param input : Input map from which the literal/computed keys that match the Spec needs to be removed.
-     * For starpathelements, go through all the input keys and check whether this pathelement key is a match.
-     */
-    public List<String> findKeysToRecurseOn( Map<String, Object> input ) {
-
-        ArrayList<String> keysToBeRemoved = new ArrayList<>();
-        boolean isStarPathElement = pathElement instanceof StarPathElement;
-        for (String ipkey : input.keySet()) {
-            if (isStarPathElement) {
-                if ( ( (StarPathElement) pathElement).stringMatch( ipkey ) ) {
-                    keysToBeRemoved.add(ipkey);
-                }
-            } else {
-
-                keysToBeRemoved.add(pathElement.getRawKey());
-            }
-        }
-        return keysToBeRemoved;
     }
 }

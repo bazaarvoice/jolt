@@ -110,7 +110,7 @@ public class RemovrCompositeSpec extends RemovrSpec {
             // IF the input is a List, the only thing that will match is a Literal or a "*"
             if ( pathElement instanceof LiteralPathElement ) {
 
-                Integer pathElementInt = getIntegerFromLiteralPathElement();
+                Integer pathElementInt = getNonNegativeIntegerFromLiteralPathElement();
 
                 if ( pathElementInt != null && pathElementInt < inputList.size() ) {
                     Object subObj = inputList.get( pathElementInt );
@@ -136,11 +136,16 @@ public class RemovrCompositeSpec extends RemovrSpec {
 
                 Set<Integer> indiciesToRemove = new HashSet<>();
 
+                // build a list of all indicies to remove
                 for(RemovrSpec childSpec : children) {
                     indiciesToRemove.addAll( childSpec.applySpec( subInput ) );
                 }
 
                 List<Integer> uniqueIndiciesToRemove = new ArrayList<>( indiciesToRemove );
+                // Sort the list from Biggest to Smallest, so that when we remove items from the input
+                //  list we don't muck up the order.
+                // Aka removing 0 _then_ 3 would be bad, because we would of actually removed
+                //  0 and 4 from the "original" list.
                 Collections.sort( uniqueIndiciesToRemove, new Comparator<Integer>() {
                     @Override
                     public int compare( Integer o1, Integer o2 ) {
