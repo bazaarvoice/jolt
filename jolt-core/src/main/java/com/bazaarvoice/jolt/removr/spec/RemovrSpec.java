@@ -22,79 +22,82 @@ import com.bazaarvoice.jolt.common.pathelement.StarAllPathElement;
 import com.bazaarvoice.jolt.common.pathelement.StarDoublePathElement;
 import com.bazaarvoice.jolt.common.pathelement.StarRegexPathElement;
 import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
-import com.bazaarvoice.jolt.common.pathelement.StarPathElement;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.utils.StringTools;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 public abstract class RemovrSpec {
 
     protected final MatchablePathElement pathElement;
 
     public RemovrSpec(String rawJsonKey) {
-        List<PathElement> pathElements = parse(rawJsonKey);
+        PathElement pathElement = parse( rawJsonKey );
 
-        if (pathElements.size() != 1) {
-            throw new SpecException("Removr invalid LHS:" + rawJsonKey + " can not contain '.'");
-        }
-
-        PathElement pe = pathElements.get(0);
-        if (!(pe instanceof MatchablePathElement)) {
+        if (!(pathElement instanceof MatchablePathElement)) {
             throw new SpecException("Spec LHS key=" + rawJsonKey + " is not a valid LHS key.");
         }
 
-        this.pathElement = (MatchablePathElement) pe;
+        this.pathElement = (MatchablePathElement) pathElement;
     }
 
     // Ex Keys :  *, cdv-*, *-$de
-    public static List<PathElement> parse(String key) {
+    public static PathElement parse(String key) {
         if ( "*".equals( key ) ) {
-            return Arrays.<PathElement>asList(new StarAllPathElement(key));
+            return new StarAllPathElement( key );
         }
 
-        int numOfStars = StringTools.countMatches(key, "*");
+        int numOfStars = StringTools.countMatches( key, "*" );
         if (numOfStars == 1) {
-            return Arrays.<PathElement>asList(new StarSinglePathElement(key));
+            return new StarSinglePathElement(key);
         } else if (numOfStars == 2) {
-            return Arrays.<PathElement>asList(new StarDoublePathElement(key));
+            return new StarDoublePathElement(key);
         } else if (numOfStars > 2) {
-            return Arrays.<PathElement>asList(new StarRegexPathElement(key));
+            return new StarRegexPathElement(key);
         } else {
-            return Arrays.<PathElement>asList(new LiteralPathElement(key));
+            return new LiteralPathElement(key);
         }
     }
 
     /**
-     * @param input : Input map from which the literal/computed keys that match the Spec needs to be removed.
-     * For starpathelements, go through all the input keys and check whether this pathelement key is a match.
+     * Try to "interpret" the spec String value as a non-negative integer.
+     *
+     * @return non-negative integer, otherwise null
      */
+    protected Integer getNonNegativeIntegerFromLiteralPathElement() {
 
-    public List<String> findKeysToBeRemoved(Map<String, Object> input) {
-        ArrayList<String> keysToBeRemoved = new ArrayList<>();
-        boolean isStarPathElement = pathElement instanceof StarPathElement;
-        for (String ipkey : input.keySet()) {
-            if (isStarPathElement) {
-                if ( ( (StarPathElement) pathElement).stringMatch( ipkey ) ) {
-                    keysToBeRemoved.add(ipkey);
-                }
-            } else {
+        Integer pathElementInt = null;
 
-                keysToBeRemoved.add(pathElement.getRawKey());
+        try {
+            pathElementInt = Integer.parseInt( pathElement.getRawKey() );
+
+            if ( pathElementInt < 0 ) {
+                return null;
             }
         }
-        return keysToBeRemoved;
+        catch( NumberFormatException nfe ) {
+            // If the data is an Array, but the spec keys are Non-Integer Strings,
+            //  we are annoyed, but we don't stop the whole transform.
+            // Just this part of the Transform won't work.
+        }
+
+        return pathElementInt;
     }
 
-    public Map<String, Object> createMapForList(LinkedHashMap<String, Object> listInput) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("root", listInput);
-        return map;
-    }
+    /**
+     * Build a list of indices to remove from the input list, using the pathElement
+     *  from the Spec.
+     *
+     * @return the indicies to remove, otherwise empty List.
+     */
+    public abstract List<Integer> applyToList( List<Object> inputList );
 
-    public abstract void remove(Map<String, Object> input);
-
-    public abstract void removeJsonArrayFields(List<LinkedHashMap<String, Object>> input);
-
-    public abstract void removeByKey(Map<String, Object> inputMap, String key);
+    /**
+     * Build a list of keys to remove from the input map, using the pathElement
+     *  from the Spec.
+     *
+     * @return the keys to remove, otherwise empty List.
+     */
+    public abstract List<String> applyToMap( Map<String, Object> inputMap );
 }

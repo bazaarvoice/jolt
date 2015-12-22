@@ -1,0 +1,35 @@
+{
+  "input": {
+    "arrayObjects": [
+      {
+        "removeThis": "gone",
+        "testStay": "here"
+      },
+      {
+        "removeThis": "remove",
+        "testStay": "still here"
+      }
+    ],
+    "arrayString" : ["entire", "field", "gone"]
+  },
+
+  "spec": {
+    "arrayObjects": {
+      "*": {
+        "removeThis": ""
+      }
+    },
+    "arrayString": ""
+  },
+
+  "expected": {
+    "arrayObjects": [
+      {
+        "testStay": "here"
+      },
+      {
+        "testStay": "still here"
+      }
+    ]
+  }
+}

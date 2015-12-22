@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.bazarvoice.jolt;
+package com.bazaarvoice.jolt;
 
-import com.bazaarvoice.jolt.Chainr;
-import com.bazaarvoice.jolt.JsonUtils;
 import com.bazaarvoice.jolt.chainr.instantiator.ChainrInstantiator;
 
 import java.io.File;

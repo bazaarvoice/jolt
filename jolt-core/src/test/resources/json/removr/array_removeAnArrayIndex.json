@@ -1,0 +1,31 @@
+{
+  "input": {
+    "arrayObjects": [
+      { "zero":  "ZERO" },
+      { "one":   "ONE" },
+      { "two":   2 },
+      { "three": 3 },
+      { "four":  "FOUR" }
+    ]
+  },
+
+  "spec": {
+    "arrayObjects": {
+      "0" : "",  // test lower bound
+      "2" : "",
+      "4" : "",   // test upper bound of list
+
+      // Things that should not cause errors / problems
+      "10": "",   // Index larger than input array
+      "-8": "",   // Index value is negative
+      "a" : ""    // Index value is not a number
+      }
+  },
+
+  "expected": {
+    "arrayObjects": [
+      { "one":   "ONE" },
+      { "three": 3 }
+    ]
+  }
+}

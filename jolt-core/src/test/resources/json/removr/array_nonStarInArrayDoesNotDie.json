@@ -1,36 +1,36 @@
 {
   "input": {
-
     "arrayObjects": [
       {
-        "removeThis": "gone",
+        "a": "b",
         "testStay": "here"
       },
       {
-        "removeThis": "remove",
+        "a": "b",
         "testStay": "still here"
       }
-    ],
-    "arrayString" : ["entire", "field", "gone"]
+    ]
   },
 
   "spec": {
-
     "arrayObjects": {
-      "*": {
-        "removeThis": ""
+      "pants": {
+        "a": ""
+      },
+      "abc*" : {
+        "a": ""
       }
-    },
-    "arrayString": ""
-
+    }
   },
 
   "expected": {
     "arrayObjects": [
       {
+        "a": "b",
         "testStay": "here"
       },
       {
+        "a": "b",
         "testStay": "still here"
       }
     ]
