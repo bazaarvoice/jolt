@@ -25,8 +25,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-/** +
- * Spec for handling the leaf spec of the Removr Transform.
+/**
+ * Spec for handling the leaf level of the Removr Transform.
  */
 public class RemovrLeafSpec extends RemovrSpec {
 
@@ -35,45 +35,47 @@ public class RemovrLeafSpec extends RemovrSpec {
     }
 
     /**
+     * Build a list of keys to remove from the input map, using the pathElement
+     *  from the Spec.
+     *
      * @param inputMap : Input map from which the spec key needs to be removed.
      */
     @Override
-    public List<String> applySpec( Map<String,Object> inputMap ) {
+    public List<String> applyToMap( Map<String, Object> inputMap ) {
         if ( inputMap == null ) {
             return null;
         }
 
+        List<String> keysToBeRemoved = new LinkedList<>();
 
         if ( pathElement instanceof LiteralPathElement ) {
-            inputMap.remove( pathElement.getRawKey() );
+
+            // if we are a literal, check to see if we match
+            if ( inputMap.containsKey( pathElement.getRawKey() ) ) {
+                keysToBeRemoved.add( pathElement.getRawKey() );
+            }
         }
         else if ( pathElement instanceof StarPathElement ) {
 
-            List<String> keysToBeRemoved = new LinkedList<>();
-            for( Map.Entry<String,Object> entry : inputMap.entrySet() ) {
+            StarPathElement star = (StarPathElement) pathElement;
 
-                StarPathElement star = (StarPathElement) pathElement;
+            // if we are a wildcard, check each input key to see if it matches us
+            for( String key : inputMap.keySet() ) {
 
-                if ( star.stringMatch( entry.getKey() ) ) {
-                    keysToBeRemoved.add( entry.getKey() );
+                if ( star.stringMatch( key ) ) {
+                    keysToBeRemoved.add( key );
                 }
-            }
-
-            for ( String key : keysToBeRemoved ) {
-                inputMap.remove( key );
             }
         }
 
-        return Collections.emptyList();
+        return keysToBeRemoved;
     }
 
-
-
     /**
-     * @param inputList : Input map from which the spec key needs to be removed.
+     * @param inputList : Input List from which the spec key needs to be removed.
      */
     @Override
-    public List<Integer> applySpec( List<Object> inputList ) {
+    public List<Integer> applyToList( List<Object> inputList ) {
         if ( inputList == null ) {
             return null;
         }
@@ -98,7 +100,10 @@ public class RemovrLeafSpec extends RemovrSpec {
 
             return toReturn;
         }
+        // else the pathElement is some other kind which is not supported when running
+        //  against arrays, aka "tuna*" makes no sense against a list.
 
-         return Collections.emptyList();
+
+        return Collections.emptyList();
     }
 }

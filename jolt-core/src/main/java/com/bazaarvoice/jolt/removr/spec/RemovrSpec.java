@@ -86,14 +86,18 @@ public abstract class RemovrSpec {
     }
 
     /**
-     * @param input List
-     * @return If the input was a list, this the indicies to remove, otherwise empty List.
+     * Build a list of indices to remove from the input list, using the pathElement
+     *  from the Spec.
+     *
+     * @return the indicies to remove, otherwise empty List.
      */
-    public abstract List<Integer> applySpec(List<Object> input);
+    public abstract List<Integer> applyToList( List<Object> inputList );
 
     /**
-     * @param input Map
-     * @return If the input was a list, this the indicies to remove, otherwise empty List.
+     * Build a list of keys to remove from the input map, using the pathElement
+     *  from the Spec.
+     *
+     * @return the keys to remove, otherwise empty List.
      */
-    public abstract List<String> applySpec(Map<String,Object> input);
+    public abstract List<String> applyToMap( Map<String, Object> inputMap );
 }

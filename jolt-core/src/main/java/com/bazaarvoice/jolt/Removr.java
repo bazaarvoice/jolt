@@ -207,7 +207,7 @@ public class Removr implements SpecDriven, Transform {
         // Wrap the input in a map to fool the CompositeSpec to recurse itself.
         Map<String,Object> wrappedMap = new HashMap<>();
         wrappedMap.put(ROOT_KEY, input);
-        rootSpec.applySpec(wrappedMap);
+        rootSpec.applyToMap( wrappedMap );
         return input;
     }
 }
