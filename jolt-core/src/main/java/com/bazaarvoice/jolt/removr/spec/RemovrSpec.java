@@ -26,6 +26,7 @@ import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.utils.StringTools;
 
 import java.util.List;
+import java.util.Map;
 
 public abstract class RemovrSpec {
 
@@ -59,6 +60,11 @@ public abstract class RemovrSpec {
         }
     }
 
+    /**
+     * Try to "interpret" the spec String value as a non-negative integer.
+     *
+     * @return non-negative integer, otherwise null
+     */
     protected Integer getNonNegativeIntegerFromLiteralPathElement() {
 
         Integer pathElementInt = null;
@@ -80,9 +86,14 @@ public abstract class RemovrSpec {
     }
 
     /**
-     *
-     * @param input
+     * @param input List
      * @return If the input was a list, this the indicies to remove, otherwise empty List.
      */
-    public abstract List<Integer> applySpec(Object input);
+    public abstract List<Integer> applySpec(List<Object> input);
+
+    /**
+     * @param input Map
+     * @return If the input was a list, this the indicies to remove, otherwise empty List.
+     */
+    public abstract List<String> applySpec(Map<String,Object> input);
 }

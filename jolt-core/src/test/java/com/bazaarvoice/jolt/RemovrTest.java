@@ -33,10 +33,11 @@ public class RemovrTest {
             {"multiStarSupport"},
             {"starDoublePathElementBoundaryConditions"},
             // Array tests
-            {"array_removeJsonArrayFields"},
-            {"array_nonStarInArrayDoesNotDie"},
             {"array_canPassThruNestedArrays"},
-            {"array_removeAnArrayIndex"}
+            {"array_canHandleTopLevelArray"},
+            {"array_nonStarInArrayDoesNotDie"},
+            {"array_removeAnArrayIndex"},
+            {"array_removeJsonArrayFields"}
         };
     }
 

@@ -35,62 +35,70 @@ public class RemovrLeafSpec extends RemovrSpec {
     }
 
     /**
-     * @param input : Input map from which the spec key needs to be removed.
+     * @param inputMap : Input map from which the spec key needs to be removed.
      */
     @Override
-    public List<Integer> applySpec( Object input ) {
-        if ( input == null ) {
+    public List<String> applySpec( Map<String,Object> inputMap ) {
+        if ( inputMap == null ) {
             return null;
         }
 
-        if ( input instanceof Map ) {
-            Map<String,Object> inputMap = (Map<String,Object>) input;
 
-            if ( pathElement instanceof LiteralPathElement ) {
-                inputMap.remove( pathElement.getRawKey() );
-            }
-            else if ( pathElement instanceof StarPathElement ) {
-
-                List<String> keysToBeRemoved = new LinkedList<>();
-                for( Map.Entry<String,Object> entry : inputMap.entrySet() ) {
-
-                    StarPathElement star = (StarPathElement) pathElement;
-
-                    if ( star.stringMatch( entry.getKey() ) ) {
-                        keysToBeRemoved.add( entry.getKey() );
-                    }
-                }
-
-                for ( String key : keysToBeRemoved ) {
-                    inputMap.remove( key );
-                }
-            }
+        if ( pathElement instanceof LiteralPathElement ) {
+            inputMap.remove( pathElement.getRawKey() );
         }
-        else if ( input instanceof List ) {
-            List<Object> inputList = (List<Object>) input;
+        else if ( pathElement instanceof StarPathElement ) {
 
-            if ( pathElement instanceof LiteralPathElement ) {
+            List<String> keysToBeRemoved = new LinkedList<>();
+            for( Map.Entry<String,Object> entry : inputMap.entrySet() ) {
 
-                Integer pathElementInt = getNonNegativeIntegerFromLiteralPathElement();
+                StarPathElement star = (StarPathElement) pathElement;
 
-                if ( pathElementInt != null && pathElementInt < inputList.size() ) {
-                    return Collections.singletonList( pathElementInt );
+                if ( star.stringMatch( entry.getKey() ) ) {
+                    keysToBeRemoved.add( entry.getKey() );
                 }
             }
-            else if ( pathElement instanceof StarAllPathElement ) {
 
-                // To be clear, this is kinda silly.
-                // If you just wanted to remove the whole list, you could have just
-                //  directly removed it, instead of stepping into it and using the "*".
-                List<Integer> toReturn = new ArrayList<>( inputList.size() );
-                for( int index = 0; index < inputList.size(); index++ ) {
-                    toReturn.add( index );
-                }
-
-                return toReturn;
+            for ( String key : keysToBeRemoved ) {
+                inputMap.remove( key );
             }
         }
 
         return Collections.emptyList();
+    }
+
+
+
+    /**
+     * @param inputList : Input map from which the spec key needs to be removed.
+     */
+    @Override
+    public List<Integer> applySpec( List<Object> inputList ) {
+        if ( inputList == null ) {
+            return null;
+        }
+
+        if ( pathElement instanceof LiteralPathElement ) {
+
+            Integer pathElementInt = getNonNegativeIntegerFromLiteralPathElement();
+
+            if ( pathElementInt != null && pathElementInt < inputList.size() ) {
+                return Collections.singletonList( pathElementInt );
+            }
+        }
+        else if ( pathElement instanceof StarAllPathElement ) {
+
+            // To be clear, this is kinda silly.
+            // If you just wanted to remove the whole list, you could have just
+            //  directly removed it, instead of stepping into it and using the "*".
+            List<Integer> toReturn = new ArrayList<>( inputList.size() );
+            for( int index = 0; index < inputList.size(); index++ ) {
+                toReturn.add( index );
+            }
+
+            return toReturn;
+        }
+
+         return Collections.emptyList();
     }
 }

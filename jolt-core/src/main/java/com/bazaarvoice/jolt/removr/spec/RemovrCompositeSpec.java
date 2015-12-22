@@ -79,48 +79,49 @@ public class RemovrCompositeSpec extends RemovrSpec {
     }
 
     /**
-     * @param input : Pass in the input map from which the spec raw key has to remove itself if it matches.
+     * @param inputMap : Pass in the input map from which the spec raw key has to remove itself if it matches.
      */
     @Override
-    public List<Integer> applySpec( Object input ) {
+    public List<String> applySpec( Map<String, Object> inputMap ) {
 
-        if ( input instanceof Map ) {
+        if ( pathElement instanceof LiteralPathElement ) {
+            Object subInput = inputMap.get( pathElement.getRawKey() );
+            callChildren( allChildren, subInput );
+        }
+        else if ( pathElement instanceof StarPathElement ) {
 
-            Map<String, Object> inputMap = (Map<String, Object>) input;
+            for( Map.Entry<String,Object> entry : inputMap.entrySet() ) {
 
-            if ( pathElement instanceof LiteralPathElement ) {
-                Object subInput = inputMap.get( pathElement.getRawKey() );
-                callChildren( allChildren, subInput );
-            }
-            else if ( pathElement instanceof StarPathElement ) {
+                StarPathElement star = (StarPathElement) pathElement;
 
-                for( Map.Entry<String,Object> entry : inputMap.entrySet() ) {
-
-                    StarPathElement star = (StarPathElement) pathElement;
-
-                    if ( star.stringMatch( entry.getKey() ) ) {
-                        callChildren( allChildren, entry.getValue() );
-                    }
+                if ( star.stringMatch( entry.getKey() ) ) {
+                    callChildren( allChildren, entry.getValue() );
                 }
             }
         }
-        else if ( input instanceof List ) {
-            List<Object> inputList = (List<Object>) input;
 
-            // IF the input is a List, the only thing that will match is a Literal or a "*"
-            if ( pathElement instanceof LiteralPathElement ) {
+        return Collections.emptyList();
+    }
 
-                Integer pathElementInt = getNonNegativeIntegerFromLiteralPathElement();
+    /**
+     * @param inputList : Pass in the input map from which the spec raw key has to remove itself if it matches.
+     */
+    @Override
+    public List<Integer> applySpec( List<Object> inputList ) {
 
-                if ( pathElementInt != null && pathElementInt < inputList.size() ) {
-                    Object subObj = inputList.get( pathElementInt );
-                    callChildren( allChildren, subObj );
-                }
+        // IF the input is a List, the only thing that will match is a Literal or a "*"
+        if ( pathElement instanceof LiteralPathElement ) {
+
+            Integer pathElementInt = getNonNegativeIntegerFromLiteralPathElement();
+
+            if ( pathElementInt != null && pathElementInt < inputList.size() ) {
+                Object subObj = inputList.get( pathElementInt );
+                callChildren( allChildren, subObj );
             }
-            else if ( pathElement instanceof StarAllPathElement ) {
-                for( Object entry : inputList ) {
-                    callChildren( allChildren, entry );
-                }
+        }
+        else if ( pathElement instanceof StarAllPathElement ) {
+            for( Object entry : inputList ) {
+                callChildren( allChildren, entry );
             }
         }
 
@@ -128,17 +129,18 @@ public class RemovrCompositeSpec extends RemovrSpec {
         return Collections.emptyList();
     }
 
-    public void callChildren( List<RemovrSpec> children, Object subInput ) {
+    private void callChildren( List<RemovrSpec> children, Object subInput ) {
 
         if (subInput != null ) {
 
             if( subInput instanceof List ) {
 
+                List<Object> subList = (List<Object>) subInput;
                 Set<Integer> indiciesToRemove = new HashSet<>();
 
                 // build a list of all indicies to remove
                 for(RemovrSpec childSpec : children) {
-                    indiciesToRemove.addAll( childSpec.applySpec( subInput ) );
+                    indiciesToRemove.addAll( childSpec.applySpec( subList ) );
                 }
 
                 List<Integer> uniqueIndiciesToRemove = new ArrayList<>( indiciesToRemove );
@@ -153,14 +155,13 @@ public class RemovrCompositeSpec extends RemovrSpec {
                     }
                 } );
 
-                List<Object> subList = (List<Object>) subInput;
                 for ( int index : uniqueIndiciesToRemove ) {
                     subList.remove( index );
                 }
             }
-            else {
+            else if (subInput instanceof Map ) {
                 for(RemovrSpec childSpec : children) {
-                    childSpec.applySpec( subInput );
+                    childSpec.applySpec( (Map<String,Object>) subInput );
                 }
             }
         }
