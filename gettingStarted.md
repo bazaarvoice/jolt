@@ -16,7 +16,7 @@ Maven Dependency to Add to your pom file
 </dependency>
 ```
 
-Where `latest.jolt.version` looks like `0.0.12`, and can be found by looking at the [project's releases](https://github.com/bazaarvoice/jolt/releases).
+Where `latest.jolt.version` looks like `0.0.16`, and can be found by looking at the [project's releases](https://github.com/bazaarvoice/jolt/releases).
 
 The two maven artifacts are:
 
@@ -48,6 +48,10 @@ Available [here](https://github.com/bazaarvoice/jolt/tree/master/jolt-core/src/t
 
         public static void main(String[] args) throws IOException {
 
+            // How to access the test artifacts, i.e. JSON files
+            //  JsonUtils.classpathToList : assumes you put the test artifacts in your class path
+            //  JsonUtils.filepathToList : you can use an absolute path to specify the files
+            
             List chainrSpecJSON = JsonUtils.classpathToList( "/json/sample/spec.json" );
             Chainr chainr = Chainr.fromSpec( chainrSpecJSON );
 
