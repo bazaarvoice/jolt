@@ -16,11 +16,12 @@ JSON to JSON transformation library written in Java where the "specification" fo
    * [4 Demo](#Demo)
    * [5 Getting Started](#Getting_Started)
    * [6 Getting Transform Help](#Getting_Transform_Help)
-   * [7 Alternatives](#Alternatives)
-   * [8 Performance](#Performance)
-   * [9 CLI](#CLI)
-   * [10 Code Coverage](#Code_Coverage)
-   * [11 Release Notes](#Release_Notes)
+   * [7 Why Jolt Exists](#Why Jolt Exists)
+   * [8 Alternatives](#Alternatives)
+   * [9 Performance](#Performance)
+   * [10 CLI](#CLI)
+   * [11 Code Coverage](#Code_Coverage)
+   * [12 Release Notes](#Release_Notes)
 
 ## <a name="Overview"></a> Overview
 
@@ -58,6 +59,7 @@ Javadoc explaining each transform DSL :
 * [shift](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Shiftr.java)
 * [default](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Defaultr.java)
 * [remove](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Removr.java)
+* [cardinality](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/CardinalityTransform.java)
 * [sort](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Sortr.java)
 * full qualified Java ClassName : Class implements the Transform or ContextualTransform interfaces, and can optionally be SpecDriven (marker interface)
     * [Transform](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Transform.java) interface
@@ -114,7 +116,7 @@ You can paste in JSON input data and a Spec, and it will post the data to server
 Note
 
 * it is hosted on a free Google App Engine instance, so it may take a minute to spin up.
-* it validates in input JSON and spec client side, but if there are any errors server side it just silently fails.
+* it validates in input JSON and spec client side.
 
 ## <a name="Getting_Started"></a> Getting Started
 
@@ -126,9 +128,9 @@ If you can't get a transform working and you need help, create and Issue in Jolt
 
 Make sure you include what your "input" is, and what you want your "output" to be.
 
-## <a name="Alternatives"></a> Alternatives
+## <a name="Why Jolt Exists"></a> Why Jolt Exists
 
-Aside from writing your own custom code to do a transform, there are two general approaches to doing Json to Json transforms in Java.
+Aside from writing your own custom code to do a transform, there are two general approaches to doing a JSON to JSON transforms in Java.
 
 1) JSON -> XML -> XSLT or STX -> XML -> JSON
 
@@ -139,6 +141,14 @@ Aside from being a Rube Goldberg approach, XSLT is more complicated than Jolt be
 With this approach you are working from the output format backwards to the input, which is complex for any non-trivial transform.
 Eg, the structure of your template will be dictated by the output JSON format, and you will end up coding a parallel tree walk of the input data and the output format in your template.
 Jolt works forward from the input data to the output format which is simpler, and it does the parallel tree walk for you.
+
+## <a name="Alternatives"></a> Alternatives
+
+Being in the Java JSON processing "space", here are some other interesting JSON manipulation tools to look at / consider :
+
+* [jq](https://stedolan.github.io/jq) - Awesome command line tool to extract data from JSON files (use it all the time, available via brew)
+* [JsonPath](https://github.com/jayway/JsonPath) - Java : Extract data from JSON using XPATH like syntax.
+* [JsonSurfer](https://github.com/jsurfer/JsonSurfer) - Java : Streaming JsonPath processor dedicated to processing big and complicated JSON data.
 
 ## <a name="Performance"></a> Performance
 
@@ -166,12 +176,11 @@ Jolt Transforms and tools can be run from the command line. Command line interfa
 [![Build Status](https://secure.travis-ci.org/bazaarvoice/jolt.png)](http://travis-ci.org/bazaarvoice/jolt)
 
 For the moment we have Cobertura configured in our poms.
-When we move to a proper open source CI build, this can go away.
 
     mvn cobertura:cobertura
     open jolt-core/target/site/cobertura/index.html
 
-Currently code coverage is at 89% line, and 81% branch.
+Currently, for the jolt-core artifact, code coverage is at 89% line, and 83% branch.
 
 ## <a name="Release_Notes"></a> Release Notes
 

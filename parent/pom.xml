@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.bazaarvoice.commons</groupId>
         <artifactId>bv-opensource-super-pom</artifactId>
-        <version>1.3</version>
+        <version>1.4</version>
         <relativePath />
         <!--an empty relativePath for the super-pom, makes maven happy -->
     </parent>
@@ -115,7 +115,7 @@
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
-                <version>0.9</version>
+                <version>0.11</version>
                 <configuration>
                     <includes>
                         <include>**/*.java</include>
@@ -130,6 +130,21 @@
                         </goals>
                     </execution>
                 </executions>
+
+                <!-- work around https://issues.apache.org/jira/browse/RAT-158 -->
+                <dependencies>
+                    <dependency>
+                      <groupId>org.apache.maven.doxia</groupId>
+                      <artifactId>doxia-core</artifactId>
+                      <version>1.6</version>
+                      <exclusions>
+                        <exclusion>
+                          <groupId>xerces</groupId>
+                          <artifactId>xercesImpl</artifactId>
+                        </exclusion>
+                      </exclusions>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
