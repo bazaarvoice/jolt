@@ -1,0 +1,57 @@
+{
+    "input": {
+        "rating": {
+            "primary": {
+                "value": 4,
+                "max": 5
+            },
+            "quality": {
+                "value": 3,
+                "max": 7
+            }
+        },
+
+        // Test if we process input data with a "." in it
+        "foo.bar" : "baz",
+
+        // Test if we can use the @ transpose operator to get to the "baz" value above
+        "test" : {
+            "use_as_data" : "data",
+            "use_as_path" : "path"
+        }
+    },
+
+    "spec": {
+        "rating": {
+            "primary": {
+                // escape the '.' so that an output key can have a dot in it
+                "value": "data.rating\\.primary"
+            },
+            "*": {
+                "value": "data.rating\\.&1"
+            }
+        },
+
+        "foo.bar" : "foobar",
+        "test" : {
+            "use_as_data" : {
+                "data" : {
+                    "@(3,foo\\.bar)" : "test.data"
+                }
+            },
+            "use_as_path" : "test.@(2,foo\\.bar)"
+        }
+    },
+
+    "expected": {
+        "data" : {
+            "rating.primary": 4,
+            "rating.quality": 3
+        },
+        "foobar" : "baz",
+        "test": {
+            "data" : "baz",
+            "baz": "path"
+        }
+    }
+}
