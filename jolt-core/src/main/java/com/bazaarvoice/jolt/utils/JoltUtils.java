@@ -114,7 +114,7 @@ public class JoltUtils {
             }
             else if(path instanceof Integer && destination instanceof List) {
                 List destinationList = (List) destination;
-                if(destinationList.size() < (Integer) path) {
+                if ( (Integer) path >= destinationList.size() ) {
                     return defaultValue;
                 }
                 else {
