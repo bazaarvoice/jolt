@@ -28,8 +28,11 @@ public class ArrayOrderObliviousDiffy extends Diffy {
 
     @Override
     protected Result diffList(List expected, List actual) {
-        for (int i=0; i<expected.size(); i++) {
+
+        for (int i=0; i < expected.size(); i++) {
+
             Object exp = expected.get(i);
+
             /**
              * iterate through all the items in list and see any of them matches with it
              * contains() does the same thing, but checks only equals()
@@ -43,14 +46,16 @@ public class ArrayOrderObliviousDiffy extends Diffy {
              */
             for(int j=0; j< actual.size(); j++) {
                 Object act = actual.get(j);
-                if((act != null && exp != null) && (
-                        act.equals(exp) ||
-                        act.hashCode() == exp.hashCode() ||
-                        diff(exp, act).isEmpty()
-                    )) {
+                if( (act != null && exp != null) &&
+                    (act.equals(exp) || act.hashCode() == exp.hashCode() || diff(exp, act).isEmpty() ) )
+                {
                     expected.remove(i);
                     actual.remove(j);
-                    i--; j--;
+
+                    // The expected.remove(i) will slide things down
+                    // reduce the count of the outer loop, so that the i++ gets back to the "same place"
+                    i--;
+                    break;
                 }
             }
         }
