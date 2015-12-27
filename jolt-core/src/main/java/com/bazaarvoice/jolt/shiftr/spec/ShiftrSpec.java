@@ -82,9 +82,15 @@ public abstract class ShiftrSpec {
      */
     public static PathElement parseSingleKeyLHS( String key )  {
 
+        //// LHS single values
         if ( "@".equals( key ) ) {
             return new AtPathElement( key );
         }
+        else if ( "*".equals( key ) ) {
+            return new StarAllPathElement( key );
+        }
+
+        //// LHS multiple values
         else if ( key.startsWith("@") || key.contains( "@(" ) ) {
             return TransposePathElement.parse( key );
         }
@@ -109,9 +115,6 @@ public abstract class ShiftrSpec {
                 throw new SpecException("Can't mix * with & ) ");
             }
             return new AmpPathElement( key );
-        }
-        else if ( "*".equals( key ) ) {
-            return new StarAllPathElement( key );
         }
         else if ( key.contains("*" ) ) {
 
@@ -139,7 +142,7 @@ public abstract class ShiftrSpec {
     /**
      * Helper method to turn a String into an Iterator<Character>
      */
-    private static Iterator<Character> stringIterator(final String string) {
+    public static Iterator<Character> stringIterator(final String string) {
         // Ensure the error is found as soon as possible.
         if (string == null)
             throw new NullPointerException();
@@ -209,11 +212,10 @@ public abstract class ShiftrSpec {
 
     /**
      * Parse RHS Transpose @ logic.
-     * "@(a.b)" or
-     * "@a.b
+     * "@(a.b)"  --> pulls "(a.b)" off the iterator
+     * "@a.b"    --> pulls just "a" off the iterator
      *
      * This method expects that the the '@' character has already been seen.
-     * Thus if ther are
      *
      * @param iter iterator to pull data from
      * @param dotNotationRef the original dotNotation string used for error messages
@@ -264,9 +266,9 @@ public abstract class ShiftrSpec {
                     throw new SpecException( "Unable to parse dotNotation, specifically the '@()' part : " + dotNotationRef );
                 }
             }
-            // Parsing "@abc.def
+            // Parsing "@abc.def, return a canonical form of "@(abc)" and leave the "def" in the iterator
             else if ( c == '.' ) {
-                return sb.toString();
+                return "(" + sb.toString().substring( 0, sb.length() - 1 ) + ")";
             }
         }
 
@@ -288,12 +290,13 @@ public abstract class ShiftrSpec {
      * @param dotNotationRef the original dotNotation string used for error messages
      * @return
      */
-    private static List<String> parseDotNotation( List<String> pathStrings, Iterator<Character> iter, String dotNotationRef ) {
+    public static List<String> parseDotNotation( List<String> pathStrings, Iterator<Character> iter, String dotNotationRef ) {
 
         if ( ! iter.hasNext() ) {
             return pathStrings;
         }
 
+        boolean escapeActive = false;
         StringBuilder sb = new StringBuilder();
 
         char c;
@@ -301,21 +304,36 @@ public abstract class ShiftrSpec {
 
             c = iter.next();
 
+            if ( c == '\\' ) {
+                // two escapes lets one thru
+                escapeActive = ! escapeActive;
+            }
+
             if( c == '@' ) {
                 sb.append( '@' );
                 sb.append( parseAtPathElement( iter, dotNotationRef ) );
                 pathStrings.add( sb.toString() );
                 sb = new StringBuilder();
             }
-            else {
-                if ( c == '.' ) {
+            else if ( c == '.' ) {
+                if ( escapeActive ) {
+                    sb.append( c );
+                }
+                else {
                     if ( sb.length() != 0 ) {
                         pathStrings.add( sb.toString() );
                     }
                     return parseDotNotation( pathStrings, iter, dotNotationRef );
                 }
+            }
+            else {
+                if ( ! escapeActive ) {
+                    sb.append( c );
+                }
+            }
 
-                sb.append( c );
+            if ( c != '\\' ) {
+                escapeActive = false;
             }
         }
 
