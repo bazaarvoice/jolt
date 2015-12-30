@@ -89,7 +89,14 @@ public abstract class ShiftrSpec {
         else if ( "*".equals( key ) ) {
             return new StarAllPathElement( key );
         }
+        else if ( key.startsWith( "[" ) ) {
 
+            if ( StringTools.countMatches(key, "[") != 1 || StringTools.countMatches(key, "]") != 1 ) {
+                throw new SpecException( "Invalid key:" + key + " has too many [] references.");
+            }
+
+            return new ArrayPathElement( key );
+        }
         //// LHS multiple values
         else if ( key.startsWith("@") || key.contains( "@(" ) ) {
             return TransposePathElement.parse( key );
@@ -312,8 +319,13 @@ public abstract class ShiftrSpec {
             if( c == '@' ) {
                 sb.append( '@' );
                 sb.append( parseAtPathElement( iter, dotNotationRef ) );
-                pathStrings.add( sb.toString() );
-                sb = new StringBuilder();
+
+                //                      there was a "[" seen       but no "]"
+                boolean isPartOfArray = sb.indexOf( "[" ) != -1 && sb.indexOf( "]" ) == -1;
+                if ( ! isPartOfArray ) {
+                    pathStrings.add( sb.toString() );
+                    sb = new StringBuilder();
+                }
             }
             else if ( c == '.' ) {
                 if ( escapeActive ) {

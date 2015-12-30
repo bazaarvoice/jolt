@@ -68,6 +68,7 @@ public class ShiftrTest {
             {"transposeComplex6_rhs-complex-at"},
             {"transposeComplex7_coerce-int-string-conversion"},
             {"transposeComplex8_coerce-boolean-string-conversion"},
+            {"transposeComplex9_lookup_an_array_index"},
             {"transposeInverseMap1"},
             {"transposeInverseMap2"},
             {"transposeLHS1"},

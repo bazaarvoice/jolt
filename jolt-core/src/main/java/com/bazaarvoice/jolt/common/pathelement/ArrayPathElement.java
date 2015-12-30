@@ -24,10 +24,11 @@ import com.bazaarvoice.jolt.common.reference.PathReference;
 
 public class ArrayPathElement extends BasePathElement implements MatchablePathElement, EvaluatablePathElement {
 
-    public enum ArrayPathType { AUTO_EXPAND, REFERENCE, HASH, EXPLICIT_INDEX }
+    public enum ArrayPathType { AUTO_EXPAND, REFERENCE, HASH, TRANSPOSE, EXPLICIT_INDEX }
 
     private final ArrayPathType arrayPathType;
     private final PathReference ref;
+    private final TransposePathElement transposePathElement;
 
     private final String canonicalForm;
     private final String arrayIndex;
@@ -41,6 +42,7 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
 
         ArrayPathType apt;
         PathReference r = null;
+        TransposePathElement tpe = null;
         String aI = "";
 
         if ( key.length() == 2 ) {
@@ -49,18 +51,25 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
         }
         else {
             String meat = key.substring( 1, key.length() - 1 );  // trim the [ ]
+            char firstChar = meat.charAt( 0 );
 
-            if ( AmpReference.TOKEN.equals( meat.charAt( 0 ) ) ) {
+            if ( AmpReference.TOKEN.equals( firstChar ) ) {
                 r = new AmpReference( meat );
                 apt = ArrayPathType.REFERENCE;
 
                 canonicalForm = "[" + r.getCanonicalForm() + "]";
             }
-            else if ( HashReference.TOKEN.equals( meat.charAt( 0 ) ) ) {
+            else if ( HashReference.TOKEN.equals( firstChar ) ) {
                 r = new HashReference( meat );
                 apt = ArrayPathType.HASH;
 
                 canonicalForm = "[" + r.getCanonicalForm() + "]";
+            }
+            else if( '@' == firstChar ) {
+                apt = ArrayPathType.TRANSPOSE;
+
+                tpe = TransposePathElement.parse( meat );
+                canonicalForm = "[" + tpe.getCanonicalForm() + "]";
             }
             else {
                 try {
@@ -76,6 +85,7 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
             }
         }
 
+        transposePathElement = tpe;
         arrayPathType = apt;
         ref = r;
         arrayIndex = aI;
@@ -102,6 +112,10 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
                 Integer index = element.getHashCount();
                 return index.toString();
 
+            case TRANSPOSE:
+                String key = transposePathElement.evaluate( walkedPath );
+                return verifyStringIsInteger( key );
+
             case REFERENCE:
                 LiteralPathElement lpe = walkedPath.elementFromEnd( ref.getPathIndex() ).getLiteralPathElement();
                 String keyPart;
@@ -112,16 +126,23 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
                 else {
                     keyPart = lpe.getSubKeyRef( 0 );
                 }
-                try
-                {
-                    Integer.parseInt( keyPart );
-                    return keyPart;
-                }
-                catch ( NumberFormatException nfe ) {
-                    throw new RuntimeException( " Evaluating canonical ReferencePathElement:" + this.getCanonicalForm() + ", and got a non integer result:(" + keyPart + "),  for reference:" + ref.getCanonicalForm() );
-                }
+
+                return verifyStringIsInteger( keyPart );
             default:
                 throw new IllegalStateException( "ArrayPathType enum added two without updating this switch statement." );
+        }
+    }
+
+    private static String verifyStringIsInteger( String key ) {
+        try
+        {
+            Integer.parseInt( key );
+            return key;
+        }
+        catch ( NumberFormatException nfe ) {
+            // Jolt should not throw any exceptions just because the input data does not match what is expected.
+            // Thus the exception is being swallowed.
+            return null;
         }
     }
 
