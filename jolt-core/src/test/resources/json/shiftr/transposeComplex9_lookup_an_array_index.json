@@ -21,6 +21,18 @@
 
                 // the idea here is that the index is a String, but is coercible to numeric
                 "index" : "3"
+            },
+            "Weyland-Yutani" : {
+                "clientId": "Walmart",
+
+                // the idea here is that negative index values get ignored
+                "index" : -1
+            },
+            "UmbrellaCorporation" : {
+                "clientId": "Monsanto",
+
+                // the idea here is that negative index values get ignored
+                "index" : "-2"
             }
         }
     },

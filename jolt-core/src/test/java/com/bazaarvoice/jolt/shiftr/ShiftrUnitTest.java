@@ -102,35 +102,39 @@ public class ShiftrUnitTest {
             },
             {
                     "Empty sub-spec",
-                    JsonUtils.jsonToMap( "{ \"tuna\" : {} }" ),
+                    JsonUtils.javason( "{ 'tuna' : {} }" ),
             },
             {
                     "Bad @",
-                    JsonUtils.jsonToMap( "{ \"tuna-*-marlin-*\" : { \"rating-@\" : \"&(1,2).&.value\" } }" ),
+                    JsonUtils.javason( "{ 'tuna-*-marlin-*' : { 'rating-@' : '&(1,2).&.value' } }" ),
             },
             {
                     "RHS @ by itself",
-                    JsonUtils.jsonToMap( "{ \"tuna-*-marlin-*\" : { \"rating-*\" : \"&(1,2).@.value\" } }" ),
+                    JsonUtils.javason( "{ 'tuna-*-marlin-*' : { 'rating-*' : '&(1,2).@.value' } }" ),
             },
             {
                     "RHS @ with bad Parens",
-                    JsonUtils.jsonToMap( "{ \"tuna-*-marlin-*\" : { \"rating-*\" : \"&(1,2).@(data.&(1,1).value\" } }" ),
+                    JsonUtils.javason( "{ 'tuna-*-marlin-*' : { 'rating-*' : '&(1,2).@(data.&(1,1).value' } }" ),
             },
             {
                     "RHS *",
-                    JsonUtils.jsonToMap( "{ \"tuna-*-marlin-*\" : { \"rating-*\" : \"&(1,2).*.value\" } }" ),
+                    JsonUtils.javason( "{ 'tuna-*-marlin-*' : { 'rating-*' : '&(1,2).*.value' } }" ),
             },
             {
                     "RHS $",
-                    JsonUtils.jsonToMap( "{ \"tuna-*-marlin-*\" : { \"rating-*\" : \"&(1,2).$.value\" } }" ),
+                    JsonUtils.javason( "{ 'tuna-*-marlin-*' : { 'rating-*' : '&(1,2).$.value' } }" ),
             },
             {
                     "Two Arrays",
-                    JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-*\" : [ \"&(1,2).photos[&(0,1)]-subArray[&(1,2)].value\", \"foo\"] } }"),
+                    JsonUtils.javason("{ 'tuna-*-marlin-*' : { 'rating-*' : [ '&(1,2).photos[&(0,1)]-subArray[&(1,2)].value', 'foo'] } }"),
             },
             {
                     "Can't mix * and & in the same key",
-                    JsonUtils.jsonToMap("{ \"tuna-*-marlin-*\" : { \"rating-&(1,2)-*\" : [ \"&(1,2).value\", \"foo\"] } }"),
+                    JsonUtils.javason("{ 'tuna-*-marlin-*' : { 'rating-&(1,2)-*' : [ '&(1,2).value', 'foo'] } }"),
+            },
+            {
+                    "Don't put negative numbers in array references",
+                    JsonUtils.javason("{ 'tuna' : 'marlin[-1]' }"),
             }
         };
     }
