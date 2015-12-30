@@ -1,0 +1,26 @@
+{
+    "input": {
+        "key": null,
+        "bunch-O-keys" : {
+            "a" : null,
+            "b" : null,
+            "c" : null
+        }
+    },
+
+    "spec": {
+        "key": "value",
+        "bunch-O-keys" : {
+            "*" : "values.&"
+        }
+    },
+
+    "expected": {
+        "value" : null,
+        "values" : {
+            "a" : null,
+            "b" : null,
+            "c" : null
+        }
+    }
+}
