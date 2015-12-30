@@ -55,6 +55,7 @@ public class ShiftrTest {
             {"prefixedData"},
             {"prefixSoupToBuckets"},
             {"queryMappingXform"},
+            {"shiftToTrash"},
             {"simpleRHSEscape"},
             {"singlePlacement"},
             {"specialKeys"},

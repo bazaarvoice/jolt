@@ -1,0 +1,28 @@
+{
+    "input": {
+        "a" : "a",
+        "b" : "b",
+        "c" : "c",
+        "d" : "d"
+    },
+
+    "spec": {
+
+        // The idea here is that I want to send everything BUT the "c" input to "foo.&".
+        //
+        // The way to do that is to specify the "c" key, but have it's RHS output path be null.
+        // Shiftr will then match the literal "c" (and not do anything with it's input) before
+        //  it matches the rest of the input keys with the "*", thus accomplishing the goal.
+        //
+        "*" : "foo.&",
+        "c" : null
+    },
+
+    "expected": {
+        "foo" : {
+            "a" : "a",
+            "b" : "b",
+            "d" : "d"
+        }
+    }
+}
