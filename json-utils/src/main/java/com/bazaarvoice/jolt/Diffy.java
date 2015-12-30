@@ -61,13 +61,16 @@ public class Diffy {
             if (!(actual instanceof List)) {
                 return new Result( expected, actual );
             }
-            return diffList( (List) expected, (List) actual );
+            return diffList( (List<Object>) expected, (List<Object>) actual );
         }
         return this.diffScalar( expected, actual );
     }
 
     protected Result diffMap(Map<String, Object> expected, Map<String, Object> actual) {
-        for (Object key: expected.keySet().toArray()) {
+
+        // Make a copy of the expected keySet so that we can remove things w/out concurrent mod exceptions
+        String[] expectedKeys = expected.keySet().toArray( new String[ expected.keySet().size() ] );
+        for (String key : expectedKeys ) {
             Result subResult = diffHelper( expected.get( key ), actual.get( key ) );
             if (subResult.isEmpty()) {
                 expected.remove( key );
@@ -80,7 +83,7 @@ public class Diffy {
         return new Result( expected, actual );
     }
 
-    protected Result diffList(List expected, List actual) {
+    protected Result diffList(List<Object> expected, List<Object> actual) {
         int shortlen = Math.min( expected.size(), actual.size() );
         boolean emptyDiff = true;
         for (int i=0; i<shortlen; i++) {

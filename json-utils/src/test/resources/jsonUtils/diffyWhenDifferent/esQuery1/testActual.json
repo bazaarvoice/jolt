@@ -1,0 +1,76 @@
+{
+    "must" : [
+        {
+            "bool" : {
+                "should" : [
+                    {
+                        "bool" : {
+                            "must" : [
+                                {
+                                    "term" : {
+                                        "client" : "testcustomer-concierge-synd1"
+                                    }
+                                },
+                                {
+                                    "term" : {
+                                        "subjectProduct.externalId.lc" : "common-product"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "bool" : {
+                            "must" : [
+                                {
+                                    "terms" : {
+                                        "subjectProduct.coordinate" : [
+                                            "catalog:testcustomer-concierge-synd:/product::common-product"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "range" : {
+                                        "firstPublishTime" : {
+                                            "from" : null,
+                                            "to" : "2015-12-21T00:00:00.000-06:00",
+                                            "include_lower" : true,
+                                            "include_upper" : false
+                                        }
+                                    }
+                                }
+                            ],
+                            "must_not" : [
+                                {
+                                    "term" : {
+                                        "subjectProduct.attribute.DISABLED" : true
+                                    }
+                                },
+                                {
+                                    "term" : {
+                                        "subjectCategory.attribute.DISABLED" : true
+                                    }
+                                },
+                                {
+                                    "terms" : {
+                                        "contentCodes" : [
+                                            "RET",
+                                            "PC",
+                                            "PRI",
+                                            "STP"
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "term" : {
+                "status" : "APPROVED"
+            }
+        }
+    ]
+}
