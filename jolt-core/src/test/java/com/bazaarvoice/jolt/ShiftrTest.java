@@ -50,6 +50,7 @@ public class ShiftrTest {
             {"mergeParallelArrays3_and-filter"},
             {"multiPlacement"},
             {"objectToArray"},
+            {"passNullThru"},
             {"passThru"},
             {"prefixDataToArray"},
             {"prefixedData"},

@@ -201,10 +201,12 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
             void processMap( ShiftrCompositeSpec spec, Map<String, Object> inputMap, WalkedPath walkedPath, Map<String, Object> output ) {
 
                 for( String key : spec.literalChildren.keySet() ) {
-                    Object subInput = inputMap.get( key );
 
-                    if ( subInput != null ) {
-                        // we know the .get(key) will not return null
+                    // only recurse down if the literalChild is a key in the input map
+                    if ( inputMap.containsKey( key ) ) {
+
+                        // At this point subInput could be null, and that is ok
+                        Object subInput = inputMap.get( key );
                         spec.literalChildren.get( key ).apply( key, subInput, walkedPath, output );
                     }
                 }
