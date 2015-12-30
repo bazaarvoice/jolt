@@ -72,15 +72,13 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
                 canonicalForm = "[" + tpe.getCanonicalForm() + "]";
             }
             else {
-                try {
-                    Integer.parseInt( meat );
+                aI = verifyStringIsNonNegativeInteger(meat);
+                if ( aI != null ) {
                     apt = ArrayPathType.EXPLICIT_INDEX;
-
-                    canonicalForm = "[" + meat + "]";
-                    aI = meat;
+                    canonicalForm = "[" + aI + "]";
                 }
-                catch ( NumberFormatException nfe ){
-                    throw new SpecException( "Unable to parse explicit array index of:" + meat + " from key:" + key );
+                else {
+                    throw new SpecException( "Bad explict array index:" + meat + " from key:" + key );
                 }
             }
         }
@@ -114,7 +112,7 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
 
             case TRANSPOSE:
                 String key = transposePathElement.evaluate( walkedPath );
-                return verifyStringIsInteger( key );
+                return verifyStringIsNonNegativeInteger( key );
 
             case REFERENCE:
                 LiteralPathElement lpe = walkedPath.elementFromEnd( ref.getPathIndex() ).getLiteralPathElement();
@@ -127,17 +125,25 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
                     keyPart = lpe.getSubKeyRef( 0 );
                 }
 
-                return verifyStringIsInteger( keyPart );
+                return verifyStringIsNonNegativeInteger( keyPart );
             default:
                 throw new IllegalStateException( "ArrayPathType enum added two without updating this switch statement." );
         }
     }
 
-    private static String verifyStringIsInteger( String key ) {
+    /**
+     * @return the String version of a non-Negative integer, else null
+     */
+    private static String verifyStringIsNonNegativeInteger( String key ) {
         try
         {
-            Integer.parseInt( key );
-            return key;
+            int number = Integer.parseInt( key );
+            if ( number >= 0 ) {
+                return key;
+            }
+            else {
+                return null;
+            }
         }
         catch ( NumberFormatException nfe ) {
             // Jolt should not throw any exceptions just because the input data does not match what is expected.
