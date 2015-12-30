@@ -61,6 +61,10 @@ public class ShiftrLeafSpec extends ShiftrSpec {
                 writers.add( parseOutputDotNotation( dotNotation ) );
             }
         }
+        else if ( rhs == null ) {
+            // this means someone wanted to match something, but not send it anywhere.  Basically like a removal.
+            writers = Collections.emptyList();
+        }
         else {
             throw new SpecException( "Invalid Shiftr spec RHS.  Should be map, string, or array of strings.  Spec in question : " + rhs );
         }
