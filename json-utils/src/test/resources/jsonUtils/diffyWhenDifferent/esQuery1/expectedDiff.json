@@ -1,0 +1,26 @@
+{
+    "must" : [
+        {
+            "bool" : {
+                "should" : [
+                    null,
+                    {
+                        "bool" : {
+                            "must" : [
+                                null,
+                                {
+                                    "range" : {
+                                        "firstPublishTime" : {
+                                            "to" : null
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        null
+    ]
+}

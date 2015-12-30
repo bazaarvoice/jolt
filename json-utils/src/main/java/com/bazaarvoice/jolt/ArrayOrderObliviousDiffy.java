@@ -16,6 +16,7 @@
 package com.bazaarvoice.jolt;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Subclass of Diffy that does not care about JSON Array order.
@@ -27,41 +28,102 @@ import java.util.List;
 public class ArrayOrderObliviousDiffy extends Diffy {
 
     @Override
-    protected Result diffList(List expected, List actual) {
+    protected Result diffList(List<Object> expected, List<Object> actual) {
 
-        for (int i=0; i < expected.size(); i++) {
+        // First we got thru an n^2 operation to compare the two lists
+        for (int expectedIndex=0; expectedIndex < expected.size(); expectedIndex++) {
 
-            Object exp = expected.get(i);
+            Object exp = expected.get(expectedIndex);
 
-            /**
-             * iterate through all the items in list and see any of them matches with it
-             * contains() does the same thing, but checks only equals()
-             * we have to check if either, equals() or hashcode() or our own diff()
-             * returns that they are same
-             *
-             * this applies to Lists with similar but differently ordered data set
-             * i.e. [[1,2]].contains([2,1]) == false
-             *
-             * this is expensive, but necessary!
-             */
-            for(int j=0; j< actual.size(); j++) {
-                Object act = actual.get(j);
-                if( (act != null && exp != null) &&
-                    (act.equals(exp) || act.hashCode() == exp.hashCode() || diff(exp, act).isEmpty() ) )
-                {
-                    expected.remove(i);
-                    actual.remove(j);
+            for(int actualIndex=0; actualIndex < actual.size(); actualIndex++) {
+                Object act = actual.get(actualIndex);
 
-                    // The expected.remove(i) will slide things down
-                    // reduce the count of the outer loop, so that the i++ gets back to the "same place"
-                    i--;
+                if ( exp == null && act == null ) {
+                    // great, we "found a match"
                     break;
+                }
+
+                if( act != null && exp != null ) {
+
+                    // Ideally the equals method finds a match, works for identical maps and simple Strings and numbers
+                    // Also try the sub-classable diffScalar if the normal ".equals" does not work
+                    if ( act.equals(exp) || diffScalar( exp, act ).isEmpty() ) {
+                        // if the indicies match nuke them
+                        expected.set(expectedIndex, null);
+                        actual.set(actualIndex, null);
+                        break;
+                    }
+                    else if ( (exp instanceof List && act instanceof List) ||
+                              (exp instanceof Map  && act instanceof Map) ) {
+
+                        // ugh, n^2 again, but enter from the top so a copy is made
+                        Diffy.Result result = diff( exp, act );
+                        if ( result.isEmpty() ) {
+                            // score!
+                            expected.set(expectedIndex, null);
+                            actual.set(actualIndex, null);
+                            break;
+                        }
+                    }
                 }
             }
         }
-        if (expected.isEmpty() && actual.isEmpty()) {
+
+        // See if all the indicies in the arrays were nulled out.
+        if ( isAllNulls( expected ) && isAllNulls( actual ) ) {
             return new Result();
         }
+
+        // Now we make a second pass, "lining up" and subtractively Diffy-ing non-null elements.
+        int actualIndex = 0;
+
+        for (int expectedIndex=0; expectedIndex < expected.size() && actualIndex < actual.size(); expectedIndex++) {
+
+            expectedIndex = findNextNonNullIndex( expected, expectedIndex );
+            if ( expectedIndex >= expected.size() ) {
+                break;
+            }
+
+            actualIndex = findNextNonNullIndex( actual, actualIndex );
+            if ( actualIndex >= actual.size() ) {
+                break;
+            }
+
+            Object exp = expected.get(expectedIndex);
+            Object act = actual.get(actualIndex);
+
+            // Do an actual "subtractive" diff, with "lined up" non-null items
+            Result subResult = diffHelper( exp, act );
+            expected.set( expectedIndex, subResult.expected );
+            actual.set( actualIndex, subResult.actual );
+
+            actualIndex++;
+        }
+
         return new Result( expected, actual );
+    }
+
+    private boolean isAllNulls( List<Object> list ) {
+
+        boolean isAllNulls = true;
+        for( int index=0; isAllNulls && index < list.size(); index++) {
+            if ( list.get(index) != null ) {
+                isAllNulls = false;
+            }
+        }
+        return isAllNulls;
+    }
+
+    private static int findNextNonNullIndex( List<Object> list, int index ) {
+
+        while ( index < list.size() ) {
+
+            if (list.get(index) != null ) {
+                break;
+            }
+
+            index++;
+        }
+        return index;
     }
 }

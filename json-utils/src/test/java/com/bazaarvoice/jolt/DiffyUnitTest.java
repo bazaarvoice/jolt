@@ -24,9 +24,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-public class DiffyTest {
+public class DiffyUnitTest {
 
     private Diffy unit;
 
@@ -136,4 +138,60 @@ public class DiffyTest {
         Assert.assertEquals( JsonUtils.jsonToMap( "{\"foo\":\"apple\"}" ), result.actual );
     }
 
+    /**
+     * Testing / exploring basic Map.equals behavior.
+     */
+    @Test
+    public void verify_NestedMapEquals() {
+        Map<String,Object> h1 = new HashMap<>();
+        {
+            h1.put( "a", "a" );
+            Map<String,Object> bMap = new HashMap<>();
+            bMap.put( "c", "c" );
+            bMap.put( "d", "d" );
+            h1.put( "b", bMap );
+        }
+
+        Map<String,Object> h2 = new HashMap<>();
+        {
+            Map<String,Object> bMap = new HashMap<>();
+            bMap.put( "c", "c" );
+            bMap.put( "d", "d" );
+            h2.put( "b", bMap );
+            h2.put( "a", "a" );
+        }
+
+        Assert.assertTrue( h1.equals( h2 ), "1->2 Two HashMaps with the same things should be equal." );
+        Assert.assertEquals( h1.hashCode(), h2.hashCode(), "1->2 Two HashMaps with the same things should have the same hashCode." );
+
+        Assert.assertTrue( h2.equals( h1 ), "2->1 Two HashMaps with the same things should be equal." );
+        Assert.assertEquals( h2.hashCode(), h1.hashCode(), "2->1 Two HashMaps with the same things should have the same hashCode." );
+
+        Map<String,Object> lh1 = new LinkedHashMap<>();
+        {
+            lh1.put( "a", "a" );
+            Map<String,Object> bMap = new HashMap<>();
+            bMap.put( "c", "c" );
+            bMap.put( "d", "d" );
+            lh1.put( "b", bMap );
+        }
+
+        Assert.assertTrue( lh1.equals( h2 ), "lh1->2 Two HashMaps with the same things should be equal." );
+        Assert.assertEquals( lh1.hashCode(), h2.hashCode(), "lh1->2 Two HashMaps with the same things should have the same hashCode." );
+
+        Assert.assertTrue( lh1.equals( h1 ), "lh1->1 Two HashMaps with the same things should be equal." );
+        Assert.assertEquals( lh1.hashCode(), h1.hashCode(), "lh1->1 Two HashMaps with the same things should have the same hashCode." );
+
+        Map<String,Object> d1 = new HashMap<>();
+        {
+            d1.put( "a", "a" );
+            Map<String,Object> bMap = new HashMap<>();
+            bMap.put( "c", "c" );
+            bMap.put( "d", "E" );
+            d1.put( "b", bMap );
+        }
+
+        Assert.assertFalse( d1.equals( h2 ), "Two HashMaps that should not be equal." );
+        Assert.assertNotEquals( d1.hashCode(), h2.hashCode(), "lh1->2 Two HashMaps should not have the same hashCode ." );
+    }
 }

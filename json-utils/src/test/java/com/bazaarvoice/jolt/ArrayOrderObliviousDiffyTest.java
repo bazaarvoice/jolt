@@ -49,7 +49,7 @@ public class ArrayOrderObliviousDiffyTest {
     }
 
     @Test(dataProvider = "testCases")
-    public void diff_bugFix95(String testCase) throws Exception {
+    public void ArrayOrderObliviousDiffy(String testCase) throws Exception {
         Object expected = JsonUtils.classpathToObject("/jsonUtils/" + testCase + "/expected.json");
         Object actual = JsonUtils.classpathToObject("/jsonUtils/" + testCase + "/actual.json");
         Diffy.Result result = unit.diff(expected, actual);
