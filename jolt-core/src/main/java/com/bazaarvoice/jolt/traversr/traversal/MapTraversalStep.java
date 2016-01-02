@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.traversr.traversal;
 
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.traversr.Traversr;
 
 import java.util.LinkedHashMap;
@@ -23,33 +24,43 @@ import java.util.Map;
 /**
  * TraversalStep that expects to handle Map objects.
  */
-public class MapTraversalStep extends BaseTraversalStep<Map<String,Object>> {
+public class MapTraversalStep<DataType> extends BaseTraversalStep<Map<String,Object>, DataType> {
 
     public MapTraversalStep( Traversr traversr, TraversalStep child ) {
         super( traversr, child );
     }
 
-    public Class getStepType() {
+    public Class<?> getStepType() {
         return Map.class;
     }
 
-    public Object newContainer() {
-        return new LinkedHashMap<String, Object>();
+    public Map<String,Object> newContainer() {
+        return new LinkedHashMap<>();
     }
 
     @Override
-    public Object get( Map<String, Object> map, String key ) {
-        return map.get( key );
+    @SuppressWarnings("unchecked")
+    public Optional<DataType> get( Map<String, Object> map, String key ) {
+
+        // This here was the whole point of adding the Optional stuff.
+        // Aka, I need a way to distinguish between the key not existing in the map
+        //  or the key existing but having a _valid_ null value.
+        if ( ! map.containsKey( key ) ) {
+            return Optional.empty();
+        }
+
+        return Optional.of( (DataType) map.get( key ) );
     }
 
     @Override
-    public Object remove( Map<String, Object> map, String key ) {
-        return map.remove( key );
+    @SuppressWarnings("unchecked")
+    public Optional<DataType> remove( Map<String, Object> map, String key ) {
+        return Optional.of( (DataType) map.remove( key ) );
     }
 
     @Override
-    public Object overwriteSet( Map<String, Object> map, String key, Object data ) {
-        map.put(  key, data );
-        return data;
+    public Optional<DataType> overwriteSet( Map<String, Object> map, String key, DataType data ) {
+        map.put( key, data );
+        return Optional.of( data );
     }
 }

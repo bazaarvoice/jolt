@@ -1,0 +1,47 @@
+{
+    "input": {
+
+        "clientsActive" : true,
+        "clients" : {
+            "Acme" : {
+                "clientId": "Acme",
+                "index" : 1
+            },
+            "Axe" : {
+                "clientId": "AXE",
+                "index" : 0
+            }
+        },
+
+        "data": {
+            "bookId": null,
+            "bookName": "Enchiridion"
+        }
+    },
+
+    "spec": {
+        "clientsActive" : {
+            "true" : {
+                "@(2,clients)" : {
+                    // Test the ability to continue to match after doing a Transpose
+                    "*" : {
+                        "clientId" : "clientIds[@(1,index)]"
+                    }
+                },
+                // Verify that it something does not exist, it does not output a null
+                "@(2,pants)" : "pants"
+            }
+        },
+        "data" : {
+            // Verify the ability for Transpose to lookup and use a "valid" null, aka one that was in the input data
+            "@bookId": "books.@bookName"
+        }
+    },
+
+    "expected": {
+        "clientIds" : [ "AXE", "Acme" ],
+        "books" : {
+            "Enchiridion" : null
+        }
+    }
+}

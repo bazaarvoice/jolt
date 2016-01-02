@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.traversr;
 
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.traversr.traversal.ArrayTraversalStep;
 import com.bazaarvoice.jolt.traversr.traversal.AutoExpandArrayTraversalStep;
 import com.bazaarvoice.jolt.traversr.traversal.MapTraversalStep;
@@ -55,7 +56,7 @@ import java.util.List;
  *
  * The list of keys are all Strings, which ArrayTraversals will convert to Integers as needed.
  */
-public abstract class Traversr {
+public abstract class Traversr<DataType> {
 
     private final TraversalStep root;
     private final int traversalLength;
@@ -109,20 +110,16 @@ public abstract class Traversr {
     }
 
     /**
+     * TODO : Make this use the Java 8 optional, when Jolt moves to 8
+     *
      * Note : Calling this method MAY modify the tree object by adding new Maps and Lists as needed
      *  for the traversal.  This is determined by the behavior of the implementations of the
      *  abstract methods of this class.
-     *
-     * @return null or data
      */
-    public Object get( Object tree, List<String> keys ) {
+    public Optional<DataType> get( Object tree, List<String> keys ) {
 
         if ( keys.size() != traversalLength ) {
             throw new TraversrException( "Traversal Path and number of keys mismatch, traversalLength:" + traversalLength + " numKeys:" + keys.size() );
-        }
-
-        if ( tree == null ) {
-            return null;
         }
 
         return root.traverse( tree, TraversalStep.Operation.GET, keys.iterator(), null );
@@ -133,7 +130,7 @@ public abstract class Traversr {
      * @param data JSON style data object you want to set
      * @return returns the data object if successfully set, otherwise null if there was a problem walking the path
      */
-    public Object set( Object tree, List<String> keys, Object data ) {
+    public Optional<DataType> set( Object tree, List<String> keys, DataType data ) {
 
         if ( keys.size() != traversalLength ) {
             throw new TraversrException( "Traversal Path and number of keys mismatch, traversalLength:" + traversalLength + " numKeys:" + keys.size() );
@@ -147,7 +144,7 @@ public abstract class Traversr {
            All we return is a reference to the data, if we were successful in our set.
         */
         if ( tree == null ) {
-            return null;
+            return Optional.empty();
         }
 
         return root.traverse( tree, TraversalStep.Operation.SET, keys.iterator(), data );
@@ -157,17 +154,15 @@ public abstract class Traversr {
      * Note : Calling this method MAY modify the tree object by adding new Maps and Lists as needed
      *  for the traversal.  This is determined by the behavior of the implementations of the
      *  abstract methods of this class.
-     *
-     * @return null or data
      */
-    public Object remove( Object tree, List<String> keys ) {
+    public Optional<DataType> remove( Object tree, List<String> keys ) {
 
         if ( keys.size() != traversalLength ) {
             throw new TraversrException( "Traversal Path and number of keys mismatch, traversalLength:" + traversalLength + " numKeys:" + keys.size() );
         }
 
         if ( tree == null ) {
-            return null;
+            return Optional.empty();
         }
 
         return root.traverse( tree, TraversalStep.Operation.REMOVE, keys.iterator(), null );
@@ -184,7 +179,7 @@ public abstract class Traversr {
      *
      * @return the data object if the set was successful, or null if not
      */
-    public abstract Object handleFinalSet( TraversalStep traversalStep, Object tree, String key, Object data );
+    public abstract Optional<DataType> handleFinalSet( TraversalStep traversalStep, Object tree, String key, DataType data );
 
     /**
      * Allow subclasses to control how gets are handled for intermediate traversals.
@@ -194,8 +189,6 @@ public abstract class Traversr {
      *   a data type incompatible with our child Traversal, what do we do?
      *
      * Overwrite or just return?
-     *
-     * @return null or a container object (Map/List) for our child Traversal to use
      */
-    public abstract Object handleIntermediateGet( TraversalStep traversalStep, Object tree, String key, Operation op );
+    public abstract Optional<DataType> handleIntermediateGet( TraversalStep traversalStep, Object tree, String key, Operation op );
 }
