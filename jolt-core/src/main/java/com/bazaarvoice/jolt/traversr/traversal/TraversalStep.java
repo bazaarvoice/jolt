@@ -69,6 +69,9 @@ public interface TraversalStep<T> {
     public Class<?> getStepType();
 
     /**
+     * TODO : Move this to use the Java 8 Optional, so that we can distinguish
+     *  the traverse "not working" or we found an actual / valid null.
+     *
      * The meat of the Traversal.
      *
      * Pull a key from the iterator, use it to make the traversal, and then

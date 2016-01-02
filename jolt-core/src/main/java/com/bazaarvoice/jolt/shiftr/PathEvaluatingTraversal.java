@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.shiftr;
 
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.common.WalkedPath;
 import com.bazaarvoice.jolt.common.pathelement.EvaluatablePathElement;
 import com.bazaarvoice.jolt.common.pathelement.PathElement;
@@ -96,12 +97,13 @@ public abstract class PathEvaluatingTraversal {
         }
     }
 
-    public Object read( Object data, WalkedPath walkedPath ) {
+    public Optional read( Object data, WalkedPath walkedPath ) {
         List<String> evaledPaths = evaluate( walkedPath );
         if ( evaledPaths == null ) {
-            return null;
+            return Optional.absent();
         }
-        return traversr.get( data, evaledPaths );
+
+        return Optional.of( traversr.get( data, evaledPaths ) );
     }
 
     /**

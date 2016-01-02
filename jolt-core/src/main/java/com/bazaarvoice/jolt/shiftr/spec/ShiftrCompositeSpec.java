@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.shiftr.spec;
 
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.common.pathelement.*;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.common.WalkedPath;
@@ -166,6 +167,22 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
         LiteralPathElement thisLevel = pathElement.match( inputKey, walkedPath );
         if ( thisLevel == null ) {
             return false;
+        }
+
+        // If we are a TransposePathElement, try to swap the "input" with what we lookup from the Transpose
+        if ( pathElement instanceof TransposePathElement ) {
+
+            TransposePathElement tpe = (TransposePathElement) this.pathElement;
+
+            // Note the data found may not be a String, thus we have to call the special objectEvaluate
+            // Optional, because the input data could have been a valid null.
+            Optional optional = tpe.objectEvaluate( walkedPath );
+            if ( optional.isPresent() ) {
+                input = optional.get();
+            }
+            else {
+                return false;
+            }
         }
 
         // add ourselves to the path, so that our children can reference us

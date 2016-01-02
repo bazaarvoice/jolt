@@ -76,6 +76,7 @@ public class ShiftrTest {
             {"transposeLHS1"},
             {"transposeLHS2"},
             {"transposeLHS3"},
+            {"transposeNestedLookup"},
             {"transposeSimple1"},
             {"transposeSimple2"},
             {"transposeSimple3"},
