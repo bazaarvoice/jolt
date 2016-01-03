@@ -97,7 +97,7 @@ public abstract class PathEvaluatingTraversal {
         }
     }
 
-    public Optional read( Object data, WalkedPath walkedPath ) {
+    public Optional<Object> read( Object data, WalkedPath walkedPath ) {
         List<String> evaledPaths = evaluate( walkedPath );
         if ( evaledPaths == null ) {
             return Optional.empty();

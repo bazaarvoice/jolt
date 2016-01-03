@@ -34,14 +34,14 @@ import java.util.List;
  *   We want the value of marlin to always be a list, and anytime we set data
  *   to marlin, it should just be added to the list.
  */
-public class AutoExpandArrayTraversalStep extends ArrayTraversalStep {
+public class AutoExpandArrayTraversalStep<DataType> extends ArrayTraversalStep<DataType> {
 
     public AutoExpandArrayTraversalStep( Traversr traversr, TraversalStep child ) {
         super( traversr, child );
     }
 
     @Override
-    public Optional<Object> get( List<Object> list, String key ) {
+    public Optional<DataType> get( List<Object> list, String key ) {
 
         if ( ! "[]".equals( key ) ) {
             throw new TraversrException( "AutoExpandArrayTraversal expects a '[]' key. Was: " + key );
@@ -51,7 +51,7 @@ public class AutoExpandArrayTraversalStep extends ArrayTraversalStep {
     }
 
     @Override
-    public Optional<Object> remove( List<Object> list, String key ) {
+    public Optional<DataType> remove( List<Object> list, String key ) {
 
         if ( ! "[]".equals( key ) ) {
             throw new TraversrException( "AutoExpandArrayTraversal expects a '[]' key. Was: " + key );
@@ -61,7 +61,7 @@ public class AutoExpandArrayTraversalStep extends ArrayTraversalStep {
     }
 
     @Override
-    public Optional<Object> overwriteSet( List<Object> list, String key, Object data ) {
+    public Optional<DataType> overwriteSet( List<Object> list, String key, DataType data ) {
 
         if ( ! "[]".equals( key ) ) {
             throw new TraversrException( "AutoExpandArrayTraversal expects a '[]' key. Was: " + key );

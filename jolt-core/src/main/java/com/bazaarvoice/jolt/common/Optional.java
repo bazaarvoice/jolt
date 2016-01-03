@@ -16,7 +16,7 @@
 package com.bazaarvoice.jolt.common;
 
 /**
- * This can go away when Jolt moves to Java 8.
+ * This can go away when Jolt moves to Java 8 and can use the Java 8 Optional.
  */
 public class Optional<T> {
 

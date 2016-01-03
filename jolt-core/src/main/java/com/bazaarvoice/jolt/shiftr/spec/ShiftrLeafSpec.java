@@ -125,7 +125,7 @@ public class ShiftrLeafSpec extends ShiftrSpec {
             TransposePathElement tpe = (TransposePathElement) this.pathElement;
 
             // Note the data found may not be a String, thus we have to call the special objectEvaluate
-            Optional evaledData = tpe.objectEvaluate( walkedPath );
+            Optional<Object> evaledData = tpe.objectEvaluate( walkedPath );
             if ( evaledData.isPresent() ) {
                 data = evaledData.get();
             }

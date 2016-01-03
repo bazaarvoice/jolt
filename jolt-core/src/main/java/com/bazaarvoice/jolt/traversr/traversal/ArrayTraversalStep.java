@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * TraversalStep that expects to handle List objects.
  */
-public class ArrayTraversalStep extends BaseTraversalStep<List<Object>> {
+public class ArrayTraversalStep<DataType> extends BaseTraversalStep<List<Object>, DataType> {
 
     public ArrayTraversalStep( Traversr traversr, TraversalStep child ) {
         super( traversr, child );
@@ -34,34 +34,34 @@ public class ArrayTraversalStep extends BaseTraversalStep<List<Object>> {
         return List.class;
     }
 
-    public Object newContainer() {
+    public List<Object> newContainer() {
         return new ArrayList<>();
     }
 
     @Override
-    public Optional<Object> get( List<Object> list, String key ) {
+    public Optional<DataType> get( List<Object> list, String key ) {
 
         int arrayIndex = Integer.parseInt( key );
         if ( arrayIndex < list.size() ) {
-            return Optional.of( list.get( arrayIndex ) );
+            return Optional.of( (DataType) list.get( arrayIndex ) );
         }
 
         return Optional.empty();
     }
 
     @Override
-    public Optional<Object> remove( List<Object> list, String key ) {
+    public Optional<DataType> remove( List<Object> list, String key ) {
 
         int arrayIndex = Integer.parseInt( key );
         if ( arrayIndex < list.size() ) {
-            return Optional.of( list.remove( arrayIndex ) );
+            return Optional.of( (DataType) list.remove( arrayIndex ) );
         }
 
         return Optional.empty();
     }
 
     @Override
-    public Optional<Object> overwriteSet( List<Object> list, String key, Object data ) {
+    public Optional<DataType> overwriteSet( List<Object> list, String key, DataType data ) {
 
         int arrayIndex = Integer.parseInt( key );
         ensureArraySize( list, arrayIndex );            // make sure it is big enough

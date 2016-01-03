@@ -47,7 +47,7 @@ public class SimpleTraversr extends Traversr {
     @Override
     public Optional<Object> handleIntermediateGet( TraversalStep traversalStep, Object tree, String key, TraversalStep.Operation op ) {
 
-        Optional optSub = traversalStep.get( tree, key );
+        Optional<Object> optSub = traversalStep.get( tree, key );
 
         Object sub = optSub.get();
 

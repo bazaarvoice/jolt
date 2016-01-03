@@ -21,7 +21,7 @@ import com.bazaarvoice.jolt.traversr.Traversr;
 import java.util.Iterator;
 
 
-public abstract class BaseTraversalStep<T> implements TraversalStep<T> {
+public abstract class BaseTraversalStep<StepType,DataType> implements TraversalStep<StepType,DataType> {
 
     protected final TraversalStep child;
     protected final Traversr traversr;
@@ -35,7 +35,7 @@ public abstract class BaseTraversalStep<T> implements TraversalStep<T> {
         return child;
     }
 
-    public final Optional<Object> traverse( Object tree, Operation op, Iterator<String> keys, Object data ) {
+    public final Optional<DataType> traverse( StepType tree, Operation op, Iterator<String> keys, DataType data ) {
 
         if ( tree == null ) {
             return Optional.empty();
@@ -49,11 +49,11 @@ public abstract class BaseTraversalStep<T> implements TraversalStep<T> {
                 // End of the Traversal so do the set or get
                 switch (op) {
                     case GET :
-                        return this.get( (T) tree, key );
+                        return this.get( tree, key );
                     case SET :
-                        return traversr.handleFinalSet( this, tree, key, data );
+                        return (Optional<DataType>) traversr.handleFinalSet( this, tree, key, data );
                     case REMOVE:
-                        return this.remove( (T) tree, key );
+                        return this.remove( tree, key );
                     default :
                         throw new IllegalStateException( "Invalid op:" + op.toString() );
                 }

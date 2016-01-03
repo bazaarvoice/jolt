@@ -176,7 +176,7 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
 
             // Note the data found may not be a String, thus we have to call the special objectEvaluate
             // Optional, because the input data could have been a valid null.
-            Optional optional = tpe.objectEvaluate( walkedPath );
+            Optional<Object> optional = tpe.objectEvaluate( walkedPath );
             if ( optional.isPresent() ) {
                 input = optional.get();
             }

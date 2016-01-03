@@ -181,9 +181,9 @@ public class TransposePathElement extends BasePathElement implements MatchablePa
      * Aka, normal "evaluate" returns either a Number or a String.
      *
      * @param walkedPath WalkedPath to evaluate against
-     * @return The data specified by this TransposePathElement, or null if it can't find anything.
+     * @return The data specified by this TransposePathElement.
      */
-    public Optional objectEvaluate( WalkedPath walkedPath ) {
+    public Optional<Object> objectEvaluate( WalkedPath walkedPath ) {
         // Grap the data we need from however far up the tree we are supposed to go
         PathStep pathStep = walkedPath.elementFromEnd( upLevel );
 
