@@ -188,23 +188,23 @@ public class Defaultr implements SpecDriven, Transform {
     @Inject
     public Defaultr( Object spec ) {
 
-        String rootKey = "root";
+        String rootString = "root";
 
         // Due to defaultr's array syntax, we can't actually express that we expect the top level of the defaultee to be an array, until we see the input.
-        //  Thus, in order to have parsed the spec so that we can perform many transforms, we create to specs, one where the root of the input
+        //  Thus, in order to have parsed the spec so that we can perform many transforms, we create two specs, one where the root of the input
         //   is a map, and the other where the root of the input is an array.
         // TODO : Handle arrays better, maybe by having a parent reference in the keys, or ditch the feature of having input that is at top level an array
 
         {
             Map<String, Object> rootSpec = new LinkedHashMap<>();
-            rootSpec.put( rootKey, spec );
+            rootSpec.put( rootString, spec );
             mapRoot = Key.parseSpec( rootSpec ).iterator().next();
         }
 
         //  Thus we check the top level type of the input.
         {
             Map<String, Object> rootSpec = new LinkedHashMap<>();
-            rootSpec.put( rootKey + WildCards.ARRAY, spec );
+            rootSpec.put( rootString + WildCards.ARRAY, spec );
             Key tempKey = null;
             try {
                 tempKey = Key.parseSpec( rootSpec ).iterator().next();

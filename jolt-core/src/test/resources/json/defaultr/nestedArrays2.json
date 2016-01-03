@@ -1,0 +1,48 @@
+{
+    "input" : {
+        "pants" :
+            [
+                [
+                    {
+                        "order" : {
+                            "id" : "OD1"
+                        }
+                    },
+                    {
+                        "order" : {
+                            "id" : "OD2"
+                        }
+                    }
+                ]
+            ]
+    },
+    "spec" : {
+        "pants[]" : {
+            "*[]" : {
+                "*" : {
+                    "order" : {
+                        "url" : "http://default.com"
+                    }
+                }
+            }
+        }
+    },
+    "expected" : {
+        "pants" : [
+            [
+                {
+                    "order" : {
+                        "id" : "OD1",
+                        "url" : "http://default.com"
+                    }
+                },
+                {
+                    "order" : {
+                        "id" : "OD2",
+                        "url" : "http://default.com"
+                    }
+                }
+            ]
+        ]
+    }
+}
