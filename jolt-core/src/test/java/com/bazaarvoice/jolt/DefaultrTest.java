@@ -26,23 +26,25 @@ import java.util.Map;
 public class DefaultrTest {
 
     @DataProvider
-    public Object[][] getTestCaseNames() {
+    public Object[][] getDiffyTestCases() {
         return new Object[][] {
-            {"defaultNulls"},
-            {"firstSample"},
-            {"identity"},
-            {"expansionOnly"},
-            {"photosArray"},
             {"arrayMismatch1"},
             {"arrayMismatch2"},
+            {"defaultNulls"},
+            {"expansionOnly"},
+            {"firstSample"},
+            {"identity"},
+            {"nestedArrays1"},
+            {"nestedArrays2"},
+            {"orOrdering"},
+            {"photosArray"},
             {"starsOfStars"},
             {"topLevelIsArray"},
-            {"orOrdering"}
         };
     }
 
-    @Test(dataProvider = "getTestCaseNames")
-    public void runTestCases(String testCaseName) throws IOException {
+    @Test(dataProvider = "getDiffyTestCases" )
+    public void runDiffyTests( String testCaseName ) throws IOException {
 
         String testPath = "/json/defaultr/" + testCaseName;
         Map<String, Object> testUnit = JsonUtils.classpathToMap( testPath + ".json" );
@@ -59,7 +61,7 @@ public class DefaultrTest {
 
     @Test
     public void deepCopyTest() throws IOException {
-        Map<String, Object> testUnit = JsonUtils.classpathToMap( "/json/defaultr/deepCopy.json" );
+        Map<String, Object> testUnit = JsonUtils.classpathToMap( "/json/defaultr/__deepCopyTest.json" );
 
         Object spec = testUnit.get( "spec" );
 
@@ -75,7 +77,7 @@ public class DefaultrTest {
             subMap.put("c", "c");
         }
         {
-            Map<String, Object> testUnit2 = JsonUtils.classpathToMap( "/json/defaultr/deepCopy.json" );
+            Map<String, Object> testUnit2 = JsonUtils.classpathToMap( "/json/defaultr/__deepCopyTest.json" );
 
             Object input = testUnit2.get( "input" );
             Object expected = testUnit2.get( "expected" );
