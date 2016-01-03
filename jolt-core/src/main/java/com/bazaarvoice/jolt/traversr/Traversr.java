@@ -56,7 +56,7 @@ import java.util.List;
  *
  * The list of keys are all Strings, which ArrayTraversals will convert to Integers as needed.
  */
-public abstract class Traversr {
+public abstract class Traversr<DataType> {
 
     private final TraversalStep root;
     private final int traversalLength;
@@ -116,7 +116,7 @@ public abstract class Traversr {
      *  for the traversal.  This is determined by the behavior of the implementations of the
      *  abstract methods of this class.
      */
-    public Optional<Object> get( Object tree, List<String> keys ) {
+    public Optional<DataType> get( Object tree, List<String> keys ) {
 
         if ( keys.size() != traversalLength ) {
             throw new TraversrException( "Traversal Path and number of keys mismatch, traversalLength:" + traversalLength + " numKeys:" + keys.size() );
@@ -130,7 +130,7 @@ public abstract class Traversr {
      * @param data JSON style data object you want to set
      * @return returns the data object if successfully set, otherwise null if there was a problem walking the path
      */
-    public Optional<Object> set( Object tree, List<String> keys, Object data ) {
+    public Optional<DataType> set( Object tree, List<String> keys, DataType data ) {
 
         if ( keys.size() != traversalLength ) {
             throw new TraversrException( "Traversal Path and number of keys mismatch, traversalLength:" + traversalLength + " numKeys:" + keys.size() );
@@ -155,7 +155,7 @@ public abstract class Traversr {
      *  for the traversal.  This is determined by the behavior of the implementations of the
      *  abstract methods of this class.
      */
-    public Optional<Object> remove( Object tree, List<String> keys ) {
+    public Optional<DataType> remove( Object tree, List<String> keys ) {
 
         if ( keys.size() != traversalLength ) {
             throw new TraversrException( "Traversal Path and number of keys mismatch, traversalLength:" + traversalLength + " numKeys:" + keys.size() );
@@ -179,7 +179,7 @@ public abstract class Traversr {
      *
      * @return the data object if the set was successful, or null if not
      */
-    public abstract Optional<Object> handleFinalSet( TraversalStep traversalStep, Object tree, String key, Object data );
+    public abstract Optional<DataType> handleFinalSet( TraversalStep traversalStep, Object tree, String key, DataType data );
 
     /**
      * Allow subclasses to control how gets are handled for intermediate traversals.
@@ -190,5 +190,5 @@ public abstract class Traversr {
      *
      * Overwrite or just return?
      */
-    public abstract Optional<Object> handleIntermediateGet( TraversalStep traversalStep, Object tree, String key, Operation op );
+    public abstract Optional<DataType> handleIntermediateGet( TraversalStep traversalStep, Object tree, String key, Operation op );
 }

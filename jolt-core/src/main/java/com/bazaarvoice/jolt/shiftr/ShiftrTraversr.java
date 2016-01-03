@@ -25,7 +25,7 @@ import com.bazaarvoice.jolt.traversr.traversal.TraversalStep;
 /**
  * Traverser that does not overwrite data.
  */
-public class ShiftrTraversr extends SimpleTraversr {
+public class ShiftrTraversr<DataType> extends SimpleTraversr<DataType> {
 
     public ShiftrTraversr( String humanPath ) {
         super( humanPath );
@@ -42,9 +42,9 @@ public class ShiftrTraversr extends SimpleTraversr {
      *  3) if there something other than a list there, grab it and stuff it and the data into a list
      *     and overwrite what is there with a list.
      */
-    public Optional<Object> handleFinalSet( TraversalStep traversalStep, Object tree, String key, Object data ) {
+    public Optional<DataType> handleFinalSet( TraversalStep traversalStep, Object tree, String key, DataType data ) {
 
-        Optional<Object> optSub = traversalStep.get( tree, key );
+        Optional<DataType> optSub = traversalStep.get( tree, key );
 
         if ( !optSub.isPresent() || optSub.get() == null ) {
             // nothing is here so just set the data

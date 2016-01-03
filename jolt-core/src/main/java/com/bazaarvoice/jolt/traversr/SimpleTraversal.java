@@ -33,7 +33,7 @@ import java.util.List;
  *  objects of the same type to the tree, therefore this class can take a generic
  *  parameter "K" to reduce casting.
  */
-public class SimpleTraversal<K> {
+public class SimpleTraversal<DataType> {
 
     private final SimpleTraversr traversr;
     private final List<String> keys;
@@ -68,8 +68,8 @@ public class SimpleTraversal<K> {
      * @param tree tree of Map and List JSON structure to navigate
      * @return the object you wanted, or null if the object or any step along the path to it were not there
      */
-    public Optional<K> get( Object tree ) {
-        return (Optional<K>) traversr.get( tree, keys );
+    public Optional<DataType> get( Object tree ) {
+        return (Optional<DataType>) traversr.get( tree, keys );
     }
 
     /**
@@ -77,15 +77,15 @@ public class SimpleTraversal<K> {
      * @param data JSON style data object you want to set
      * @return returns the data object if successfully set, otherwise null if there was a problem walking the path
      */
-    public Optional<K> set( Object tree, K data ) {
-        return (Optional<K>) traversr.set( tree, keys, data );
+    public Optional<DataType> set( Object tree, DataType data ) {
+        return (Optional<DataType>) traversr.set( tree, keys, data );
     }
 
     /**
      * @param tree tree of Map and List JSON structure to navigate
      * @return removes and returns the data object if it was able to successfully navigate to it and remove it.
      */
-    public Optional<Object> remove( Object tree ) {
+    public Optional<DataType> remove( Object tree ) {
         return traversr.remove( tree, keys );
     }
 }

@@ -69,7 +69,6 @@ public class ArrayTraversalStep<DataType> extends BaseTraversalStep<List<Object>
         return Optional.of( data );
     }
 
-
     private static void ensureArraySize( List<Object> list, Integer upperIndex ) {
         for ( int sizing = list.size(); sizing <= upperIndex; sizing++ ) {
             list.add( null );
