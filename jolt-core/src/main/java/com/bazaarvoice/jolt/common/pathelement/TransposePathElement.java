@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.common.pathelement;
 
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.common.PathStep;
 import com.bazaarvoice.jolt.common.WalkedPath;
 import com.bazaarvoice.jolt.exception.SpecException;
@@ -180,51 +181,61 @@ public class TransposePathElement extends BasePathElement implements MatchablePa
      * Aka, normal "evaluate" returns either a Number or a String.
      *
      * @param walkedPath WalkedPath to evaluate against
-     * @return The data specified by this TransposePathElement, or null if it can't find anything.
+     * @return The data specified by this TransposePathElement.
      */
-    public Object objectEvaluate( WalkedPath walkedPath ) {
+    public Optional<Object> objectEvaluate( WalkedPath walkedPath ) {
         // Grap the data we need from however far up the tree we are supposed to go
         PathStep pathStep = walkedPath.elementFromEnd( upLevel );
+
+        if ( pathStep == null ) {
+            return Optional.empty();
+        }
 
         Object treeRef = pathStep.getTreeRef();
 
         // Now walk down from that level using the subPathReader
         if ( subPathReader == null ) {
-            return treeRef;
+            return Optional.of( treeRef );
         }
         else {
-            Object data = subPathReader.read( treeRef, walkedPath );
-            return data;
+            return subPathReader.read( treeRef, walkedPath );
         }
     }
 
     @Override
     public String evaluate( WalkedPath walkedPath ) {
 
-        Object dataFromTranspose = objectEvaluate( walkedPath );
+        Optional dataFromTranspose = objectEvaluate( walkedPath );
 
-        // Coerce a number into a String
-        if ( dataFromTranspose instanceof Number ) {
-            // the idea here being we are looking for an array index value
-            int val = ((Number) dataFromTranspose).intValue();
-            return Integer.toString( val );
+        if ( dataFromTranspose.isPresent() ) {
+
+            Object data = dataFromTranspose.get();
+
+            // Coerce a number into a String
+            if ( data instanceof Number ) {
+                // the idea here being we are looking for an array index value
+                int val = ((Number) data).intValue();
+                return Integer.toString( val );
+            }
+
+            // Coerce a boolean into a String
+            if ( data instanceof Boolean ) {
+                return Boolean.toString( (Boolean) data );
+            }
+
+            if ( data == null || ! ( data instanceof String ) ) {
+
+                // If this output path has a TransposePathElement, and when we evaluate it
+                //  it does not resolve to a String, then return null
+                return null;
+            }
+
+            return (String) data;
         }
-
-        // Coerce a boolean into a String
-        if ( dataFromTranspose instanceof Boolean ) {
-            return Boolean.toString( (Boolean) dataFromTranspose );
-        }
-
-        if ( dataFromTranspose == null || ! ( dataFromTranspose instanceof String ) ) {
-
-            // If this output path has a TransposePathElement, and when we evaluate it
-            //  it does not resolve to a String, then return null
+        else {
             return null;
         }
-
-        return (String) dataFromTranspose;
     }
-
 
     public LiteralPathElement match( String dataKey, WalkedPath walkedPath ) {
         return walkedPath.lastElement().getLiteralPathElement();  // copy what our parent was so that write keys of &0 and &1 both work.

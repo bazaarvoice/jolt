@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.traversr;
 
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.traversr.traversal.TraversalStep;
 
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.List;
  * 1 Does overwrite sets at the leaf level
  * 2 Will create intermediate container objects only on SET operations
  */
-public class SimpleTraversr extends Traversr {
+public class SimpleTraversr<DataType> extends Traversr<DataType> {
 
     public SimpleTraversr( String humanPath ) {
         super( humanPath );
@@ -36,7 +37,7 @@ public class SimpleTraversr extends Traversr {
     }
 
     @Override
-    public Object handleFinalSet( TraversalStep traversalStep, Object tree, String key, Object data ) {
+    public Optional<DataType> handleFinalSet( TraversalStep traversalStep, Object tree, String key, DataType data ) {
         return traversalStep.overwriteSet( tree, key, data );
     }
 
@@ -44,9 +45,11 @@ public class SimpleTraversr extends Traversr {
      * Only make a new instance of a container object for SET, if there is nothing "there".
      */
     @Override
-    public Object handleIntermediateGet( TraversalStep traversalStep, Object tree, String key, TraversalStep.Operation op ) {
+    public Optional<DataType> handleIntermediateGet( TraversalStep traversalStep, Object tree, String key, TraversalStep.Operation op ) {
 
-        Object sub = traversalStep.get( tree, key );
+        Optional<Object> optSub = traversalStep.get( tree, key );
+
+        Object sub = optSub.get();
 
         if ( sub == null && op == TraversalStep.Operation.SET ) {
 
@@ -55,6 +58,6 @@ public class SimpleTraversr extends Traversr {
             traversalStep.overwriteSet( tree, key, sub );
         }
 
-        return sub;
+        return Optional.of( (DataType) sub );
     }
 }

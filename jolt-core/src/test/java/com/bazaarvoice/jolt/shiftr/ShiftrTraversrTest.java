@@ -17,6 +17,7 @@ package com.bazaarvoice.jolt.shiftr;
 
 import com.bazaarvoice.jolt.JoltTestUtil;
 import com.bazaarvoice.jolt.JsonUtils;
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.traversr.Traversr;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -115,8 +116,8 @@ public class ShiftrTraversrTest {
     public void getTest(String testCaseName, List<String> notUsedInThisTest, Object expected, String traversrPath, List<String> keys, Map<String, Object> tree) throws Exception
     {
         Traversr traversr = new ShiftrTraversr( traversrPath  );
-        Object actual = traversr.get( tree, keys);
+        Optional<Object> actual = traversr.get( tree, keys);
 
-        JoltTestUtil.runDiffy( testCaseName, expected, actual );
+        JoltTestUtil.runDiffy( testCaseName, expected, actual.get() );
     }
 }

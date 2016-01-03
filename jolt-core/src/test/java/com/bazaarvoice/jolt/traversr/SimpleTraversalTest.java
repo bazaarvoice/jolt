@@ -17,6 +17,7 @@ package com.bazaarvoice.jolt.traversr;
 
 import com.bazaarvoice.jolt.JoltTestUtil;
 import com.bazaarvoice.jolt.JsonUtils;
+import com.bazaarvoice.jolt.common.Optional;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -69,9 +70,9 @@ public class SimpleTraversalTest {
         Object original = JsonUtils.cloneJson( input );
         Object tree = JsonUtils.cloneJson( input );
 
-        Object actual = simpleTraversal.get( tree );
+        Optional actual = simpleTraversal.get( tree );
 
-        Assert.assertEquals( expected, actual );
+        Assert.assertEquals( expected, actual.get() );
         JoltTestUtil.runDiffy( "Get should not have modified the input", original, tree );
     }
 
@@ -80,7 +81,7 @@ public class SimpleTraversalTest {
 
         Object actual = JsonUtils.cloneJson( start );
 
-        Assert.assertEquals( toSet, simpleTraversal.set( actual, toSet ) ); // set should be successful
+        Assert.assertEquals( toSet, simpleTraversal.set( actual, toSet ).get() ); // set should be successful
 
         Assert.assertEquals( expected, actual );
     }
@@ -94,12 +95,12 @@ public class SimpleTraversalTest {
 
         Object actual = new HashMap();
 
-        Assert.assertNull( traversal.get( actual ) );
+        Assert.assertFalse( traversal.get( actual ).isPresent() );
         Assert.assertEquals( 0, ((HashMap) actual).size() ); // get didn't add anything
 
         // Add two things and validate the Auto Expand array
-        Assert.assertEquals( "one", traversal.set( actual, "one" ) );
-        Assert.assertEquals( "two", traversal.set( actual, "two" ) );
+        Assert.assertEquals( "one", traversal.set( actual, "one" ).get() );
+        Assert.assertEquals( "two", traversal.set( actual, "two" ).get() );
 
         JoltTestUtil.runDiffy( expected, actual );
     }
@@ -113,13 +114,13 @@ public class SimpleTraversalTest {
         Object expectedOne = JsonUtils.jsonToMap( "{ \"a\" : { \"b\" : \"one\" } }" );
         Object expectedTwo = JsonUtils.jsonToMap( "{ \"a\" : { \"b\" : \"two\" } }" );
 
-        Assert.assertEquals( "tuna", traversal.get( actual ) );
+        Assert.assertEquals( "tuna", traversal.get( actual ).get() );
 
         // Set twice and verify that the sets did in fact overwrite
-        Assert.assertEquals( "one", traversal.set( actual, "one" ) );
+        Assert.assertEquals( "one", traversal.set( actual, "one" ).get() );
         JoltTestUtil.runDiffy( expectedOne, actual );
 
-        Assert.assertEquals( "two", traversal.set( actual, "two" ) );
+        Assert.assertEquals( "two", traversal.set( actual, "two" ).get() );
         JoltTestUtil.runDiffy( expectedTwo, actual );
     }
 
@@ -163,8 +164,8 @@ public class SimpleTraversalTest {
                              throws Exception
     {
 
-        Object actualRemove = simpleTraversal.remove( start );
-        JoltTestUtil.runDiffy( testDescription, expectedReturn, actualRemove );
+        Optional<Object> actualRemoveOpt = simpleTraversal.remove( start );
+        JoltTestUtil.runDiffy( testDescription, expectedReturn, actualRemoveOpt.get() );
 
         JoltTestUtil.runDiffy( testDescription, expectedLeft, start );
     }
@@ -177,7 +178,7 @@ public class SimpleTraversalTest {
         SimpleTraversal<List> trav = SimpleTraversal.newTraversal( "__queryContext" );
         // barfs here, needs the 'List list =' part to trigger it
         @SuppressWarnings( "unused" )
-        List list = trav.get( tree );
+        List list = trav.get( tree ).get();
     }
 
     @Test(expectedExceptions = ClassCastException.class)
@@ -188,7 +189,7 @@ public class SimpleTraversalTest {
         SimpleTraversal<Map> trav = SimpleTraversal.newTraversal( "__queryContext.catalogLin" );
         // barfs here, needs the 'Map map =' part to trigger it
         @SuppressWarnings( "unused" )
-        Map map = trav.get( tree );
+        Map map = trav.get( tree ).get();
     }
 
     @Test(expectedExceptions = ClassCastException.class)
@@ -198,7 +199,7 @@ public class SimpleTraversalTest {
 
         SimpleTraversal<Map<String,Map>> trav = SimpleTraversal.newTraversal( "__queryContext" );
         // this works
-        Map<String,Map> queryContext = trav.get( tree );
+        Map<String,Map> queryContext = trav.get( tree ).get();
 
         // this does not
         @SuppressWarnings( "unused" )
@@ -213,7 +214,7 @@ public class SimpleTraversalTest {
 
         SimpleTraversal<Map<String,List>> trav = SimpleTraversal.newTraversal( "__queryContext" );
         // this works
-        Map<String,List> queryContext = trav.get( tree );
+        Map<String,List> queryContext = trav.get( tree ).get();
 
         // this does not
         @SuppressWarnings( "unused" )

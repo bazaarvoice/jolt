@@ -16,6 +16,7 @@
 package com.bazaarvoice.jolt.shiftr.spec;
 
 import com.bazaarvoice.jolt.Shiftr;
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.common.pathelement.HashPathElement;
 import com.bazaarvoice.jolt.common.pathelement.TransposePathElement;
 import com.bazaarvoice.jolt.shiftr.ShiftrWriter;
@@ -124,8 +125,11 @@ public class ShiftrLeafSpec extends ShiftrSpec {
             TransposePathElement tpe = (TransposePathElement) this.pathElement;
 
             // Note the data found may not be a String, thus we have to call the special objectEvaluate
-            data = tpe.objectEvaluate( walkedPath );
-            if ( data == null ) {
+            Optional<Object> evaledData = tpe.objectEvaluate( walkedPath );
+            if ( evaledData.isPresent() ) {
+                data = evaledData.get();
+            }
+            else {
                 // if we could not find the value we want looking down the tree, bail
                 return false;
             }

@@ -275,7 +275,7 @@ public class JoltUtilsTest {
     @Test(dataProvider = "pathProvider")
     public void testToSimpleTraversrPath(Object... paths) {
         String humanReadablePath = JoltUtils.toSimpleTraversrPath(paths);
-        Assert.assertEquals(new SimpleTraversal<>(humanReadablePath).get(jsonSource), navigate(jsonSource, paths));
+        Assert.assertEquals(new SimpleTraversal<>(humanReadablePath).get(jsonSource).get(), navigate(jsonSource, paths));
     }
 
     @Test
