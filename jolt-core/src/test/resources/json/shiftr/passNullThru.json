@@ -11,7 +11,8 @@
     "spec": {
         "key": "value",
         "bunch-O-keys" : {
-            "*" : "values.&"
+            "*" : "values.&",
+            "@(1,notLegit)" : "notLegit" // verify that if we lookup something that does not exist we do not write out a null
         }
     },
 

@@ -188,7 +188,7 @@ public class TransposePathElement extends BasePathElement implements MatchablePa
         PathStep pathStep = walkedPath.elementFromEnd( upLevel );
 
         if ( pathStep == null ) {
-            return Optional.absent();
+            return Optional.empty();
         }
 
         Object treeRef = pathStep.getTreeRef();

@@ -18,6 +18,7 @@ package com.bazaarvoice.jolt.shiftr;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.traversr.SimpleTraversr;
 import com.bazaarvoice.jolt.traversr.traversal.TraversalStep;
 
@@ -41,27 +42,27 @@ public class ShiftrTraversr extends SimpleTraversr {
      *  3) if there something other than a list there, grab it and stuff it and the data into a list
      *     and overwrite what is there with a list.
      */
-    public Object handleFinalSet( TraversalStep traversalStep, Object tree, String key, Object data ) {
+    public Optional<Object> handleFinalSet( TraversalStep traversalStep, Object tree, String key, Object data ) {
 
-        Object sub = traversalStep.get( tree, key );
+        Optional<Object> optSub = traversalStep.get( tree, key );
 
-        if ( sub == null ) {
+        if ( !optSub.isPresent() || optSub.get() == null ) {
             // nothing is here so just set the data
             traversalStep.overwriteSet( tree, key, data );
         }
-        else if ( sub instanceof List ) {
+        else if ( optSub.get() instanceof List ) {
             // there is a list here, so we just add to it
-            ((List<Object>) sub).add( data );
+            ((List<Object>) optSub.get()).add( data );
         }
         else {
             // take whatever is there and make it the first element in an Array
             List<Object> temp = new ArrayList<>();
-            temp.add( sub );
+            temp.add( optSub.get() );
             temp.add( data );
 
             traversalStep.overwriteSet( tree, key, temp );
         }
 
-        return data;
+        return Optional.of( data );
     }
 }

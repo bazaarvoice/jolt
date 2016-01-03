@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.traversr.traversal;
 
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.traversr.Traversr;
 
 import java.util.LinkedHashMap;
@@ -38,18 +39,26 @@ public class MapTraversalStep extends BaseTraversalStep<Map<String,Object>> {
     }
 
     @Override
-    public Object get( Map<String, Object> map, String key ) {
-        return map.get( key );
+    public Optional<Object> get( Map<String, Object> map, String key ) {
+
+        // This here was the whole point of adding the Optional stuff.
+        // Aka, I need a way to distinguish between the key not existing in the map
+        //  or the key existing but having a _valid_ null value.
+        if ( ! map.containsKey( key ) ) {
+            return Optional.empty();
+        }
+
+        return Optional.of( map.get( key ) );
     }
 
     @Override
-    public Object remove( Map<String, Object> map, String key ) {
-        return map.remove( key );
+    public Optional<Object> remove( Map<String, Object> map, String key ) {
+        return Optional.of( map.remove( key ) );
     }
 
     @Override
-    public Object overwriteSet( Map<String, Object> map, String key, Object data ) {
+    public Optional<Object> overwriteSet( Map<String, Object> map, String key, Object data ) {
         map.put(  key, data );
-        return data;
+        return Optional.of( data );
     }
 }

@@ -27,7 +27,9 @@
                     "*" : {
                         "clientId" : "clientIds[@(1,index)]"
                     }
-                }
+                },
+                // Verify that it something does not exist, it does not output a null
+                "@(2,pants)" : "pants"
             }
         },
         "data" : {

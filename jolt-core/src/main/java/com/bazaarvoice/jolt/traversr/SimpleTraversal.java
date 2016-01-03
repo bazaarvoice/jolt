@@ -15,6 +15,8 @@
  */
 package com.bazaarvoice.jolt.traversr;
 
+import com.bazaarvoice.jolt.common.Optional;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -66,8 +68,8 @@ public class SimpleTraversal<K> {
      * @param tree tree of Map and List JSON structure to navigate
      * @return the object you wanted, or null if the object or any step along the path to it were not there
      */
-    public K get( Object tree ) {
-        return (K) traversr.get( tree, keys );
+    public Optional<K> get( Object tree ) {
+        return (Optional<K>) traversr.get( tree, keys );
     }
 
     /**
@@ -75,15 +77,15 @@ public class SimpleTraversal<K> {
      * @param data JSON style data object you want to set
      * @return returns the data object if successfully set, otherwise null if there was a problem walking the path
      */
-    public K set( Object tree, K data ) {
-        return (K) traversr.set( tree, keys, data );
+    public Optional<K> set( Object tree, K data ) {
+        return (Optional<K>) traversr.set( tree, keys, data );
     }
 
     /**
      * @param tree tree of Map and List JSON structure to navigate
      * @return removes and returns the data object if it was able to successfully navigate to it and remove it.
      */
-    public K remove( Object tree ) {
-        return (K) traversr.remove( tree, keys );
+    public Optional<Object> remove( Object tree ) {
+        return traversr.remove( tree, keys );
     }
 }

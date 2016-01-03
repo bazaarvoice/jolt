@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.traversr.traversal;
 
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.traversr.Traversr;
 
 import java.util.Iterator;
@@ -34,10 +35,10 @@ public abstract class BaseTraversalStep<T> implements TraversalStep<T> {
         return child;
     }
 
-    public final Object traverse( Object tree, Operation op, Iterator<String> keys, Object data ) {
+    public final Optional<Object> traverse( Object tree, Operation op, Iterator<String> keys, Object data ) {
 
         if ( tree == null ) {
-            return null;
+            return Optional.empty();
         }
 
         if ( getStepType().isAssignableFrom( tree.getClass() ) ) {
@@ -60,19 +61,14 @@ public abstract class BaseTraversalStep<T> implements TraversalStep<T> {
             else {
 
                 // We just an intermediate step, so traverse and then hand over control to our child
-                Object sub = traversr.handleIntermediateGet( this, tree, key, op );
+                Optional<Object> optSub = traversr.handleIntermediateGet( this, tree, key, op );
 
-                return child.traverse( sub, op, keys, data );
+                if ( optSub.isPresent() ) {
+                    return child.traverse( optSub.get(), op, keys, data );
+                }
             }
         }
-        else {
-            // TODO make the throwing of this Exception be something handled / optional by the travesr
-            //  Aka combine the typeOk logic with this
-            //  If type != ok options are :
-            //    Do nothing
-            //    Throw Exception
-            //    "make" the type ok by overwriting with a new container object (got list, wanted map, so trash the list by overwriting with a new map)
-            return null;
-        }
+
+        return Optional.empty();
     }
 }

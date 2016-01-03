@@ -100,10 +100,10 @@ public abstract class PathEvaluatingTraversal {
     public Optional read( Object data, WalkedPath walkedPath ) {
         List<String> evaledPaths = evaluate( walkedPath );
         if ( evaledPaths == null ) {
-            return Optional.absent();
+            return Optional.empty();
         }
 
-        return Optional.of( traversr.get( data, evaledPaths ) );
+        return traversr.get( data, evaledPaths );
     }
 
     /**

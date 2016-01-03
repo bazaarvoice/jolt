@@ -18,17 +18,21 @@ package com.bazaarvoice.jolt.common;
 /**
  * This can go away when Jolt moves to Java 8.
  */
-public class Optional {
+public class Optional<T> {
 
-    private final Object obj;
+    private final T obj;
     private final boolean abs;
 
-    public static Optional absent() {
-        return new Optional();
+    private static final Optional<?> EMPTY = new Optional<>();
+
+    public static<T> Optional<T> empty() {
+        @SuppressWarnings("unchecked")
+        Optional<T> t = (Optional<T>) EMPTY;
+        return t;
     }
 
-    public static Optional of( Object obj ) {
-        return new Optional( obj );
+    public static <T> Optional<T> of(T value) {
+        return new Optional<>(value);
     }
 
     private Optional() {
@@ -36,12 +40,12 @@ public class Optional {
         abs = true;
     }
 
-    private Optional( Object obj ) {
+    private Optional( T obj ) {
         this.obj = obj;
         abs = false;
     }
 
-    public Object get() {
+    public T get() {
         return obj;
     }
 

@@ -15,6 +15,8 @@
  */
 package com.bazaarvoice.jolt.traversr.traversal;
 
+import com.bazaarvoice.jolt.common.Optional;
+
 import java.util.Iterator;
 
 /**
@@ -32,21 +34,21 @@ public interface TraversalStep<T> {
      *
      * @return data object if available, or null.
      */
-    public Object get( T tree, String key );
+    public Optional<Object> get( T tree, String key );
 
     /**
      * Remove and return the data for the key from the provided tree object.
      *
      * @return data object if available, or null.
      */
-    public Object remove( T tree, String key );
+    public Optional<Object> remove( T tree, String key );
 
     /**
      * Insert the data into the tree, overwriting any data that is there.
      *
      * @return returns the data object if successful or null if it could not
      */
-    public Object overwriteSet( T tree, String key, Object data );
+    public Optional overwriteSet( T tree, String key, Object data );
 
     /**
      * @return the child Traversal or null if this Traversal has no child
@@ -83,5 +85,5 @@ public interface TraversalStep<T> {
      * @param data the data to place if the operation is SET
      * @return if SET, null for fail or the "data" object for ok.  if GET, PANTS
      */
-    public Object traverse( Object tree, Operation op, Iterator<String> keys, Object data );
+    public Optional<Object> traverse( Object tree, Operation op, Iterator<String> keys, Object data );
 }

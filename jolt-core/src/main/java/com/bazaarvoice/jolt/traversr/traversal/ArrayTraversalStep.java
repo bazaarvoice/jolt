@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.traversr.traversal;
 
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.traversr.Traversr;
 
 import java.util.ArrayList;
@@ -38,34 +39,34 @@ public class ArrayTraversalStep extends BaseTraversalStep<List<Object>> {
     }
 
     @Override
-    public Object get( List<Object> list, String key ) {
+    public Optional<Object> get( List<Object> list, String key ) {
 
         int arrayIndex = Integer.parseInt( key );
         if ( arrayIndex < list.size() ) {
-            return list.get( arrayIndex );
+            return Optional.of( list.get( arrayIndex ) );
         }
 
-        return null;
+        return Optional.empty();
     }
 
     @Override
-    public Object remove( List<Object> list, String key ) {
+    public Optional<Object> remove( List<Object> list, String key ) {
 
         int arrayIndex = Integer.parseInt( key );
         if ( arrayIndex < list.size() ) {
-            return list.remove( arrayIndex );
+            return Optional.of( list.remove( arrayIndex ) );
         }
 
-        return null;
+        return Optional.empty();
     }
 
     @Override
-    public Object overwriteSet( List<Object> list, String key, Object data ) {
+    public Optional<Object> overwriteSet( List<Object> list, String key, Object data ) {
 
         int arrayIndex = Integer.parseInt( key );
         ensureArraySize( list, arrayIndex );            // make sure it is big enough
         list.set( arrayIndex, data );
-        return data;
+        return Optional.of( data );
     }
 
 

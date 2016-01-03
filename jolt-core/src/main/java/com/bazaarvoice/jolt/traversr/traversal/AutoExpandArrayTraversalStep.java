@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.traversr.traversal;
 
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.traversr.Traversr;
 import com.bazaarvoice.jolt.traversr.TraversrException;
 
@@ -40,33 +41,33 @@ public class AutoExpandArrayTraversalStep extends ArrayTraversalStep {
     }
 
     @Override
-    public Object get( List<Object> list, String key ) {
+    public Optional<Object> get( List<Object> list, String key ) {
 
         if ( ! "[]".equals( key ) ) {
             throw new TraversrException( "AutoExpandArrayTraversal expects a '[]' key. Was: " + key );
         }
 
-        return null;
+        return Optional.empty();
     }
 
     @Override
-    public Object remove( List<Object> list, String key ) {
+    public Optional<Object> remove( List<Object> list, String key ) {
 
         if ( ! "[]".equals( key ) ) {
             throw new TraversrException( "AutoExpandArrayTraversal expects a '[]' key. Was: " + key );
         }
 
-        return null;
+        return Optional.empty();
     }
 
     @Override
-    public Object overwriteSet( List<Object> list, String key, Object data ) {
+    public Optional<Object> overwriteSet( List<Object> list, String key, Object data ) {
 
         if ( ! "[]".equals( key ) ) {
             throw new TraversrException( "AutoExpandArrayTraversal expects a '[]' key. Was: " + key );
         }
 
         list.add( data );
-        return data;
+        return Optional.of( data );
     }
 }
