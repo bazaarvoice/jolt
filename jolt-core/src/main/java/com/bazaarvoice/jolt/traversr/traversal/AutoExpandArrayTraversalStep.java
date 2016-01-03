@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.traversr.traversal;
 
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.traversr.Traversr;
 import com.bazaarvoice.jolt.traversr.TraversrException;
 
@@ -33,40 +34,40 @@ import java.util.List;
  *   We want the value of marlin to always be a list, and anytime we set data
  *   to marlin, it should just be added to the list.
  */
-public class AutoExpandArrayTraversalStep extends ArrayTraversalStep {
+public class AutoExpandArrayTraversalStep<DataType> extends ArrayTraversalStep<DataType> {
 
     public AutoExpandArrayTraversalStep( Traversr traversr, TraversalStep child ) {
         super( traversr, child );
     }
 
     @Override
-    public Object get( List<Object> list, String key ) {
+    public Optional<DataType> get( List<Object> list, String key ) {
 
         if ( ! "[]".equals( key ) ) {
             throw new TraversrException( "AutoExpandArrayTraversal expects a '[]' key. Was: " + key );
         }
 
-        return null;
+        return Optional.empty();
     }
 
     @Override
-    public Object remove( List<Object> list, String key ) {
+    public Optional<DataType> remove( List<Object> list, String key ) {
 
         if ( ! "[]".equals( key ) ) {
             throw new TraversrException( "AutoExpandArrayTraversal expects a '[]' key. Was: " + key );
         }
 
-        return null;
+        return Optional.empty();
     }
 
     @Override
-    public Object overwriteSet( List<Object> list, String key, Object data ) {
+    public Optional<DataType> overwriteSet( List<Object> list, String key, DataType data ) {
 
         if ( ! "[]".equals( key ) ) {
             throw new TraversrException( "AutoExpandArrayTraversal expects a '[]' key. Was: " + key );
         }
 
         list.add( data );
-        return data;
+        return Optional.of( data );
     }
 }

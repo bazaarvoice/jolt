@@ -15,12 +15,14 @@
  */
 package com.bazaarvoice.jolt.traversr.traversal;
 
+import com.bazaarvoice.jolt.common.Optional;
+
 import java.util.Iterator;
 
 /**
  * A step in a JSON tree traversal.
  */
-public interface TraversalStep<T> {
+public interface TraversalStep<StepType, DataType> {
 
     /**
      * The three things you can do with a Traversal.
@@ -32,21 +34,21 @@ public interface TraversalStep<T> {
      *
      * @return data object if available, or null.
      */
-    public Object get( T tree, String key );
+    public Optional<DataType> get( StepType tree, String key );
 
     /**
      * Remove and return the data for the key from the provided tree object.
      *
      * @return data object if available, or null.
      */
-    public Object remove( T tree, String key );
+    public Optional<DataType> remove( StepType tree, String key );
 
     /**
      * Insert the data into the tree, overwriting any data that is there.
      *
      * @return returns the data object if successful or null if it could not
      */
-    public Object overwriteSet( T tree, String key, Object data );
+    public Optional<DataType> overwriteSet( StepType tree, String key, DataType data );
 
     /**
      * @return the child Traversal or null if this Traversal has no child
@@ -58,7 +60,7 @@ public interface TraversalStep<T> {
      *
      * @return new List or Map, depending on the type of the Traversal
      */
-    public Object newContainer();
+    public StepType newContainer();
 
     /**
      * Return the Class of the Generic T, so that it can be used in an
@@ -69,6 +71,9 @@ public interface TraversalStep<T> {
     public Class<?> getStepType();
 
     /**
+     * TODO : Move this to use the Java 8 Optional, so that we can distinguish
+     *  the traverse "not working" or we found an actual / valid null.
+     *
      * The meat of the Traversal.
      *
      * Pull a key from the iterator, use it to make the traversal, and then
@@ -80,5 +85,5 @@ public interface TraversalStep<T> {
      * @param data the data to place if the operation is SET
      * @return if SET, null for fail or the "data" object for ok.  if GET, PANTS
      */
-    public Object traverse( Object tree, Operation op, Iterator<String> keys, Object data );
+    public Optional<DataType> traverse( StepType tree, Operation op, Iterator<String> keys, DataType data );
 }
