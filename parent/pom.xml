@@ -12,7 +12,7 @@
 
     <groupId>com.bazaarvoice.jolt</groupId>
     <artifactId>jolt-parent</artifactId>
-    <version>0.0.18</version>
+    <version>0.0.19-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Jolt Parent</name>
@@ -21,7 +21,7 @@
         <url>https://github.com/bazaarvoice/jolt</url>
         <connection>scm:git:git@github.com:bazaarvoice/jolt.git</connection>
         <developerConnection>scm:git:git@github.com:bazaarvoice/jolt.git</developerConnection>
-      <tag>jolt-0.0.18</tag>
+      <tag>jolt-0.0.19-SNAPSHOT</tag>
   </scm>
 
     <properties>
