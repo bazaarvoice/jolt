@@ -17,6 +17,7 @@ package com.bazaarvoice.jolt.utils;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -129,6 +130,14 @@ public class JoltUtils {
     }
 
     /**
+     * Deprecated: use isVacantJson() instead
+     */
+    @Deprecated
+    public static boolean isEmptyJson(final Object obj) {
+        return isVacantJson(obj);
+    }
+    /**
+     * Vacant implies there are empty placeholders, i.e. a vacant hotel
      * Given a json document, checks if it has any "leaf" values, can handle deep nesting of lists and maps
      *
      * i.e. { "a": [ "x": {}, "y": [] ], "b": { "p": [], "q": {} }} ==> is empty
@@ -136,7 +145,7 @@ public class JoltUtils {
      * @param obj source
      * @return true if its an empty json, can have deep nesting, false otherwise
      */
-    public static boolean isEmptyJson(final Object obj) {
+    public static boolean isVacantJson(final Object obj) {
         Collection values = null;
         if(obj instanceof Collection) {
             if(((Collection) obj).size() == 0) {
@@ -153,7 +162,7 @@ public class JoltUtils {
         int processedEmpty = 0;
         if(values != null) {
             for (Object value: values) {
-                if(!isEmptyJson(value)) {
+                if(!isVacantJson(value)) {
                     return false;
                 }
                 processedEmpty++;
@@ -163,6 +172,25 @@ public class JoltUtils {
             }
         }
         return false;
+    }
+
+    /**
+     * Given a json document checks if its jst blank doc, i.e. [] or {}
+     *
+     * @param obj source
+     * @return true if the json doc is [] or {}
+     */
+    public static boolean isBlankJson(final Object obj) {
+        if (obj == null) {
+            return true;
+        }
+        if(obj instanceof Collection) {
+            return (((Collection) obj).size() == 0);
+        }
+        if(obj instanceof Map) {
+            return (((Map) obj).size() == 0);
+        }
+        throw new UnsupportedOperationException("map or list is supported, got ${obj?obj.getClass():null}");
     }
 
     /**
@@ -273,5 +301,189 @@ public class JoltUtils {
     @SuppressWarnings("unchecked")
     public static <E> E[] cast(Object[] object) {
         return (E[])(object);
+    }
+
+    /**
+     * Given a 'fluffy' json document, it recursively removes all null elements
+     * to compact the json document
+     *
+     * Warning: mutates the doc, destroys array order
+     *
+     * @param source
+     * @return mutated source where all null elements are nuked
+     */
+    @SuppressWarnings("unchecked")
+    public static Object compactJson(Object source) {
+        if (source == null) return null;
+
+        if (source instanceof List) {
+            for (Object item : (List) source) {
+                if (item instanceof List) {
+                    compactJson(item);
+                }
+                else if (item instanceof Map) {
+                    compactJson(item);
+                }
+            }
+            ((List) source).removeAll(Collections.singleton(null));
+        }
+        else if (source instanceof Map) {
+            List keysToRemove = new LinkedList();
+            for (Object key : ((Map) source).keySet()) {
+                Object value = ((Map)source).get(key);
+                if (value instanceof List) {
+                    if (((List) value).size() == 0)
+                        keysToRemove.add(key);
+                    else {
+                        compactJson(value);
+                    }
+                } else if (value instanceof Map) {
+                    if (((Map) value).size() == 0) {
+                        keysToRemove.add(key);
+                    } else {
+                        compactJson(value);
+                    }
+                } else if (value == null) {
+                    keysToRemove.add(key);
+                }
+            }
+            for(Object key: keysToRemove) {
+                ((Map) source).remove(key);
+            }
+        }
+        else {
+            throw new UnsupportedOperationException( "Only Map/String and List/Integer types are supported" );
+        }
+
+        return source;
+    }
+
+    /**
+     * For a given non-null (json) object, save the valve in the nested path provided
+     *
+     * @param source the source json object
+     * @param value the value to store
+     * @param paths var args Object path to navigate down and store the object in
+     * @return previously stored value if available, null otherwise
+     */
+    @SuppressWarnings( "unchecked" )
+    public static <T> T store( Object source, T value, Object... paths ) {
+        int destKeyIndex = paths.length - 1;
+        if(destKeyIndex < 0) {
+            throw new IllegalArgumentException( "No path information provided" );
+        }
+        if(source == null) {
+            throw new NullPointerException( "source cannot be null" );
+        }
+        for ( int i = 0; i < destKeyIndex; i++ ) {
+            Object currentPath = paths[i];
+            Object nextPath = paths[i+1];
+            source = getOrCreateNextObject( source, currentPath, nextPath );
+        }
+        Object path = paths[destKeyIndex];
+        if(source instanceof Map && path instanceof String) {
+            return cast( ( (Map) source ).put( path, value ) );
+        }
+        else if(source instanceof List && path instanceof Integer) {
+            ensureListAvailability( (List) source, (int) path );
+            return cast( ( (List) source ).set( (int) path, value ) );
+        }
+        else {
+            throw new UnsupportedOperationException( "Only Map/String and List/Integer types are supported" );
+        }
+    }
+
+    /**
+     * For a given non-null (json) object, removes and returns the value in the nested path provided
+     *
+     * Warning: changes array order, to maintain order, use store(source, null, path ...) instead
+     *
+     * @param source the source json object
+     * @param paths var args Object path to navigate down and remove
+     * @return existing value if available, null otherwise
+     */
+    @SuppressWarnings( "unchecked" )
+    public static <T> T remove( Object source, Object... paths ) {
+        int destKeyIndex = paths.length - 1;
+        if(destKeyIndex < 0) {
+            throw new IllegalArgumentException( "No path information provided" );
+        }
+        if(source == null) {
+            throw new NullPointerException( "source cannot be null" );
+        }
+        for ( int i = 0; i < destKeyIndex; i++ ) {
+            Object currentPath = paths[i];
+            Object nextPath = paths[i+1];
+            source = getOrCreateNextObject( source, currentPath, nextPath );
+        }
+        Object path = paths[destKeyIndex];
+        if(source instanceof Map && path instanceof String) {
+            return cast( ( (Map) source ).remove( path ) );
+        }
+        else if(source instanceof List && path instanceof Integer) {
+            ensureListAvailability( (List) source, (int) path );
+            return cast( ( (List) source ).remove( (int) path) );
+        }
+        else {
+            throw new UnsupportedOperationException( "Only Map/String and List/Integer types are supported" );
+        }
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private static void ensureListAvailability( List source, int index ) {
+        for ( int i = source.size(); i <= index; i++ ) {
+            source.add( i, null );
+        }
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private static Object getOrCreateNextObject( Object source, Object key, Object nextKey ) {
+        Object value;
+        if ( source instanceof Map && key instanceof String ) {
+            if ( ( value = ( (Map) source ).get( key ) ) == null ) {
+                Object newValue;
+                if ( nextKey instanceof String ) {
+                    newValue = new HashMap();
+                }
+                else if ( nextKey instanceof Integer ) {
+                    newValue = new LinkedList();
+                }
+                else {
+                    throw new UnsupportedOperationException( "Only String and Integer types are supported" );
+                }
+                ( (Map) source ).put( key, newValue );
+                value = newValue;
+            }
+        }
+        else if ( source instanceof List && key instanceof Integer ) {
+            ensureListAvailability( ( (List) source ), (int) key );
+            if ( ( value = ( (List) source ).get( (int) key ) ) == null ) {
+                Object newValue;
+                if ( nextKey instanceof String ) {
+                    newValue = new HashMap();
+                }
+                else if ( nextKey instanceof Integer ) {
+                    newValue = new LinkedList();
+                }
+                else {
+                    throw new UnsupportedOperationException( "Only String and Integer types are supported" );
+                }
+                ( (List) source ).set( (int) key, newValue );
+                value = newValue;
+            }
+        }
+        else if(source == null || key == null) {
+            throw new NullPointerException( "source and/or key cannot be null" );
+        }
+        else {
+            throw new UnsupportedOperationException( "Only Map and List types are supported" );
+        }
+
+        if ( ( nextKey instanceof String && value instanceof Map ) || ( nextKey instanceof Integer && value instanceof List ) ) {
+            return value;
+        }
+        else {
+            throw new UnsupportedOperationException( "Only Map/String and List/Integer types are supported" );
+        }
     }
 }

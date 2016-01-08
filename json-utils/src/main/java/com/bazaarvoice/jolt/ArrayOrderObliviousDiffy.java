@@ -27,6 +27,12 @@ import java.util.Map;
  */
 public class ArrayOrderObliviousDiffy extends Diffy {
 
+    public ArrayOrderObliviousDiffy(JsonUtil jsonUtil) {
+        super(jsonUtil);
+    }
+
+    public ArrayOrderObliviousDiffy() {super();}
+
     @Override
     protected Result diffList(List<Object> expected, List<Object> actual) {
 

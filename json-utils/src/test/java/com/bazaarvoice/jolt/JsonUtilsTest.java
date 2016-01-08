@@ -113,6 +113,7 @@ public class JsonUtilsTest {
 
 
     @Test(dataProvider = "removeRecursiveCases")
+    @SuppressWarnings("deprecation")
     public void testRemoveRecursive(Object json, String key, Object expected) throws IOException {
 
         JsonUtils.removeRecursive( json, key );
@@ -124,6 +125,7 @@ public class JsonUtilsTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void runFixtureTests() throws IOException {
 
         String testFixture = "/jsonUtils/jsonUtils-removeRecursive.json";
@@ -143,25 +145,6 @@ public class JsonUtilsTest {
                 Assert.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
             }
         }
-    }
-
-    @Test( description = "No exception if we don't try to remove from an ImmutableMap.")
-    public void doNotUnnecessarilyDieOnImmutableMaps() throws IOException
-    {
-        Map expected = JsonUtils.jsonToMap( JsonUtils.toJsonString( top ) );
-
-        JsonUtils.removeRecursive( top, "tuna" );
-
-        Diffy.Result result = diffy.diff( expected, top );
-        if (!result.isEmpty()) {
-            Assert.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
-        }
-    }
-
-    @Test( expectedExceptions = UnsupportedOperationException.class, description = "Exception if try to remove from an Immutable map.")
-    public void correctExceptionWithImmutableMap() throws IOException
-    {
-        JsonUtils.removeRecursive( top, "c" );
     }
 
     @Test
@@ -224,6 +207,7 @@ public class JsonUtilsTest {
      * Method: navigate(Object source, Object... paths)
      */
     @Test (dataProvider = "coordinates")
+    @SuppressWarnings("deprecation")
     public void navigator(Object expected, Object[] path) throws Exception {
         Object actual = JsonUtils.navigate(jsonSource, path);
         Assert.assertEquals(actual, expected);

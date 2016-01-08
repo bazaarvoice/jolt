@@ -59,6 +59,7 @@ public class JsonUtils {
             return;
         }
         if ( json instanceof Map ) {
+            @SuppressWarnings("unchecked")
             Map<String, Object> jsonMap = (Map<String, Object>) json;
 
             // If this level of the tree has the key we are looking for, remove it
