@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 Bazaarvoice, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.bazaarvoice.jolt.convertr;
 
 import com.bazaarvoice.jolt.exception.TypeConversionException;
@@ -7,16 +22,16 @@ public enum TYPE {
 	STRING, FLOAT, INT, BOOLEAN;
 	
 	public static TYPE parse(String typeString) {
-		if ("STRING".equals(typeString)) {
+		if ("STRING".equalsIgnoreCase(typeString)) {
 			return STRING;
 		}
-		if ("FLOAT".equals(typeString)) {
+		if ("FLOAT".equalsIgnoreCase(typeString)) {
 			return FLOAT;
 		}
-		if ("INT".equals(typeString)) {
+		if ("INT".equalsIgnoreCase(typeString)) {
 			return INT;
 		}
-		if ("BOOLEAN".equals(typeString)) {
+		if ("BOOLEAN".equalsIgnoreCase(typeString)) {
 			return BOOLEAN;
 		}
 		throw new TypeConversionException("Unknown type: " + typeString);
@@ -30,19 +45,19 @@ public enum TYPE {
 				case FLOAT:
 					return Double.parseDouble((String)convertee);
 				case INT:
-					return Integer.parseInt((String)convertee);
+					return Long.parseLong((String)convertee);
 				case BOOLEAN:
 					return Boolean.parseBoolean((String)convertee);
 			}
 		}
-		else if (convertee instanceof Integer) {
+		else if (convertee instanceof Integer || convertee instanceof Long) {
 			switch (to) {
 				case STRING:
 					return String.valueOf(convertee);
 				case FLOAT:
 					return (double)convertee;
 				case INT:
-					return convertee;
+					return (long)convertee;
 				case BOOLEAN:
 					throw new TypeConversionException("Cannot convert from " + INT + " to " + BOOLEAN);
 			}
@@ -54,7 +69,7 @@ public enum TYPE {
 				case FLOAT:
 					return (double)convertee;
 				case INT:
-					return (int)convertee;
+					return (long)convertee;
 				case BOOLEAN:
 					throw new TypeConversionException("Cannot convert from " + FLOAT + " to " + BOOLEAN);
 			}

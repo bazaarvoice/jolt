@@ -1,0 +1,11 @@
+{
+  "input": {
+    "int2boolean": 123,
+    "boolean2float": true
+  },
+
+  "spec": {
+    "int2boolean": "BOOLEAN",
+    "boolean2float": "FLOAT"
+  }
+}
