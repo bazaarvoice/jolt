@@ -3,12 +3,12 @@
         "conversion": {
         	"num2str": {
                 "int2str": 55,
-                "float2str": 3.1,
+                "double2str": 3.1,
                 "boolean2str": true
             },
             "str2num": {
                 "str2int": "55",
-                "str2float": "3.1",
+                "str2double": "3.1",
                 "str2boolean": "true"
             }
         }
@@ -17,13 +17,13 @@
     "spec": {
         "conversion": {
             "num2str": {
-                "int2str": "STRING",
-                "float2str": "STRING",
+                "int2str": "STRICT_STRING",
+                "double2str": "STRING",
                 "boolean2str": "STRING"
             },
             "str2num": {
-                "str2int": "INT",
-                "str2float": "FLOAT",
+                "str2int": "STRICT_INT",
+                "str2double": "DOUBLE",
                 "str2boolean": "BOOLEAN"
             }
         }
@@ -33,12 +33,12 @@
         "conversion": {
             "num2str": {
                 "int2str": "55",
-                "float2str": "3.1",
+                "double2str": "3.1",
                 "boolean2str": "true"
             },
             "str2num": {
                 "str2int": 55,
-                "str2float": 3.1,
+                "str2double": 3.1,
                 "str2boolean": true
             }
         }

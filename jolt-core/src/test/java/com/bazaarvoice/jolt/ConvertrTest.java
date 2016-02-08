@@ -27,7 +27,20 @@ public class ConvertrTest {
     @DataProvider
     public Object[][] getDiffyTestCases() {
         return new Object[][] {
-            {"convertionTest"}
+                {"arrayMismatch"},
+                {"conversionTest"},
+                {"defaultNulls"},
+                {"invalidConversion"},
+                {"nestedArrays"}
+        };
+    }
+
+    @DataProvider
+    public Object[][] getBadTypeTestCases() {
+        return new Object[][] {
+                {"badTypeTest1"},
+                {"badTypeTest2"},
+                {"badTypeTest3"}
         };
     }
 
@@ -47,10 +60,10 @@ public class ConvertrTest {
         JoltTestUtil.runDiffy( "failed case " + testPath, expected, actual );
     }
 
-    @Test(expectedExceptions = TypeConversionException.class)
-    public void throwExceptionOnBadType() throws IOException {
-        String testPath = "/json/convertr/badTypeTest.json";
-        Map<String, Object> testUnit = JsonUtils.classpathToMap( testPath );
+    @Test(expectedExceptions = TypeConversionException.class, dataProvider = "getBadTypeTestCases")
+    public void throwExceptionOnBadType(String testCaseName) throws IOException {
+        String testPath = "/json/convertr/" + testCaseName;
+        Map<String, Object> testUnit = JsonUtils.classpathToMap( testPath + ".json" );
 
         Object input = testUnit.get("input");
         Object spec = testUnit.get("spec");

@@ -1,0 +1,9 @@
+{
+  "input": {
+    "boolean2double": true
+  },
+
+  "spec": {
+    "boolean2double": "STRICT_DOUBLE"
+  }
+}

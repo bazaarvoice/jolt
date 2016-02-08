@@ -1,0 +1,36 @@
+{
+    "input": {
+        "conversion": [
+            {
+                "num": "1"
+            },
+            {
+                "num": "2"
+            }
+        ]
+    },
+
+    "spec": {
+        "conversion": {
+            "*": {
+                "num": "INT",
+                "str": "STRING"
+            },
+            "3": {
+                "num": "INT",
+                "str": "STRING"
+            }
+        }
+    },
+
+    "expected": {
+        "conversion": [
+            {
+                "num": "1"
+            },
+            {
+                "num": "2"
+            }
+        ]
+    }
+}

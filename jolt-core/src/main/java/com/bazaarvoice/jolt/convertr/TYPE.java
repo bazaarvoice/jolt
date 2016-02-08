@@ -19,14 +19,14 @@ import com.bazaarvoice.jolt.exception.TypeConversionException;
 
 public enum TYPE {
 	
-	STRING, FLOAT, INT, BOOLEAN;
+	STRING, DOUBLE, INT, BOOLEAN, STRICT_STRING, STRICT_DOUBLE, STRICT_INT, STRICT_BOOLEAN;
 	
 	public static TYPE parse(String typeString) {
 		if ("STRING".equalsIgnoreCase(typeString)) {
 			return STRING;
 		}
-		if ("FLOAT".equalsIgnoreCase(typeString)) {
-			return FLOAT;
+		if ("DOUBLE".equalsIgnoreCase(typeString)) {
+			return DOUBLE;
 		}
 		if ("INT".equalsIgnoreCase(typeString)) {
 			return INT;
@@ -34,59 +34,112 @@ public enum TYPE {
 		if ("BOOLEAN".equalsIgnoreCase(typeString)) {
 			return BOOLEAN;
 		}
+		if ("STRICT_STRING".equalsIgnoreCase(typeString)) {
+            return STRICT_STRING;
+        }
+        if ("STRICT_DOUBLE".equalsIgnoreCase(typeString)) {
+            return STRICT_DOUBLE;
+        }
+        if ("STRICT_INT".equalsIgnoreCase(typeString)) {
+            return STRICT_INT;
+        }
+        if ("STRICT_BOOLEAN".equalsIgnoreCase(typeString)) {
+            return STRICT_BOOLEAN;
+        }
 		throw new TypeConversionException("Unknown type: " + typeString);
 	}
 	
 	public static Object convert(Object convertee, TYPE to) {
 		if (convertee instanceof String) {
+            convertee = ((String)convertee).trim();
 			switch (to) {
-				case STRING:
-					return convertee;
-				case FLOAT:
-					return Double.parseDouble((String)convertee);
+				case DOUBLE:
+                case STRICT_DOUBLE:
+                    try {
+                        return Double.parseDouble((String) convertee);
+                    } catch (NumberFormatException e) {
+                        if (to == DOUBLE)
+                            return convertee;
+                    }
+                    break;
 				case INT:
-					return Long.parseLong((String)convertee);
+                case STRICT_INT:
+                    try {
+                        return Long.parseLong((String) convertee);
+                    } catch (NumberFormatException e) {
+                        if (to == INT)
+                            return convertee;
+                    }
+                    break;
 				case BOOLEAN:
-					return Boolean.parseBoolean((String)convertee);
+                    return Boolean.parseBoolean((String)convertee);
+                case STRICT_BOOLEAN:
+                    if ("true".equalsIgnoreCase((String)convertee) || "false".equalsIgnoreCase((String)convertee))
+                        return Boolean.parseBoolean((String)convertee);
+                    break;
+                default:
+                    return convertee;
 			}
 		}
 		else if (convertee instanceof Integer || convertee instanceof Long) {
 			switch (to) {
 				case STRING:
+                case STRICT_STRING:
 					return String.valueOf(convertee);
-				case FLOAT:
+				case DOUBLE:
+                case STRICT_DOUBLE:
 					return (double)convertee;
 				case INT:
+                case STRICT_INT:
 					return (long)convertee;
-				case BOOLEAN:
-					throw new TypeConversionException("Cannot convert from " + INT + " to " + BOOLEAN);
+                case BOOLEAN:
+                    if ((long)convertee > 0)
+                        return true;
+                    return false;
+                case STRICT_BOOLEAN:
+                    break;
+                default:
+                    return convertee;
 			}
 		}
 		else if (convertee instanceof Float || convertee instanceof Double) {
 			switch (to) {
 				case STRING:
-					return String.valueOf(convertee);
-				case FLOAT:
+                case STRICT_STRING:
+                    return String.valueOf(convertee);
+				case DOUBLE:
+                case STRICT_DOUBLE:
 					return (double)convertee;
 				case INT:
+                case STRICT_INT:
 					return (long)convertee;
-				case BOOLEAN:
-					throw new TypeConversionException("Cannot convert from " + FLOAT + " to " + BOOLEAN);
+                case BOOLEAN:
+                    if ((double)convertee > 0)
+                        return true;
+                    return false;
+                case STRICT_BOOLEAN:
+					break;
+                default:
+                    return convertee;
 			}
 		}
 		else if (convertee instanceof Boolean) {
 			switch (to) {
 				case STRING:
+                case STRICT_STRING:
 					return String.valueOf(convertee);
-				case FLOAT:
-					throw new TypeConversionException("Cannot convert from " + BOOLEAN + " to " + FLOAT);
-				case INT:
-					throw new TypeConversionException("Cannot convert from " + BOOLEAN + " to " + INT);
-				case BOOLEAN:
-					return convertee;
+                case STRICT_DOUBLE:
+				case STRICT_INT:
+					break;
+                default:
+                    return convertee;
 			}
 		}
-		throw new TypeConversionException(String.valueOf(convertee) + " does not belong to " + STRING + ", " + FLOAT + ", " + INT + " or " + BOOLEAN);
+
+        if (to == STRICT_BOOLEAN || to == STRICT_DOUBLE || to == STRICT_INT || to == STRICT_STRING) {
+            throw new TypeConversionException("Cannot convert " + String.valueOf(convertee) + " to " + to);
+        }
+        return convertee;
 	}
 
 }

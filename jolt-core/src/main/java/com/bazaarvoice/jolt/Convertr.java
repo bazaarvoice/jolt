@@ -27,7 +27,7 @@ import com.bazaarvoice.jolt.exception.TransformException;
 
 /**
  * Convertr is a kind of JOLT transform that convert types for JSON values.
- * Convertr supports valid conversion between STRING, INT, FLOAT and BOOLEAN.
+ * Convertr supports valid conversion between STRING, INT, DOUBLE and BOOLEAN.
  *
  * Example : Given input JSON like
  * <pre>
@@ -69,7 +69,7 @@ import com.bazaarvoice.jolt.exception.TransformException;
  *   },
  *   "str2num": {
  *     "str2int": "INT",
- *     "str2float": "FLOAT",
+ *     "str2float": "DOUBLE",
  *     "str2boolean": "BOOLEAN"
  *   }
  * }
