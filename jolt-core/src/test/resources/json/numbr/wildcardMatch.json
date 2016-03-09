@@ -1,0 +1,30 @@
+{
+    "input": {
+        "rank-size": 10,
+        "rank-weight": 8.5,
+        "toInt": 5.7,
+        "stayInt": 33,
+        "unmodifiedString": "foo",
+        "unmodifiedObject": {
+            "stayInt": 18,
+            "stayDouble": 9.7
+        }
+    },
+
+    "spec": {
+        "*": "int",
+        "rank-*": "double"
+    },
+
+    "expected": {
+        "rank-size": 10.0,
+        "rank-weight": 8.5,
+        "toInt": 5,
+        "stayInt": 33,
+        "unmodifiedString": "foo",
+        "unmodifiedObject": {
+            "stayInt": 18,
+            "stayDouble": 9.7
+        }
+    }
+}

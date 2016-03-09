@@ -1,0 +1,38 @@
+{
+    "input": {
+        "lat": 30,
+        "long": 48,
+        "rank-fit": 5,
+        "rank-color": 8.2,
+        "age": 10.3,
+        "channel": 99.0,
+        "unmodifiedInt": 6,
+        "unmodifiedDouble": 14.3,
+        "unmodifiedObject": {
+            "forecast": "sunny",
+            "high": 78.5,
+            "pop": 5
+        }
+    },
+
+    "spec": {
+        "lat|long|rank-*": "double",
+        "age|channel": "int"
+    },
+
+    "expected": {
+        "lat": 30.0,
+        "long": 48.0,
+        "rank-fit": 5.0,
+        "rank-color": 8.2,
+        "age": 10,
+        "channel": 99,
+        "unmodifiedInt": 6,
+        "unmodifiedDouble": 14.3,
+        "unmodifiedObject": {
+            "forecast": "sunny",
+            "high": 78.5,
+            "pop": 5
+        }
+    }
+}

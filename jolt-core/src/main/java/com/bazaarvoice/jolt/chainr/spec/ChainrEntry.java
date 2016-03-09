@@ -19,6 +19,7 @@ import com.bazaarvoice.jolt.CardinalityTransform;
 import com.bazaarvoice.jolt.Chainr;
 import com.bazaarvoice.jolt.Defaultr;
 import com.bazaarvoice.jolt.JoltTransform;
+import com.bazaarvoice.jolt.Numbr;
 import com.bazaarvoice.jolt.Removr;
 import com.bazaarvoice.jolt.Shiftr;
 import com.bazaarvoice.jolt.Sortr;
@@ -47,6 +48,7 @@ public class ChainrEntry {
         temp.put( "remove", Removr.class.getCanonicalName() );
         temp.put( "sort", Sortr.class.getCanonicalName() );
         temp.put( "cardinality", CardinalityTransform.class.getCanonicalName() );
+        temp.put( "number", Numbr.class.getCanonicalName() );
         STOCK_TRANSFORMS = Collections.unmodifiableMap( temp );
     }
 

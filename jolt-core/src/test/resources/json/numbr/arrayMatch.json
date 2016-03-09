@@ -1,0 +1,43 @@
+{
+    "input": {
+        "ints": [ 1, 2.1, 3, 4.7, 5],
+        "doubles-test": [ 1, 2.1, 3, 4.7, 5],
+        "double-unmodified": [ 1, 2.1, 3, 4.7, 5],
+        "nested": [
+            {
+                "size": 6,
+                "unmodifiedInt": 15
+            },
+            {
+                "size": 9,
+                "unmodifiedInt": 10
+            }
+        ],
+        "unmodifiedString": "18"
+    },
+
+    "spec": {
+        "ints[]": "int",
+        "doubles-*[]": "double",
+        "nested[]": {
+            "size": "double"
+        }
+    },
+
+    "expected": {
+        "ints": [ 1, 2, 3, 4, 5],
+        "doubles-test": [ 1.0, 2.1, 3.0, 4.7, 5.0],
+        "double-unmodified": [ 1, 2.1, 3, 4.7, 5],
+        "nested": [
+            {
+                "size": 6.0,
+                "unmodifiedInt": 15
+            },
+            {
+                "size": 9.0,
+                "unmodifiedInt": 10
+            }
+        ],
+        "unmodifiedString": "18"
+    }
+}
