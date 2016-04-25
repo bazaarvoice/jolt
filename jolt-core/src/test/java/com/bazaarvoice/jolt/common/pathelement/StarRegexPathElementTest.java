@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.common.pathelement;
 
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -36,7 +37,7 @@ public class StarRegexPathElementTest {
 
         StarPathElement star = new StarRegexPathElement( spec );
 
-        LiteralPathElement lpe = star.match( dataKey, null );
+        MatchedElement lpe = star.match( dataKey, null );
 
         Assert.assertEquals( 3, lpe.getSubKeyCount() );
         Assert.assertEquals( dataKey,   lpe.getSubKeyRef( 0 ) );

@@ -15,13 +15,14 @@
  */
 package com.bazaarvoice.jolt.shiftr;
 
-import com.bazaarvoice.jolt.common.WalkedPath;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.common.pathelement.AmpPathElement;
 import com.bazaarvoice.jolt.common.pathelement.ArrayPathElement;
 import com.bazaarvoice.jolt.common.pathelement.EvaluatablePathElement;
-import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import com.bazaarvoice.jolt.common.pathelement.MatchablePathElement;
 import com.bazaarvoice.jolt.common.pathelement.PathElement;
+import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.common.reference.AmpReference;
 import com.bazaarvoice.jolt.shiftr.spec.ShiftrSpec;
 import org.testng.Assert;
@@ -107,7 +108,7 @@ public class PathElementTest {
         MatchablePathElement pe1 = (MatchablePathElement) ShiftrSpec.parseSingleKeyLHS( "tuna-*-marlin-*" );
         MatchablePathElement pe2 = (MatchablePathElement) ShiftrSpec.parseSingleKeyLHS( "rating-*" );
 
-        LiteralPathElement lpe = pe1.match( "tuna-marlin", new WalkedPath() );
+        MatchedElement lpe = pe1.match( "tuna-marlin", new WalkedPath() );
         Assert.assertNull( lpe );
 
         lpe = pe1.match( "tuna-A-marlin-AAA", new WalkedPath() );
@@ -117,7 +118,7 @@ public class PathElementTest {
         Assert.assertEquals( "A" , lpe.getSubKeyRef( 1 ) );
         Assert.assertEquals( "AAA" , lpe.getSubKeyRef( 2 ) );
 
-        LiteralPathElement lpe2 = pe2.match( "rating-BBB", new WalkedPath( null, lpe ) );
+        MatchedElement lpe2 = pe2.match( "rating-BBB", new WalkedPath( null, lpe ) );
         Assert.assertEquals(  "rating-BBB", lpe2.getRawKey() );
         Assert.assertEquals(  "rating-BBB", lpe2.getSubKeyRef( 0 ) );
         Assert.assertEquals( 2, lpe2.getSubKeyCount() );
@@ -151,11 +152,11 @@ public class PathElementTest {
         MatchablePathElement pe2 = (MatchablePathElement) ShiftrSpec.parseSingleKeyLHS( "rating-*" );
 
         // match them against some data to get LiteralPathElements with captured values
-        LiteralPathElement lpe = pe1.match( "tuna-2-marlin-3", new WalkedPath() );
+        MatchedElement lpe = pe1.match( "tuna-2-marlin-3", new WalkedPath() );
         Assert.assertEquals( "2" , lpe.getSubKeyRef( 1 ) );
         Assert.assertEquals( "3" , lpe.getSubKeyRef( 2 ) );
 
-        LiteralPathElement lpe2 = pe2.match( "rating-BBB", new WalkedPath( null, lpe ) );
+        MatchedElement lpe2 = pe2.match( "rating-BBB", new WalkedPath( null, lpe ) );
         Assert.assertEquals( 2, lpe2.getSubKeyCount() );
         Assert.assertEquals( "BBB" , lpe2.getSubKeyRef( 1 ) );
 

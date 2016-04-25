@@ -15,7 +15,8 @@
  */
 package com.bazaarvoice.jolt.common.pathelement;
 
-import com.bazaarvoice.jolt.common.WalkedPath;
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.utils.StringTools;
 
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class StarSinglePathElement extends BasePathElement implements StarPathEl
     }
 
     @Override
-    public LiteralPathElement match( String dataKey, WalkedPath walkedPath ) {
+    public MatchedElement match( String dataKey, WalkedPath walkedPath ) {
 
         if ( stringMatch( dataKey ) )  {
             List<String> subKeys = new ArrayList<>(1);
@@ -74,7 +75,7 @@ public class StarSinglePathElement extends BasePathElement implements StarPathEl
             String starPart = dataKey.substring( prefix.length(), dataKey.length() - suffix.length() );
             subKeys.add( starPart );
 
-            return new LiteralPathElement(dataKey, subKeys);
+            return new MatchedElement(dataKey, subKeys);
         }
 
         return null;

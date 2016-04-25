@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.common.pathelement;
 
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -30,7 +31,7 @@ public class StarSinglePathElementTest {
         Assert.assertFalse( star.stringMatch( "tuna" ) );
         Assert.assertFalse( star.stringMatch( "tuna-bob" ) );
 
-        LiteralPathElement lpe = star.match( "bob-tuna", null );
+        MatchedElement lpe = star.match( "bob-tuna", null );
         Assert.assertEquals( "bob-tuna", lpe.getSubKeyRef( 0 ) );
         Assert.assertEquals( "bob", lpe.getSubKeyRef( 1 ) );
         Assert.assertEquals( 2, lpe.getSubKeyCount() );
@@ -48,7 +49,7 @@ public class StarSinglePathElementTest {
         Assert.assertFalse( star.stringMatch( "tuna" ) );
         Assert.assertFalse( star.stringMatch( "bob-tuna" ) );
 
-        LiteralPathElement lpe = star.match( "tuna-bob", null );
+        MatchedElement lpe = star.match( "tuna-bob", null );
         Assert.assertEquals( "tuna-bob", lpe.getSubKeyRef( 0 ) );
         Assert.assertEquals( "bob", lpe.getSubKeyRef( 1 ) );
         Assert.assertEquals( 2, lpe.getSubKeyCount() );
@@ -66,7 +67,7 @@ public class StarSinglePathElementTest {
         Assert.assertFalse( star.stringMatch( "tunamarlin" ) );
         Assert.assertFalse( star.stringMatch( "marlin-bob-tuna" ) );
 
-        LiteralPathElement lpe = star.match( "tuna-bob-marlin", null );
+        MatchedElement lpe = star.match( "tuna-bob-marlin", null );
         Assert.assertEquals( "tuna-bob-marlin", lpe.getSubKeyRef( 0 ) );
         Assert.assertEquals( "bob", lpe.getSubKeyRef( 1 ) );
         Assert.assertEquals( 2, lpe.getSubKeyCount() );

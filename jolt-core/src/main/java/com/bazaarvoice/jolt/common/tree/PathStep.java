@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.bazaarvoice.jolt.common;
-
-import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
+package com.bazaarvoice.jolt.common.tree;
 
 /**
  * A tuple class that contains the data for one level of a
@@ -24,18 +22,18 @@ import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
  */
 public final class PathStep {
     private final Object treeRef;
-    private final LiteralPathElement literalPathElement;
+    private final MatchedElement matchedElement;
 
-    public PathStep(Object treeRef, LiteralPathElement literalPathElement) {
+    public PathStep(Object treeRef, MatchedElement matchedElement ) {
         this.treeRef = treeRef;
-        this.literalPathElement = literalPathElement;
+        this.matchedElement = matchedElement;
     }
 
     public Object getTreeRef() {
         return treeRef;
     }
 
-    public LiteralPathElement getLiteralPathElement() {
-        return literalPathElement;
+    public MatchedElement getMatchedElement() {
+        return matchedElement;
     }
 }

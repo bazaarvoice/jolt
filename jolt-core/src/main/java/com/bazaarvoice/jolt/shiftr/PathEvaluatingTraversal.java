@@ -16,7 +16,7 @@
 package com.bazaarvoice.jolt.shiftr;
 
 import com.bazaarvoice.jolt.common.Optional;
-import com.bazaarvoice.jolt.common.WalkedPath;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.common.pathelement.EvaluatablePathElement;
 import com.bazaarvoice.jolt.common.pathelement.PathElement;
 import com.bazaarvoice.jolt.exception.SpecException;
@@ -42,8 +42,9 @@ public abstract class PathEvaluatingTraversal {
 
     public PathEvaluatingTraversal( String dotNotation ) {
 
-        if ( dotNotation.contains("*") || dotNotation.contains("$")) {
-            throw new SpecException("DotNotation (write key) can not contain '*' or '$' : write key: " + dotNotation );
+        if ( ( dotNotation.contains("*") && ! dotNotation.contains( "\\*" ) ) ||
+             ( dotNotation.contains("$") && ! dotNotation.contains( "\\$" ) ) ) {
+                throw new SpecException("DotNotation (write key) can not contain '*' or '$' : write key: " + dotNotation );
         }
 
         List<PathElement> paths;

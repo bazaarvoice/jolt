@@ -22,10 +22,10 @@ import com.bazaarvoice.jolt.common.pathelement.TransposePathElement;
 import com.bazaarvoice.jolt.shiftr.ShiftrWriter;
 import com.bazaarvoice.jolt.utils.StringTools;
 import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.common.WalkedPath;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.common.pathelement.AtPathElement;
 import com.bazaarvoice.jolt.common.pathelement.DollarPathElement;
-import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -101,7 +101,7 @@ public class ShiftrLeafSpec extends ShiftrSpec {
     @Override
     public boolean apply( String inputKey, Object input, WalkedPath walkedPath, Map<String,Object> output ){
 
-        LiteralPathElement thisLevel = pathElement.match( inputKey, walkedPath );
+        MatchedElement thisLevel = pathElement.match( inputKey, walkedPath );
         if ( thisLevel == null ) {
             return false;
         }
@@ -153,7 +153,7 @@ public class ShiftrLeafSpec extends ShiftrSpec {
 
         if ( realChild ) {
             // we were a "real" child, so increment the matchCount of our parent
-            walkedPath.lastElement().getLiteralPathElement().incrementHashCount();
+            walkedPath.lastElement().getMatchedElement().incrementHashCount();
         }
 
         return realChild;

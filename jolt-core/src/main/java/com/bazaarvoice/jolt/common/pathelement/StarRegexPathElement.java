@@ -15,7 +15,8 @@
  */
 package com.bazaarvoice.jolt.common.pathelement;
 
-import com.bazaarvoice.jolt.common.WalkedPath;
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -119,7 +120,7 @@ public class StarRegexPathElement extends BasePathElement implements StarPathEle
     }
 
     @Override
-    public LiteralPathElement match( String dataKey, WalkedPath walkedPath ) {
+    public MatchedElement match( String dataKey, WalkedPath walkedPath ) {
 
         Matcher matcher = pattern.matcher( dataKey );
         if ( ! matcher.find() ) {
@@ -133,7 +134,7 @@ public class StarRegexPathElement extends BasePathElement implements StarPathEle
             subKeys.add( matcher.group( index ) );
         }
 
-        return new LiteralPathElement(dataKey, subKeys);
+        return new MatchedElement(dataKey, subKeys);
     }
 
     @Override

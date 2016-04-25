@@ -15,8 +15,8 @@
  */
 package com.bazaarvoice.jolt.cardinality;
 
-import com.bazaarvoice.jolt.common.WalkedPath;
-import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import com.bazaarvoice.jolt.exception.SpecException;
 
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class CardinalityLeafSpec extends CardinalitySpec {
     @Override
     public boolean apply( String inputKey, Object input, WalkedPath walkedPath, Object parentContainer ) {
 
-        LiteralPathElement thisLevel = getMatch( inputKey, walkedPath );
+        MatchedElement thisLevel = getMatch( inputKey, walkedPath );
         if ( thisLevel == null ) {
             return false;
         }
@@ -73,7 +73,7 @@ public class CardinalityLeafSpec extends CardinalitySpec {
      */
     public Object applyToParentContainer ( String inputKey, Object input, WalkedPath walkedPath, Object parentContainer ) {
 
-        LiteralPathElement thisLevel = getMatch( inputKey, walkedPath );
+        MatchedElement thisLevel = getMatch( inputKey, walkedPath );
         if ( thisLevel == null ) {
             return null;
         }
@@ -84,7 +84,7 @@ public class CardinalityLeafSpec extends CardinalitySpec {
      *
      * @return null if no work was done, otherwise returns the re-parented data
      */
-    private Object performCardinalityAdjustment( String inputKey, Object input, WalkedPath walkedPath, Map parentContainer, LiteralPathElement thisLevel ) {
+    private Object performCardinalityAdjustment( String inputKey, Object input, WalkedPath walkedPath, Map parentContainer, MatchedElement thisLevel ) {
 
         // Add our the LiteralPathElement for this level, so that write path References can use it as &(0,0)
         walkedPath.add( input, thisLevel );
@@ -120,7 +120,7 @@ public class CardinalityLeafSpec extends CardinalitySpec {
         return returnValue;
     }
 
-    private LiteralPathElement getMatch( String inputKey, WalkedPath walkedPath ) {
+    private MatchedElement getMatch( String inputKey, WalkedPath walkedPath ) {
         return pathElement.match( inputKey, walkedPath );
     }
 }

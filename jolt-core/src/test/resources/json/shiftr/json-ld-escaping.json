@@ -1,0 +1,113 @@
+{
+    "input": {
+        // pulled from http://json-ld.org/playground/ example recipe.  Also, Mojitos are good.
+        "@context": {
+            "name": "http://rdf.data-vocabulary.org/#name",
+            "ingredient": "http://rdf.data-vocabulary.org/#ingredients",
+            "yield": "http://rdf.data-vocabulary.org/#yield",
+            "instructions": "http://rdf.data-vocabulary.org/#instructions",
+            "step": {
+                "@id": "http://rdf.data-vocabulary.org/#step",
+                "@type": "xsd:integer"
+            },
+            "description": "http://rdf.data-vocabulary.org/#description",
+            "xsd": "http://www.w3.org/2001/XMLSchema#"
+        },
+        "name": "Mojito",
+        "ingredient": [
+            "12 fresh mint leaves",
+            "1/2 lime, juiced with pulp",
+            "1 tablespoons white sugar",
+            "1 cup ice cubes",
+            "2 fluid ounces white rum",
+            "1/2 cup club soda"
+        ],
+        "yield": "1 cocktail",
+        "instructions": [
+            {
+                "step": 1,
+                "description": "Crush lime juice, mint and sugar together in glass."
+            },
+            {
+                "step": 2,
+                "description": "Fill glass to top with ice cubes."
+            },
+            {
+                "step": 3,
+                "description": "Pour white rum over ice."
+            },
+            {
+                "step": 4,
+                "description": "Fill the rest of glass with club soda, stir."
+            },
+            {
+                "step": 5,
+                "description": "Garnish with a lime wedge."
+            }
+        ]
+    },
+
+    "spec": {
+        // In this test / example, we want to change some of the LHS keys in this Json document.
+        // To accomplish this we escape the leading '@' chars both as spec matches (left hand side)
+        //  and as output paths (right hand side)
+        "\\@context": {
+            "name": "&1.Name",
+            "ingredient": "&1.Inputs",
+            "yield": "\\@context.Makes",
+            // pass the rest thru
+            "*" : "&1.&"
+        },
+        "name": "Name",
+        "ingredient": "Inputs",
+        "yield": "Makes",
+        "*" : "&"
+    },
+
+    "expected": {
+        "@context": {
+            "Name": "http://rdf.data-vocabulary.org/#name",
+            "Inputs": "http://rdf.data-vocabulary.org/#ingredients",
+            "Makes": "http://rdf.data-vocabulary.org/#yield",
+            "instructions": "http://rdf.data-vocabulary.org/#instructions",
+            "step": {
+                "@id": "http://rdf.data-vocabulary.org/#step",
+                "@type": "xsd:integer"
+            },
+            "description": "http://rdf.data-vocabulary.org/#description",
+            "xsd": "http://www.w3.org/2001/XMLSchema#"
+        },
+        "Name": "Mojito",
+        "Inputs": [
+            "12 fresh mint leaves",
+            "1/2 lime, juiced with pulp",
+            "1 tablespoons white sugar",
+            "1 cup ice cubes",
+            "2 fluid ounces white rum",
+            "1/2 cup club soda"
+        ],
+        "Makes": "1 cocktail",
+        "instructions": [
+            {
+                "step": 1,
+                "description": "Crush lime juice, mint and sugar together in glass."
+            },
+            {
+                "step": 2,
+                "description": "Fill glass to top with ice cubes."
+            },
+            {
+                "step": 3,
+                "description": "Pour white rum over ice."
+            },
+            {
+                "step": 4,
+                "description": "Fill the rest of glass with club soda, stir."
+            },
+            {
+                "step": 5,
+                "description": "Garnish with a lime wedge."
+            }
+        ]
+    }
+}

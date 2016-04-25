@@ -17,8 +17,9 @@ package com.bazaarvoice.jolt.shiftr.spec;
 
 import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.common.pathelement.*;
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.common.WalkedPath;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 
 import java.util.*;
 
@@ -164,7 +165,7 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
     @Override
     public boolean apply( String inputKey, Object input, WalkedPath walkedPath, Map<String,Object> output )
     {
-        LiteralPathElement thisLevel = pathElement.match( inputKey, walkedPath );
+        MatchedElement thisLevel = pathElement.match( inputKey, walkedPath );
         if ( thisLevel == null ) {
             return false;
         }
@@ -200,7 +201,7 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
         walkedPath.removeLast();
 
         // we matched so increment the matchCount of our parent
-        walkedPath.lastElement().getLiteralPathElement().incrementHashCount();
+        walkedPath.lastElement().getMatchedElement().incrementHashCount();
 
         return true;
     }

@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.bazaarvoice.jolt.common;
-
-import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
+package com.bazaarvoice.jolt.common.tree;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +29,7 @@ import java.util.Collection;
  * It is primarily used to by the ShiftrLeafSpec and CardinalityLeafSpec as a reference
  * to lookup real values for output "&(1,1)" references.
  *
- * It is expected that as the SpecTransform navigates down the tree, LiteralElements will be added and then
+ * It is expected that as the SpecTransform navigates down the tree, MatchedElements will be added and then
  *  removed when that subtree has been walked.
  */
 public class WalkedPath extends ArrayList<PathStep> {
@@ -44,16 +42,16 @@ public class WalkedPath extends ArrayList<PathStep> {
         super(c);
     }
 
-    public WalkedPath( Object treeRef, LiteralPathElement literalPathElement ) {
+    public WalkedPath( Object treeRef, MatchedElement matchedElement ) {
         super();
-        this.add( new PathStep( treeRef, literalPathElement ) );
+        this.add( new PathStep( treeRef, matchedElement ) );
     }
 
     /**
      * Convenience method
      */
-    public boolean add( Object treeRef, LiteralPathElement literalPathElement ) {
-        return super.add( new PathStep( treeRef, literalPathElement ) );
+    public boolean add( Object treeRef, MatchedElement matchedElement ) {
+        return super.add( new PathStep( treeRef, matchedElement ) );
     }
 
     public void removeLast() {

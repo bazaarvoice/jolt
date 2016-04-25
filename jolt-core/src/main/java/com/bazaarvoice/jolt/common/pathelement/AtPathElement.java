@@ -15,8 +15,9 @@
  */
 package com.bazaarvoice.jolt.common.pathelement;
 
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.common.WalkedPath;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 
 public class AtPathElement extends BasePathElement implements MatchablePathElement {
     public AtPathElement( String key ) {
@@ -27,8 +28,8 @@ public class AtPathElement extends BasePathElement implements MatchablePathEleme
         }
     }
 
-    public LiteralPathElement match( String dataKey, WalkedPath walkedPath ) {
-        return walkedPath.lastElement().getLiteralPathElement();  // copy what our parent was so that write keys of &0 and &1 both work.
+    public MatchedElement match( String dataKey, WalkedPath walkedPath ) {
+        return walkedPath.lastElement().getMatchedElement();  // copy what our parent was so that write keys of &0 and &1 both work.
     }
 
     @Override
