@@ -16,8 +16,8 @@
 package com.bazaarvoice.jolt;
 
 import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.common.WalkedPath;
-import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import com.bazaarvoice.jolt.shiftr.spec.ShiftrCompositeSpec;
 
 import javax.inject.Inject;
@@ -498,7 +498,7 @@ public class Shiftr implements SpecDriven, Transform {
         Map<String,Object> output = new HashMap<>();
 
         // Create a root LiteralPathElement so that # is useful at the root level
-        LiteralPathElement rootLpe = new LiteralPathElement( ROOT_KEY );
+        MatchedElement rootLpe = new MatchedElement( ROOT_KEY );
         WalkedPath walkedPath = new WalkedPath();
         walkedPath.add( input, rootLpe );
 

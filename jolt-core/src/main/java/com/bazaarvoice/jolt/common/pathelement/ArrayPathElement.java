@@ -15,9 +15,10 @@
  */
 package com.bazaarvoice.jolt.common.pathelement;
 
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.common.reference.AmpReference;
-import com.bazaarvoice.jolt.common.WalkedPath;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.common.reference.HashReference;
 import com.bazaarvoice.jolt.common.reference.PathAndGroupReference;
 import com.bazaarvoice.jolt.common.reference.PathReference;
@@ -106,7 +107,7 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
                 return arrayIndex;
 
             case HASH:
-                LiteralPathElement element = walkedPath.elementFromEnd( ref.getPathIndex() ).getLiteralPathElement();
+                MatchedElement element = walkedPath.elementFromEnd( ref.getPathIndex() ).getMatchedElement();
                 Integer index = element.getHashCount();
                 return index.toString();
 
@@ -115,7 +116,7 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
                 return verifyStringIsNonNegativeInteger( key );
 
             case REFERENCE:
-                LiteralPathElement lpe = walkedPath.elementFromEnd( ref.getPathIndex() ).getLiteralPathElement();
+                MatchedElement lpe = walkedPath.elementFromEnd( ref.getPathIndex() ).getMatchedElement();
                 String keyPart;
 
                 if ( ref instanceof PathAndGroupReference ) {
@@ -153,10 +154,10 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
     }
 
     @Override
-    public LiteralPathElement match( String dataKey, WalkedPath walkedPath ) {
+    public MatchedElement match( String dataKey, WalkedPath walkedPath ) {
         String evaled = evaluate( walkedPath );
         if ( evaled.equals( dataKey ) ) {
-            return new LiteralPathElement( evaled );
+            return new MatchedElement( evaled );
         }
         return null;
     }

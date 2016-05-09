@@ -16,7 +16,8 @@
 package com.bazaarvoice.jolt.common.pathelement;
 
 import com.bazaarvoice.jolt.common.reference.DollarReference;
-import com.bazaarvoice.jolt.common.WalkedPath;
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 
 public class DollarPathElement extends BasePathElement implements MatchablePathElement, EvaluatablePathElement {
 
@@ -35,13 +36,13 @@ public class DollarPathElement extends BasePathElement implements MatchablePathE
 
     @Override
     public String evaluate( WalkedPath walkedPath ) {
-        LiteralPathElement pe = walkedPath.elementFromEnd( dRef.getPathIndex() ).getLiteralPathElement();
+        MatchedElement pe = walkedPath.elementFromEnd( dRef.getPathIndex() ).getMatchedElement();
         return pe.getSubKeyRef( dRef.getKeyGroup() );
     }
 
     @Override
-    public LiteralPathElement match( String dataKey, WalkedPath walkedPath ) {
+    public MatchedElement match( String dataKey, WalkedPath walkedPath ) {
         String evaled = evaluate( walkedPath );
-        return new LiteralPathElement( evaled );
+        return new MatchedElement( evaled );
     }
 }

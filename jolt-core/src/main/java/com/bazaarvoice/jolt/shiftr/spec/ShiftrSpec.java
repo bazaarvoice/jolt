@@ -17,7 +17,7 @@ package com.bazaarvoice.jolt.shiftr.spec;
 
 import com.bazaarvoice.jolt.common.pathelement.*;
 import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.common.WalkedPath;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.utils.StringTools;
 
 import java.util.ArrayList;
@@ -77,72 +77,141 @@ public abstract class ShiftrSpec {
      * Inspects the key in a particular order to determine the correct sublass of
      *  PathElement to create.
      *
-     * @param key String that should represent a single PathElement
+     * @param origKey String that should represent a single PathElement
      * @return a concrete implementation of PathElement
      */
-    public static PathElement parseSingleKeyLHS( String key )  {
+    public static PathElement parseSingleKeyLHS( String origKey )  {
 
-        //// LHS single values
-        if ( "@".equals( key ) ) {
-            return new AtPathElement( key );
-        }
-        else if ( "*".equals( key ) ) {
-            return new StarAllPathElement( key );
-        }
-        else if ( key.startsWith( "[" ) ) {
+        String elementKey;  // the String to use to actually make Elements
+        String keyToInspect;  // the String to use to determine which kind of Element to create
 
-            if ( StringTools.countMatches(key, "[") != 1 || StringTools.countMatches(key, "]") != 1 ) {
-                throw new SpecException( "Invalid key:" + key + " has too many [] references.");
-            }
-
-            return new ArrayPathElement( key );
-        }
-        //// LHS multiple values
-        else if ( key.startsWith("@") || key.contains( "@(" ) ) {
-            return TransposePathElement.parse( key );
-        }
-        else if ( key.contains( "@" ) ) {
-            throw new SpecException( "Invalid key:" + key  + " can not have an @ other than at the front." );
-        }
-        else if ( key.contains("$") ) {
-            return new DollarPathElement( key );
-        }
-        else if ( key.contains("[") ) {
-
-            if ( StringTools.countMatches(key, "[") != 1 || StringTools.countMatches(key, "]") != 1 ) {
-                throw new SpecException( "Invalid key:" + key + " has too many [] references.");
-            }
-
-            return new ArrayPathElement( key );
-        }
-        else if ( key.contains( "&" ) ) {
-
-            if ( key.contains("*") )
-            {
-                throw new SpecException("Can't mix * with & ) ");
-            }
-            return new AmpPathElement( key );
-        }
-        else if ( key.contains("*" ) ) {
-
-            int numOfStars = StringTools.countMatches(key, "*");
-
-            if(numOfStars == 1){
-                return new StarSinglePathElement( key );
-            }
-            else if(numOfStars == 2){
-                return new StarDoublePathElement( key );
-            }
-            else {
-                return new StarRegexPathElement( key );
-            }
-        }
-        else if ( key.contains("#" ) ) {
-            return new HashPathElement( key );
+        if ( origKey.contains( "\\" ) ) {
+            // only do the extra work of processing for escaped chars, if there is one.
+            keyToInspect = removeEscapedValues(origKey);
+            elementKey = removeEscapeChars( origKey );
         }
         else {
-            return new LiteralPathElement( key );
+            keyToInspect = origKey;
+            elementKey = origKey;
         }
+
+        //// LHS single values
+        if ( "@".equals( keyToInspect ) ) {
+            return new AtPathElement( elementKey );
+        }
+        else if ( "*".equals( keyToInspect ) ) {
+            return new StarAllPathElement( elementKey );
+        }
+        else if ( keyToInspect.startsWith( "[" ) ) {
+
+            if ( StringTools.countMatches(keyToInspect, "[") != 1 || StringTools.countMatches(keyToInspect, "]") != 1 ) {
+                throw new SpecException( "Invalid key:" + origKey + " has too many [] references.");
+            }
+
+            return new ArrayPathElement( elementKey );
+        }
+        //// LHS multiple values
+        else if ( keyToInspect.startsWith("@") || keyToInspect.contains( "@(" ) ) {
+            // The traspose path element gets the origKey so that it has it's escapes.
+            return TransposePathElement.parse( origKey );
+        }
+        else if ( keyToInspect.contains( "@" ) ) {
+            throw new SpecException( "Invalid key:" + origKey  + " can not have an @ other than at the front." );
+        }
+        else if ( keyToInspect.contains("$") ) {
+            return new DollarPathElement( elementKey );
+        }
+        else if ( keyToInspect.contains("[") ) {
+
+            if ( StringTools.countMatches(keyToInspect, "[") != 1 || StringTools.countMatches(keyToInspect, "]") != 1 ) {
+                throw new SpecException( "Invalid key:" + origKey + " has too many [] references.");
+            }
+
+            return new ArrayPathElement( elementKey );
+        }
+        else if ( keyToInspect.contains( "&" ) ) {
+
+            if ( keyToInspect.contains("*") )
+            {
+                throw new SpecException( "Invalid key:" + origKey + ", Can't mix * with & ) ");
+            }
+            return new AmpPathElement( elementKey );
+        }
+        else if ( keyToInspect.contains("*" ) ) {
+
+            int numOfStars = StringTools.countMatches(keyToInspect, "*");
+
+            if(numOfStars == 1){
+                return new StarSinglePathElement( elementKey );
+            }
+            else if(numOfStars == 2){
+                return new StarDoublePathElement( elementKey );
+            }
+            else {
+                return new StarRegexPathElement( elementKey );
+            }
+        }
+        else if ( keyToInspect.contains("#" ) ) {
+            return new HashPathElement( elementKey );
+        }
+        else {
+            return new LiteralPathElement( elementKey );
+        }
+    }
+
+    // Visible for Testing
+    // given "\@pants" -> "pants"                 starts with escape
+    // given "rating-\&pants" -> "rating-pants"   escape in the middle
+    // given "rating\\pants" -> "ratingpants"     escape the escape char
+    static String removeEscapedValues(String origKey) {
+        StringBuilder sb = new StringBuilder();
+
+        boolean prevWasEscape = false;
+        for ( char c : origKey.toCharArray() ) {
+            if ( '\\' == c ) {
+                if ( prevWasEscape ) {
+                    prevWasEscape = false;
+                }
+                else {
+                    prevWasEscape = true;
+                }
+            }
+            else {
+                if ( ! prevWasEscape ) {
+                    sb.append( c );
+                }
+                prevWasEscape = false;
+            }
+        }
+
+        return sb.toString();
+    }
+
+    // Visible for Testing
+    // given "\@pants" -> "@pants"                 starts with escape
+    // given "rating-\&pants" -> "rating-&pants"   escape in the middle
+    // given "rating\\pants" -> "rating\pants"     escape the escape char
+    static String removeEscapeChars( String origKey ) {
+        StringBuilder sb = new StringBuilder();
+
+        boolean prevWasEscape = false;
+        for ( char c : origKey.toCharArray() ) {
+            if ( '\\' == c ) {
+                if ( prevWasEscape ) {
+                    sb.append( c );
+                    prevWasEscape = false;
+                }
+                else {
+                    prevWasEscape = true;
+                }
+            }
+            else {
+                sb.append( c );
+                prevWasEscape = false;
+            }
+        }
+
+        return sb.toString();
     }
 
 
@@ -200,7 +269,7 @@ public abstract class ShiftrSpec {
         for ( int index = 1; index < dotNotaton.length(); index++ ) {
             char curr =  dotNotaton.charAt( index );
 
-            if ( curr == '[' ) {
+            if ( curr == '[' && prev != '\\') {
                 if ( prev == '@' || prev == '.' ) {
                     // no need to add an extra '.'
                 }
@@ -297,13 +366,18 @@ public abstract class ShiftrSpec {
      * @param dotNotationRef the original dotNotation string used for error messages
      * @return
      */
-    public static List<String> parseDotNotation( List<String> pathStrings, Iterator<Character> iter, String dotNotationRef ) {
+    public static List<String> parseDotNotation( List<String> pathStrings, Iterator<Character> iter,
+                                                 String dotNotationRef ) {
 
         if ( ! iter.hasNext() ) {
             return pathStrings;
         }
 
-        boolean escapeActive = false;
+        // Leave the forward slashes, unless it precedes a "."
+        // The way this works is always supress the forward slashes, but add them back in if the next char is not a "."
+
+        boolean prevIsEscape = false;
+        boolean currIsEscape = false;
         StringBuilder sb = new StringBuilder();
 
         char c;
@@ -311,12 +385,18 @@ public abstract class ShiftrSpec {
 
             c = iter.next();
 
-            if ( c == '\\' ) {
-                // two escapes lets one thru
-                escapeActive = ! escapeActive;
+            currIsEscape = false;
+            if ( c == '\\' && ! prevIsEscape ) {
+                // current is Escape only if the char is escape, or
+                //  it is an Escape and the prior char was, then don't consider this one an escape
+                currIsEscape = true;
             }
 
-            if( c == '@' ) {
+            if ( prevIsEscape && c != '.' && c != '\\') {
+                sb.append( '\\' );
+                sb.append( c );
+            }
+            else if( c == '@' ) {
                 sb.append( '@' );
                 sb.append( parseAtPathElement( iter, dotNotationRef ) );
 
@@ -328,8 +408,9 @@ public abstract class ShiftrSpec {
                 }
             }
             else if ( c == '.' ) {
-                if ( escapeActive ) {
-                    sb.append( c );
+
+                if ( prevIsEscape ) {
+                    sb.append( '.' );
                 }
                 else {
                     if ( sb.length() != 0 ) {
@@ -338,15 +419,11 @@ public abstract class ShiftrSpec {
                     return parseDotNotation( pathStrings, iter, dotNotationRef );
                 }
             }
-            else {
-                if ( ! escapeActive ) {
-                    sb.append( c );
-                }
+            else if ( ! currIsEscape ) {
+                sb.append( c );
             }
 
-            if ( c != '\\' ) {
-                escapeActive = false;
-            }
+            prevIsEscape = currIsEscape;
         }
 
         if ( sb.length() != 0 ) {

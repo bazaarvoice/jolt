@@ -15,7 +15,7 @@
  */
 package com.bazaarvoice.jolt.common.pathelement;
 
-import com.bazaarvoice.jolt.common.WalkedPath;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 
 public interface EvaluatablePathElement extends PathElement {
 

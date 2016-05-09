@@ -1,0 +1,36 @@
+{
+    "input": {
+        "aaa@context": "atSymbol",
+        "bbb$name": "Mojito",
+        "ccc&ingredient": "mint",
+        "ddd[yield": "open array",
+        "eee[]yield": "full array",
+        "fff]yield": "back array",
+        "ggg*" : "star",
+        "hhh#" : "hash",
+        "yyy(" : "left paren"
+    },
+
+    "spec": {
+        // TEST escaping all the things when they are in the middle of the LHS and RHS keys
+        "aaa\\@context": "aaa\\@A",
+        "bbb\\$name": "bbb\\$B",
+        "ccc\\&ingredient": "ccc\\&C",
+        "ddd\\[yield": "ddd\\[D",
+        "eee\\[\\]yield": "eee\\[\\]E",
+        "fff\\]yield": "fff\\]F",
+        "ggg\\*" : "ggg\\*G",
+        "hhh\\#" : "hhh\\#H"
+    },
+
+    "expected": {
+        "aaa@A" : "atSymbol",
+        "bbb$B" : "Mojito",
+        "ccc&C" : "mint",
+        "ddd[D": "open array",
+        "eee[]E" : "full array",
+        "fff]F" : "back array",
+        "ggg*G" : "star",
+        "hhh#H" : "hash"
+    }
+}

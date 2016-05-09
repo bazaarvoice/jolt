@@ -16,7 +16,8 @@
 package com.bazaarvoice.jolt.common.pathelement;
 
 import com.bazaarvoice.jolt.common.reference.AmpReference;
-import com.bazaarvoice.jolt.common.WalkedPath;
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -114,8 +115,8 @@ public class AmpPathElement extends BasePathElement implements MatchablePathElem
             }
             else {
                 AmpReference ref = (AmpReference) token;
-                LiteralPathElement literalPathElement = walkedPath.elementFromEnd( ref.getPathIndex() ).getLiteralPathElement();
-                String value = literalPathElement.getSubKeyRef( ref.getKeyGroup() );
+                MatchedElement matchedElement = walkedPath.elementFromEnd( ref.getPathIndex() ).getMatchedElement();
+                String value = matchedElement.getSubKeyRef( ref.getKeyGroup() );
                 output.append( value );
             }
         }
@@ -124,10 +125,10 @@ public class AmpPathElement extends BasePathElement implements MatchablePathElem
     }
 
     @Override
-    public LiteralPathElement match( String dataKey, WalkedPath walkedPath ) {
+    public MatchedElement match( String dataKey, WalkedPath walkedPath ) {
         String evaled = evaluate( walkedPath );
         if ( evaled.equals( dataKey ) ) {
-            return new LiteralPathElement( evaled );
+            return new MatchedElement( evaled );
         }
         return null;
     }

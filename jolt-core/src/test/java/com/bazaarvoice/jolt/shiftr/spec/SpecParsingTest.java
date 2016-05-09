@@ -24,10 +24,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class RHSParsingTest {
+public class SpecParsingTest {
 
     @DataProvider
-    public Object[][] RHSParsingTests() throws IOException {
+    public Object[][] RHSParsingTestsRemoveEscapes() throws IOException {
         return new Object[][] {
             {
                 "simple, no escape",
@@ -55,9 +55,9 @@ public class RHSParsingTest {
                 Arrays.asList( "a.b", "c" )
             },
             {
-                "double escape in front of a period, does not escape the period",
-                "a\\\\.b.c",
-                Arrays.asList( "a\\", "b", "c" )
+                "escaping rhs",
+                "data.\\\\$rating-&1",
+                Arrays.asList( "data", "\\$rating-&1" )
             },
             {
                 "@Class example",
@@ -67,11 +67,48 @@ public class RHSParsingTest {
         };
     }
 
-    @Test(dataProvider = "RHSParsingTests" )
-    public void testRHSParsing( String testName, String unSweetendDotNotation, List<String> expected ) {
+    @Test(dataProvider = "RHSParsingTestsRemoveEscapes")
+    public void testRHSParsingRemoveEscapes( String testName, String unSweetendDotNotation, List<String> expected ) {
 
-        List<String> actual = ShiftrSpec.parseDotNotation( Lists.<String>newArrayList(), ShiftrSpec.stringIterator(unSweetendDotNotation), unSweetendDotNotation );
+        List<String> actual = ShiftrSpec.parseDotNotation( Lists.<String>newArrayList(), ShiftrSpec.stringIterator(unSweetendDotNotation),
+                unSweetendDotNotation );
 
+        Assert.assertEquals( actual, expected, "Failed test name " + testName );
+    }
+
+    @DataProvider
+    public Object[][] removeEscapeCharsTests() throws IOException {
+
+        return new Object[][] {
+            { "starts with escape",     "\\@pants", "@pants" },
+            { "escape in the middle",   "rating-\\&pants", "rating-&pants" },
+            { "escape the escape char", "rating\\\\pants", "rating\\pants" },
+        };
+    }
+
+    @Test(dataProvider = "removeEscapeCharsTests" )
+    public void testRemoveEscapeChars( String testName, String input, String expected ) {
+
+        String actual = ShiftrSpec.removeEscapeChars( input );
+        Assert.assertEquals( actual, expected, "Failed test name " + testName );
+    }
+
+
+    @DataProvider
+    public Object[][] removeEscapedValuesTest() throws IOException {
+
+        return new Object[][] {
+            { "starts with escape",     "\\@pants", "pants" },
+            { "escape in the middle",   "rating-\\&pants", "rating-pants" },
+            { "escape the escape char", "rating\\\\pants", "ratingpants" },
+            { "escape the array", "\\[\\]pants", "pants" },
+        };
+    }
+
+    @Test(dataProvider = "removeEscapedValuesTest" )
+    public void testEscapeParsing( String testName, String input, String expected ) {
+
+        String actual = ShiftrSpec.removeEscapedValues( input );
         Assert.assertEquals( actual, expected, "Failed test name " + testName );
     }
 }

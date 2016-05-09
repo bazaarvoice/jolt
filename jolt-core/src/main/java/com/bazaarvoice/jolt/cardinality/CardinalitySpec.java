@@ -15,11 +15,11 @@
  */
 package com.bazaarvoice.jolt.cardinality;
 
-import com.bazaarvoice.jolt.common.WalkedPath;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.common.pathelement.AtPathElement;
-import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.common.pathelement.MatchablePathElement;
 import com.bazaarvoice.jolt.common.pathelement.PathElement;
+import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.common.pathelement.StarAllPathElement;
 import com.bazaarvoice.jolt.common.pathelement.StarRegexPathElement;
 import com.bazaarvoice.jolt.common.pathelement.StarSinglePathElement;

@@ -15,9 +15,8 @@
  */
 package com.bazaarvoice.jolt.common.pathelement;
 
-import com.bazaarvoice.jolt.common.WalkedPath;
-
-import java.util.Collections;
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 
 /**
  * PathElement for the lone "*" wildcard.   In this case we can avoid doing any
@@ -41,8 +40,8 @@ public class StarAllPathElement implements StarPathElement {
     }
 
     @Override
-    public LiteralPathElement match( String dataKey, WalkedPath walkedPath ) {
-        return new LiteralPathElement(dataKey, Collections.<String>emptyList() );
+    public MatchedElement match( String dataKey, WalkedPath walkedPath ) {
+        return new MatchedElement( dataKey );
     }
 
     @Override

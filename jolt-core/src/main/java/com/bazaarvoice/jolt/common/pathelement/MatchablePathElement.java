@@ -15,7 +15,8 @@
  */
 package com.bazaarvoice.jolt.common.pathelement;
 
-import com.bazaarvoice.jolt.common.WalkedPath;
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 
 public interface MatchablePathElement extends PathElement {
 
@@ -28,5 +29,5 @@ public interface MatchablePathElement extends PathElement {
      * @param walkedPath "up the tree" list of LiteralPathElements, that may be used by this key as it is computing its match
      * @return null or a matched LiteralPathElement
      */
-    LiteralPathElement match( String dataKey, WalkedPath walkedPath );
+    MatchedElement match( String dataKey, WalkedPath walkedPath );
 }

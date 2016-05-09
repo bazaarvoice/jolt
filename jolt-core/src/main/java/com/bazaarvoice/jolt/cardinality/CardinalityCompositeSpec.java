@@ -15,11 +15,12 @@
  */
 package com.bazaarvoice.jolt.cardinality;
 
-import com.bazaarvoice.jolt.common.WalkedPath;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.common.pathelement.AmpPathElement;
 import com.bazaarvoice.jolt.common.pathelement.AtPathElement;
-import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import com.bazaarvoice.jolt.common.pathelement.PathElement;
+import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.common.pathelement.StarPathElement;
 import com.bazaarvoice.jolt.exception.SpecException;
 
@@ -136,7 +137,7 @@ public class CardinalityCompositeSpec extends CardinalitySpec {
      */
     @Override
     public boolean apply( String inputKey, Object input, WalkedPath walkedPath, Object parentContainer ) {
-        LiteralPathElement thisLevel = pathElement.match( inputKey, walkedPath );
+        MatchedElement thisLevel = pathElement.match( inputKey, walkedPath );
         if ( thisLevel == null ) {
             return false;
         }

@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.common.pathelement;
 
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -29,7 +30,7 @@ public class StarDoublePathElementTest {
         Assert.assertFalse( star.stringMatch( "abbbbbbbbcc" )  );
         Assert.assertFalse( star.stringMatch( "bbba" )  );
 
-        LiteralPathElement lpe = star.match( "bbbaccc", null );
+        MatchedElement lpe = star.match( "bbbaccc", null );
         // * -> bbb
         // a -> a
         // * -> ccc
@@ -50,7 +51,7 @@ public class StarDoublePathElementTest {
         Assert.assertFalse( star.stringMatch( "bac" )  );
         Assert.assertFalse( star.stringMatch( "baa" )  );
 
-        LiteralPathElement lpe = star.match( "abcadefc", null );
+        MatchedElement lpe = star.match( "abcadefc", null );
         // * -> abc
         // a -> a index 4
         // * -> def
@@ -73,7 +74,7 @@ public class StarDoublePathElementTest {
         Assert.assertFalse( star.stringMatch( "addb" )  );
         Assert.assertFalse( star.stringMatch( "abc" )  );
 
-        LiteralPathElement lpe = star.match( "abcbbac", null );
+        MatchedElement lpe = star.match( "abcbbac", null );
         // a -> a
         // * -> bc index 1
         // b -> b   index 3
@@ -95,7 +96,7 @@ public class StarDoublePathElementTest {
         Assert.assertTrue( star.stringMatch( "a123b456c" )  );
         Assert.assertTrue( star.stringMatch( "abccbcc" )  );
 
-        LiteralPathElement lpe = star.match( "abccbcc", null );
+        MatchedElement lpe = star.match( "abccbcc", null );
         // a -> a
         // * -> bcc index 1
         // b -> b
@@ -114,7 +115,7 @@ public class StarDoublePathElementTest {
 
         StarPathElement star = new StarDoublePathElement( "a*b*c" );
 
-        LiteralPathElement lpe = star.match( "abbccbccc", null );
+        MatchedElement lpe = star.match( "abbccbccc", null );
         // a -> a
         // * -> b index 1
         // b -> b

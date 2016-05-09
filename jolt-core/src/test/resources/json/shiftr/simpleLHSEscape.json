@@ -1,0 +1,38 @@
+{
+    "input": {
+        "@rating": {
+            "$primary": {
+                "value": 4,
+                "max": 5
+            },
+            "&quality": {
+                "value": 3,
+                "max": 7
+            },
+            "#sharpness": {
+                "value": 5,
+                "max": 7
+            }
+        }
+    },
+
+    "spec": {
+        "\\@rating": {
+            "\\$primary": {
+                // escape the '.' so that an output key can have a dot in it
+                "value": "data.\\$rating"
+            },
+            "*": {
+                "value": "data.\\$rating-&1"
+            }
+        }
+    },
+
+    "expected": {
+        "data" : {
+            "$rating" : 4,
+            "$rating-&quality" : 3,
+            "$rating-#sharpness" : 5
+        }
+    }
+}

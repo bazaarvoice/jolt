@@ -15,7 +15,8 @@
  */
 package com.bazaarvoice.jolt.common.pathelement;
 
-import com.bazaarvoice.jolt.common.WalkedPath;
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.utils.StringTools;
 
@@ -62,7 +63,7 @@ public class HashPathElement extends BasePathElement implements MatchablePathEle
     }
 
     @Override
-    public LiteralPathElement match( String dataKey, WalkedPath walkedPath ) {
-        return new LiteralPathElement( keyValue );
+    public MatchedElement match( String dataKey, WalkedPath walkedPath ) {
+        return new MatchedElement( keyValue );
     }
 }
