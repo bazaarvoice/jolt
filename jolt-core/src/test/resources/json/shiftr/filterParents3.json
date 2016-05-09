@@ -1,0 +1,63 @@
+{
+    // From https://github.com/bazaarvoice/jolt/issues/206
+    //
+    // Here we only want to pass thru Planets that have moons.
+    // Matching on Satellite : null, does not work because when Satellite
+    //  is not null, it has it's own nested objects.
+    // Thus the approach is to looking for a Satellites that has are non-null
+    //  in that they have a sub-object, like "PhysicalData", and use that to
+    //  grab the Planet object.
+    "input": {
+        "Planet": [
+            {
+                "Satellite": {
+                    "PhysicalData": {
+                        "pd1": "pdv1",
+                        "pd2": "pdv2"
+                    },
+                    "ChemicalData": {
+                        "cd1": "cdv1",
+                        "cd2": "cdv2"
+                    }
+                },
+                "Name": "Earth"
+            },
+            {
+                "Name": "Mercury",
+                "Satellite": null
+            }
+        ]
+    },
+
+    "spec": {
+        "Planet": {
+            "*": {
+                "Satellite": {
+                    "PhysicalData": {
+                        // @2 means look up the tree three levels (0, 1, 2), grab what is there (the whole planet object)
+                        // and then use that as the data to write to "PlanetsWithMoons"
+                        "@2": "PlanetsWithMoons[]"
+                    }
+                }
+            }
+        }
+    },
+
+    "expected": {
+        "PlanetsWithMoons" : [
+            {
+                "Satellite" : {
+                    "PhysicalData" : {
+                        "pd1" : "pdv1",
+                        "pd2" : "pdv2"
+                    },
+                    "ChemicalData" : {
+                        "cd1" : "cdv1",
+                        "cd2" : "cdv2"
+                    }
+                },
+                "Name" : "Earth"
+            }
+        ]
+    }
+}
