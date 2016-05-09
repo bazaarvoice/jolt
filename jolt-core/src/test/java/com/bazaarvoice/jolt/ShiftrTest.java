@@ -35,6 +35,7 @@ public class ShiftrTest {
             {"filterParallelArrays"},
             {"filterParents1"},
             {"filterParents2"},
+            {"filterParents3"},
             {"firstSample"},
             {"hashDefault"},
             {"identity"},
