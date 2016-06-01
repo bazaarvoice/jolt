@@ -56,7 +56,7 @@ public class CardinalityLeafSpec extends CardinalitySpec {
      * @return true if this this spec "handles" the inputkey such that no sibling specs need to see it
      */
     @Override
-    public boolean apply( String inputKey, Object input, WalkedPath walkedPath, Object parentContainer ) {
+    public boolean applyCardinality( String inputKey, Object input, WalkedPath walkedPath, Object parentContainer ) {
 
         MatchedElement thisLevel = getMatch( inputKey, walkedPath );
         if ( thisLevel == null ) {

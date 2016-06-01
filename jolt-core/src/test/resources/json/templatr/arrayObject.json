@@ -1,0 +1,59 @@
+{
+    "input": {
+        "objectMapFill": [
+            {},{},{}
+        ],
+        "objectArrayFill": [
+            [],[],[]
+        ]
+    },
+
+    "spec": {
+        "objectMapFill": {
+            "*": {"a": "b"},
+            "[3]": {"x": "y"}
+
+        },
+        "objectArrayFill": {
+            "*": [0],
+            "[4]": [4]
+        },
+        "emptyMap": {},
+        "emptyList": []
+    },
+
+    "context": {},
+
+    "OVERWRITE": {
+        "objectMapFill": [
+            {"a": "b"},{"a": "b"},{"a": "b"},{"a": "b", "x": "y"}
+        ],
+        "objectArrayFill": [
+            [0],[0],[0],[0],[0]
+        ],
+        "emptyMap": {},
+        "emptyList": []
+    },
+
+    "DEFAULTR": {
+        "objectMapFill" : [
+            {"a": "b"},{"a": "b"},{"a": "b"},{"a": "b", "x": "y"}
+        ],
+        "objectArrayFill" : [
+            [],[],[],[0],[4]
+        ],
+        "emptyMap" : { },
+        "emptyList" : []
+    },
+
+    "DEFINR": {
+        "objectMapFill" : [
+            {"a": "b"},{"a": "b"},{"a": "b"},{"x": "y"}
+        ],
+        "objectArrayFill" : [
+            [],[],[],[0],[4]
+        ],
+        "emptyMap" : { },
+        "emptyList" : []
+    }
+}

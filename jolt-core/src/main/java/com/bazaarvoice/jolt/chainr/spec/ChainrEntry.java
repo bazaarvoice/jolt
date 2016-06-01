@@ -17,12 +17,12 @@ package com.bazaarvoice.jolt.chainr.spec;
 
 import com.bazaarvoice.jolt.CardinalityTransform;
 import com.bazaarvoice.jolt.Chainr;
-import com.bazaarvoice.jolt.Defaultr;
 import com.bazaarvoice.jolt.JoltTransform;
 import com.bazaarvoice.jolt.Removr;
 import com.bazaarvoice.jolt.Shiftr;
 import com.bazaarvoice.jolt.Sortr;
 import com.bazaarvoice.jolt.SpecDriven;
+import com.bazaarvoice.jolt.Templatr;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.utils.StringTools;
 
@@ -40,13 +40,21 @@ public class ChainrEntry {
      * Map transform "operation" names to the classes that handle them
      */
     public static final Map<String, String> STOCK_TRANSFORMS;
+
+    /**
+     * getName() returns fqdn$path compared to humanReadablePath from getCanonicalPath()
+     * to make internal classes available/loadable at runtime it is imperative that we use fqdn
+     */
     static {
         HashMap<String, String> temp = new HashMap<>();
-        temp.put( "shift", Shiftr.class.getCanonicalName() );
-        temp.put( "default", Defaultr.class.getCanonicalName() );
-        temp.put( "remove", Removr.class.getCanonicalName() );
-        temp.put( "sort", Sortr.class.getCanonicalName() );
-        temp.put( "cardinality", CardinalityTransform.class.getCanonicalName() );
+        temp.put( "shift", Shiftr.class.getName() );
+        temp.put( "default", com.bazaarvoice.jolt.Defaultr.class.getName() );
+        temp.put( "overwrite-beta", Templatr.Overwritr.class.getName() );
+        temp.put( "default-beta", Templatr.Defaultr.class.getName() );
+        temp.put( "define-beta", Templatr.Definr.class.getName() );
+        temp.put( "remove", Removr.class.getName() );
+        temp.put( "sort", Sortr.class.getName() );
+        temp.put( "cardinality", CardinalityTransform.class.getName() );
         STOCK_TRANSFORMS = Collections.unmodifiableMap( temp );
     }
 
@@ -98,7 +106,7 @@ public class ChainrEntry {
 
         isSpecDriven = SpecDriven.class.isAssignableFrom( joltTransformClass );
         if ( isSpecDriven && ! chainrEntryMap.containsKey( SPEC_KEY ) ) {
-            throw new SpecException( "JOLT Chainr - Transform className:" + joltTransformClass.getCanonicalName() + " requires a spec" + getErrorMessageIndexSuffix() );
+            throw new SpecException( "JOLT Chainr - Transform className:" + joltTransformClass.getName() + " requires a spec" + getErrorMessageIndexSuffix() );
         }
     }
 

@@ -462,7 +462,6 @@ import java.util.Map;
  */
 public class Shiftr implements SpecDriven, Transform {
 
-    public static final String ROOT_KEY = "root";
     private final ShiftrCompositeSpec rootSpec;
 
     /**
@@ -502,7 +501,7 @@ public class Shiftr implements SpecDriven, Transform {
         WalkedPath walkedPath = new WalkedPath();
         walkedPath.add( input, rootLpe );
 
-        rootSpec.apply( ROOT_KEY, input, walkedPath, output );
+        rootSpec.apply( ROOT_KEY, input, walkedPath, output, null );
 
         return output.get( ROOT_KEY );
     }

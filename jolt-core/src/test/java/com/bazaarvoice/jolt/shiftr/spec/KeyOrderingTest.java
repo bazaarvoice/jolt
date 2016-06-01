@@ -17,6 +17,7 @@ package com.bazaarvoice.jolt.shiftr.spec;
 
 import com.bazaarvoice.jolt.JsonUtils;
 import com.bazaarvoice.jolt.Shiftr;
+import com.bazaarvoice.jolt.SpecDriven;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -57,7 +58,7 @@ public class KeyOrderingTest {
     @Test(dataProvider = "shiftrKeyOrderingTestCases" )
     public void testKeyOrdering( String testName, Map<String,Object> spec, List<String> expectedOrder ) {
 
-        ShiftrCompositeSpec root = new ShiftrCompositeSpec( Shiftr.ROOT_KEY, spec );
+        ShiftrCompositeSpec root = new ShiftrCompositeSpec( SpecDriven.ROOT_KEY, spec );
 
         for ( int index = 0; index < expectedOrder.size(); index++) {
             String expected = expectedOrder.get( index );

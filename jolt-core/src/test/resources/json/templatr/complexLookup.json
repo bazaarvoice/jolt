@@ -1,0 +1,76 @@
+{
+    // complex read involving path value(s) retrieved from input
+    // i.e. ContextDataValues.Age.Value is 65orOver, which is a part of context path, cdvs.Age.valuesLabels.65orOver
+
+    "input": {
+        "ContextDataValues": {
+            "Age": {
+                "Value": "65orOver",
+                "Id": "Age"
+            },
+            "Gender": {
+                "Value": "Male",
+                "Id": "Gender"
+            }
+        },
+        "default": "defaultValue"
+    },
+    "spec": {
+        "ContextDataValues": {
+            "Age": {
+                // "Value": "65orOver" -> "^cdvs.Age.valuesLabels.65orOver"
+                "ValueLabel": "^cdvs.&1.valuesLabels.@(1,Value)",
+                "DimensionLabel": "^cdvs.&1.dimensionLabel",
+                "default": "@(3,default)"
+            },
+            "Gender": {
+                // "Value": "Male" -> "^cdvs.Gender.valuesLabels.Male"
+                "ValueLabel": "^cdvs.&1.valuesLabels.@(1,Value)",
+                "DimensionLabel": "^cdvs.&1.dimensionLabel",
+                "default": "@(3,default)"
+            }
+        }
+    },
+    "OVERWRITE": {
+        "ContextDataValues": {
+            "Age": {
+                "Value": "65orOver",
+                "ValueLabel": "65 or over",
+                "DimensionLabel": "Age",
+                "Id": "Age",
+                "default": "defaultValue"
+            },
+            "Gender": {
+                "Value": "Male",
+                "ValueLabel": "Male",
+                "DimensionLabel": "Gender",
+                "Id": "Gender",
+                "default": "defaultValue"
+            }
+        },
+        "default": "defaultValue"
+    },
+    "context": {
+        "cdvs": {
+            "Gender": {
+                "dimensionLabel": "Gender",
+                "valuesLabels": {
+                    "Male": "Male",
+                    "Female": "Female"
+                }
+            },
+            "Age": {
+                "dimensionLabel": "Age",
+                "valuesLabels": {
+                    "17orUnder": "17 or under",
+                    "18to24": "18 to 24",
+                    "25to34": "25 to 34",
+                    "35to44": "35 to 44",
+                    "45to54": "45 to 54",
+                    "55to64": "55 to 64",
+                    "65orOver": "65 or over"
+                }
+            }
+        }
+    }
+}

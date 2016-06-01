@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.shiftr;
 
+import com.bazaarvoice.jolt.common.PathElementBuilder;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.common.pathelement.AmpPathElement;
 import com.bazaarvoice.jolt.common.pathelement.ArrayPathElement;
@@ -24,7 +25,6 @@ import com.bazaarvoice.jolt.common.pathelement.MatchablePathElement;
 import com.bazaarvoice.jolt.common.pathelement.PathElement;
 import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.common.reference.AmpReference;
-import com.bazaarvoice.jolt.shiftr.spec.ShiftrSpec;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -32,7 +32,7 @@ import java.util.List;
 
 // Todo Now that the PathElement classes have been split out (no longer inner classes)
 //  each class should get a test
-public class PathElementTest {
+public class ShiftrWritrTest {
 
     @Test
     public void referenceTest() {
@@ -105,8 +105,8 @@ public class PathElementTest {
     @Test
     public void calculateOutputTest_refsOnly() {
 
-        MatchablePathElement pe1 = (MatchablePathElement) ShiftrSpec.parseSingleKeyLHS( "tuna-*-marlin-*" );
-        MatchablePathElement pe2 = (MatchablePathElement) ShiftrSpec.parseSingleKeyLHS( "rating-*" );
+        MatchablePathElement pe1 = (MatchablePathElement) PathElementBuilder.parseSingleKeyLHS( "tuna-*-marlin-*" );
+        MatchablePathElement pe2 = (MatchablePathElement) PathElementBuilder.parseSingleKeyLHS( "rating-*" );
 
         MatchedElement lpe = pe1.match( "tuna-marlin", new WalkedPath() );
         Assert.assertNull( lpe );
@@ -148,8 +148,8 @@ public class PathElementTest {
     public void calculateOutputTest_arrayIndexes() {
 
         // simulate Shiftr LHS specs
-        MatchablePathElement pe1 = (MatchablePathElement) ShiftrSpec.parseSingleKeyLHS( "tuna-*-marlin-*" );
-        MatchablePathElement pe2 = (MatchablePathElement) ShiftrSpec.parseSingleKeyLHS( "rating-*" );
+        MatchablePathElement pe1 = (MatchablePathElement) PathElementBuilder.parseSingleKeyLHS( "tuna-*-marlin-*" );
+        MatchablePathElement pe2 = (MatchablePathElement) PathElementBuilder.parseSingleKeyLHS( "rating-*" );
 
         // match them against some data to get LiteralPathElements with captured values
         MatchedElement lpe = pe1.match( "tuna-2-marlin-3", new WalkedPath() );

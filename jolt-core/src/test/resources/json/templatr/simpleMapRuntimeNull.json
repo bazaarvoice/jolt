@@ -1,0 +1,24 @@
+{
+    "input": {
+        "simpleMap": null
+    },
+
+    "spec": {
+        "simpleMap": {
+            "*": 0
+        }
+    },
+
+    "context": {},
+
+    "OVERWRITE": {
+        "simpleMap": null
+    },
+
+    "DEFAULTR": {
+        "simpleMap": null
+    },
+    "DEFINR": {
+        "simpleMap": null
+    }
+}

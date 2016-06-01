@@ -15,18 +15,17 @@
  */
 package com.bazaarvoice.jolt.cardinality;
 
+import com.bazaarvoice.jolt.common.ComputedKeysComparator;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.common.pathelement.AmpPathElement;
 import com.bazaarvoice.jolt.common.pathelement.AtPathElement;
 import com.bazaarvoice.jolt.common.tree.MatchedElement;
-import com.bazaarvoice.jolt.common.pathelement.PathElement;
 import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.common.pathelement.StarPathElement;
 import com.bazaarvoice.jolt.exception.SpecException;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,8 +37,15 @@ import java.util.Set;
  */
 public class CardinalityCompositeSpec extends CardinalitySpec {
 
-    private static final ComputedKeysComparator computedKeysComparator = new ComputedKeysComparator();
+    private static final HashMap<Class, Integer> orderMap;
+    private static final com.bazaarvoice.jolt.common.ComputedKeysComparator computedKeysComparator;
 
+    static {
+        orderMap = new HashMap<>();
+        orderMap.put( AmpPathElement.class, 1 );
+        orderMap.put( StarPathElement.class, 2 );
+        computedKeysComparator = ComputedKeysComparator.fromOrder(orderMap);
+    }
     // Three different buckets for the children of this CardinalityCompositeSpec
     private CardinalityLeafSpec specialChild;                    // children that aren't actually triggered off the input data
     private final Map<String, CardinalitySpec> literalChildren;  // children that are simple exact matches against the input data
@@ -136,7 +142,7 @@ public class CardinalityCompositeSpec extends CardinalitySpec {
      * @return true if this this spec "handles" the inputkey such that no sibling specs need to see it
      */
     @Override
-    public boolean apply( String inputKey, Object input, WalkedPath walkedPath, Object parentContainer ) {
+    public boolean applyCardinality( String inputKey, Object input, WalkedPath walkedPath, Object parentContainer ) {
         MatchedElement thisLevel = pathElement.match( inputKey, walkedPath );
         if ( thisLevel == null ) {
             return false;
@@ -195,7 +201,7 @@ public class CardinalityCompositeSpec extends CardinalitySpec {
 
         // if the subKeyStr found a literalChild, then we do not have to try to match any of the computed ones
         if ( literalChild != null ) {
-            literalChild.apply( subKeyStr, subInput, walkedPath, input );
+            literalChild.applyCardinality( subKeyStr, subInput, walkedPath, input );
         } else {
             // If no literal spec key matched, iterate through all the computedChildren
 
@@ -203,48 +209,10 @@ public class CardinalityCompositeSpec extends CardinalitySpec {
             // This relies upon the computedChildren having already been sorted in priority order
             for ( CardinalitySpec computedChild : spec.computedChildren ) {
                 // if the computed key does not match it will quickly return false
-                if ( computedChild.apply( subKeyStr, subInput, walkedPath, input ) ) {
+                if ( computedChild.applyCardinality( subKeyStr, subInput, walkedPath, input ) ) {
                     break;
                 }
             }
-        }
-    }
-
-    public static class ComputedKeysComparator implements Comparator<CardinalitySpec> {
-
-        private static final HashMap<Class, Integer> orderMap = new HashMap<>();
-
-        static {
-            orderMap.put( AmpPathElement.class, 1 );
-            orderMap.put( StarPathElement.class, 2 );
-        }
-
-        @Override
-        public int compare( CardinalitySpec a, CardinalitySpec b ) {
-
-            PathElement ape = a.pathElement;
-            PathElement bpe = b.pathElement;
-
-            int aa = orderMap.get( ape.getClass() );
-            int bb = orderMap.get( bpe.getClass() );
-
-            int elementsEqual = aa < bb ? -1 : aa == bb ? 0 : 1;
-
-            if ( elementsEqual != 0 ) {
-                return elementsEqual;
-            }
-
-            // At this point we have two PathElements of the same type.
-            String acf = ape.getCanonicalForm();
-            String bcf = bpe.getCanonicalForm();
-
-            int alen = acf.length();
-            int blen = bcf.length();
-
-            // Sort them by length, with the longest (most specific) being first
-            //  aka "rating-range-*" needs to be evaluated before "rating-*", or else "rating-*" will catch too much
-            // If the lengths are equal, sort alphabetically as the last ditch deterministic behavior
-            return alen > blen ? -1 : alen == blen ? acf.compareTo( bcf ) : 1;
         }
     }
 }

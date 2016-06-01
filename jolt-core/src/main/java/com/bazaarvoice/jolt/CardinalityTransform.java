@@ -229,7 +229,7 @@ public class CardinalityTransform implements SpecDriven, Transform {
     @Override
     public Object transform( Object input ) {
 
-        rootSpec.apply( ROOT_KEY, input, new WalkedPath(), null );
+        rootSpec.apply( ROOT_KEY, input, new WalkedPath(), null, null );
 
         return input;
     }

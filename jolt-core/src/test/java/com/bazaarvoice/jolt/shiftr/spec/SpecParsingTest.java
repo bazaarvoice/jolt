@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.shiftr.spec;
 
+import com.bazaarvoice.jolt.common.SpecStringParser;
 import com.google.common.collect.Lists;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -70,8 +71,7 @@ public class SpecParsingTest {
     @Test(dataProvider = "RHSParsingTestsRemoveEscapes")
     public void testRHSParsingRemoveEscapes( String testName, String unSweetendDotNotation, List<String> expected ) {
 
-        List<String> actual = ShiftrSpec.parseDotNotation( Lists.<String>newArrayList(), ShiftrSpec.stringIterator(unSweetendDotNotation),
-                unSweetendDotNotation );
+        List<String> actual = SpecStringParser.parseDotNotation( Lists.<String>newArrayList(), SpecStringParser.stringIterator( unSweetendDotNotation ), unSweetendDotNotation );
 
         Assert.assertEquals( actual, expected, "Failed test name " + testName );
     }
@@ -89,7 +89,7 @@ public class SpecParsingTest {
     @Test(dataProvider = "removeEscapeCharsTests" )
     public void testRemoveEscapeChars( String testName, String input, String expected ) {
 
-        String actual = ShiftrSpec.removeEscapeChars( input );
+        String actual = SpecStringParser.removeEscapeChars( input );
         Assert.assertEquals( actual, expected, "Failed test name " + testName );
     }
 
@@ -108,7 +108,7 @@ public class SpecParsingTest {
     @Test(dataProvider = "removeEscapedValuesTest" )
     public void testEscapeParsing( String testName, String input, String expected ) {
 
-        String actual = ShiftrSpec.removeEscapedValues( input );
+        String actual = SpecStringParser.removeEscapedValues( input );
         Assert.assertEquals( actual, expected, "Failed test name " + testName );
     }
 }

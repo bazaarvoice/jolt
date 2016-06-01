@@ -15,6 +15,8 @@
  */
 package com.bazaarvoice.jolt.common.pathelement;
 
+import com.bazaarvoice.jolt.common.Optional;
+import com.bazaarvoice.jolt.common.tree.ArrayMatchedElement;
 import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.common.reference.AmpReference;
@@ -57,7 +59,6 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
             if ( AmpReference.TOKEN.equals( firstChar ) ) {
                 r = new AmpReference( meat );
                 apt = ArrayPathType.REFERENCE;
-
                 canonicalForm = "[" + r.getCanonicalForm() + "]";
             }
             else if ( HashReference.TOKEN.equals( firstChar ) ) {
@@ -153,11 +154,30 @@ public class ArrayPathElement extends BasePathElement implements MatchablePathEl
         }
     }
 
+    public Integer getExplicitArrayIndex() {
+        try {
+            return Integer.parseInt( arrayIndex );
+        }
+        catch ( Exception ignored ) {
+            return null;
+        }
+    }
+
+    public boolean isExplicitArrayIndex() {
+        return arrayPathType.equals( ArrayPathType.EXPLICIT_INDEX );
+    }
+
     @Override
     public MatchedElement match( String dataKey, WalkedPath walkedPath ) {
         String evaled = evaluate( walkedPath );
         if ( evaled.equals( dataKey ) ) {
-            return new MatchedElement( evaled );
+            Optional<Integer> origSizeOptional = walkedPath.lastElement().getOrigSize();
+            if(origSizeOptional.isPresent()) {
+                return new ArrayMatchedElement( evaled, origSizeOptional.get());
+            }
+            else {
+                return null;
+            }
         }
         return null;
     }

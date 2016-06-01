@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.bazaarvoice.jolt.shiftr;
+package com.bazaarvoice.jolt.common;
 
 import com.bazaarvoice.jolt.traversr.SimpleTraversr;
 import com.bazaarvoice.jolt.traversr.Traversr;

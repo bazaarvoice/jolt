@@ -1,0 +1,62 @@
+{
+    "input": {
+        "photo": {
+            "Sizes": {
+                "thumbnail": {
+                    "Url": "http://test.com/0001/1234/photoThumb.jpg",
+                    "Id": "thumbnail"
+                },
+                "normal": {
+                    "Url": "http://test.com/0001/1234/photo.jpg",
+                    "Id": "normal"
+                }
+            }
+        }
+    },
+
+    "spec": {
+        "photo": {
+            "Sizes": {
+                "thumbnail": {
+                    "label": "^textValues.&3.&1"
+                },
+                "normal": {
+                    "label": "^textValues.&3.&1"
+                }
+            },
+            "message": "^textValues.&0.text",
+            "default": "some default value"
+        }
+    },
+
+    "context": {
+        "textValues": {
+            "photo": {
+                "normal": "normal photo label",
+                "thumbnail": "thumbnail photo label"
+            },
+            "message": {
+                "text": "powered by bv"
+            }
+        }
+    },
+
+    "OVERWRITE": {
+        "photo": {
+            "Sizes": {
+                "thumbnail": {
+                    "Url": "http://test.com/0001/1234/photoThumb.jpg",
+                    "Id": "thumbnail",
+                    "label": "thumbnail photo label"
+                },
+                "normal": {
+                    "Url": "http://test.com/0001/1234/photo.jpg",
+                    "Id": "normal",
+                    "label": "normal photo label"
+                }
+            },
+            "message": "powered by bv",
+            "default": "some default value"
+        }
+    }
+}

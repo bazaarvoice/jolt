@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.shiftr;
 
+import com.bazaarvoice.jolt.common.PathEvaluatingTraversal;
 import com.bazaarvoice.jolt.traversr.Traversr;
 
 import java.util.List;

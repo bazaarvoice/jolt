@@ -1,0 +1,50 @@
+{
+    "input": {
+        "thumbnail": [
+            {
+                "Url": "http://test.com/0001/1234/photoThumb.jpg",
+                "Id": "thumbnail-1"
+            },
+            {
+                "Url": "http://test.com/0002/1234/photoThumb.jpg",
+                "Id": "thumbnail-2"
+            }
+        ],
+        "default": "defaultValue"
+    },
+
+    "spec": {
+        "thumbnail": {
+            "*": {
+                "label": "^photo.label.thumbnail",
+                "default": "@(3,default)"
+            }
+        }
+    },
+
+    "context": {
+        "photo": {
+            "label": {
+                "thumbnail": "thumbnail for photo"
+            }
+        }
+    },
+
+    "OVERWRITE": {
+        "thumbnail": [
+            {
+                "Url": "http://test.com/0001/1234/photoThumb.jpg",
+                "Id": "thumbnail-1",
+                "label": "thumbnail for photo",
+                "default": "defaultValue"
+            },
+            {
+                "Url": "http://test.com/0002/1234/photoThumb.jpg",
+                "Id": "thumbnail-2",
+                "label": "thumbnail for photo",
+                "default": "defaultValue"
+            }
+        ],
+        "default": "defaultValue"
+    }
+}

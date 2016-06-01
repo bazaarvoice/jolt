@@ -15,18 +15,39 @@
  */
 package com.bazaarvoice.jolt.shiftr.spec;
 
+import com.bazaarvoice.jolt.common.ComputedKeysComparator;
+import com.bazaarvoice.jolt.common.ExecutionStrategy;
 import com.bazaarvoice.jolt.common.Optional;
-import com.bazaarvoice.jolt.common.pathelement.*;
+import com.bazaarvoice.jolt.common.pathelement.AmpPathElement;
+import com.bazaarvoice.jolt.common.pathelement.AtPathElement;
+import com.bazaarvoice.jolt.common.pathelement.DollarPathElement;
+import com.bazaarvoice.jolt.common.pathelement.HashPathElement;
+import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
+import com.bazaarvoice.jolt.common.pathelement.StarAllPathElement;
+import com.bazaarvoice.jolt.common.pathelement.StarDoublePathElement;
+import com.bazaarvoice.jolt.common.pathelement.StarPathElement;
+import com.bazaarvoice.jolt.common.pathelement.StarRegexPathElement;
+import com.bazaarvoice.jolt.common.pathelement.StarSinglePathElement;
+import com.bazaarvoice.jolt.common.pathelement.TransposePathElement;
+import com.bazaarvoice.jolt.common.spec.BaseSpec;
+import com.bazaarvoice.jolt.common.spec.OrderedCompositeSpec;
+import com.bazaarvoice.jolt.common.spec.SpecBuilder;
 import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
+import com.bazaarvoice.jolt.shiftr.ShiftrSpecBuilder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Spec that has children, which it builds and then manages during Transforms.
  */
-public class ShiftrCompositeSpec extends ShiftrSpec {
+public class ShiftrCompositeSpec extends ShiftrSpec implements OrderedCompositeSpec {
 
     /*
     Example of how a Spec gets parsed into Composite and LeafSpec objects :
@@ -48,14 +69,25 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
     }
     */
 
+    private static final HashMap<Class, Integer> orderMap;
+    private static final ComputedKeysComparator computedKeysComparator;
+    private static final SpecBuilder<ShiftrSpec> specBuilder;
 
-    private static final ComputedKeysComparator computedKeysComparator = new ComputedKeysComparator();
+    static {
+        orderMap = new HashMap<>();
+        orderMap.put( AmpPathElement.class, 1 );
+        orderMap.put( StarRegexPathElement.class, 2 );
+        orderMap.put( StarDoublePathElement.class, 3 );
+        orderMap.put( StarSinglePathElement.class, 4 );
+        orderMap.put( StarAllPathElement.class, 5 );
+        computedKeysComparator = ComputedKeysComparator.fromOrder( orderMap );
+        specBuilder = new ShiftrSpecBuilder();
+    }
 
     // Three different buckets for the children of this CompositeSpec
     private final List<ShiftrSpec> specialChildren;         // children that aren't actually triggered off the input data
     private final Map<String, ShiftrSpec> literalChildren;  // children that are simple exact matches against the input data
     private final List<ShiftrSpec> computedChildren;        // children that are regex matches against the input data
-
     private final ExecutionStrategy executionStrategy;
 
     public ShiftrCompositeSpec(String rawKey, Map<String, Object> spec ) {
@@ -73,7 +105,7 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
             throw new SpecException( "$ Shiftr key, can not have children." );
         }
 
-        List<ShiftrSpec> children = createChildren( spec );
+        List<ShiftrSpec> children = specBuilder.createSpec( spec );
 
         if ( children.isEmpty() ) {
             throw new SpecException( "Shift ShiftrSpec format error : ShiftrSpec line with empty {} as value is not valid." );
@@ -96,7 +128,7 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
         }
 
         // Only the computed children need to be sorted
-        Collections.sort(computed, computedKeysComparator);
+        Collections.sort( computed, computedKeysComparator );
 
         special.trimToSize();
         computed.trimToSize();
@@ -105,50 +137,44 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
         literalChildren = Collections.unmodifiableMap( literals );
         computedChildren = Collections.unmodifiableList( computed );
 
-        executionStrategy = ExecutionStrategy.determineStrategy( literalChildren, computedChildren );
+        executionStrategy = determineExecutionStrategy();
     }
 
 
-    /**
-     * Recursively walk the spec input tree.
-     */
-    private static List<ShiftrSpec> createChildren( Map<String, Object> rawSpec ) {
+    @Override
+    public Map<String, ShiftrSpec> getLiteralChildren() {
+        return literalChildren;
+    }
 
-        List<ShiftrSpec> result = new ArrayList<>();
-        Set<String> actualKeys = new HashSet<>();
+    @Override
+    public List<ShiftrSpec> getComputedChildren() {
+        return computedChildren;
+    }
 
-        for ( String rawLhsStr : rawSpec.keySet() ) {
+    @Override
+    public ExecutionStrategy determineExecutionStrategy() {
+        if ( computedChildren.isEmpty() ) {
+            return ExecutionStrategy.AVAILABLE_LITERALS;
+        }
+        else if ( literalChildren.isEmpty() ) {
+            return ExecutionStrategy.COMPUTED;
+        }
 
-            Object rawRhs = rawSpec.get( rawLhsStr );
-            String[] keyStrings = rawLhsStr.split( "\\|" ); // unwrap the syntactic sugar of the OR
-            for ( String keyString : keyStrings ) {
+        for ( BaseSpec computed : computedChildren ) {
+            if ( ! ( computed.getPathElement() instanceof StarPathElement ) ) {
+                return ExecutionStrategy.CONFLICT;
+            }
 
-                ShiftrSpec childSpec;
-                if( rawRhs instanceof Map ) {
-                    childSpec = new ShiftrCompositeSpec(keyString, (Map<String, Object>) rawRhs );
+            StarPathElement starPathElement = (StarPathElement) computed.getPathElement();
+
+            for ( String literal : literalChildren.keySet() ) {
+                if ( starPathElement.stringMatch( literal ) ) {
+                    return ExecutionStrategy.CONFLICT;
                 }
-                else {
-                    childSpec = new ShiftrLeafSpec(keyString, rawRhs );
-                }
-
-                String childCanonicalString = childSpec.pathElement.getCanonicalForm();
-
-                if ( actualKeys.contains( childCanonicalString ) ) {
-                    throw new IllegalArgumentException( "Duplicate canonical Shiftr key found : " + childCanonicalString );
-                }
-
-                actualKeys.add( childCanonicalString );
-
-                result.add(childSpec);
             }
         }
 
-        return result;
-    }
-
-    // visible for test
-    List<ShiftrSpec> getComputedChildren() {
-        return computedChildren;
+        return ExecutionStrategy.AVAILABLE_LITERALS_WITH_COMPUTED;
     }
 
     /**
@@ -163,7 +189,7 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
      * @return true if this this spec "handles" the inputKey such that no sibling specs need to see it
      */
     @Override
-    public boolean apply( String inputKey, Object input, WalkedPath walkedPath, Map<String,Object> output )
+    public boolean apply( String inputKey, Object input, WalkedPath walkedPath, Map<String,Object> output, Map<String, Object> context )
     {
         MatchedElement thisLevel = pathElement.match( inputKey, walkedPath );
         if ( thisLevel == null ) {
@@ -191,11 +217,11 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
 
         // Handle any special / key based children first, but don't have them block anything
         for( ShiftrSpec subSpec : specialChildren ) {
-            subSpec.apply( inputKey, input, walkedPath, output );
+            subSpec.apply( inputKey, input, walkedPath, output, context );
         }
 
         // Handle the rest of the children
-        executionStrategy.process( this, input, walkedPath, output );
+        executionStrategy.process( this, input, walkedPath, output, context );
 
         // We are done, so remove ourselves from the walkedPath
         walkedPath.removeLast();
@@ -204,274 +230,5 @@ public class ShiftrCompositeSpec extends ShiftrSpec {
         walkedPath.lastElement().getMatchedElement().incrementHashCount();
 
         return true;
-    }
-
-    private enum ExecutionStrategy {
-
-        /**
-         * The performance assumption built into this code is that the literal values in the spec, are generally smaller
-         *  than the number of potential keys to check in the input.
-         *
-         *  More specifically, the assumption here is that the set of literalChildren is smaller than the input "keyset".
-         */
-        LITERALS_ONLY {
-            @Override
-            void processMap( ShiftrCompositeSpec spec, Map<String, Object> inputMap, WalkedPath walkedPath, Map<String, Object> output ) {
-
-                for( String key : spec.literalChildren.keySet() ) {
-
-                    // only recurse down if the literalChild is a key in the input map
-                    if ( inputMap.containsKey( key ) ) {
-
-                        // At this point subInput could be null, and that is ok
-                        Object subInput = inputMap.get( key );
-                        spec.literalChildren.get( key ).apply( key, subInput, walkedPath, output );
-                    }
-                }
-            }
-
-            @Override
-            void processList( ShiftrCompositeSpec spec, List<Object> inputList, WalkedPath walkedPath, Map<String, Object> output ) {
-
-                for( String key : spec.literalChildren.keySet() ) {
-
-                    int keyInt = Integer.MAX_VALUE;
-
-                    try {
-                        keyInt = Integer.parseInt( key );
-                    }
-                    catch( NumberFormatException nfe ) {
-                        // If the data is an Array, but the spec keys are Non-Integer Strings,
-                        //  we are annoyed, but we don't stop the whole transform.
-                        // Just this part of the Transform won't work.
-                    }
-
-                    if ( keyInt < inputList.size() ) {
-
-                        Object subInput = inputList.get( keyInt );
-
-                        // we know the .get(key) will not return null, because we are iterating over its keys
-                        spec.literalChildren.get( key ).apply( key, subInput, walkedPath, output );
-                    }
-                }
-            }
-            @Override
-            void processScalar( ShiftrCompositeSpec spec, String scalarInput, WalkedPath walkedPath, Map<String, Object> output ) {
-
-                ShiftrSpec literalChild = spec.literalChildren.get( scalarInput );
-                if ( literalChild != null ) {
-                    literalChild.apply( scalarInput, null, walkedPath, output );
-                }
-            }
-        },
-
-        /**
-         * If the CompositeSpec only has computed children, we can avoid checking the literalChildren altogether, and
-         *  we can do a slightly better iteration (HashSet.entrySet) across the input.
-         */
-        COMPUTED_ONLY {
-            @Override
-            void processMap( ShiftrCompositeSpec spec, Map<String, Object> inputMap, WalkedPath walkedPath, Map<String, Object> output ) {
-
-                // Iterate over the whole entrySet rather than the keyset with follow on gets of the values
-                for( Map.Entry<String, Object> inputEntry : inputMap.entrySet() ) {
-                    applyKeyToComputed( spec.computedChildren, walkedPath, output, inputEntry.getKey(), inputEntry.getValue() );
-                }
-            }
-
-            @Override
-            void processList( ShiftrCompositeSpec spec, List<Object> inputList, WalkedPath walkedPath, Map<String, Object> output ) {
-
-                for (int index = 0; index < inputList.size(); index++) {
-                    Object subInput = inputList.get( index );
-                    String subKeyStr = Integer.toString( index );
-
-                    applyKeyToComputed( spec.computedChildren, walkedPath, output, subKeyStr, subInput );
-                }
-            }
-
-            @Override
-            void processScalar( ShiftrCompositeSpec spec, String scalarInput, WalkedPath walkedPath, Map<String, Object> output ) {
-                applyKeyToComputed( spec.computedChildren, walkedPath, output, scalarInput, null );
-            }
-        },
-
-        /**
-         * In order to implement the Shiftr key precedence order, we have to process each input "key", first to
-         *  see if it matches any literals, and if it does not, check against each of the computed
-         */
-        CONFLICT {
-            @Override
-            void processMap( ShiftrCompositeSpec spec, Map<String, Object> inputMap, WalkedPath walkedPath, Map<String, Object> output ) {
-
-                // Iterate over the whole entrySet rather than the keyset with follow on gets of the values
-                for( Map.Entry<String, Object> inputEntry : inputMap.entrySet() ) {
-                    applyKeyToLiteralAndComputed( spec, inputEntry.getKey(), inputEntry.getValue(), walkedPath, output );
-                }
-            }
-
-            @Override
-            void processList( ShiftrCompositeSpec spec, List<Object> inputList, WalkedPath walkedPath, Map<String, Object> output ) {
-
-                for (int index = 0; index < inputList.size(); index++) {
-                    Object subInput = inputList.get( index );
-                    String subKeyStr = Integer.toString( index );
-
-                    applyKeyToLiteralAndComputed( spec, subKeyStr, subInput, walkedPath, output );
-                }
-            }
-
-            @Override
-            void processScalar( ShiftrCompositeSpec spec, String scalarInput, WalkedPath walkedPath, Map<String, Object> output ) {
-                applyKeyToLiteralAndComputed( spec, scalarInput, null, walkedPath, output );
-            }
-        },
-
-        /**
-         * We have both literal and computed children, but we have determined that there is no way an input key
-         *  could match one of our literal and computed children.  Hence we can safely run each one.
-         */
-        NO_CONFLICT {
-            @Override
-            void processMap( ShiftrCompositeSpec spec, Map<String, Object> inputMap, WalkedPath walkedPath, Map<String, Object> output ) {
-                LITERALS_ONLY.processMap( spec, inputMap, walkedPath, output );
-                COMPUTED_ONLY.processMap( spec, inputMap, walkedPath, output );
-            }
-
-            @Override
-            void processList( ShiftrCompositeSpec spec, List<Object> inputList, WalkedPath walkedPath, Map<String, Object> output ) {
-                LITERALS_ONLY.processList( spec, inputList, walkedPath, output );
-                COMPUTED_ONLY.processList( spec, inputList, walkedPath, output );
-            }
-
-            @Override
-            void processScalar( ShiftrCompositeSpec spec, String scalarInput, WalkedPath walkedPath, Map<String, Object> output ) {
-                LITERALS_ONLY.processScalar( spec, scalarInput, walkedPath, output );
-                COMPUTED_ONLY.processScalar( spec, scalarInput, walkedPath, output  );
-            }
-        };
-
-        @SuppressWarnings( "unchecked" )
-        public void process( ShiftrCompositeSpec spec, Object input, WalkedPath walkedPath, Map<String,Object> output ) {
-            if ( input instanceof Map) {
-                processMap( spec, (Map<String, Object>) input, walkedPath, output );
-            }
-            else if ( input instanceof List ) {
-                processList( spec, (List<Object>) input, walkedPath, output );
-            }
-            else if ( input != null ) {
-                // if not a map or list, must be a scalar
-                processScalar( spec, input.toString(), walkedPath, output );
-            }
-        }
-
-        abstract void processMap   ( ShiftrCompositeSpec spec, Map<String, Object> inputMap, WalkedPath walkedPath, Map<String,Object> output );
-        abstract void processList  ( ShiftrCompositeSpec spec, List<Object> inputList      , WalkedPath walkedPath, Map<String,Object> output );
-        abstract void processScalar( ShiftrCompositeSpec spec, String scalarInput          , WalkedPath walkedPath, Map<String,Object> output );
-
-
-        /**
-         * This is the method we are trying to avoid calling.  It implements the Shiftr matching behavior
-         *  when we have both literal and computed children.
-         *
-         * For each input key, we see if it matches a literal, and it not, try to match the key with every computed child.
-         *
-         * Worse case : n + n * c, where
-         *   n is number of input keys
-         *   c is number of computed children
-         */
-        private static void applyKeyToLiteralAndComputed( ShiftrCompositeSpec spec, String subKeyStr, Object subInput, WalkedPath walkedPath, Map<String, Object> output ) {
-
-            ShiftrSpec literalChild = spec.literalChildren.get( subKeyStr );
-
-            // if the subKeyStr found a literalChild, then we do not have to try to match any of the computed ones
-            if ( literalChild != null ) {
-                literalChild.apply( subKeyStr, subInput, walkedPath, output );
-            }
-            else {
-                // If no literal spec key matched, iterate through all the computedChildren
-                applyKeyToComputed( spec.computedChildren, walkedPath, output, subKeyStr, subInput );
-            }
-        }
-
-        private static void applyKeyToComputed( List<ShiftrSpec> computedChildren, WalkedPath walkedPath, Map<String, Object> output, String subKeyStr, Object subInput ) {
-
-            // Iterate through all the computedChildren until we find a match
-            // This relies upon the computedChildren having already been sorted in priority order
-            for ( ShiftrSpec computedChild : computedChildren ) {
-                // if the computed key does not match it will quickly return false
-                if ( computedChild.apply( subKeyStr, subInput, walkedPath, output ) ) {
-                    break;
-                }
-            }
-        }
-
-        public static ExecutionStrategy determineStrategy( Map<String, ShiftrSpec> literalChildren, List<ShiftrSpec> computedChildren ) {
-
-            if ( computedChildren.isEmpty() ) {
-                return ExecutionStrategy.LITERALS_ONLY;
-            }
-            else if ( literalChildren.isEmpty() ) {
-                return ExecutionStrategy.COMPUTED_ONLY;
-            }
-
-            for ( ShiftrSpec computed : computedChildren ) {
-                if ( ! ( computed.pathElement instanceof StarPathElement ) ) {
-                    return ExecutionStrategy.CONFLICT;
-                }
-
-                StarPathElement starPathElement = (StarPathElement) computed.pathElement;
-
-                for ( String literal : literalChildren.keySet() ) {
-                    if ( starPathElement.stringMatch( literal ) ) {
-                        return ExecutionStrategy.CONFLICT;
-                    }
-                }
-            }
-
-            return ExecutionStrategy.NO_CONFLICT;
-        }
-    }
-
-    public static class ComputedKeysComparator implements Comparator<ShiftrSpec> {
-
-        private final static HashMap<Class, Integer> orderMap = new HashMap<>();
-
-        static {
-            orderMap.put( AmpPathElement.class, 1 );
-            // TODO this feels weird, but it works
-            orderMap.put( StarRegexPathElement.class, 2 );
-            orderMap.put( StarDoublePathElement.class, 3 );
-            orderMap.put( StarSinglePathElement.class, 4 );
-            orderMap.put( StarAllPathElement.class, 5 );
-        }
-
-        @Override
-        public int compare( ShiftrSpec a, ShiftrSpec b ) {
-
-            PathElement ape = a.pathElement;
-            PathElement bpe = b.pathElement;
-
-            int aa = orderMap.get( ape.getClass() );
-            int bb = orderMap.get( bpe.getClass() );
-
-            int elementsEqual =  aa < bb ? -1 : aa == bb ? 0 : 1;
-
-            if ( elementsEqual != 0 ) {
-                return elementsEqual;
-            }
-
-            // At this point we have two PathElements of the same type.
-            String acf = ape.getCanonicalForm();
-            String bcf = bpe.getCanonicalForm();
-
-            int alen = acf.length();
-            int blen = bcf.length();
-
-            // Sort them by length, with the longest (most specific) being first
-            //  aka "rating-range-*" needs to be evaluated before "rating-*", or else "rating-*" will catch too much
-            // If the lengths are equal, sort alphabetically as the last ditch deterministic behavior
-            return alen > blen ? -1 : alen == blen ? acf.compareTo( bcf ) : 1;
-        }
     }
 }

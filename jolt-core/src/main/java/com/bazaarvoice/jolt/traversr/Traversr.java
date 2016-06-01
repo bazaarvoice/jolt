@@ -110,8 +110,6 @@ public abstract class Traversr<DataType> {
     }
 
     /**
-     * TODO : Make this use the Java 8 optional, when Jolt moves to 8
-     *
      * Note : Calling this method MAY modify the tree object by adding new Maps and Lists as needed
      *  for the traversal.  This is determined by the behavior of the implementations of the
      *  abstract methods of this class.
