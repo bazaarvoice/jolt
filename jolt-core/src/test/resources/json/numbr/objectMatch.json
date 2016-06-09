@@ -1,0 +1,82 @@
+{
+    "input": {
+        "age": 22.5,
+        "location": {
+            "place": "home",
+            "lat": 38,
+            "long": 99.03
+        },
+        "upc": 8232610032,
+        "size": {
+            "text": "good size",
+            "ratings": {
+                "first": 1,
+                "second": 2.5,
+                "third": 3.1
+            }
+        },
+        "fit": {
+            "text": "good fit",
+            "ratings": {
+                "first": 4.7,
+                "second": 5,
+                "third": 6.12
+            }
+        },
+        "unmodifiedObject": {
+            "text": "good color",
+            "ratings": {
+                "first": 7.18,
+                "second": 8,
+                "third": 9.91
+            }
+        }
+    },
+
+    "spec": {
+        "age": "int",
+        "location": {
+            "lat": "double",
+            "long": "double"
+        },
+        "size|fit": {
+            "ratings": {
+                "*": "int"
+            }
+        }
+    },
+
+    "expected": {
+        "age": 22,
+        "location": {
+            "place": "home",
+            "lat": 38.0,
+            "long": 99.03
+        },
+        "upc": 8232610032,
+        "size": {
+            "text": "good size",
+            "ratings": {
+                "first": 1,
+                "second": 2,
+                "third": 3
+            }
+        },
+        "fit": {
+            "text": "good fit",
+            "ratings": {
+                "first": 4,
+                "second": 5,
+                "third": 6
+            }
+        },
+        "unmodifiedObject": {
+            "text": "good color",
+            "ratings": {
+                "first": 7.18,
+                "second": 8,
+                "third": 9.91
+            }
+        }
+    }
+}

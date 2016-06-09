@@ -1,0 +1,28 @@
+{
+    "input": {
+        "id": 123,
+        "toInt": 3.0,
+        "toDouble": 5,
+        "unmodifiedInt": 7,
+        "unmodifiedDouble": 9.0,
+        "unmodifiedObject": {
+            "key": "value"
+        }
+    },
+
+    "spec": {
+        "toInt": "int",
+        "toDouble": "double"
+    },
+
+    "expected": {
+        "id": 123,
+        "toInt": 3,
+        "toDouble": 5.0,
+        "unmodifiedInt": 7,
+        "unmodifiedDouble": 9.0,
+        "unmodifiedObject": {
+            "key": "value"
+        }
+    }
+}

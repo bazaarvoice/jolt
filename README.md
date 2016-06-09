@@ -42,6 +42,7 @@ The Stock transforms are:
     remove      : remove data from the tree
     sort        : sort the Map key values alphabetically ( for debugging and human readability )
     cardinality : "fix" the cardinality of input data.  Eg, the "urls" element is usually a List, but if there is only one, then it is a String
+    number      : convert a numeric value from one type to another.  Eg, convert an integer to a double
 
 Each transform has it's own DSL (Domain Specific Language) in order to facilitate it's narrow job.
 
@@ -61,6 +62,7 @@ Javadoc explaining each transform DSL :
 * [remove](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Removr.java)
 * [cardinality](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/CardinalityTransform.java)
 * [sort](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Sortr.java)
+* [number](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Numbr.java)
 * full qualified Java ClassName : Class implements the Transform or ContextualTransform interfaces, and can optionally be SpecDriven (marker interface)
     * [Transform](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Transform.java) interface
     * [SpecDriven](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/SpecDriven.java)

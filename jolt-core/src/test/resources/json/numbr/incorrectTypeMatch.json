@@ -1,0 +1,26 @@
+{
+    "input": {
+        "age": "twenty",
+        "height": "tall",
+        "weight": {
+            "lbs": 145.5
+        },
+        "sizes": 7.3
+    },
+
+    "spec": {
+        "age": "int",
+        "height": "double",
+        "weight": "int",
+        "sizes[]": "int"
+    },
+
+    "expected": {
+        "age": "twenty",
+        "height": "tall",
+        "weight": {
+            "lbs": 145.5
+        },
+        "sizes": 7.3
+    }
+}
