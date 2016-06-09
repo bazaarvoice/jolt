@@ -22,9 +22,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-
 /**
- * Handy utilities that do NOT depend on JsonUtil lives here!
+ * Handy utilities that do NOT depend on JsonUtil / Jackson live here
  */
 public class JoltUtils {
 
@@ -44,13 +43,14 @@ public class JoltUtils {
             Map<String, Object> jsonMap = cast(json);
 
             // If this level of the tree has the key we are looking for, remove it
+            // Do the lookup instead of just the remove to avoid un-necessarily
+            //  dying on ImmutableMaps.
             if ( jsonMap.containsKey( keyToRemove ) ) {
                 jsonMap.remove( keyToRemove );
             }
 
             // regardless, recurse down the tree
-            for ( String subKey : jsonMap.keySet() ) {
-                Object value = jsonMap.get( subKey );
+            for ( Object value : jsonMap.values() ) {
                 removeRecursive( value, keyToRemove );
             }
         }

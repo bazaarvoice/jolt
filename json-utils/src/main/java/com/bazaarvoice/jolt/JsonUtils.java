@@ -63,13 +63,14 @@ public class JsonUtils {
             Map<String, Object> jsonMap = (Map<String, Object>) json;
 
             // If this level of the tree has the key we are looking for, remove it
+            // Do the lookup instead of just the remove to avoid un-necessarily
+            //  dying on ImmutableMaps.
             if ( jsonMap.containsKey( keyToRemove ) ) {
                 jsonMap.remove( keyToRemove );
             }
 
             // regardless, recurse down the tree
-            for ( String subKey : jsonMap.keySet() ) {
-                Object value = jsonMap.get( subKey );
+            for ( Object value : jsonMap.values() ) {
                 removeRecursive( value, keyToRemove );
             }
         }
