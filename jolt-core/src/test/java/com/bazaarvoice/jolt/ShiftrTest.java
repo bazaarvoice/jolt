@@ -56,6 +56,7 @@ public class ShiftrTest {
             {"objectToArray"},
             {"passNullThru"},
             {"passThru"},
+            {"pollaxman_218_duplicate_speclines_bug"},
             {"prefixDataToArray"},
             {"prefixedData"},
             {"prefixSoupToBuckets"},
