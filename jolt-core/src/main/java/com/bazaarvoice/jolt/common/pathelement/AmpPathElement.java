@@ -69,6 +69,7 @@ public class AmpPathElement extends BasePathElement implements MatchablePathElem
         }
         if ( literal.length() > 0 ) {
             tok.add( literal.toString() );
+            canonicalBuilder.append( literal.toString() );
         }
 
         tok.trimToSize();

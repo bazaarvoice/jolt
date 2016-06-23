@@ -1,0 +1,34 @@
+{
+    "input" : {
+        "clone1_Physician" : "Physician_10000",
+        "clone2_Physician" : "Physician_10000",
+        "clone1_GCPerProIdenInfoPhyInfoStreet" : "Street",
+        "clone1_GCPerProIdenInfoPhyInfoAddLin2" : "Address1",
+        "clone1_GCPerProIdenInfoPhyInfoAddLin3" : "Address3",
+        "clone2_GCPerProIdenInfoPhyInfoStreet" : "Address1",
+        "clone2_GCPerProIdenInfoPhyInfoAddLin2" : "addresdd"
+    },
+    "spec" : {
+        // match clone1_Physician and clone2_Physician
+        "clone*_Physician" : {
+            // match the RHS of Physician_10000
+            "Physician_1000*" : {
+                // if we matched then grab the "number" of the physician and use that to process the address
+                "@(2,clone&(1,1)_GCPerProIdenInfoPhyInfoStreet)" : "Physician&(2,1).street",
+                "@(2,clone&(1,1)_GCPerProIdenInfoPhyInfoAddLin2)" : "Physician&(2,1).adderLin2",
+                "@(2,clone&(1,1)_GCPerProIdenInfoPhyInfoAddLin3)" : "Physician&(2,1).adderLin3"
+            }
+        }
+    },
+    "expected" : {
+        "Physician1" : {
+            "street" : "Street",
+            "adderLin2" : "Address1",
+            "adderLin3" : "Address3"
+        },
+        "Physician2" : {
+            "street" : "Address1",
+            "adderLin2" : "addresdd"
+        }
+    }
+}
