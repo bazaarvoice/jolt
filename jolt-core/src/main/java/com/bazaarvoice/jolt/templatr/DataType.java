@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.bazaarvoice.jolt.common;
+package com.bazaarvoice.jolt.templatr;
 
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
 
 import java.util.ArrayList;

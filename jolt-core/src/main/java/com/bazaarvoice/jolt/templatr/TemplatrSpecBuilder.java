@@ -16,7 +16,6 @@
 
 package com.bazaarvoice.jolt.templatr;
 
-import com.bazaarvoice.jolt.common.OpMode;
 import com.bazaarvoice.jolt.common.spec.SpecBuilder;
 import com.bazaarvoice.jolt.templatr.spec.TemplatrCompositeSpec;
 import com.bazaarvoice.jolt.templatr.spec.TemplatrContextLookupLeafSpec;

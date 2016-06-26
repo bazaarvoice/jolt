@@ -20,8 +20,6 @@ import com.bazaarvoice.jolt.common.tree.ArrayMatchedElement;
 import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
 
-import java.util.List;
-
 /**
  * PathElement for the lone "*" wildcard.   In this case we can avoid doing any
  *  regex or string comparison work at all.

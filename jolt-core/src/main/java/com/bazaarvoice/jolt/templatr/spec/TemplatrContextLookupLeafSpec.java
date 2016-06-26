@@ -18,10 +18,9 @@ package com.bazaarvoice.jolt.templatr.spec;
 
 import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.common.PathEvaluatingTraversal;
-import com.bazaarvoice.jolt.common.TraversalBuilder;
 import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
-import com.bazaarvoice.jolt.common.OpMode;
+import com.bazaarvoice.jolt.templatr.OpMode;
 
 import java.util.Map;
 

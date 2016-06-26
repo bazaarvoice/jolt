@@ -19,7 +19,6 @@ package com.bazaarvoice.jolt.common;
 import com.bazaarvoice.jolt.common.spec.BaseSpec;
 import com.bazaarvoice.jolt.common.spec.OrderedCompositeSpec;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
-import com.bazaarvoice.jolt.templatr.spec.TemplatrCompositeSpec;
 
 import java.util.List;
 import java.util.Map;

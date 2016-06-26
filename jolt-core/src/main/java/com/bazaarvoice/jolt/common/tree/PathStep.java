@@ -17,9 +17,6 @@ package com.bazaarvoice.jolt.common.tree;
 
 import com.bazaarvoice.jolt.common.Optional;
 
-import javax.swing.text.html.Option;
-import java.util.List;
-
 /**
  * A tuple class that contains the data for one level of a
  *  tree walk, aka a reference to the input for that level, and

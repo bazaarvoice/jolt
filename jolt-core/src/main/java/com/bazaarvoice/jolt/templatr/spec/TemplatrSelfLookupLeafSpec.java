@@ -23,7 +23,7 @@ import com.bazaarvoice.jolt.common.pathelement.TransposePathElement;
 import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.common.OpMode;
+import com.bazaarvoice.jolt.templatr.OpMode;
 
 import java.util.Map;
 

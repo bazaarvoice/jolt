@@ -16,7 +16,6 @@
 package com.bazaarvoice.jolt.shiftr.spec;
 
 import com.bazaarvoice.jolt.JsonUtils;
-import com.bazaarvoice.jolt.Shiftr;
 import com.bazaarvoice.jolt.SpecDriven;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;

@@ -19,7 +19,7 @@ package com.bazaarvoice.jolt;
 import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.common.OpMode;
+import com.bazaarvoice.jolt.templatr.OpMode;
 import com.bazaarvoice.jolt.templatr.spec.TemplatrCompositeSpec;
 import com.bazaarvoice.jolt.templatr.TemplatrSpecBuilder;
 

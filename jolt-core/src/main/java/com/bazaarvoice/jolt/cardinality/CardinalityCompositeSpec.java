@@ -38,7 +38,7 @@ import java.util.Set;
 public class CardinalityCompositeSpec extends CardinalitySpec {
 
     private static final HashMap<Class, Integer> orderMap;
-    private static final com.bazaarvoice.jolt.common.ComputedKeysComparator computedKeysComparator;
+    private static final ComputedKeysComparator computedKeysComparator;
 
     static {
         orderMap = new HashMap<>();

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.bazaarvoice.jolt.common;
+package com.bazaarvoice.jolt.templatr;
 
 import java.util.List;
 import java.util.Map;
