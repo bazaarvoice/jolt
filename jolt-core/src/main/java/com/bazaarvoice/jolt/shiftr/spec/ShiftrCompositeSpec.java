@@ -33,8 +33,8 @@ import com.bazaarvoice.jolt.common.spec.BaseSpec;
 import com.bazaarvoice.jolt.common.spec.OrderedCompositeSpec;
 import com.bazaarvoice.jolt.common.spec.SpecBuilder;
 import com.bazaarvoice.jolt.common.tree.MatchedElement;
-import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
+import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.shiftr.ShiftrSpecBuilder;
 
 import java.util.ArrayList;

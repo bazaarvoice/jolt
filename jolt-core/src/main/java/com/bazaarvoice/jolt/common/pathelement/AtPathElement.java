@@ -16,8 +16,8 @@
 package com.bazaarvoice.jolt.common.pathelement;
 
 import com.bazaarvoice.jolt.common.tree.MatchedElement;
-import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
+import com.bazaarvoice.jolt.exception.SpecException;
 
 public class AtPathElement extends BasePathElement implements MatchablePathElement {
     public AtPathElement( String key ) {

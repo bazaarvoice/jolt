@@ -15,9 +15,9 @@
  */
 package com.bazaarvoice.jolt.common;
 
-import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.common.pathelement.EvaluatablePathElement;
 import com.bazaarvoice.jolt.common.pathelement.PathElement;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.traversr.Traversr;
 import com.bazaarvoice.jolt.utils.StringTools;

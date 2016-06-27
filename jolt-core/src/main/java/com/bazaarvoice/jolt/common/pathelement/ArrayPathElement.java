@@ -16,14 +16,14 @@
 package com.bazaarvoice.jolt.common.pathelement;
 
 import com.bazaarvoice.jolt.common.Optional;
-import com.bazaarvoice.jolt.common.tree.ArrayMatchedElement;
-import com.bazaarvoice.jolt.common.tree.MatchedElement;
-import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.common.reference.AmpReference;
-import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.common.reference.HashReference;
 import com.bazaarvoice.jolt.common.reference.PathAndGroupReference;
 import com.bazaarvoice.jolt.common.reference.PathReference;
+import com.bazaarvoice.jolt.common.tree.ArrayMatchedElement;
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
+import com.bazaarvoice.jolt.exception.SpecException;
 
 public class ArrayPathElement extends BasePathElement implements MatchablePathElement, EvaluatablePathElement {
 

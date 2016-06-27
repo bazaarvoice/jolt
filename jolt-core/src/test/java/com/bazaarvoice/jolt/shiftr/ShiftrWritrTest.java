@@ -16,15 +16,15 @@
 package com.bazaarvoice.jolt.shiftr;
 
 import com.bazaarvoice.jolt.common.PathElementBuilder;
-import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.common.pathelement.AmpPathElement;
 import com.bazaarvoice.jolt.common.pathelement.ArrayPathElement;
 import com.bazaarvoice.jolt.common.pathelement.EvaluatablePathElement;
-import com.bazaarvoice.jolt.common.tree.MatchedElement;
+import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.common.pathelement.MatchablePathElement;
 import com.bazaarvoice.jolt.common.pathelement.PathElement;
-import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.common.reference.AmpReference;
+import com.bazaarvoice.jolt.common.tree.MatchedElement;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

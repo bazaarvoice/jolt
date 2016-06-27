@@ -16,8 +16,8 @@
 package com.bazaarvoice.jolt;
 
 import com.bazaarvoice.jolt.cardinality.CardinalityCompositeSpec;
-import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
+import com.bazaarvoice.jolt.exception.SpecException;
 
 import javax.inject.Inject;
 import java.util.Map;

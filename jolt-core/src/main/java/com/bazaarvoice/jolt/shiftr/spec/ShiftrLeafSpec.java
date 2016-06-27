@@ -16,6 +16,7 @@
 package com.bazaarvoice.jolt.shiftr.spec;
 
 import com.bazaarvoice.jolt.common.Optional;
+import com.bazaarvoice.jolt.common.PathEvaluatingTraversal;
 import com.bazaarvoice.jolt.common.TraversalBuilder;
 import com.bazaarvoice.jolt.common.pathelement.AtPathElement;
 import com.bazaarvoice.jolt.common.pathelement.DollarPathElement;
@@ -24,7 +25,6 @@ import com.bazaarvoice.jolt.common.pathelement.TransposePathElement;
 import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.common.PathEvaluatingTraversal;
 import com.bazaarvoice.jolt.shiftr.ShiftrWriter;
 
 import java.util.ArrayList;
