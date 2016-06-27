@@ -18,10 +18,10 @@ package com.bazaarvoice.jolt.shiftr;
 import com.bazaarvoice.jolt.JoltTestUtil;
 import com.bazaarvoice.jolt.JsonUtils;
 import com.bazaarvoice.jolt.Shiftr;
+import com.bazaarvoice.jolt.common.PathElementBuilder;
 import com.bazaarvoice.jolt.common.pathelement.PathElement;
 import com.bazaarvoice.jolt.common.pathelement.TransposePathElement;
 import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.shiftr.spec.ShiftrSpec;
 import com.google.common.base.Joiner;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -175,7 +175,7 @@ public class ShiftrUnitTest {
 
     @Test(dataProvider = "validRHS" )
     public void validRHSTests( String dotNotation, String expected ) {
-        List<PathElement> paths = ShiftrSpec.parseDotNotationRHS( dotNotation );
+        List<PathElement> paths = PathElementBuilder.parseDotNotationRHS( dotNotation );
         String actualCanonicalForm = buildCanonicalString( paths );
 
         Assert.assertEquals( actualCanonicalForm, expected, "TestCase: " + dotNotation );
@@ -184,7 +184,7 @@ public class ShiftrUnitTest {
     @Test
     public void testTransposePathParsing() {
 
-        List<PathElement> paths = ShiftrSpec.parseDotNotationRHS( "test.@(2,foo\\.bar)" );
+        List<PathElement> paths = PathElementBuilder.parseDotNotationRHS( "test.@(2,foo\\.bar)" );
 
         Assert.assertEquals( paths.size(), 2 );
         TransposePathElement actualApe = (TransposePathElement) paths.get( 1 );
@@ -208,6 +208,6 @@ public class ShiftrUnitTest {
 
     @Test(dataProvider = "badRHS", expectedExceptions = SpecException.class)
     public void failureRHSTests( String dotNotation ) {
-        ShiftrSpec.parseDotNotationRHS( dotNotation );
+        PathElementBuilder.parseDotNotationRHS( dotNotation );
     }
 }

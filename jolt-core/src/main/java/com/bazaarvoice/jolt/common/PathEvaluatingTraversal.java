@@ -13,18 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.bazaarvoice.jolt.shiftr;
+package com.bazaarvoice.jolt.common;
 
-import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.common.pathelement.EvaluatablePathElement;
 import com.bazaarvoice.jolt.common.pathelement.PathElement;
 import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.shiftr.spec.ShiftrSpec;
 import com.bazaarvoice.jolt.traversr.Traversr;
 import com.bazaarvoice.jolt.utils.StringTools;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static com.bazaarvoice.jolt.common.PathElementBuilder.parseDotNotationRHS;
 
 /**
  * Combines a Traversr with the ability to evaluate References against a WalkedPath.
@@ -53,7 +57,7 @@ public abstract class PathEvaluatingTraversal {
         if ( StringTools.isNotBlank( dotNotation ) ) {
 
             // Compute the path elements.
-            paths = ShiftrSpec.parseDotNotationRHS( dotNotation );
+            paths = parseDotNotationRHS( dotNotation );
 
             // Use the canonical versions of the path elements to create the Traversr
             List<String> traversrPaths = new ArrayList<>( paths.size() );
@@ -116,7 +120,7 @@ public abstract class PathEvaluatingTraversal {
      * @return null or fully evaluated Strings, possibly with concrete array references like "photos.[3]"
      */
     // Visible for testing
-    List<String> evaluate( WalkedPath walkedPath ) {
+    public List<String> evaluate( WalkedPath walkedPath ) {
 
         List<String> strings = new ArrayList<>( elements.size() );
         for ( EvaluatablePathElement pathElement : elements ) {

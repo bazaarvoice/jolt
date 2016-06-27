@@ -1,0 +1,123 @@
+[
+    {
+        "thumbnail": {
+            "[1]": {
+                "label": "^photo.label.main"
+            },
+            "[2]": {
+                "label": "aux photo"
+            },
+            "*": {
+                "label": "^photo.label.thumbnail"
+            },
+            "*a": {
+                "label": "^photo.label.thumbnail"
+            }
+        }
+    },
+    {
+        "thumbnail": {
+            "[1]": {
+                "label": "^photo.label.main"
+            },
+            "[2]": {
+                "label": "aux photo"
+            },
+            "*": {
+                "label": "^photo.label.thumbnail"
+            },
+            "a*": {
+                "label": "^photo.label.thumbnail"
+            }
+        }
+    },
+    {
+        "thumbnail": {
+            "*a": {
+                "label": "^photo.label.thumbnail"
+            },
+            "[1]": {
+                "label": "^photo.label.main"
+            },
+            "[2]": {
+                "label": "aux photo"
+            },
+            "*": {
+                "label": "^photo.label.thumbnail"
+            }
+        }
+    },
+    {
+        "thumbnail": {
+            "a*": {
+                "label": "^photo.label.thumbnail"
+            },
+            "[1]": {
+                "label": "^photo.label.main"
+            },
+            "[2]": {
+                "label": "aux photo"
+            },
+            "*": {
+                "label": "^photo.label.thumbnail"
+            }
+        }
+    },
+    {
+        "thumbnail": {
+            "[1]": {
+                "label": "^photo.label.main"
+            },
+            "*a": {
+                "label": "^photo.label.thumbnail"
+            },
+            "[2]": {
+                "label": "aux photo"
+            },
+            "*": {
+                "label": "^photo.label.thumbnail"
+            }
+        }
+    },
+    {
+        "thumbnail": {
+            "[1]": {
+                "label": "^photo.label.main"
+            },
+            "a*": {
+                "label": "^photo.label.thumbnail"
+            },
+            "[2]": {
+                "label": "aux photo"
+            },
+            "*": {
+                "label": "^photo.label.thumbnail"
+            }
+        }
+    },
+        {
+        "thumbnail": {
+            "[1]": {
+                "label": "^photo.label.main"
+            },
+            "*a": {
+                "label": "^photo.label.thumbnail"
+            },
+            "[2]": {
+                "label": "aux photo"
+            }        }
+    },
+    {
+        "thumbnail": {
+            "[1]": {
+                "label": "^photo.label.main"
+            },
+            "a*": {
+                "label": "^photo.label.thumbnail"
+            },
+            "[2]": {
+                "label": "aux photo"
+            }
+        }
+    }
+]

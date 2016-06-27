@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.cardinality;
 
+import com.bazaarvoice.jolt.common.spec.BaseSpec;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.common.pathelement.AtPathElement;
 import com.bazaarvoice.jolt.common.pathelement.MatchablePathElement;
@@ -28,6 +29,7 @@ import com.bazaarvoice.jolt.utils.StringTools;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A Spec Object represents a single line from the JSON Cardinality Spec.
@@ -46,7 +48,7 @@ import java.util.List;
  * During the parallel tree walk, a Path<Literal PathElements> is maintained, and used when
  *  a tree walk encounters a leaf spec.
  */
-public abstract class CardinalitySpec {
+public abstract class CardinalitySpec implements BaseSpec {
 
     private static final String STAR = "*";
     private static final String AT = "@";
@@ -102,5 +104,15 @@ public abstract class CardinalitySpec {
      *
      * @return true if this this spec "handles" the inputkey such that no sibling specs need to see it
      */
-    public abstract boolean apply( String inputKey, Object input, WalkedPath walkedPath, Object parentContainer );
+    public abstract boolean applyCardinality( String inputKey, Object input, WalkedPath walkedPath, Object parentContainer );
+
+    @Override
+    public boolean apply( final String inputKey, final Object input, final WalkedPath walkedPath, final Map<String, Object> output, final Map<String, Object> context ) {
+        return applyCardinality( inputKey, input, walkedPath, output );
+    }
+
+    @Override
+    public MatchablePathElement getPathElement() {
+        return pathElement;
+    }
 }

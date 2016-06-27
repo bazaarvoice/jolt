@@ -42,10 +42,10 @@ public class JoltTestUtil {
 
 
     private static void runDiffy( Diffy diffy, String failureMessage, Object expected, Object actual ) {
-
+        String actualObject = JsonUtils.toPrettyJsonString( actual );
         Diffy.Result result = diffy.diff( expected, actual );
         if (!result.isEmpty()) {
-            Assert.fail( failureMessage + ".\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
+            Assert.fail( "\nActual object\n" + actualObject + "\n" + failureMessage + "\nDiffy output\n" + result.toString());
         }
     }
 }

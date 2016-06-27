@@ -31,4 +31,7 @@ package com.bazaarvoice.jolt;
  * Ideally, calls to the transform method are expected to be stateless and multi-thread safe.
  */
 public interface SpecDriven {
+
+    String ROOT_KEY = "root";
+
 }
