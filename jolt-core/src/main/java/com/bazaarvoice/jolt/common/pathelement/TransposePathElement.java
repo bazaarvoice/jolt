@@ -16,11 +16,11 @@
 package com.bazaarvoice.jolt.common.pathelement;
 
 import com.bazaarvoice.jolt.common.Optional;
+import com.bazaarvoice.jolt.common.TransposeReader;
 import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import com.bazaarvoice.jolt.common.tree.PathStep;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.common.TransposeReader;
 import com.bazaarvoice.jolt.utils.StringTools;
 
 /**

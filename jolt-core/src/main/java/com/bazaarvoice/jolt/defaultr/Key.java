@@ -18,8 +18,6 @@ package com.bazaarvoice.jolt.defaultr;
 import com.bazaarvoice.jolt.Defaultr;
 import com.bazaarvoice.jolt.exception.TransformException;
 
-import static com.bazaarvoice.jolt.defaultr.OPS.*;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,6 +27,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static com.bazaarvoice.jolt.defaultr.OPS.OR;
 
 public abstract class Key {
 

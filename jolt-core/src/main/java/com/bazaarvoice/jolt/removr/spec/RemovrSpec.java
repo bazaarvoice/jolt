@@ -15,13 +15,13 @@
  */
 package com.bazaarvoice.jolt.removr.spec;
 
+import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.common.pathelement.MatchablePathElement;
 import com.bazaarvoice.jolt.common.pathelement.PathElement;
-import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
-import com.bazaarvoice.jolt.common.pathelement.StarSinglePathElement;
 import com.bazaarvoice.jolt.common.pathelement.StarAllPathElement;
 import com.bazaarvoice.jolt.common.pathelement.StarDoublePathElement;
 import com.bazaarvoice.jolt.common.pathelement.StarRegexPathElement;
+import com.bazaarvoice.jolt.common.pathelement.StarSinglePathElement;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.utils.StringTools;
 

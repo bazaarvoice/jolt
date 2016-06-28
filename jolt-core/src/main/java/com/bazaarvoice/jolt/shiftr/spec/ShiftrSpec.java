@@ -15,8 +15,8 @@
  */
 package com.bazaarvoice.jolt.shiftr.spec;
 
-import com.bazaarvoice.jolt.common.pathelement.MatchablePathElement;
 import com.bazaarvoice.jolt.common.PathElementBuilder;
+import com.bazaarvoice.jolt.common.pathelement.MatchablePathElement;
 import com.bazaarvoice.jolt.common.spec.BaseSpec;
 
 /**

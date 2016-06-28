@@ -19,8 +19,6 @@ import com.bazaarvoice.jolt.Diffy;
 import com.bazaarvoice.jolt.JsonUtils;
 import org.testng.Assert;
 
-import java.io.IOException;
-
 public class JoltTestUtil {
 
     private static final Diffy diffy = new Diffy();

@@ -15,8 +15,8 @@
  */
 package com.bazaarvoice.jolt.cardinality;
 
-import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.common.tree.MatchedElement;
+import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.exception.SpecException;
 
 import java.util.ArrayList;

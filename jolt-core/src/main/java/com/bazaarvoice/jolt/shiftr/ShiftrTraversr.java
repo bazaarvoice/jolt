@@ -15,12 +15,12 @@
  */
 package com.bazaarvoice.jolt.shiftr;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.traversr.SimpleTraversr;
 import com.bazaarvoice.jolt.traversr.traversal.TraversalStep;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Traverser that does not overwrite data.
