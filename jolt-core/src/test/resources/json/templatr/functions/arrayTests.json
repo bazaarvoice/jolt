@@ -1,0 +1,46 @@
+{
+    "input": [
+        {
+            "value": 2
+        },
+        {
+            "value": 2.0
+        }
+    ],
+
+    "spec": {
+        "*": {
+            "max": "=maxOf(@(2,[&1].value),^value,0)",
+            "min": "=minOf(@(2,[&1].value),^value,0.0)",
+            "abs": "=abs(^value)",
+            "double": "=toDouble(@(2,[&1].value))",
+            "integer": "=toInteger(@(2,[&1].value))",
+            "long": "=toLong(@(2,[&1].value))"
+        }
+    },
+
+    "context": {
+        "value" : -1.0
+    },
+
+    "OVERWRITR": [
+        {
+            "value": 2,
+            "min": -1.0,
+            "max": 2,
+            "abs": 1.0,
+            "double": 2.0,
+            "integer": 2,
+            "long": 2
+        },
+        {
+            "value": 2.0,
+            "min": -1.0,
+            "max": 2.0,
+            "abs": 1.0,
+            "integer": 2,
+            "double": 2.0,
+            "long": 2
+        }
+    ]
+}

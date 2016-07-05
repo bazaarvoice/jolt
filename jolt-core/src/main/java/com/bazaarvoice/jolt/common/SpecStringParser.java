@@ -19,6 +19,7 @@ package com.bazaarvoice.jolt.common;
 import com.bazaarvoice.jolt.exception.SpecException;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -300,5 +301,49 @@ public class SpecStringParser {
         }
 
         return sb.toString();
+    }
+
+    public static List<String> parseFunctionArgs(String argString) {
+        List<String> argsList = new LinkedList<>(  );
+        int firstBracket = argString.indexOf( '(' );
+
+        String className = argString.substring( 0, firstBracket );
+        argsList.add( className );
+
+        // drop the first and last ( )
+        argString = argString.substring( firstBracket + 1, argString.length() - 1 );
+
+        StringBuilder sb = new StringBuilder( );
+        boolean inBetweenBrackets = false;
+        boolean inBetweenQuotes = false;
+        for (int i = 0; i < argString.length(); i++){
+            char c = argString.charAt(i);
+            switch ( c ) {
+                case '(':
+                    inBetweenBrackets = true;
+                    sb.append( c );
+                    break;
+                case ')':
+                    inBetweenBrackets = false;
+                    sb.append( c );
+                    break;
+                case '\'':
+                    inBetweenQuotes = !inBetweenQuotes;
+                    sb.append( c );
+                    break;
+                case ',':
+                    if ( !inBetweenBrackets && !inBetweenQuotes ) {
+                        argsList.add( sb.toString() );
+                        sb = new StringBuilder();
+                        break;
+                    }
+                default:
+                    sb.append( c );
+                    break;
+            }
+        }
+
+        argsList.add( sb.toString() );
+        return argsList;
     }
 }

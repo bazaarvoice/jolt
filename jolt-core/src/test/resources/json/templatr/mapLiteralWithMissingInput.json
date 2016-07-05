@@ -1,6 +1,5 @@
 {
-    "input": {
-    },
+    "input": { },
 
     "spec": {
         "simpleMap": {
@@ -16,7 +15,7 @@
         "value": 5
     },
 
-    "OVERWRITE": {
+    "OVERWRITR": {
         "simpleMap": {
             "6": 0,
             "7": 0,
