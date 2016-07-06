@@ -24,7 +24,7 @@
 
     "context": {},
 
-    "OVERWRITE": {
+    "OVERWRITR": {
         "objectMapFill": [
             {"a": "b"},{"a": "b"},{"a": "b"},{"a": "b", "x": "y"}
         ],
@@ -53,7 +53,7 @@
         "objectArrayFill" : [
             [],[],[],[0],[4]
         ],
-        "emptyMap" : { },
+        "emptyMap" : {},
         "emptyList" : []
     }
 }

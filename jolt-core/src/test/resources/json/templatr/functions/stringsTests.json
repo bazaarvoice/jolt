@@ -1,0 +1,42 @@
+{
+    "input": {
+        "string": "the QuIcK brOwn fox"
+    },
+
+    "spec": {
+        "lower": {
+            "leading": "=toLower(@(2,string))",
+            "trailing": "=toLower(^value)",
+            "custom1": "=toLower(bazinga)",
+            "custom2": "=toLower('yabadabadoo')"
+        },
+        "upper": {
+            "leading": "=toUpper(@(2,string))",
+            "trailing": "=toUpper(^value)",
+            "custom1": "=toUpper(bazinga)",
+            "custom2": "=toUpper('yabadabadoo')"
+        },
+        "concat": "=concat(@(1,lower.leading),' ',@(1,lower.trailing))"
+    },
+
+    "context": {
+        "value" : "JumpeD OVeR THE laZy dog"
+    },
+
+    "OVERWRITR": {
+        "string" : "the QuIcK brOwn fox",
+        "lower": {
+            "leading": "the quick brown fox",
+            "trailing": "jumped over the lazy dog",
+            "custom1": "bazinga",
+            "custom2": "yabadabadoo"
+        },
+        "upper": {
+            "leading": "THE QUICK BROWN FOX",
+            "trailing": "JUMPED OVER THE LAZY DOG",
+            "custom1": "BAZINGA",
+            "custom2": "YABADABADOO"
+        },
+        "concat": "the quick brown fox jumped over the lazy dog"
+    }
+}

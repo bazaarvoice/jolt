@@ -136,11 +136,11 @@ public class TemplatrCompositeSpec extends TemplatrSpec implements OrderedCompos
 
     @Override
     @SuppressWarnings( "unchecked" )
-    public boolean applyElement( final String inputKey, Object input, MatchedElement thisLevel, final WalkedPath walkedPath, final Map<String, Object> context ) {
+    public void applyElement( final String inputKey, Object input, MatchedElement thisLevel, final WalkedPath walkedPath, final Map<String, Object> context ) {
 
         // sanity checks, cannot work on a list spec with map input and vice versa, and runtime with null input
         if(!specDataType.isCompatible( input )) {
-            return true;
+            return;
         }
 
         // create input if it is null
@@ -167,8 +167,6 @@ public class TemplatrCompositeSpec extends TemplatrSpec implements OrderedCompos
         executionStrategy.process( this, input, walkedPath, null, context );
         // We are done, so remove ourselves from the walkedPath
         walkedPath.removeLast();
-
-        return true;
     }
 
     @Override

@@ -1,0 +1,94 @@
+{
+    "input": {
+        "ratings": {
+            "Leg4857": {
+                "minLabel": null,
+                "maxLabel": null
+
+            },
+            "EaseOfAssembly": {},
+            "Quality": {},
+            "Shrinkage69": {
+                "minLabel": null,
+                "maxLabel": null
+            },
+            "Panels2564": {
+                "minLabel": null,
+                "maxLabel": null
+            },
+            "Cleanliness": {}
+        }
+    }
+    ,
+    "spec": {
+        "ratings": {
+            "*": {
+                "minLabel": "=minLabelComputation(^ratings.&1.valuesLabels)",
+                "maxLabel": "=maxLabelComputation(^ratings.&1.valuesLabels)"
+            }
+        }
+    },
+
+    "context": {
+        "cdvs": { },
+        "tags": { },
+        "additionalFields": { },
+        "ratings": {
+            "Leg4857": {
+                "dimensionLabel": "Leg",
+                "valuesLabels": {
+                    "0": "Too loose",
+                    "1": "As expected",
+                    "2": "Too tight"
+                }
+            },
+            "EaseOfAssembly": {
+                "dimensionLabel": "do not use"
+            },
+            "Quality": {
+                "dimensionLabel": "Quality"
+            },
+            "Shrinkage69": {
+                "dimensionLabel": "Shrinkage",
+                "valuesLabels": {
+                    "1": "More shrinkage",
+                    "2": "As expected",
+                    "3": "Less shrinkage"
+                }
+            },
+            "Panels2564": {
+                "dimensionLabel": "Panels",
+                "valuesLabels": {
+                    "1": "Highest",
+                    "2": "Higher",
+                    "3": "As expected",
+                    "4": "Lower",
+                    "5": "Lowest"
+                }
+            },
+            "Cleanliness": {
+                "dimensionLabel": "do not use"
+            }
+        }
+    },
+
+    "DEFAULTR": {
+        "ratings" : {
+            "Leg4857" : {
+                "minLabel" : "Too loose",
+                "maxLabel" : "Too tight"
+            },
+            "EaseOfAssembly" : { },
+            "Quality" : { },
+            "Shrinkage69" : {
+                "minLabel" : "More shrinkage",
+                "maxLabel" : "Less shrinkage"
+            },
+            "Panels2564" : {
+                "minLabel" : "Highest",
+                "maxLabel" : "Lowest"
+            },
+            "Cleanliness" : { }
+        }
+    }
+}

@@ -82,14 +82,15 @@ public abstract class TemplatrSpec implements BaseSpec {
             return false;
         }
 
-        return applyElement( inputKey, input, thisLevel, walkedPath, context );
+        applyElement( inputKey, input, thisLevel, walkedPath, context );
+        return true;
     }
 
     /**
      * Templatr specific override that is used in BaseSpec#apply(...)
      * The name is changed for easy identification during debugging
      */
-    protected abstract boolean applyElement( final String key, final Object input, final MatchedElement thisLevel, final WalkedPath walkedPath, final Map<String, Object> context );
+    protected abstract void applyElement( final String key, final Object input, final MatchedElement thisLevel, final WalkedPath walkedPath, final Map<String, Object> context );
 
     /**
      * Static utility method for facilitating writes on input object

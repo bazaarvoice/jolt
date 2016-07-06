@@ -17,57 +17,36 @@
 package com.bazaarvoice.jolt.templatr;
 
 import com.bazaarvoice.jolt.common.spec.SpecBuilder;
+import com.bazaarvoice.jolt.templatr.function.Function;
 import com.bazaarvoice.jolt.templatr.spec.TemplatrCompositeSpec;
-import com.bazaarvoice.jolt.templatr.spec.TemplatrContextLookupLeafSpec;
-import com.bazaarvoice.jolt.templatr.spec.TemplatrDefaultLeafSpec;
-import com.bazaarvoice.jolt.templatr.spec.TemplatrSelfLookupLeafSpec;
+import com.bazaarvoice.jolt.templatr.spec.TemplatrLeafSpec;
 import com.bazaarvoice.jolt.templatr.spec.TemplatrSpec;
 
 import java.util.Map;
 
 public class TemplatrSpecBuilder extends SpecBuilder<TemplatrSpec> {
 
-    private static final String CARET = "^";
-    private static final String AT = "@";
+    public static final String CARET = "^";
+    public static final String AT = "@";
+    public static final String FUNCTION = "=";
 
     private final OpMode opMode;
+    private final Map<String, Function> functionsMap;
 
-    public TemplatrSpecBuilder(OpMode opMode) {
+
+    public TemplatrSpecBuilder( OpMode opMode, Map<String, Function> functionsMap ) {
         this.opMode = opMode;
+        this.functionsMap = functionsMap;
     }
 
     @Override
+    @SuppressWarnings( "unchecked" )
     public TemplatrSpec createSpec( final String lhs, final Object rhs ) {
-        if( rhs instanceof Map ) {
-            Map rhsMap = (Map)rhs;
-            if(rhsMap.isEmpty()) {
-                return new TemplatrDefaultLeafSpec( lhs, rhsMap, opMode );
-            }
-            else {
-                return new TemplatrCompositeSpec(lhs, rhsMap, opMode, this );
-            }
-
+        if( rhs instanceof Map  && (!( (Map) rhs ).isEmpty())) {
+            return new TemplatrCompositeSpec(lhs, (Map)rhs, opMode, this );
         }
         else {
-            if ( rhs instanceof String ) {
-                String rhsValue = (String) rhs;
-                // leaf level starts with ^ , so spec is an dot notation read from context
-                if(rhsValue.startsWith( CARET )) {
-                    return new TemplatrContextLookupLeafSpec( lhs, rhsValue, opMode );
-                }
-                // leaf level starts with @ , so spec is an dot notation read from self
-                else if(rhsValue.startsWith( AT )) {
-                    return new TemplatrSelfLookupLeafSpec( lhs, rhsValue, opMode );
-                }
-                // leaf level is an actual string value, we need to set as default
-                else {
-                    return new TemplatrDefaultLeafSpec( lhs, rhsValue, opMode );
-                }
-            }
-            // leaf level is an actual non-string value or null or Map or List, we need to set as default
-            else {
-                return new TemplatrDefaultLeafSpec( lhs, rhs, opMode );
-            }
+            return new TemplatrLeafSpec( lhs, rhs, opMode, functionsMap );
         }
     }
 }
