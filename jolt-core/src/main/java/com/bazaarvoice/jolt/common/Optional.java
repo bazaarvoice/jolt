@@ -54,4 +54,26 @@ public class Optional<T> {
     public boolean isPresent() {
         return ! abs;
     }
+
+    @Override
+    public boolean equals( final Object obj ) {
+        if(!(obj instanceof Optional)) {
+            return false;
+        }
+        Optional that = (Optional) obj;
+        return that == EMPTY || (
+                this.abs == that.abs && (
+                        (this.obj == null && that.obj == null) || (
+                                this.obj != null &&
+                                that.obj != null &&
+                                this.obj.equals( that.obj )
+                        )
+                )
+        );
+    }
+
+    @Override
+    public String toString() {
+        return "Optional<" + (abs?"?":obj==null?"?":obj.getClass().getSimpleName()) + ">: present=" + !abs + ", value=(" + obj + ")";
+    }
 }

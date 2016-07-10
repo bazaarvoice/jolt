@@ -10,8 +10,8 @@
 
     "spec": {
         "*": {
-            "max": "=maxOf(@(2,[&1].value),^value,0)",
-            "min": "=minOf(@(2,[&1].value),^value,0.0)",
+            "max": "=max(@(2,[&1].value),^value,0)",
+            "min": "=min(@(2,[&1].value),^value,0.0)",
             "abs": "=abs(^value)",
             "double": "=toDouble(@(2,[&1].value))",
             "integer": "=toInteger(@(2,[&1].value))",

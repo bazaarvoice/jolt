@@ -189,7 +189,7 @@ public class ShiftrCompositeSpec extends ShiftrSpec implements OrderedCompositeS
      * @return true if this this spec "handles" the inputKey such that no sibling specs need to see it
      */
     @Override
-    public boolean apply( String inputKey, Object input, WalkedPath walkedPath, Map<String,Object> output, Map<String, Object> context )
+    public boolean apply( String inputKey, Optional<Object> inputOptional, WalkedPath walkedPath, Map<String,Object> output, Map<String, Object> context )
     {
         MatchedElement thisLevel = pathElement.match( inputKey, walkedPath );
         if ( thisLevel == null ) {
@@ -204,24 +204,22 @@ public class ShiftrCompositeSpec extends ShiftrSpec implements OrderedCompositeS
             // Note the data found may not be a String, thus we have to call the special objectEvaluate
             // Optional, because the input data could have been a valid null.
             Optional<Object> optional = tpe.objectEvaluate( walkedPath );
-            if ( optional.isPresent() ) {
-                input = optional.get();
-            }
-            else {
+            if ( !optional.isPresent() ) {
                 return false;
             }
+            inputOptional = optional;
         }
 
         // add ourselves to the path, so that our children can reference us
-        walkedPath.add( input, thisLevel );
+        walkedPath.add( inputOptional.get(), thisLevel );
 
         // Handle any special / key based children first, but don't have them block anything
         for( ShiftrSpec subSpec : specialChildren ) {
-            subSpec.apply( inputKey, input, walkedPath, output, context );
+            subSpec.apply( inputKey, inputOptional, walkedPath, output, context );
         }
 
         // Handle the rest of the children
-        executionStrategy.process( this, input, walkedPath, output, context );
+        executionStrategy.process( this, inputOptional, walkedPath, output, context );
 
         // We are done, so remove ourselves from the walkedPath
         walkedPath.removeLast();

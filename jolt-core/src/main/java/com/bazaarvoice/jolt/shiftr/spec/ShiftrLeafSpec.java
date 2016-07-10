@@ -88,8 +88,9 @@ public class ShiftrLeafSpec extends ShiftrSpec {
      * @return true if this this spec "handles" the inputkey such that no sibling specs need to see it
      */
     @Override
-    public boolean apply( String inputKey, Object input, WalkedPath walkedPath, Map<String,Object> output, Map<String, Object> context){
+    public boolean apply( String inputKey, Optional<Object> inputOptional, WalkedPath walkedPath, Map<String,Object> output, Map<String, Object> context){
 
+        Object input = inputOptional.get();
         MatchedElement thisLevel = pathElement.match( inputKey, walkedPath );
         if ( thisLevel == null ) {
             return false;

@@ -1,0 +1,31 @@
+{
+    "input": {
+        "data": [ null,"b","c" ]
+    },
+
+    "spec": {
+        "data": {
+            "[0]": "x",
+            "[1]?": "y",
+            "[3]": "d",
+            "[4]?": "e"
+        }
+    },
+
+    "context": { },
+
+    "OVERWRITR": {
+        "data":
+            [ "x", "y", "c", "d" ]
+    },
+
+    "DEFAULTR": {
+        "data":
+            [ "x", "b", "c", "d" ]
+    },
+
+    "DEFINR": {
+        "data":
+            [ null, "b", "c", "d" ]
+    }
+}

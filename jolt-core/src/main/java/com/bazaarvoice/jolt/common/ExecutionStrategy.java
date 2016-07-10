@@ -40,8 +40,8 @@ public enum ExecutionStrategy {
                 // Do not work if the value is missing in the input map
                 if ( inputMap.containsKey( key ) ) {
 
-                    Object subInput = inputMap.get( key );
-                    spec.getLiteralChildren().get( key ).apply( key, subInput, walkedPath, output, context );
+                    Optional<Object> subInputOptional = Optional.of( inputMap.get( key ) );
+                    spec.getLiteralChildren().get( key ).apply( key, subInputOptional, walkedPath, output, context );
                 }
             }
         }
@@ -49,6 +49,7 @@ public enum ExecutionStrategy {
         @Override
         void processList( OrderedCompositeSpec spec, List<Object> inputList, WalkedPath walkedPath, Map<String, Object> output, Map<String, Object> context ) {
 
+            Integer originalSize = walkedPath.lastElement().getOrigSize().get();
             for( String key : spec.getLiteralChildren().keySet() ) {
 
                 int keyInt = Integer.MAX_VALUE;
@@ -66,9 +67,16 @@ public enum ExecutionStrategy {
                 if ( keyInt < inputList.size() ) {
 
                     Object subInput = inputList.get( keyInt );
+                    Optional<Object> subInputOptional;
+                    if ( subInput == null && originalSize != null && keyInt >= originalSize ) {
+                        subInputOptional = Optional.empty();
+                    }
+                    else {
+                        subInputOptional = Optional.of( subInput );
+                    }
 
                     // we know the .get(key) will not return null, because we are iterating over its keys
-                    spec.getLiteralChildren().get( key ).apply( key, subInput, walkedPath, output, context );
+                    spec.getLiteralChildren().get( key ).apply( key, subInputOptional, walkedPath, output, context );
                 }
             }
         }
@@ -78,10 +86,9 @@ public enum ExecutionStrategy {
 
             BaseSpec literalChild = spec.getLiteralChildren().get( scalarInput );
             if ( literalChild != null ) {
-                literalChild.apply( scalarInput, null, walkedPath, output, context );
+                literalChild.apply( scalarInput, Optional.empty(), walkedPath, output, context );
             }
         }
-
     },
 
     /**
@@ -98,17 +105,18 @@ public enum ExecutionStrategy {
 
                 // if the input in not available in the map us null or else get value,
                 // then lookup and place a defined value from spec there
-                Object subInput = null;
+                Optional<Object> subInputOptional = Optional.empty();
                 if ( inputMap.containsKey( key ) ) {
-                    subInput = inputMap.get( key );
+                    subInputOptional = Optional.of( inputMap.get( key ));
                 }
-                spec.getLiteralChildren().get( key ).apply( key, subInput, walkedPath, output, context );
+                spec.getLiteralChildren().get( key ).apply( key, subInputOptional, walkedPath, output, context );
             }
         }
 
         @Override
         void processList( OrderedCompositeSpec spec, List<Object> inputList, WalkedPath walkedPath, Map<String, Object> output, Map<String, Object> context ) {
 
+            Integer originalSize = walkedPath.lastElement().getOrigSize().get();
             for( String key : spec.getLiteralChildren().keySet() ) {
 
                 int keyInt = Integer.MAX_VALUE;
@@ -124,12 +132,15 @@ public enum ExecutionStrategy {
 
                 // if the input in not available in the list use null or else get value,
                 // then lookup and place a default value as defined in spec there
-                Object subInput = null;
+                Optional<Object> subInputOptional = Optional.empty();
                 if ( keyInt < inputList.size() ) {
-                    subInput = inputList.get( keyInt );
+                    Object subInput = inputList.get( keyInt );
+                    if ( subInput != null || originalSize == null || keyInt < originalSize ) {
+                        subInputOptional = Optional.of( subInput );
+                    }
                 }
                 // we know the .get(key) will not return null, because we are iterating over its keys
-                spec.getLiteralChildren().get( key ).apply( key, subInput, walkedPath, output, context );
+                spec.getLiteralChildren().get( key ).apply( key, subInputOptional, walkedPath, output, context );
             }
         }
 
@@ -150,24 +161,32 @@ public enum ExecutionStrategy {
 
             // Iterate over the whole entrySet rather than the keyset with follow on gets of the values
             for( Map.Entry<String, Object> inputEntry : inputMap.entrySet() ) {
-                applyKeyToComputed( spec.getComputedChildren(), walkedPath, output, inputEntry.getKey(), inputEntry.getValue(), context );
+                applyKeyToComputed( spec.getComputedChildren(), walkedPath, output, inputEntry.getKey(), Optional.of( inputEntry.getValue() ), context );
             }
         }
 
         @Override
         void processList( OrderedCompositeSpec spec, List<Object> inputList, WalkedPath walkedPath, Map<String, Object> output, Map<String, Object> context ) {
 
+            Integer originalSize = walkedPath.lastElement().getOrigSize().get();
             for (int index = 0; index < inputList.size(); index++) {
                 Object subInput = inputList.get( index );
                 String subKeyStr = Integer.toString( index );
+                Optional<Object> subInputOptional;
+                if ( subInput == null && originalSize != null && index >= originalSize ) {
+                    subInputOptional = Optional.empty();
+                }
+                else {
+                    subInputOptional = Optional.of( subInput );
+                }
 
-                applyKeyToComputed( spec.getComputedChildren(), walkedPath, output, subKeyStr, subInput, context );
+                applyKeyToComputed( spec.getComputedChildren(), walkedPath, output, subKeyStr, subInputOptional, context );
             }
         }
 
         @Override
         void processScalar( OrderedCompositeSpec spec, String scalarInput, WalkedPath walkedPath, Map<String, Object> output, Map<String, Object> context ) {
-            applyKeyToComputed( spec.getComputedChildren(), walkedPath, output, scalarInput, null, context );
+            applyKeyToComputed( spec.getComputedChildren(), walkedPath, output, scalarInput, Optional.empty(), context );
         }
     },
 
@@ -181,24 +200,32 @@ public enum ExecutionStrategy {
 
             // Iterate over the whole entrySet rather than the keyset with follow on gets of the values
             for( Map.Entry<String, Object> inputEntry : inputMap.entrySet() ) {
-                applyKeyToLiteralAndComputed( spec, inputEntry.getKey(), inputEntry.getValue(), walkedPath, output, context );
+                applyKeyToLiteralAndComputed( spec, inputEntry.getKey(), Optional.of( inputEntry.getValue() ), walkedPath, output, context );
             }
         }
 
         @Override
         void processList( OrderedCompositeSpec spec, List<Object> inputList, WalkedPath walkedPath, Map<String, Object> output, Map<String, Object> context ) {
 
+            Integer originalSize = walkedPath.lastElement().getOrigSize().get();
             for (int index = 0; index < inputList.size(); index++) {
                 Object subInput = inputList.get( index );
                 String subKeyStr = Integer.toString( index );
+                Optional<Object> subInputOptional;
+                if ( subInput == null && originalSize != null && index >= originalSize ) {
+                    subInputOptional = Optional.empty();
+                }
+                else {
+                    subInputOptional = Optional.of( subInput );
+                }
 
-                applyKeyToLiteralAndComputed( spec, subKeyStr, subInput, walkedPath, output, context );
+                applyKeyToLiteralAndComputed( spec, subKeyStr, subInputOptional, walkedPath, output, context );
             }
         }
 
         @Override
         void processScalar( OrderedCompositeSpec spec, String scalarInput, WalkedPath walkedPath, Map<String, Object> output, Map<String, Object> context ) {
-            applyKeyToLiteralAndComputed( spec, scalarInput, null, walkedPath, output, context );
+            applyKeyToLiteralAndComputed( spec, scalarInput, Optional.empty(), walkedPath, output, context );
         }
     },
 
@@ -248,7 +275,8 @@ public enum ExecutionStrategy {
     };
 
     @SuppressWarnings( "unchecked" )
-    public void process( OrderedCompositeSpec spec, Object input, WalkedPath walkedPath, Map<String,Object> output, Map<String, Object> context ) {
+    public void process( OrderedCompositeSpec spec, Optional<Object> inputOptional, WalkedPath walkedPath, Map<String,Object> output, Map<String, Object> context ) {
+        Object input = inputOptional.get();
         if ( input instanceof Map) {
             processMap( spec, (Map<String, Object>) input, walkedPath, output, context );
         }
@@ -276,27 +304,27 @@ public enum ExecutionStrategy {
      *   n is number of input keys
      *   c is number of computed children
      */
-    private static <T extends OrderedCompositeSpec> void applyKeyToLiteralAndComputed( T spec, String subKeyStr, Object subInput, WalkedPath walkedPath, Map<String, Object> output, Map<String, Object> context ) {
+    private static <T extends OrderedCompositeSpec> void applyKeyToLiteralAndComputed( T spec, String subKeyStr, Optional<Object> subInputOptional, WalkedPath walkedPath, Map<String, Object> output, Map<String, Object> context ) {
 
         BaseSpec literalChild = spec.getLiteralChildren().get( subKeyStr );
 
         // if the subKeyStr found a literalChild, then we do not have to try to match any of the computed ones
         if ( literalChild != null ) {
-            literalChild.apply( subKeyStr, subInput, walkedPath, output, context );
+            literalChild.apply( subKeyStr, subInputOptional, walkedPath, output, context );
         }
         else {
             // If no literal spec key matched, iterate through all the getComputedChildren()
-            applyKeyToComputed( spec.getComputedChildren(), walkedPath, output, subKeyStr, subInput, context );
+            applyKeyToComputed( spec.getComputedChildren(), walkedPath, output, subKeyStr, subInputOptional, context );
         }
     }
 
-    private static <T extends BaseSpec> void applyKeyToComputed( List<T> computedChildren, WalkedPath walkedPath, Map<String, Object> output, String subKeyStr, Object subInput, Map<String, Object> context ) {
+    private static <T extends BaseSpec> void applyKeyToComputed( List<T> computedChildren, WalkedPath walkedPath, Map<String, Object> output, String subKeyStr, Optional<Object> subInputOptional, Map<String, Object> context ) {
 
         // Iterate through all the getComputedChildren() until we find a match
         // This relies upon the getComputedChildren() having already been sorted in priority order
         for ( BaseSpec computedChild : computedChildren ) {
             // if the computed key does not match it will quickly return false
-            if ( computedChild.apply( subKeyStr, subInput, walkedPath, output, context ) ) {
+            if ( computedChild.apply( subKeyStr, subInputOptional, walkedPath, output, context ) ) {
                 break;
             }
         }

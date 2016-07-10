@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.bazaarvoice.jolt.templatr.spec;
+package com.bazaarvoice.jolt.modifier.spec;
 
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.common.PathEvaluatingTraversal;
 import com.bazaarvoice.jolt.common.TransposeReader;
 import com.bazaarvoice.jolt.common.TraversalBuilder;
@@ -29,17 +30,18 @@ import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.exception.TransformException;
-import com.bazaarvoice.jolt.templatr.OpMode;
+import com.bazaarvoice.jolt.modifier.OpMode;
 
 import java.util.List;
 import java.util.Map;
 
 import static com.bazaarvoice.jolt.common.PathElementBuilder.buildMatchablePathElement;
 
+
 /**
  * Base Templatr spec
  */
-public abstract class TemplatrSpec implements BaseSpec {
+public abstract class ModifierSpec implements BaseSpec {
 
     // traversal builder that uses a TransposeReader to create a PathEvaluatingTraversal
     protected  static final TraversalBuilder TRAVERSAL_BUILDER = new TraversalBuilder() {
@@ -52,16 +54,33 @@ public abstract class TemplatrSpec implements BaseSpec {
 
     protected final OpMode opMode;
     protected final MatchablePathElement pathElement;
+    protected final boolean checkValue;
 
     /**
      * Builds LHS pathElement and validates to specification
      */
-    protected TemplatrSpec(String rawJsonKey, OpMode opMode) {
-        this.pathElement = buildMatchablePathElement( rawJsonKey );
-        if(pathElement instanceof StarPathElement || pathElement instanceof LiteralPathElement || pathElement instanceof ArrayPathElement) {
-            this.opMode = opMode;
+    protected ModifierSpec( String rawJsonKey, OpMode opMode ) {
+        String prefix = rawJsonKey.substring( 0, 1 );
+        String suffix = rawJsonKey.length() > 1 ? rawJsonKey.substring( rawJsonKey.length() - 1 ) : null;
+
+        if(OpMode.isValid( prefix )) {
+            this.opMode = OpMode.from( prefix );
+            rawJsonKey = rawJsonKey.substring( 1 );
         }
         else {
+            this.opMode = opMode;
+        }
+
+        if ( suffix != null && suffix.equals( "?" ) && !( rawJsonKey.endsWith( "\\?" ) ) ) {
+            checkValue = true;
+            rawJsonKey = rawJsonKey.substring( 0, rawJsonKey.length() - 1 );
+        }
+        else {
+            checkValue = false;
+        }
+
+        this.pathElement = buildMatchablePathElement( rawJsonKey );
+        if ( !( pathElement instanceof StarPathElement ) && !( pathElement instanceof LiteralPathElement ) && !( pathElement instanceof ArrayPathElement ) ) {
             throw new SpecException( opMode.name() + " cannot have " + pathElement.getClass().getSimpleName() + " RHS" );
         }
     }
@@ -72,8 +91,8 @@ public abstract class TemplatrSpec implements BaseSpec {
     }
 
     @Override
-    public boolean apply( final String inputKey, final Object input, final WalkedPath walkedPath, final Map<String, Object> output, final Map<String, Object> context ) {
-        if(output != null) {
+    public boolean apply( final String inputKey, final Optional<Object> inputOptional, final WalkedPath walkedPath, final Map<String, Object> output, final Map<String, Object> context ) {
+        if ( output != null ) {
             throw new TransformException( "Expected a null output" );
         }
 
@@ -82,7 +101,12 @@ public abstract class TemplatrSpec implements BaseSpec {
             return false;
         }
 
-        applyElement( inputKey, input, thisLevel, walkedPath, context );
+        if ( !checkValue ) { // there was no trailing "?" so no check is necessary
+            applyElement( inputKey, inputOptional, thisLevel, walkedPath, context );
+        }
+        else if ( inputOptional.isPresent() ) {
+            applyElement( inputKey, inputOptional, thisLevel, walkedPath, context );
+        }
         return true;
     }
 
@@ -90,7 +114,7 @@ public abstract class TemplatrSpec implements BaseSpec {
      * Templatr specific override that is used in BaseSpec#apply(...)
      * The name is changed for easy identification during debugging
      */
-    protected abstract void applyElement( final String key, final Object input, final MatchedElement thisLevel, final WalkedPath walkedPath, final Map<String, Object> context );
+    protected abstract void applyElement( final String key, final Optional<Object> inputOptional, final MatchedElement thisLevel, final WalkedPath walkedPath, final Map<String, Object> context );
 
     /**
      * Static utility method for facilitating writes on input object

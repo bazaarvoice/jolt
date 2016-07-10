@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.bazaarvoice.jolt.templatr.spec;
+package com.bazaarvoice.jolt.modifier.spec;
 
 import com.bazaarvoice.jolt.common.ComputedKeysComparator;
 import com.bazaarvoice.jolt.common.ExecutionStrategy;
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.common.pathelement.ArrayPathElement;
 import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.common.pathelement.PathElement;
@@ -31,9 +32,9 @@ import com.bazaarvoice.jolt.common.tree.ArrayMatchedElement;
 import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.templatr.DataType;
-import com.bazaarvoice.jolt.templatr.OpMode;
-import com.bazaarvoice.jolt.templatr.TemplatrSpecBuilder;
+import com.bazaarvoice.jolt.modifier.DataType;
+import com.bazaarvoice.jolt.modifier.OpMode;
+import com.bazaarvoice.jolt.modifier.TemplatrSpecBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,7 +47,7 @@ import java.util.Map;
  * Composite spec is non-leaf level spec that contains one or many child specs and processes
  * them based on a pre-determined execution strategy
  */
-public class TemplatrCompositeSpec extends TemplatrSpec implements OrderedCompositeSpec {
+public class ModifierCompositeSpec extends ModifierSpec implements OrderedCompositeSpec {
     private static final HashMap<Class, Integer> orderMap;
     private static final ComputedKeysComparator computedKeysComparator;
 
@@ -60,25 +61,25 @@ public class TemplatrCompositeSpec extends TemplatrSpec implements OrderedCompos
         computedKeysComparator = ComputedKeysComparator.fromOrder(orderMap);
     }
 
-    private final Map<String, TemplatrSpec> literalChildren;
-    private final List<TemplatrSpec> computedChildren;
+    private final Map<String, ModifierSpec> literalChildren;
+    private final List<ModifierSpec> computedChildren;
     private final ExecutionStrategy executionStrategy;
     private final DataType specDataType;
 
-    public TemplatrCompositeSpec( final String key, final Map<String, Object> spec, final OpMode opMode, TemplatrSpecBuilder specBuilder ) {
+    public ModifierCompositeSpec( final String key, final Map<String, Object> spec, final OpMode opMode, TemplatrSpecBuilder specBuilder ) {
         super(key, opMode);
 
-        Map<String, TemplatrSpec> literals = new LinkedHashMap<>();
-        ArrayList<TemplatrSpec> computed = new ArrayList<>();
+        Map<String, ModifierSpec> literals = new LinkedHashMap<>();
+        ArrayList<ModifierSpec> computed = new ArrayList<>();
 
-        List<TemplatrSpec> children = specBuilder.createSpec( spec );
+        List<ModifierSpec> children = specBuilder.createSpec( spec );
 
         // remember max explicit index from spec to expand input array at runtime
         // need to validate spec such that it does not specify both array and literal path element
         int maxExplicitIndexFromSpec = -1, confirmedMapAtIndex = -1, confirmedArrayAtIndex = -1;
 
         for(int i=0; i<children.size(); i++) {
-            TemplatrSpec childSpec = children.get( i );
+            ModifierSpec childSpec = children.get( i );
             PathElement childPathElement = childSpec.pathElement;
 
             // for every child,
@@ -99,7 +100,10 @@ public class TemplatrCompositeSpec extends TemplatrSpec implements OrderedCompos
                     throw new SpecException( opMode.name() + " RHS only supports explicit Array path element" );
                 }
                 int explicitIndex = childArrayPathElement.getExplicitArrayIndex();
-                maxExplicitIndexFromSpec = Math.max(maxExplicitIndexFromSpec, explicitIndex);
+                // if explicit index from spec also enforces "[...]?" don't bother using that as max index
+                if ( !childSpec.checkValue ) {
+                    maxExplicitIndexFromSpec = Math.max( maxExplicitIndexFromSpec, explicitIndex );
+                }
 
                 literals.put( String.valueOf( explicitIndex ), childSpec );
             }
@@ -136,8 +140,9 @@ public class TemplatrCompositeSpec extends TemplatrSpec implements OrderedCompos
 
     @Override
     @SuppressWarnings( "unchecked" )
-    public void applyElement( final String inputKey, Object input, MatchedElement thisLevel, final WalkedPath walkedPath, final Map<String, Object> context ) {
+    public void applyElement( final String inputKey, Optional<Object> inputOptional, MatchedElement thisLevel, final WalkedPath walkedPath, final Map<String, Object> context ) {
 
+        Object input = inputOptional.get();
         // sanity checks, cannot work on a list spec with map input and vice versa, and runtime with null input
         if(!specDataType.isCompatible( input )) {
             return;
@@ -146,6 +151,10 @@ public class TemplatrCompositeSpec extends TemplatrSpec implements OrderedCompos
         // create input if it is null
         if( input == null ) {
             input = specDataType.create( inputKey, walkedPath, opMode );
+            // if input has changed, wrap
+            if ( input != null ) {
+                inputOptional = Optional.of( input );
+            }
         }
 
         // if input is List, create special ArrayMatchedElement, which tracks the original size of the input array
@@ -164,7 +173,7 @@ public class TemplatrCompositeSpec extends TemplatrSpec implements OrderedCompos
         // add self to walked path
         walkedPath.add( input, thisLevel );
         // Handle the rest of the children
-        executionStrategy.process( this, input, walkedPath, null, context );
+        executionStrategy.process( this, inputOptional, walkedPath, null, context );
         // We are done, so remove ourselves from the walkedPath
         walkedPath.removeLast();
     }

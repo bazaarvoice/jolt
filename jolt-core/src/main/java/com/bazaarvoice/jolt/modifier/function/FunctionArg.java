@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.bazaarvoice.jolt.templatr.function;
+package com.bazaarvoice.jolt.modifier.function;
 
 import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.common.PathEvaluatingTraversal;
@@ -67,32 +67,29 @@ public abstract class FunctionArg {
         }
     }
 
-    public static FunctionArg forLiteral( Object obj ) {
-        if(obj instanceof String) {
-            String arg = (String) obj;
-            if ( arg.length() == 0 ) {
-                return new LiteralArg( null );
-            }
-            else if ( arg.startsWith( "'" ) && arg.endsWith( "'" ) ) {
-                return new LiteralArg( arg.substring( 1, arg.length() - 1 ) );
-            }
-            else if ( arg.equalsIgnoreCase( "true" ) || arg.equalsIgnoreCase( "false" ) ) {
-                return new LiteralArg( Boolean.parseBoolean( arg ) );
+    public static FunctionArg forLiteral( Object obj, boolean parseArg ) {
+        if(parseArg) {
+            if ( obj instanceof String ) {
+                String arg = (String) obj;
+                if ( arg.length() == 0 ) {
+                    return new LiteralArg( null );
+                }
+                else if ( arg.startsWith( "'" ) && arg.endsWith( "'" ) ) {
+                    return new LiteralArg( arg.substring( 1, arg.length() - 1 ) );
+                }
+                else if ( arg.equalsIgnoreCase( "true" ) || arg.equalsIgnoreCase( "false" ) ) {
+                    return new LiteralArg( Boolean.parseBoolean( arg ) );
+                }
+                else {
+                    Optional<?> optional = Math.toNumber( arg );
+                    if(optional.isPresent()) {
+                        return new LiteralArg( optional.get() );
+                    }
+                    return new LiteralArg( arg );
+                }
             }
             else {
-                try {
-                    return new LiteralArg( Integer.parseInt( arg ) );
-                }
-                catch ( Exception ignored ) {}
-                try {
-                    return new LiteralArg( Long.parseLong( arg ) );
-                }
-                catch ( Exception ignored ) {}
-                try {
-                    return new LiteralArg( Double.parseDouble( arg ) );
-                }
-                catch ( Exception ignored ) {}
-                return new LiteralArg( arg );
+                return new LiteralArg( obj );
             }
         }
         else {

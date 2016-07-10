@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.bazaarvoice.jolt.templatr;
+package com.bazaarvoice.jolt.modifier;
 
 import com.bazaarvoice.jolt.common.spec.SpecBuilder;
-import com.bazaarvoice.jolt.templatr.function.Function;
-import com.bazaarvoice.jolt.templatr.spec.TemplatrCompositeSpec;
-import com.bazaarvoice.jolt.templatr.spec.TemplatrLeafSpec;
-import com.bazaarvoice.jolt.templatr.spec.TemplatrSpec;
+import com.bazaarvoice.jolt.modifier.function.Function;
+import com.bazaarvoice.jolt.modifier.spec.ModifierCompositeSpec;
+import com.bazaarvoice.jolt.modifier.spec.ModifierLeafSpec;
+import com.bazaarvoice.jolt.modifier.spec.ModifierSpec;
 
 import java.util.Map;
 
-public class TemplatrSpecBuilder extends SpecBuilder<TemplatrSpec> {
+public class TemplatrSpecBuilder extends SpecBuilder<ModifierSpec> {
 
     public static final String CARET = "^";
     public static final String AT = "@";
@@ -41,12 +41,12 @@ public class TemplatrSpecBuilder extends SpecBuilder<TemplatrSpec> {
 
     @Override
     @SuppressWarnings( "unchecked" )
-    public TemplatrSpec createSpec( final String lhs, final Object rhs ) {
+    public ModifierSpec createSpec( final String lhs, final Object rhs ) {
         if( rhs instanceof Map  && (!( (Map) rhs ).isEmpty())) {
-            return new TemplatrCompositeSpec(lhs, (Map)rhs, opMode, this );
+            return new ModifierCompositeSpec(lhs, (Map)rhs, opMode, this );
         }
         else {
-            return new TemplatrLeafSpec( lhs, rhs, opMode, functionsMap );
+            return new ModifierLeafSpec( lhs, rhs, opMode, functionsMap );
         }
     }
 }

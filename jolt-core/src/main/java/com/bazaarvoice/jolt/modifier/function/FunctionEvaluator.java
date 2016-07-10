@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-package com.bazaarvoice.jolt.templatr.function;
+package com.bazaarvoice.jolt.modifier.function;
 
 import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
 
 import java.util.Map;
 
+@SuppressWarnings( "deprecated" )
 public class FunctionEvaluator {
 
-    public static FunctionEvaluator of(Function function, FunctionArg[] functionArgs) {
+    public static FunctionEvaluator forFunctionEvaluation( Function function, FunctionArg... functionArgs ) {
         return new FunctionEvaluator( function, functionArgs );
+    }
+
+    public static FunctionEvaluator forArgEvaluation( FunctionArg functionArgs ) {
+        return new FunctionEvaluator( null, functionArgs );
     }
 
     // function that is evaluated and applied as output
@@ -33,15 +38,15 @@ public class FunctionEvaluator {
     // either point to a context or self, or a value present at the matching level
     private final FunctionArg[] functionArgs;
 
-    private FunctionEvaluator( final Function function, final FunctionArg[] functionArgs ) {
+    private FunctionEvaluator( final Function function, final FunctionArg... functionArgs ) {
         this.function = function;
         this.functionArgs = functionArgs;
     }
 
 
-    public Optional<Object> evaluate(Object input, WalkedPath walkedPath, Map<String, Object> context) {
-        Optional<Object> valueOptional = Optional.empty();
+    public Optional<Object> evaluate(Optional<Object> inputOptional, WalkedPath walkedPath, Map<String, Object> context) {
 
+        Optional<Object> valueOptional = Optional.empty();
         try {
             Object[] evaluatedArgs;
 
@@ -50,13 +55,14 @@ public class FunctionEvaluator {
                 valueOptional = functionArgs[0].evaluateArg( walkedPath, context );
             }
             // "key": "=abs(@(1,&0))"
-            else if( functionArgs != null ) {
+            else if( functionArgs.length > 0 ) {
                 evaluatedArgs = evaluateArgsValue( functionArgs, context, walkedPath );
                 valueOptional = function.apply( evaluatedArgs );
             }
             // "key": "=abs"
             else {
-                evaluatedArgs = new Object[] {input}; // pass current value as arg
+                // pass current value as arg
+                evaluatedArgs = inputOptional.isPresent() ? new Object[] {inputOptional.get()} : new Object[0];
                 valueOptional = function.apply( evaluatedArgs );
             }
         }

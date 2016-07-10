@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package com.bazaarvoice.jolt.templatr;
+package com.bazaarvoice.jolt.modifier;
 
+import com.bazaarvoice.jolt.exception.SpecException;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +38,8 @@ import java.util.Map;
  *
  */
 public enum OpMode {
-    OVERWRITR {
+
+    OVERWRITR("+") {
         @Override
         public boolean isApplicable( final Map source, final String key ) {
             return super.isApplicable(source, key);
@@ -45,7 +49,7 @@ public enum OpMode {
             return super.isApplicable(source, reqIndex , origSize);
         }
     },
-    DEFAULTR {
+    DEFAULTR("~") {
         @Override
         public boolean isApplicable( final Map source, final String key ) {
             return super.isApplicable( source, key ) && source.get( key ) == null;
@@ -55,7 +59,7 @@ public enum OpMode {
             return super.isApplicable(source, reqIndex, origSize ) && source.get( reqIndex ) == null;
         }
     },
-    DEFINER {
+    DEFINER("_") {
         @Override
         public boolean isApplicable( final Map source, final String key ) {
             return super.isApplicable(source, key) && !source.containsKey( key );
@@ -67,6 +71,24 @@ public enum OpMode {
                     reqIndex >= origSize && source.get( reqIndex ) == null;
         }
     };
+
+    /**
+     * Identifier OP prefix that is defined in SPEC
+     */
+    private String op;
+
+    private OpMode( final String op ) {
+        this.op = op;
+    }
+
+    public String getOp() {
+        return op;
+    }
+
+    public String toString() {
+        return op + "modify";
+    }
+
 
     /**
      * Given a source map and a input key returns true if it is ok to go ahead with
@@ -82,5 +104,28 @@ public enum OpMode {
      */
     public boolean isApplicable(List source, int reqIndex, int origSize) {
         return source != null && reqIndex >= 0 && origSize >= 0;
+    }
+
+    /**
+     * Static validity checker and instance getter from given op String
+     */
+    private static Map<String, OpMode> opModeMap;
+
+    static {
+        opModeMap = new HashMap<>(  );
+        opModeMap.put( OVERWRITR.op, OVERWRITR );
+        opModeMap.put( DEFAULTR.op, DEFAULTR );
+        opModeMap.put( DEFINER.op, DEFINER );
+    }
+
+    public static boolean isValid(String op) {
+        return opModeMap.containsKey( op );
+    }
+
+    public static OpMode from(String op) {
+        if ( isValid( op ) ) {
+            return opModeMap.get( op );
+        }
+        throw new SpecException( "OpMode " + op + " is not valid" );
     }
 }
