@@ -1,0 +1,40 @@
+{
+    "input": {
+        "data": {
+            "a": "a",
+            "c": null
+        }
+    },
+
+    "spec": {
+        "data": {
+            "a?": "x",
+            "b?": "y",
+            "c": "z"
+        }
+    },
+
+    "context": { },
+
+    "OVERWRITR": {
+        "data": {
+            "a": "x",
+            "c": "z"
+        }
+    }
+    ,
+
+    "DEFAULTR": {
+        "data": {
+            "a": "a",
+            "c": "z"
+        }
+    },
+
+    "DEFINR": {
+        "data": {
+            "a": "a",
+            "c": null
+        }
+    }
+}

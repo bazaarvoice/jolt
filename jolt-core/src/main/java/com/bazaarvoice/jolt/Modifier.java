@@ -16,15 +16,17 @@
 
 package com.bazaarvoice.jolt;
 
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.templatr.OpMode;
-import com.bazaarvoice.jolt.templatr.TemplatrSpecBuilder;
-import com.bazaarvoice.jolt.templatr.function.Function;
-import com.bazaarvoice.jolt.templatr.function.Math;
-import com.bazaarvoice.jolt.templatr.function.Strings;
-import com.bazaarvoice.jolt.templatr.spec.TemplatrCompositeSpec;
+import com.bazaarvoice.jolt.modifier.OpMode;
+import com.bazaarvoice.jolt.modifier.TemplatrSpecBuilder;
+import com.bazaarvoice.jolt.modifier.function.Function;
+import com.bazaarvoice.jolt.modifier.function.Lists;
+import com.bazaarvoice.jolt.modifier.function.Math;
+import com.bazaarvoice.jolt.modifier.function.Strings;
+import com.bazaarvoice.jolt.modifier.spec.ModifierCompositeSpec;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,7 +35,7 @@ import java.util.Map;
 /**
  * Base Templatr transform that to behave differently based on provided opMode
  */
-public abstract class Templatr implements SpecDriven, ContextualTransform {
+public abstract class Modifier implements SpecDriven, ContextualTransform {
 
     private static final Map<String, Function> STOCK_FUNCTIONS = new HashMap<>(  );
 
@@ -42,18 +44,28 @@ public abstract class Templatr implements SpecDriven, ContextualTransform {
         STOCK_FUNCTIONS.put( "toUpper", new Strings.toUpperCase() );
         STOCK_FUNCTIONS.put( "concat", new Strings.concat() );
 
-        STOCK_FUNCTIONS.put( "minOf", new com.bazaarvoice.jolt.templatr.function.Math.MinOf() );
-        STOCK_FUNCTIONS.put( "maxOf", new Math.MaxOf() );
-        STOCK_FUNCTIONS.put( "abs", new Math.Abs() );
+        STOCK_FUNCTIONS.put( "min", new Math.min() );
+        STOCK_FUNCTIONS.put( "max", new Math.max() );
+        STOCK_FUNCTIONS.put( "abs", new Math.abs() );
         STOCK_FUNCTIONS.put( "toInteger", new Math.toInteger() );
         STOCK_FUNCTIONS.put( "toDouble", new Math.toDouble() );
         STOCK_FUNCTIONS.put( "toLong", new Math.toLong() );
+
+        STOCK_FUNCTIONS.put( "noop", Function.noop );
+        STOCK_FUNCTIONS.put( "isPresent", Function.isPresent );
+        STOCK_FUNCTIONS.put( "notNull", Function.notNull );
+        STOCK_FUNCTIONS.put( "isNull", Function.isNull );
+
+        STOCK_FUNCTIONS.put( "firstElement", new Lists.firstElement() );
+        STOCK_FUNCTIONS.put( "lastElement", new Lists.lastElement() );
+        STOCK_FUNCTIONS.put( "elementAt", new Lists.elementAt() );
+        STOCK_FUNCTIONS.put( "toList", new Lists.toList() );
     }
 
-    private final TemplatrCompositeSpec rootSpec;
+    private final ModifierCompositeSpec rootSpec;
 
     @SuppressWarnings( "unchecked" )
-    private Templatr(Object spec, OpMode opMode, Map<String, Function> functionsMap) {
+    private Modifier( Object spec, OpMode opMode, Map<String, Function> functionsMap ) {
         if ( spec == null ){
             throw new SpecException( opMode.name() + " expected a spec of Map type, got 'null'." );
         }
@@ -67,7 +79,7 @@ public abstract class Templatr implements SpecDriven, ContextualTransform {
 
         functionsMap = Collections.unmodifiableMap( functionsMap );
         TemplatrSpecBuilder templatrSpecBuilder = new TemplatrSpecBuilder( opMode, functionsMap );
-        rootSpec = new TemplatrCompositeSpec( ROOT_KEY, (Map<String, Object>) spec, opMode, templatrSpecBuilder );
+        rootSpec = new ModifierCompositeSpec( ROOT_KEY, (Map<String, Object>) spec, opMode, templatrSpecBuilder );
     }
 
     @Override
@@ -80,15 +92,15 @@ public abstract class Templatr implements SpecDriven, ContextualTransform {
         WalkedPath walkedPath = new WalkedPath();
         walkedPath.add( input, rootLpe );
 
-        rootSpec.apply( ROOT_KEY, input, walkedPath, null, contextWrapper );
+        rootSpec.apply( ROOT_KEY, Optional.of( input), walkedPath, null, contextWrapper );
         return input;
     }
 
 /**
-     * This variant of templatr creates the key/index is missing,
+     * This variant of modifier creates the key/index is missing,
      * and overwrites the value if present
      */
-    public static final class Overwritr extends Templatr {
+    public static final class Overwritr extends Modifier {
 
         public Overwritr( Object spec ) {
             this( spec, STOCK_FUNCTIONS );
@@ -100,9 +112,9 @@ public abstract class Templatr implements SpecDriven, ContextualTransform {
     }
 
     /**
-     * This variant of templatr only writes when the key/index is missing
+     * This variant of modifier only writes when the key/index is missing
      */
-    public static final class Definr extends Templatr {
+    public static final class Definr extends Modifier {
 
         public Definr( final Object spec ) {
             this( spec, STOCK_FUNCTIONS );
@@ -114,9 +126,9 @@ public abstract class Templatr implements SpecDriven, ContextualTransform {
     }
 
     /**
-     * This variant of templatr only writes when the key/index is missing or the value is null
+     * This variant of modifier only writes when the key/index is missing or the value is null
      */
-    public static class Defaultr extends Templatr {
+    public static class Defaultr extends Modifier {
 
         public Defaultr( final Object spec ) {
             this( spec, STOCK_FUNCTIONS );

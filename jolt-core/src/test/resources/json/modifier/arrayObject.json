@@ -15,8 +15,8 @@
 
         },
         "objectArrayFill": {
-            "*": [0],
-            "[4]": [4]
+            "*": "=toList(0)",
+            "[4]": "=toList(4)"
         },
         "emptyMap": {},
         "emptyList": []

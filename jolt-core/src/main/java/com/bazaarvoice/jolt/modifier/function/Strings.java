@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.bazaarvoice.jolt.templatr.function;
+package com.bazaarvoice.jolt.modifier.function;
 
 import com.bazaarvoice.jolt.common.Optional;
 
-@SuppressWarnings( "unused" )
+@SuppressWarnings( "deprecated" )
 public class Strings {
 
     public static final class toLowerCase implements Function {

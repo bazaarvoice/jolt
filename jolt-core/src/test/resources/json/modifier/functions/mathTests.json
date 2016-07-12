@@ -1,0 +1,48 @@
+{
+    "input": {
+        "data1": {
+            "value": -2
+        },
+        "data2": {
+            "value": -2.0
+        }
+    },
+
+    "spec": {
+        "data1": {
+            "max": "=max(@(1,value),^value,0)",
+            "min": "=min(@(1,value),^value,0.0)",
+            "double": "=toDouble(@(1,value))",
+            "value": "=abs"
+
+        },
+        "data2": {
+            "max": "=max(@(1,value),^value,0.0)",
+            "min": "=min(@(1,value),^value,0)",
+            "integer": "=toInteger(@(1,value))",
+            "value": "=abs"
+        }
+    },
+
+    "context": {
+        "value" : 1.0
+    },
+
+    "OVERWRITR": {
+
+        "data1" : {
+            "max" : 1.0,
+            "min" : -2,
+            "double" : -2.0,
+            "value" : 2
+        },
+        "data2" : {
+            "max" : 1.0,
+            "min" : -2.0,
+            "integer" : -2,
+            "value" : 2.0
+        }
+
+
+    }
+}

@@ -16,6 +16,7 @@
 
 package com.bazaarvoice.jolt.common.spec;
 
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.common.pathelement.MatchablePathElement;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
 
@@ -44,6 +45,6 @@ public interface BaseSpec {
      *
      * @return true if this this spec "handles" the inputkey such that no sibling specs need to see it
      */
-    boolean apply( final String inputKey, final Object input, final WalkedPath walkedPath, final Map<String, Object> output, final Map<String, Object> context );
+    boolean apply( final String inputKey, final Optional<Object> inputOptional, final WalkedPath walkedPath, final Map<String, Object> output, final Map<String, Object> context );
 
 }

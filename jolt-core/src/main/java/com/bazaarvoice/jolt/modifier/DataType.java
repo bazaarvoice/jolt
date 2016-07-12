@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.bazaarvoice.jolt.templatr;
+package com.bazaarvoice.jolt.modifier;
 
 import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;

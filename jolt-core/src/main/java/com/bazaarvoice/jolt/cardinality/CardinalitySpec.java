@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt.cardinality;
 
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.common.pathelement.AtPathElement;
 import com.bazaarvoice.jolt.common.pathelement.LiteralPathElement;
 import com.bazaarvoice.jolt.common.pathelement.MatchablePathElement;
@@ -107,8 +108,8 @@ public abstract class CardinalitySpec implements BaseSpec {
     public abstract boolean applyCardinality( String inputKey, Object input, WalkedPath walkedPath, Object parentContainer );
 
     @Override
-    public boolean apply( final String inputKey, final Object input, final WalkedPath walkedPath, final Map<String, Object> output, final Map<String, Object> context ) {
-        return applyCardinality( inputKey, input, walkedPath, output );
+    public boolean apply( final String inputKey, final Optional<Object> inputOptional, final WalkedPath walkedPath, final Map<String, Object> output, final Map<String, Object> context ) {
+        return applyCardinality( inputKey, inputOptional.get(), walkedPath, output );
     }
 
     @Override

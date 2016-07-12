@@ -19,7 +19,7 @@ package com.bazaarvoice.jolt;
 import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.common.SpecStringParser;
 import com.bazaarvoice.jolt.exception.SpecException;
-import com.bazaarvoice.jolt.templatr.function.Function;
+import com.bazaarvoice.jolt.modifier.function.Function;
 import com.google.common.collect.Lists;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -31,29 +31,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class TemplatrTest {
+@SuppressWarnings( "deprecated" )
+public class ModifierTest {
 
     enum TemplatrTestCase {
         OVERWRITR {
             @Override
-            Templatr getTemplatr( final Object spec ) {
-                return new Templatr.Overwritr( spec );
+            Modifier getTemplatr( final Object spec ) {
+                return new Modifier.Overwritr( spec );
             }
         },
         DEFAULTR {
             @Override
-            Templatr getTemplatr( final Object spec ) {
-                return new Templatr.Defaultr(spec);
+            Modifier getTemplatr( final Object spec ) {
+                return new Modifier.Defaultr(spec);
             }
         },
         DEFINR {
             @Override
-            Templatr getTemplatr( final Object spec ) {
-                return new Templatr.Definr( spec );
+            Modifier getTemplatr( final Object spec ) {
+                return new Modifier.Definr( spec );
             }
         };
 
-        abstract Templatr getTemplatr(Object spec);
+        abstract Modifier getTemplatr(Object spec);
     }
 
     @BeforeClass
@@ -61,7 +62,7 @@ public class TemplatrTest {
     public void setup() throws Exception {
         // accessing built ins such that we can test a custom impl of function
         // this is a special test case, and not a recommended approach of using function
-        Field f = Templatr.class.getDeclaredField("STOCK_FUNCTIONS");
+        Field f = Modifier.class.getDeclaredField("STOCK_FUNCTIONS");
         f.setAccessible( true );
         Map<String, Function> BUILT_INS  = (Map<String, Function>) f.get( null );
         BUILT_INS.put( "minLabelComputation", new MinLabelComputation() );
@@ -72,23 +73,41 @@ public class TemplatrTest {
     public Iterator<Object[]> getTestCases() {
         List<Object[]> testCases = Lists.newLinkedList();
 
-        testCases.add( new Object[]{"/json/templatr/mapLiteral.json"} );
-        testCases.add( new Object[]{"/json/templatr/mapLiteralWithNullInput.json"} );
-        testCases.add( new Object[]{"/json/templatr/mapLiteralWithMissingInput.json"} );
-        testCases.add( new Object[]{"/json/templatr/mapLiteralWithEmptyInput.json"} );
-        testCases.add( new Object[]{"/json/templatr/arrayLiteralWithNullInput.json"} );
-        testCases.add( new Object[]{"/json/templatr/arrayLiteral.json"} );
-        testCases.add( new Object[]{"/json/templatr/arrayLiteralWithEmptyInput.json"} );
-        testCases.add( new Object[]{"/json/templatr/arrayLiteralWithMissingInput.json"} );
-        testCases.add( new Object[]{"/json/templatr/arrayObject.json"} );
-        testCases.add( new Object[]{"/json/templatr/simple.json"} );
-        testCases.add( new Object[]{"/json/templatr/simpleMapNullToArray.json"} );
-        testCases.add( new Object[]{"/json/templatr/simpleMapRuntimeNull.json"} );
-        testCases.add( new Object[]{"/json/templatr/simpleLookup.json"} );
-        testCases.add( new Object[]{"/json/templatr/complexLookup.json"} );
-        testCases.add( new Object[]{"/json/templatr/simpleArray.json"} );
-        testCases.add( new Object[]{"/json/templatr/simpleArrayLookup.json"} );
-        testCases.add( new Object[]{"/json/templatr/complexArrayLookup.json"} );
+        testCases.add( new Object[]{"/json/modifier/mapLiteral.json"} );
+        testCases.add( new Object[]{"/json/modifier/mapLiteralWithNullInput.json"} );
+        testCases.add( new Object[]{"/json/modifier/mapLiteralWithMissingInput.json"} );
+        testCases.add( new Object[]{"/json/modifier/mapLiteralWithEmptyInput.json"} );
+
+        testCases.add( new Object[]{"/json/modifier/arrayLiteral.json"} );
+        testCases.add( new Object[]{"/json/modifier/arrayLiteralWithNullInput.json"} );
+        testCases.add( new Object[]{"/json/modifier/arrayLiteralWithEmptyInput.json"} );
+        testCases.add( new Object[]{"/json/modifier/arrayLiteralWithMissingInput.json"} );
+
+        testCases.add( new Object[]{"/json/modifier/simple.json"} );
+        testCases.add( new Object[]{"/json/modifier/simpleArray.json"} );
+        testCases.add( new Object[]{"/json/modifier/arrayObject.json"} );
+
+        testCases.add( new Object[]{"/json/modifier/simpleMapNullToArray.json"} );
+        testCases.add( new Object[]{"/json/modifier/simpleMapRuntimeNull.json"} );
+
+        testCases.add( new Object[]{"/json/modifier/simpleLookup.json"} );
+        testCases.add( new Object[]{"/json/modifier/complexLookup.json"} );
+
+        testCases.add( new Object[]{"/json/modifier/simpleArrayLookup.json"} );
+        testCases.add( new Object[]{"/json/modifier/complexArrayLookup.json"} );
+
+        testCases.add( new Object[]{"/json/modifier/valueCheckSimpleArray.json"} );
+        testCases.add( new Object[]{"/json/modifier/valueCheckSimpleArrayNullInput.json"} );
+        testCases.add( new Object[]{"/json/modifier/valueCheckSimpleArrayEmptyInput.json"} );
+
+        testCases.add( new Object[]{"/json/modifier/valueCheckSimpleMap.json"} );
+        testCases.add( new Object[]{"/json/modifier/valueCheckSimpleMapNullInput.json"} );
+        testCases.add( new Object[]{"/json/modifier/valueCheckSimpleMapEmptyInput.json"} );
+
+        testCases.add( new Object[]{"/json/modifier/simpleMapOpOverride.json"} );
+        testCases.add( new Object[]{"/json/modifier/simpleArrayOpOverride.json"} );
+
+        testCases.add( new Object[]{"/json/modifier/testListOfFunction.json"} );
 
         return testCases.iterator();
     }
@@ -115,8 +134,8 @@ public class TemplatrTest {
         Object context = testUnit.get( "context" );
         Object expected = testUnit.get( testCase.name() );
         if(expected != null) {
-            Templatr templatr = testCase.getTemplatr( spec );
-            Object actual = templatr.transform( input, (Map<String, Object>) context );
+            Modifier modifier = testCase.getTemplatr( spec );
+            Object actual = modifier.transform( input, (Map<String, Object>) context );
             JoltTestUtil.runArrayOrderObliviousDiffy( testCase.name() + " failed case " + testFile, expected, actual );
         }
     }
@@ -124,7 +143,7 @@ public class TemplatrTest {
     @DataProvider
     public Iterator<Object[]> getSpecValidationTestCases() {
         List<Object[]> testCases = Lists.newLinkedList();
-        List<Object> testObjects = JsonUtils.classpathToList( "/json/templatr/validation/specThatShouldFail.json" );
+        List<Object> testObjects = JsonUtils.classpathToList( "/json/modifier/validation/specThatShouldFail.json" );
 
         for(TemplatrTestCase testCase: TemplatrTestCase.values()) {
             for(Object specObj: testObjects) {
@@ -144,10 +163,11 @@ public class TemplatrTest {
     public Iterator<Object[]> getFunctionTests() {
         List<Object[]> testCases = Lists.newLinkedList();
 
-        testCases.add( new Object[]{"/json/templatr/functions/stringsTests.json", TemplatrTestCase.OVERWRITR});
-        testCases.add( new Object[]{"/json/templatr/functions/mathTests.json", TemplatrTestCase.OVERWRITR} );
-        testCases.add( new Object[]{"/json/templatr/functions/arrayTests.json", TemplatrTestCase.OVERWRITR} );
-        testCases.add( new Object[]{"/json/templatr/functions/computationTest.json", TemplatrTestCase.DEFAULTR} );
+        testCases.add( new Object[]{"/json/modifier/functions/stringsTests.json", TemplatrTestCase.OVERWRITR});
+        testCases.add( new Object[]{"/json/modifier/functions/mathTests.json", TemplatrTestCase.OVERWRITR} );
+        testCases.add( new Object[]{"/json/modifier/functions/arrayTests.json", TemplatrTestCase.OVERWRITR} );
+        testCases.add( new Object[]{"/json/modifier/functions/computationTest.json", TemplatrTestCase.DEFAULTR} );
+        testCases.add( new Object[]{"/json/modifier/functions/valueTests.json", TemplatrTestCase.OVERWRITR }  );
 
         return testCases.iterator();
     }

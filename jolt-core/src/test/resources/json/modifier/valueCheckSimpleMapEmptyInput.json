@@ -1,0 +1,34 @@
+{
+    "input": {
+        "data": {}
+    },
+
+    "spec": {
+        "data": {
+            "a?": "x",
+            "b?": "y",
+            "c": "z"
+        }
+    },
+
+    "context": { },
+
+    "OVERWRITR": {
+        "data": {
+            "c" : "z"
+        }
+    }
+    ,
+
+    "DEFAULTR": {
+        "data": {
+            "c" : "z"
+        }
+    },
+
+    "DEFINR": {
+        "data": {
+             "c" : "z"
+        }
+    }
+}

@@ -15,6 +15,7 @@
  */
 package com.bazaarvoice.jolt;
 
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.common.tree.MatchedElement;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.exception.SpecException;
@@ -501,7 +502,7 @@ public class Shiftr implements SpecDriven, Transform {
         WalkedPath walkedPath = new WalkedPath();
         walkedPath.add( input, rootLpe );
 
-        rootSpec.apply( ROOT_KEY, input, walkedPath, output, null );
+        rootSpec.apply( ROOT_KEY, Optional.of( input ), walkedPath, output, null );
 
         return output.get( ROOT_KEY );
     }

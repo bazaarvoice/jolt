@@ -17,12 +17,13 @@ package com.bazaarvoice.jolt.chainr.spec;
 
 import com.bazaarvoice.jolt.CardinalityTransform;
 import com.bazaarvoice.jolt.Chainr;
+import com.bazaarvoice.jolt.Defaultr;
 import com.bazaarvoice.jolt.JoltTransform;
+import com.bazaarvoice.jolt.Modifier;
 import com.bazaarvoice.jolt.Removr;
 import com.bazaarvoice.jolt.Shiftr;
 import com.bazaarvoice.jolt.Sortr;
 import com.bazaarvoice.jolt.SpecDriven;
-import com.bazaarvoice.jolt.Templatr;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.utils.StringTools;
 
@@ -48,10 +49,10 @@ public class ChainrEntry {
     static {
         HashMap<String, String> temp = new HashMap<>();
         temp.put( "shift", Shiftr.class.getName() );
-        temp.put( "default", com.bazaarvoice.jolt.Defaultr.class.getName() );
-        temp.put( "overwrite-beta", Templatr.Overwritr.class.getName() );
-        temp.put( "default-beta", Templatr.Defaultr.class.getName() );
-        temp.put( "define-beta", Templatr.Definr.class.getName() );
+        temp.put( "default", Defaultr.class.getName() );
+        temp.put( "modify-overwrite-beta", Modifier.Overwritr.class.getName() );
+        temp.put( "modify-default-beta", Modifier.Defaultr.class.getName() );
+        temp.put( "modify-define-beta", Modifier.Definr.class.getName() );
         temp.put( "remove", Removr.class.getName() );
         temp.put( "sort", Sortr.class.getName() );
         temp.put( "cardinality", CardinalityTransform.class.getName() );

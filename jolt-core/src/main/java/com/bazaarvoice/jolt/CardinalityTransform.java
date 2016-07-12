@@ -16,6 +16,7 @@
 package com.bazaarvoice.jolt;
 
 import com.bazaarvoice.jolt.cardinality.CardinalityCompositeSpec;
+import com.bazaarvoice.jolt.common.Optional;
 import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.exception.SpecException;
 
@@ -229,7 +230,7 @@ public class CardinalityTransform implements SpecDriven, Transform {
     @Override
     public Object transform( Object input ) {
 
-        rootSpec.apply( ROOT_KEY, input, new WalkedPath(), null, null );
+        rootSpec.apply( ROOT_KEY, Optional.of( input ), new WalkedPath(), null, null );
 
         return input;
     }

@@ -1,0 +1,97 @@
+{
+    "input": {
+        "data": [
+            "a",
+            "b",
+            "c",
+
+            null,
+            null,
+            null
+        ],
+        "data2": [
+            "a",
+            null
+        ]
+    },
+
+    "spec": {
+        "data": {
+            "+[0]": "aa",
+            "~[1]": "bb",
+            "_[2]": "cc",
+
+            "+[3]": "pp",
+            "~[4]": "qq",
+            "_[5]": "rr",
+
+            "+[6]": "xx",
+            "~[7]": "yy",
+            "_[8]": "zz"
+        },
+        "data2": {
+            "[0]": "aa",
+            "[1]": "bb",
+            "[2]": "cc"
+        }
+    },
+
+    "context": { },
+
+    "OVERWRITR": {
+        "data": [
+            "aa",
+            "b",
+            "c",
+            "pp",
+            "qq",
+            null,
+            "xx",
+            "yy",
+            "zz"
+        ],
+        "data2" : [
+            "aa",
+            "bb",
+            "cc"
+        ]
+    },
+
+    "DEFAULTR": {
+        "data": [
+            "aa",
+            "b",
+            "c",
+            "pp",
+            "qq",
+            null,
+            "xx",
+            "yy",
+            "zz"
+        ],
+        "data2" : [
+            "a",
+            "bb",
+            "cc"
+        ]
+    },
+
+    "DEFINR": {
+        "data": [
+            "aa",
+            "b",
+            "c",
+            "pp",
+            "qq",
+            null,
+            "xx",
+            "yy",
+            "zz"
+        ],
+        "data2" : [
+            "a",
+            null,
+            "cc"
+        ]
+    }
+}
