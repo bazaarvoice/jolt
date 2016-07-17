@@ -25,6 +25,7 @@ import com.bazaarvoice.jolt.modifier.TemplatrSpecBuilder;
 import com.bazaarvoice.jolt.modifier.function.Function;
 import com.bazaarvoice.jolt.modifier.function.Lists;
 import com.bazaarvoice.jolt.modifier.function.Math;
+import com.bazaarvoice.jolt.modifier.function.Objects;
 import com.bazaarvoice.jolt.modifier.function.Strings;
 import com.bazaarvoice.jolt.modifier.spec.ModifierCompositeSpec;
 
@@ -43,13 +44,19 @@ public abstract class Modifier implements SpecDriven, ContextualTransform {
         STOCK_FUNCTIONS.put( "toLower", new Strings.toLowerCase() );
         STOCK_FUNCTIONS.put( "toUpper", new Strings.toUpperCase() );
         STOCK_FUNCTIONS.put( "concat", new Strings.concat() );
+        STOCK_FUNCTIONS.put( "join", new Strings.join() );
 
         STOCK_FUNCTIONS.put( "min", new Math.min() );
         STOCK_FUNCTIONS.put( "max", new Math.max() );
         STOCK_FUNCTIONS.put( "abs", new Math.abs() );
-        STOCK_FUNCTIONS.put( "toInteger", new Math.toInteger() );
-        STOCK_FUNCTIONS.put( "toDouble", new Math.toDouble() );
-        STOCK_FUNCTIONS.put( "toLong", new Math.toLong() );
+        STOCK_FUNCTIONS.put( "avg", new Math.avg() );
+
+        STOCK_FUNCTIONS.put( "toInteger", new Objects.toInteger() );
+        STOCK_FUNCTIONS.put( "toDouble", new Objects.toDouble() );
+        STOCK_FUNCTIONS.put( "toLong", new Objects.toLong() );
+        STOCK_FUNCTIONS.put( "toBoolean", new Objects.toBoolean() );
+        STOCK_FUNCTIONS.put( "toString", new Objects.toString() );
+        STOCK_FUNCTIONS.put( "size", new Objects.size() );
 
         STOCK_FUNCTIONS.put( "noop", Function.noop );
         STOCK_FUNCTIONS.put( "isPresent", Function.isPresent );
@@ -60,6 +67,7 @@ public abstract class Modifier implements SpecDriven, ContextualTransform {
         STOCK_FUNCTIONS.put( "lastElement", new Lists.lastElement() );
         STOCK_FUNCTIONS.put( "elementAt", new Lists.elementAt() );
         STOCK_FUNCTIONS.put( "toList", new Lists.toList() );
+        STOCK_FUNCTIONS.put( "sort", new Lists.sort() );
     }
 
     private final ModifierCompositeSpec rootSpec;

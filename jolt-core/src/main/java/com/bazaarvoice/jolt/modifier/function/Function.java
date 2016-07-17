@@ -18,6 +18,12 @@ package com.bazaarvoice.jolt.modifier.function;
 
 import com.bazaarvoice.jolt.common.Optional;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Modifier supports a Function on RHS that accepts jolt path expressions as arguments and evaluates
  * them at runtime before calling it. Function always returns an Optional, and the value is written
@@ -175,4 +181,188 @@ public interface Function {
             return Optional.of( args[0] );
         }
     };
+
+    /**
+     * Abstract class that processes var-args and calls two abstract methods
+     *
+     * If its single list arg, or many args, calls applyList()
+     * else calls applySingle()
+     *
+     * @param <T> type of return value
+     */
+    @SuppressWarnings( "unchecked" )
+    public static abstract class BaseFunction<T> implements Function {
+
+        public final Optional<Object> apply( final Object... args ) {
+            if(args.length == 0) {
+                return Optional.empty();
+            }
+            else if(args.length == 1) {
+                if(args[0] instanceof List ) {
+                    return applyList( (List) args[0] );
+                }
+                else {
+                    return (Optional) applySingle( args[0] );
+                }
+            }
+            else {
+                return applyList( Arrays.asList( args ) );
+            }
+        }
+
+        protected abstract Optional<Object> applyList( final List<Object> input );
+
+        protected abstract Optional<T> applySingle( final Object arg );
+    }
+
+    /**
+     * Abstract class that provides rudimentary abstraction to quickly implement
+     * a function that works on an single value input
+     *
+     * i.e. toUpperCase a string
+     *
+     * @param <T> type of return value
+     */
+    @SuppressWarnings( "unchecked" )
+    public static abstract class SingleFunction<T> extends BaseFunction<T> {
+
+        protected final Optional<Object> applyList( final List<Object> input ) {
+            List<Object> ret = new ArrayList<>( input.size() );
+            for(Object o: input) {
+                Optional<T> optional = applySingle( o );
+                ret.add(optional.isPresent()?optional.get():o);
+            }
+            return Optional.<Object>of( ret );
+        }
+
+        protected abstract Optional<T> applySingle( final Object arg );
+    }
+
+    /**
+     * Abstract class that provides rudimentary abstraction to quickly implement
+     * a function that works on an List of input
+     *
+     * i.e. find the max item from a list, etc.
+     *
+     */
+    @SuppressWarnings( "unchecked" )
+    public static abstract class ListFunction extends BaseFunction<Object> {
+
+        protected abstract Optional<Object> applyList( final List<Object> argList );
+
+        protected final Optional<Object> applySingle( final Object arg ) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Abstract class that provides rudimentary abstraction to quickly implement
+     * a function that classifies first arg as special input and rest as regular
+     * input.
+     *
+     * @param <S> type of special argument
+     * @param <R> type of return value
+     */
+    @SuppressWarnings( "unchecked" )
+    public static abstract class ArgDrivenFunction<S, R> implements Function {
+
+        private final Class<S> specialArgType;
+
+        private ArgDrivenFunction() {
+            /**
+             * inspired from {@link com.google.common.reflect.TypeCapture#capture()}
+             * copied, coz jolt-core is designed to have no dependency
+             * modified, coz the instanceof check and subsequently throwing exception
+             * is unnecessary as we already know this class has genericSuperClass of
+             * Parametrized type. In worst case if an implementation does not specify
+             * the generics, we fall back to Object.class, and that's ok.
+             */
+            Type superclass = getClass().getGenericSuperclass();
+            if(superclass instanceof ParameterizedType) {
+                specialArgType =  (Class<S>) ((ParameterizedType) superclass).getActualTypeArguments()[0];
+            }
+            else {
+                specialArgType =  (Class<S>) Object.class;
+            }
+        }
+
+        private Optional<S> getSpecialArg(Object[] args) {
+            if ( (args.length >= 2) && specialArgType.isInstance( args[0]) ) {
+                S specialArg = (S) args[0];
+                return Optional.of( specialArg );
+            }
+            return Optional.empty();
+        }
+
+        @Override
+        public final Optional<Object> apply( final Object... args ) {
+
+            Optional<S> specialArgOptional = getSpecialArg( args );
+            if ( specialArgOptional.isPresent() ) {
+                S specialArg = specialArgOptional.get();
+                if ( args.length == 2) {
+                    if(args[1] instanceof List) {
+                        return (Optional) applyList( specialArg, (List) args[1] );
+                    }
+                    else {
+                        return (Optional) applySingle( specialArg, args[1] );
+                    }
+                }
+                else {
+                    List<Object> input = Arrays.asList( Arrays.copyOfRange(args, 1, args.length) );
+                    return (Optional) applyList( specialArg, input );
+                }
+            }
+            else {
+                return Optional.empty();
+            }
+        }
+
+        protected abstract Optional<Object> applyList( S specialArg, List<Object> args );
+
+        protected abstract Optional<R> applySingle( S specialArg, Object arg );
+    }
+
+    /**
+     * Extends ArgDrivenConverter to provide rudimentary abstraction to quickly
+     * implement a function that works on a single input
+     *
+     * i.e. increment(1, value)
+     *
+     * @param <S> type of special argument
+     * @param <R> type of return value
+     */
+    @SuppressWarnings( "unchecked" )
+    public static abstract class ArgDrivenSingleFunction<S, R> extends ArgDrivenFunction<S, R> {
+
+        protected final Optional<Object> applyList( S specialArg, List<Object> input ) {
+            List<Object> ret = new ArrayList<>( input.size() );
+            for(Object o: input) {
+                Optional<R> optional = applySingle( specialArg, o );
+                ret.add(optional.isPresent()?optional.get():o);
+            }
+            return (Optional) Optional.of( ret );
+        }
+
+        protected abstract Optional<R> applySingle( S specialArg, Object arg );
+    }
+
+    /**
+     * Extends ArgDrivenConverter to provide rudimentary abstraction to quickly
+     * implement a function that works on an input list|array
+     *
+     * i.e. join('-', ...)
+     *
+     * @param <S> type of special argument
+     */
+    @SuppressWarnings( "unchecked" )
+    public static abstract class ArgDrivenListFunction<S> extends ArgDrivenFunction<S, Object> {
+
+        protected abstract Optional<Object> applyList( S specialArg, List<Object> args );
+
+        protected final Optional<Object> applySingle( S specialArg, Object arg ) {
+            return Optional.empty();
+        }
+    }
+
 }

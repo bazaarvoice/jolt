@@ -48,22 +48,30 @@ public class FunctionEvaluator {
 
         Optional<Object> valueOptional = Optional.empty();
         try {
-            Object[] evaluatedArgs;
 
             // "key": "@0", "key": literal
             if(function == null) {
                 valueOptional = functionArgs[0].evaluateArg( walkedPath, context );
             }
             // "key": "=abs(@(1,&0))"
-            else if( functionArgs.length > 0 ) {
-                evaluatedArgs = evaluateArgsValue( functionArgs, context, walkedPath );
+            // this is most usual case, a single argument is passed and we need to evaluate and
+            // pass the value, if present, to the spec function
+            else if( functionArgs.length == 1 ) {
+                Optional<Object> evaluatedArgValue = functionArgs[0].evaluateArg( walkedPath, context );
+                valueOptional = evaluatedArgValue.isPresent() ? function.apply( evaluatedArgValue.get() ): function.apply( );
+            }
+            // "key": "=abs(@(1,&0),-1,-3)"
+            // this is more complicated case! if args is an array, after evaluation we cannot pass a missing value wrapped in
+            // object[] into function. In such case null will be passed however, in json null is also a valid value, so it is
+            // upto the implementer to interpret the value. Ideally we can almost always pass a list straight from input.
+            else if( functionArgs.length > 1 ) {
+                Object[] evaluatedArgs = evaluateArgsValue( functionArgs, context, walkedPath );
                 valueOptional = function.apply( evaluatedArgs );
             }
             // "key": "=abs"
             else {
-                // pass current value as arg
-                evaluatedArgs = inputOptional.isPresent() ? new Object[] {inputOptional.get()} : new Object[0];
-                valueOptional = function.apply( evaluatedArgs );
+                // pass current value as arg if present
+                valueOptional = inputOptional.isPresent() ? function.apply( inputOptional.get()) : function.apply(  );
             }
         }
         catch(Exception ignored) {}
@@ -78,7 +86,7 @@ public class FunctionEvaluator {
         for(int i=0; i<functionArgs.length; i++) {
             FunctionArg arg = functionArgs[i];
             Optional<Object> evaluatedValue = arg.evaluateArg( walkedPath, context );
-            evaluatedArgs[i] = evaluatedValue.isPresent() ? evaluatedValue.get() : null;
+            evaluatedArgs[i] = evaluatedValue.get();
         }
         return evaluatedArgs;
     }

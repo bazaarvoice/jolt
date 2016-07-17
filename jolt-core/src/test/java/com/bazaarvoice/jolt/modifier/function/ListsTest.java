@@ -60,11 +60,11 @@ public class ListsTest extends AbstractTester {
         testCases.add( new Object[] {"at-empty-null", ELEMENT_AT, new Object[] {null, 1}, Optional.empty() } );
         testCases.add( new Object[] {"at-empty-invalid", ELEMENT_AT, new Object(), Optional.empty() } );
 
-        testCases.add( new Object[] {"at-array", ELEMENT_AT, new Object[]{ 1, 2, 3, 1 }, Optional.of( 2 ) } );
-        testCases.add( new Object[] {"at-list", ELEMENT_AT, Arrays.asList( 1, 2, 3, 1 ), Optional.of( 2 ) } );
+        testCases.add( new Object[] {"at-array", ELEMENT_AT, new Object[]{ 1, 2, 3, 1 }, Optional.of( 3 ) } );
+        testCases.add( new Object[] {"at-list", ELEMENT_AT, Arrays.asList( 1, 2, 3, 1 ), Optional.of( 3 ) } );
 
-        testCases.add( new Object[] {"at-array-missing", ELEMENT_AT, new Object[]{ 1, 2, 3, 5 }, Optional.empty() } );
-        testCases.add( new Object[] {"at-list-missing", ELEMENT_AT, Arrays.asList( 1, 2, 3, 5 ), Optional.empty() } );
+        testCases.add( new Object[] {"at-array-missing", ELEMENT_AT, new Object[]{ 5, 1, 2, 3 }, Optional.empty() } );
+        testCases.add( new Object[] {"at-list-missing", ELEMENT_AT, Arrays.asList( 5, 1, 2, 3 ), Optional.empty() } );
 
         return testCases.iterator();
     }

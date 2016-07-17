@@ -333,7 +333,7 @@ public class SpecStringParser {
                     break;
                 case ',':
                     if ( !inBetweenBrackets && !inBetweenQuotes ) {
-                        argsList.add( sb.toString() );
+                        argsList.add( sb.toString().trim() );
                         sb = new StringBuilder();
                         break;
                     }
@@ -343,7 +343,7 @@ public class SpecStringParser {
             }
         }
 
-        argsList.add( sb.toString() );
+        argsList.add( sb.toString().trim() );
         return argsList;
     }
 }

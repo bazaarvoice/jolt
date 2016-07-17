@@ -18,54 +18,57 @@ package com.bazaarvoice.jolt.modifier.function;
 
 import com.bazaarvoice.jolt.common.Optional;
 
+import java.util.List;
+
 @SuppressWarnings( "deprecated" )
 public class Strings {
 
-    public static final class toLowerCase implements Function {
+    public static final class toLowerCase extends Function.SingleFunction<String> {
         @Override
-        public Optional<Object> apply( final Object... args ) {
-            if(args.length == 0) {
-                return Optional.empty();
-            }
-            Object arg = args[0];
-            if(arg != null) {
-                return Optional.<Object>of( args[0].toString().toLowerCase());
-            }
-            else {
-                return Optional.of( null );
-            }
+        protected Optional<String> applySingle( final Object arg ) {
+            return arg == null ? Optional.<String>of( null ) : Optional.of( arg.toString().toLowerCase() );
         }
     }
 
-    public static final class toUpperCase implements Function {
+    public static final class toUpperCase extends Function.SingleFunction<String> {
         @Override
-        public Optional<Object> apply( final Object... args ) {
-            if(args.length == 0) {
-                return Optional.empty();
-            }
-            Object arg = args[0];
-            if(arg != null) {
-                return Optional.<Object>of(args[0].toString().toUpperCase());
-            }
-            else {
-                return Optional.of( null );
-            }
+        protected Optional<String> applySingle( final Object arg ) {
+            return arg == null ? Optional.<String>of( null ): Optional.of( arg.toString().toUpperCase() );
         }
     }
 
-    public static final class concat implements Function {
+    public static final class concat extends Function.ListFunction {
         @Override
-        public Optional<Object> apply( final Object... args ) {
-            if(args.length == 0) {
-                return Optional.empty();
-            }
+        protected Optional<Object> applyList( final List<Object> argList ) {
             StringBuilder sb = new StringBuilder(  );
-            for(Object arg: args) {
+            for(Object arg: argList ) {
                 if ( arg != null ) {
                     sb.append(arg.toString() );
                 }
             }
             return Optional.<Object>of(sb.toString());
+        }
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public static final class join extends Function.ArgDrivenListFunction<String> {
+
+        @Override
+        protected Optional<Object> applyList( final String specialArg, final List<Object> args ) {
+            StringBuilder sb = new StringBuilder(  );
+            for(int i=0; i < args.size(); i++) {
+                Object arg = args.get(i);
+                if (arg != null ) {
+                    String argString = arg.toString();
+                    if( !("".equals( argString ))) {
+                        sb.append( argString );
+                        if ( i < args.size() - 1 ) {
+                            sb.append( specialArg );
+                        }
+                    }
+                }
+            }
+            return Optional.<Object>of( sb.toString() );
         }
     }
 }
