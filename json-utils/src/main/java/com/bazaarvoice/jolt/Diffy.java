@@ -43,7 +43,19 @@ public class Diffy {
         this.jsonUtil = jsonUtil;
     }
 
+    /**
+     * Finds the differences between two JSON-like Objects (that is, Maps or
+     * Lists). The difference is returned as a Result Object.
+     *
+     * @param expected the expected value to be compared against
+     * @param actual the actual value which we will compare to expected
+     * @return a Result containing the differences between expected and actual
+     * @throws IllegalArgumentException if either argument is not a Map or List
+     */
     public Result diff(Object expected, Object actual) {
+        JsonUtils.ensureJSONType(expected);
+        JsonUtils.ensureJSONType(actual);
+
         Object expectedCopy = jsonUtil.cloneJson( expected );
         Object actualCopy = jsonUtil.cloneJson( actual );
         return diffHelper( expectedCopy, actualCopy );
