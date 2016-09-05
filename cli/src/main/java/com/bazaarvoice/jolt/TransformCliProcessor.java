@@ -70,7 +70,8 @@ public class TransformCliProcessor implements JoltCliProcessor {
         try {
             chainr = ChainrFactory.fromFile((File) ns.get("spec"));
         } catch ( Exception e ) {
-            JoltCliUtilities.printToStandardOut( "Chainr failed to process spec file.", SUPPRESS_OUTPUT );
+            JoltCliUtilities.printToStandardOut( "Chainr failed to load spec file.", SUPPRESS_OUTPUT );
+            e.printStackTrace( System.out );
             return false;
         }
 
@@ -81,7 +82,7 @@ public class TransformCliProcessor implements JoltCliProcessor {
         try {
             output = chainr.transform( input );
         } catch ( Exception e ) {
-            JoltCliUtilities.printToStandardOut( "Chainr failed to process spec file.", SUPPRESS_OUTPUT );
+            JoltCliUtilities.printToStandardOut( "Chainr failed to run spec file.", SUPPRESS_OUTPUT );
             return false;
         }
 

@@ -1,5 +1,6 @@
 {
     "~id": 1234,
+    "" : "damn empty string",
     "bar": 14,
     "baz": 15,
     "foo": 3,
