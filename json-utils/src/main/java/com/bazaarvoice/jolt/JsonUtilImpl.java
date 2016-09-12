@@ -15,6 +15,8 @@
  */
 package com.bazaarvoice.jolt;
 
+import com.bazaarvoice.jolt.exception.JsonMarshalException;
+import com.bazaarvoice.jolt.exception.JsonUnmarshalException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -102,7 +104,7 @@ public class JsonUtilImpl implements JsonUtil {
             return objectMapper.readValue( in, Object.class );
         }
         catch ( IOException e ) {
-            throw new RuntimeException( "Unable to load JSON object from InputStream.", e );
+            throw new JsonUnmarshalException("Unable to unmarshal JSON to an Object.", e );
         }
     }
 
@@ -127,7 +129,7 @@ public class JsonUtilImpl implements JsonUtil {
             return objectMapper.readValue( in, mapTypeReference );
         }
         catch ( IOException e ) {
-            throw new RuntimeException( "Unable to load JSON map from InputStream.", e );
+            throw new JsonUnmarshalException( "Unable to unmarshal JSON to a Map.", e );
         }
     }
 
@@ -152,7 +154,7 @@ public class JsonUtilImpl implements JsonUtil {
             return objectMapper.readValue( in, listTypeReference );
         }
         catch ( IOException e ) {
-            throw new RuntimeException( "Unable to load JSON list from InputStream.", e );
+            throw new JsonUnmarshalException( "Unable to unmarshal JSON to a List.", e );
         }
     }
 
@@ -283,7 +285,7 @@ public class JsonUtilImpl implements JsonUtil {
             return objectMapper.readValue( in, typeRef );
         }
         catch ( IOException e ) {
-            throw new RuntimeException( "Unable to load JSON object from InputStream.", e );
+            throw new JsonUnmarshalException( "Unable to unmarshal JSON to type: " + typeRef, e );
         }
     }
 
@@ -293,7 +295,7 @@ public class JsonUtilImpl implements JsonUtil {
             return objectMapper.readValue( in, aClass );
         }
         catch ( IOException e ) {
-            throw new RuntimeException( "Unable to load JSON object from InputStream.", e );
+            throw new JsonUnmarshalException( "Unable to unmarshal JSON to class: " + aClass, e );
         }
     }
 
@@ -305,7 +307,7 @@ public class JsonUtilImpl implements JsonUtil {
             return objectMapper.writeValueAsString( obj );
         }
         catch ( IOException e ) {
-            throw new RuntimeException( "Unable to serialize object : " + obj, e );
+            throw new JsonMarshalException("Unable to serialize object : " + obj, e );
         }
     }
 
@@ -315,7 +317,7 @@ public class JsonUtilImpl implements JsonUtil {
             return prettyPrintWriter.writeValueAsString( obj );
         }
         catch ( IOException e ) {
-            throw new RuntimeException( "Unable to serialize object : " + obj, e );
+            throw new JsonMarshalException( "Unable to serialize object : " + obj, e );
         }
     }
 

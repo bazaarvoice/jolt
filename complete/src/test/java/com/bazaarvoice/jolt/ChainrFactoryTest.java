@@ -16,6 +16,8 @@
 package com.bazaarvoice.jolt;
 
 import com.bazaarvoice.jolt.chainr.instantiator.DefaultChainrInstantiator;
+import com.bazaarvoice.jolt.exception.JsonUnmarshalException;
+
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -72,7 +74,7 @@ public class ChainrFactoryTest {
         Assert.assertNotNull( result, "ChainrFactory did not return an instance of Chainr." );
     }
 
-    @Test( expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = "Unable to load JSON.*" )
+    @Test( expectedExceptions = JsonUnmarshalException.class, expectedExceptionsMessageRegExp = "Unable to unmarshal JSON.*" )
     public void testGetChainrInstanceFromFileSystem_error()
             throws Exception {
         ChainrFactory.fromFileSystem( fileSystemPath + MALFORMED_INPUT_FILENAME );
@@ -85,7 +87,7 @@ public class ChainrFactoryTest {
         Assert.assertNotNull( result, "ChainrFactory did not return an instance of Chainr." );
     }
 
-    @Test(expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = "Unable to load JSON.*")
+    @Test(expectedExceptions = JsonUnmarshalException.class, expectedExceptionsMessageRegExp = "Unable to unmarshal JSON.*")
     public void testGetChainrInstanceFromFileSystemWithInstantiator_error()
             throws Exception {
         ChainrFactory.fromFileSystem( fileSystemPath + MALFORMED_INPUT_FILENAME, new DefaultChainrInstantiator() );
