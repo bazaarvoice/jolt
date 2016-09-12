@@ -27,7 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.bazaarvoice.jolt.modifier.function.Math.abs;
-import static com.bazaarvoice.jolt.modifier.function.Math.toNumber;
+import static com.bazaarvoice.jolt.modifier.function.Objects.toNumber;
 
 @SuppressWarnings( "deprecated" )
 public class MathTest extends AbstractTester {
@@ -39,9 +39,9 @@ public class MathTest extends AbstractTester {
         Function MAX_OF = new Math.max();
         Function MIN_OF = new Math.min();
         Function ABS_OF = new Math.abs();
-        Function TO_INTEGER = new Math.toInteger();
-        Function TO_DOUBLE = new Math.toDouble();
-        Function TO_LONG = new Math.toLong();
+        Function TO_INTEGER = new Objects.toInteger();
+        Function TO_DOUBLE = new Objects.toDouble();
+        Function TO_LONG = new Objects.toLong();
 
 
         testCases.add( new Object[] { "max-empty-array", MAX_OF, new Object[] {}, Optional.empty() } );

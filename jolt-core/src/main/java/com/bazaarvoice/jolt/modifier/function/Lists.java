@@ -24,55 +24,82 @@ import java.util.List;
 @SuppressWarnings( "deprecated" )
 public class Lists {
 
-    public static final class firstElement implements Function {
+    /**
+     * Given a list, return the first element
+     */
+    public static final class firstElement extends Function.ListFunction {
+
         @Override
-        public Optional<Object> apply( final Object... args ) {
-            if(args.length == 1 && args[0] instanceof List) {
-                List input = (List)args[0];
-                if(input.size() > 0) {
-                    return Optional.of( input.get( 0 ) );
-                }
+        protected Optional applyList( final List argList ) {
+            return argList.size() > 0 ?
+                    Optional.of( argList.get( 0 ) ) :
+                    Optional.empty();
+        }
+    }
+
+    /**
+     * Given a list, return the last element
+     */
+    public static final class lastElement extends Function.ListFunction {
+
+        @Override
+        protected Optional applyList( final List argList ) {
+            return argList.size() > 0 ?
+                    Optional.of( argList.get( argList.size() - 1 ) ) :
+                    Optional.empty();
+        }
+    }
+
+    /**
+     * Given an index at arg[0], and a list at arg[1] or args[1...N], return element at index of list or array
+     */
+    public static final class elementAt extends Function.ArgDrivenListFunction<Integer> {
+
+        @Override
+        protected Optional<Object> applyList( final Integer specialArg, final List<Object> args ) {
+            if ( specialArg != null && args != null && args.size() > specialArg ) {
+                return Optional.of( args.get( specialArg ) );
             }
             return Optional.empty();
         }
     }
 
-    public static final class lastElement implements Function {
+    /**
+     * Given an arbitrary number of arguments, return them as list
+     */
+    public static final class toList extends Function.BaseFunction<List> {
         @Override
-        public Optional<Object> apply( final Object... args ) {
-            if(args.length == 1 && args[0] instanceof List) {
-                List input = (List)args[0];
-                if(input.size() > 0) {
-                    return Optional.of( input.get( input.size() - 1 ) );
-                }
-            }
-            return Optional.empty();
+        protected Optional<Object> applyList( final List input ) {
+            return Optional.<Object>of( input );
+        }
+
+        @Override
+        protected Optional<List> applySingle( final Object arg ) {
+            return Optional.<List>of( Arrays.asList( arg ) );
         }
     }
 
-    public static final class elementAt implements Function {
-        @Override
-        public Optional<Object> apply( final Object... args ) {
-            if ( args.length == 2 && args[0] instanceof List && args[1] instanceof Integer ) {
-                int index = (int) args[1];
-                List input = (List) args[0];
-                if ( input.size() > index ) {
-                    return Optional.of( input.get( index ) );
-                }
-            }
-            return Optional.empty();
-        }
-    }
+    /**
+     * Given an arbitrary list of items, returns a new array of them in sorted state
+     */
+    public static final class sort extends Function.BaseFunction {
 
-    public static final class toList implements Function {
         @Override
-        public Optional<Object> apply( final Object... args ) {
-            if(args.length == 0) {
+        protected Optional applyList( final List argList ) {
+            try {
+                Object[] dest = argList.toArray();
+                Arrays.sort( dest );
+                return Optional.<Object>of( dest );
+            }
+            // if any of the elements are not Comparable<?> it'll throw a ClassCastException
+            catch(Exception ignored) {
                 return Optional.empty();
             }
-            else {
-                return Optional.<Object>of( Arrays.asList( args ));
-            }
+        }
+
+        @Override
+        protected Optional applySingle( final Object arg ) {
+            return Optional.of( arg );
         }
     }
 }

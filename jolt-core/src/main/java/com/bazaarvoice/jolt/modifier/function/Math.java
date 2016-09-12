@@ -18,8 +18,6 @@ package com.bazaarvoice.jolt.modifier.function;
 
 import com.bazaarvoice.jolt.common.Optional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings( "deprecated" )
@@ -35,7 +33,7 @@ public class Math {
      * max([]) == Optional.empty()
      */
     public static Optional<Number> max( List<Object> args ) {
-        if(args.size() == 0) {
+        if(args == null || args.size() == 0) {
             return Optional.empty();
         }
 
@@ -58,7 +56,7 @@ public class Math {
                 found = true;
             }
             else if(arg instanceof String) {
-                Optional<?> optional = toNumber( arg );
+                Optional<?> optional = Objects.toNumber( arg );
                 if(optional.isPresent()) {
                     arg = optional.get();
                     if(arg instanceof Integer) {
@@ -104,7 +102,7 @@ public class Math {
      * min([]) == Optional.empty()
      */
     public static Optional<Number> min( List<Object> args ) {
-        if(args.size() == 0) {
+        if(args == null || args.size() == 0) {
             return Optional.empty();
         }
         Integer minInt = Integer.MAX_VALUE;
@@ -126,7 +124,7 @@ public class Math {
                 found = true;
             }
             else if(arg instanceof String) {
-                Optional<?> optional = toNumber( arg );
+                Optional<?> optional = Objects.toNumber( arg );
                 if(optional.isPresent()) {
                     arg = optional.get();
                     if(arg instanceof Integer) {
@@ -182,198 +180,59 @@ public class Math {
             return Optional.<Number>of( java.lang.Math.abs( (Long) arg ));
         }
         else if(arg instanceof String) {
-            return abs( toNumber( arg ).get() );
+            return abs( Objects.toNumber( arg ).get() );
         }
         return Optional.empty();
     }
 
     /**
-     * Given any object, returns, if possible. its Java number equivalent wrapped in Optional
-     * Interprets String as Number
+     * Given a list of numbers, returns their avg as double
+     * any value in the list that is not a valid number is ignored
      *
-     * toNumber("123") == Optional.of(123)
-     * toNumber("-123") == Optional.of(-123)
-     * toNumber("12.3") == Optional.of(12.3)
-     *
-     * toNumber("abc") == Optional.empty()
-     * toNumber(null) == Optional.empty()
-     *
-     * also, see: MathTest#testNitPicks
-     *
+     * avg(2,"2","abc") == Optional.of(2.0)
      */
-    public static Optional<? extends Number> toNumber(Object arg) {
-        if ( arg instanceof Number ) {
-            return Optional.of( ( (Number) arg ));
-        }
-        else if(arg instanceof String) {
-            try {
-                return Optional.of( (Number) Integer.parseInt( (String) arg ) );
-            }
-            catch(Exception ignored) {}
-            try {
-                return Optional.of( (Number) Long.parseLong( (String) arg ) );
-            }
-            catch(Exception ignored) {}
-            try {
-                return Optional.of( (Number) Double.parseDouble( (String) arg ) );
-            }
-            catch(Exception ignored) {}
-            return Optional.empty();
-        }
-        else {
-            return Optional.empty();
-        }
-    }
-
-    /**
-     * Returns int value of argument, if possible, wrapped in Optional
-     * Interprets String as Number
-     */
-    public static Optional<Integer> toInteger(Object arg) {
-        if ( arg instanceof Number ) {
-            return Optional.of( ( (Number) arg ).intValue() );
-        }
-        else if(arg instanceof String) {
-            Optional<? extends Number> optional = toNumber( arg );
-            if ( optional.isPresent() ) {
-                return Optional.of( optional.get().intValue() );
-            }
-            else {
-                return Optional.empty();
+    public static Optional<Double> avg (List<Object> args) {
+        double sum = 0d;
+        int count = 0;
+        for(Object arg: args) {
+            Optional<? extends Number> numberOptional = Objects.toNumber( arg );
+            if(numberOptional.isPresent()) {
+                sum = sum + numberOptional.get().doubleValue();
+                count = count + 1;
             }
         }
-        else {
-            return Optional.empty();
-        }
-    }
-
-    /**
-     * Returns long value of argument, if possible, wrapped in Optional
-     * Interprets String as Number
-     */
-    public static Optional<Long> toLong(Object arg) {
-        if ( arg instanceof Number ) {
-            return Optional.of( ( (Number) arg ).longValue() );
-        }
-        else if(arg instanceof String) {
-            Optional<? extends Number> optional = toNumber( arg );
-            if ( optional.isPresent() ) {
-                return Optional.of( optional.get().longValue() );
-            }
-            else {
-                return Optional.empty();
-            }
-        }
-        else {
-            return Optional.empty();
-        }
-    }
-
-    /**
-     * Returns double value of argument, if possible, wrapped in Optional
-     * Interprets String as Number
-     */
-    public static Optional<Double> toDouble(Object arg) {
-        if ( arg instanceof Number ) {
-            return Optional.of( ( (Number) arg ).doubleValue() );
-        }
-        else if(arg instanceof String) {
-            Optional<? extends Number> optional = toNumber( arg );
-            if ( optional.isPresent() ) {
-                return Optional.of( optional.get().doubleValue() );
-            }
-            else {
-                return Optional.empty();
-            }
-        }
-        else {
-            return Optional.empty();
-        }
+        return  count == 0 ? Optional.<Double>empty() : Optional.of( sum / count );
     }
 
     @SuppressWarnings( "unchecked" )
-    public static final class max implements Function {
-
-        public Optional<Object> apply( final List<Object> args ) {
-            return (Optional) max( args );
-        }
-
+    public static final class max extends Function.ListFunction {
         @Override
-        public Optional<Object> apply( final Object... args ) {
-            return (Optional) max( Arrays.asList( args ));
+        protected Optional<Object> applyList( final List argList ) {
+            return (Optional) max( argList );
         }
-
     }
 
     @SuppressWarnings( "unchecked" )
-    public static final class min implements Function {
-
-        public Optional<Object> apply( final List<Object> args ) {
-            return (Optional) min( args );
-        }
-
+    public static final class min extends Function.ListFunction {
         @Override
-        public Optional<Object> apply( final Object... args ) {
-            return (Optional) min( Arrays.asList( args ));
+        protected Optional<Object> applyList( final List<Object> argList ) {
+            return (Optional) min( argList );
         }
     }
 
     @SuppressWarnings( "unchecked" )
-    public static final class abs extends genericConverter {
+    public static final class abs extends Function.SingleFunction<Number> {
         @Override
-        protected <T extends Number> Optional<T> convert( final Object o ) {
-            return (Optional) abs( o );
+        protected Optional<Number> applySingle( final Object arg ) {
+            return abs( arg );
         }
     }
 
     @SuppressWarnings( "unchecked" )
-    public static final class toInteger extends genericConverter {
+    public static final class avg extends Function.ListFunction {
         @Override
-        protected <T extends Number> Optional<T> convert( final Object o ) {
-            return (Optional<T>) toInteger( o );
-        }
-
-    }
-
-    @SuppressWarnings( "unchecked" )
-    public static final class toLong extends genericConverter {
-        @Override
-        protected <T extends Number> Optional<T> convert( final Object o ) {
-            return (Optional<T>) toLong( o );
+        protected Optional<Object> applyList( final List<Object> argList ) {
+            return (Optional) avg( argList );
         }
     }
-
-    @SuppressWarnings( "unchecked" )
-    public static final class toDouble extends genericConverter {
-        @Override
-        protected <T extends Number> Optional<T> convert( final Object o ) {
-            return (Optional<T>) toDouble( o );
-        }
-    }
-
-    @SuppressWarnings( "unchecked" )
-    private static abstract class genericConverter implements Function {
-
-        public Optional<Object> apply( final Object... args ) {
-            if(args.length == 0) {
-                return Optional.empty();
-            }
-            else if(args.length == 1) {
-                return (Optional) convert( args[0] );
-            }
-            return apply(Arrays.asList( args ));
-        }
-
-        public Optional<Object> apply( final List<Object> input ) {
-            List<Object> ret = new ArrayList<>( input.size() );
-            for(Object o: input) {
-                Optional<? extends Number> optional = convert( o );
-                ret.add(optional.isPresent()?optional.get():o);
-            }
-            return Optional.<Object>of( ret );
-        }
-
-        protected abstract <T extends Number> Optional<T> convert( final Object o );
-    }
-
 }

@@ -81,7 +81,7 @@ public abstract class FunctionArg {
                     return new LiteralArg( Boolean.parseBoolean( arg ) );
                 }
                 else {
-                    Optional<?> optional = Math.toNumber( arg );
+                    Optional<?> optional = Objects.toNumber( arg );
                     if(optional.isPresent()) {
                         return new LiteralArg( optional.get() );
                     }
