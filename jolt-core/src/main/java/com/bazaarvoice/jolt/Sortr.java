@@ -84,8 +84,8 @@ public class Sortr implements Transform {
         @Override
         public int compare(String a, String b) {
 
-            boolean aTilde = ( a.charAt(0) == '~' );
-            boolean bTilde = ( b.charAt(0) == '~' );
+            boolean aTilde = ( a.length() > 0 && a.charAt(0) == '~' );
+            boolean bTilde = ( b.length() > 0 && b.charAt(0) == '~' );
 
             if ( aTilde && ! bTilde ) {
                 return -1;
