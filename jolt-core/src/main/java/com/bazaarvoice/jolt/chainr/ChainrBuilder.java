@@ -59,7 +59,7 @@ public class ChainrBuilder {
 
     public ChainrBuilder withClassLoader( ClassLoader classLoader ) {
         if ( classLoader == null ) {
-            throw new IllegalArgumentException( "ChainrBuilder requires a non-null classLoder." );
+            throw new IllegalArgumentException( "ChainrBuilder requires a non-null classLoader." );
         }
         this.classLoader = classLoader;
         return this;
