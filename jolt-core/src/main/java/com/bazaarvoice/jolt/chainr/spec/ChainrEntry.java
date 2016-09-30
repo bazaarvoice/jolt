@@ -101,7 +101,7 @@ public class ChainrEntry {
             operationClassName = opString;
         }
 
-        joltTransformClass = loadJoltTransformClass(classLoader);
+        joltTransformClass = loadJoltTransformClass( classLoader );
 
         spec = chainrEntryMap.get( ChainrEntry.SPEC_KEY );
 
