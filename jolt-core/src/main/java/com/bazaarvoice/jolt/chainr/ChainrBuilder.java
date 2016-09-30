@@ -27,8 +27,9 @@ import java.util.List;
 
 public class ChainrBuilder {
 
-    private final ChainrSpec chainrSpec;
+    private final Object chainrSpecObj;
     protected ChainrInstantiator chainrInstantiator = new DefaultChainrInstantiator();
+    private ClassLoader classLoader = ChainrBuilder.class.getClassLoader();
 
     /**
      * Initialize a Chainr to run a list of Transforms.
@@ -37,7 +38,7 @@ public class ChainrBuilder {
      * @param chainrSpecObj List of transforms to run
      */
     public ChainrBuilder( Object chainrSpecObj ) {
-        this.chainrSpec = new ChainrSpec( chainrSpecObj );
+        this.chainrSpecObj = chainrSpecObj;
     }
 
     /**
@@ -56,8 +57,16 @@ public class ChainrBuilder {
         return this;
     }
 
-    public Chainr build() {
+    public ChainrBuilder withClassLoader( ClassLoader classLoader ) {
+        if ( classLoader == null ) {
+            throw new IllegalArgumentException( "ChainrBuilder requires a non-null classLoder." );
+        }
+        this.classLoader = classLoader;
+        return this;
+    }
 
+    public Chainr build() {
+        ChainrSpec chainrSpec = new ChainrSpec( chainrSpecObj, classLoader );
         List<JoltTransform> transforms = new ArrayList<>( chainrSpec.getChainrEntries().size() );
         for ( ChainrEntry entry : chainrSpec.getChainrEntries() ) {
 
