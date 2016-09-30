@@ -77,7 +77,7 @@ public class ChainrEntry {
      * @param chainrEntryObj the unknown Object from the Chainr list
      * @param index the index of the chainrEntryObj, used in reporting errors
      */
-    public ChainrEntry( int index, Object chainrEntryObj ) {
+    public ChainrEntry( int index, Object chainrEntryObj, ClassLoader classLoader ) {
 
         if ( ! (chainrEntryObj instanceof Map ) ) {
             throw new SpecException( "JOLT ChainrEntry expects a JSON map - Malformed spec" + getErrorMessageIndexSuffix() );
@@ -101,7 +101,7 @@ public class ChainrEntry {
             operationClassName = opString;
         }
 
-        joltTransformClass = loadJoltTransformClass();
+        joltTransformClass = loadJoltTransformClass(classLoader);
 
         spec = chainrEntryMap.get( ChainrEntry.SPEC_KEY );
 
@@ -128,10 +128,10 @@ public class ChainrEntry {
         }
     }
 
-    private Class<? extends JoltTransform> loadJoltTransformClass() {
+    private Class<? extends JoltTransform> loadJoltTransformClass(ClassLoader classLoader) {
 
         try {
-            Class opClass = Class.forName( operationClassName );
+            Class opClass = classLoader.loadClass( operationClassName );
 
             if ( Chainr.class.isAssignableFrom( opClass ) ) {
                 throw new SpecException( "Attempt to nest Chainr inside itself" + getErrorMessageIndexSuffix() );
