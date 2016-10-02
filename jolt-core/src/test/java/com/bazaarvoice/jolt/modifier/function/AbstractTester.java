@@ -42,6 +42,9 @@ public abstract class AbstractTester {
         else {
             actual = function.apply( args );
         }
-        assertEquals( actual, expected, name + " failed");
+        assertEquals( actual.isPresent(), expected.isPresent(), "actual and expected should both be present or not" );
+        if ( actual.isPresent() ) {
+            assertEquals( actual.get(), expected.get(), name + " failed");
+        }
     }
 }
