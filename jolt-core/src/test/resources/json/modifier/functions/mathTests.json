@@ -14,8 +14,8 @@
             "test1": [5, 2.0],   // Divide integer and double returns double
             "test2": [5, 0],     // Divide by 0 returns empty hence noop
             "test3": [0, 5],     // Divide 0 by any number returns 0
-            "nr": 10,
-            "dr": 5
+            "nr": 51,
+            "dr": 13
         }
     },
 
@@ -46,11 +46,12 @@
             "value": "=intSum"
         },
         "data4": {
-            "test1": "=div",
-            "test2": "=div",
-            "test3": "=div",
-            "explicit": "=div(@(1,value))",
-            "div": "=div(@(1,nr),@(1,dr))"   // Look up the numerator and denominator from the input
+            "test1": "=divide",
+            "test2": "=divide",
+            "test3": "=divide",
+            "explicit": "=divide(@(1,value))",
+            "div": "=divide(@(1,nr),@(1,dr))" ,  // Look up the numerator and denominator from the input
+            "roundedDiv": "=divideAndRound(4, @(1,nr),@(1,dr))"   // Round the result to the 4 decimal points
         }
     },
 
@@ -88,11 +89,12 @@
             "test1": 2.5,
             "test2": [5, 0],
             "test3": 0.0,
-            "div": 2.0,
+            "div": 3.923076923076923,
+            "roundedDiv":3.9231,
             "explicit": 2.5,
             "value": [5, 2],
-            "nr": 10,
-            "dr": 5
+            "nr": 51,
+            "dr": 13
         }
     }
 }
