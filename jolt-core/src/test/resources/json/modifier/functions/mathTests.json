@@ -8,6 +8,14 @@
         },
         "data3": {
             "value": [-1,2,3.0]
+        },
+        "data4": {
+            "value": [5, 2],
+            "test1": [5, 2.0],
+            "test2": [5, 0],
+            "test3": [0, 5],
+            "test4": [5, 2],
+            "test5": [5, 2.0]
         }
     },
 
@@ -16,8 +24,9 @@
             "max": "=max(@(1,value) , ^value,0)",
             "min": "=min(@(1,value) , ^value,0.0)",
             "double": "=toDouble(@(1,value))",
-            "value": "=abs"
-
+            "value": "=abs",
+            "intSum": "=intSum",  // Noop. Sum is a list function. Single arg is being passed here.
+            "doubleSum": "=doubleSum"
         },
         "data2": {
             "max": "=max(@(1,value) , ^value,0.0)",
@@ -30,7 +39,21 @@
             "max": "=max(@(1,value))",
             "int": "=toInteger(@(1,value))",
             "double": "=toDouble(@(1,value))",
-            "abs": "=abs(@(1,value))"
+            "abs": "=abs(@(1,value))",
+            "intSum": "=intSum(@(1,value))",
+            "doubleSum": "=doubleSum(@(1,value))",
+            "longSum": "=longSum(@(1,value))",
+            "value": "=intSum"
+        },
+        "data4": {
+            "test1": "=div",
+            "test1": "=div",
+            "test2": "=div",
+            "test3": "=div",
+            "test4": "=div",
+            "test5": "=div",
+            "explicit": "=div(@(1,value))"
+
         }
     },
 
@@ -58,7 +81,21 @@
             "max" : 3.0,
             "int" : [ -1, 2, 3 ],
             "double" : [ -1.0, 2.0, 3.0 ],
-            "abs" : [ 1, 2, 3.0 ]
+            "abs" : [ 1, 2, 3.0 ],
+            "intSum" : 4,
+            "doubleSum" : 4.0,
+            "longSum" : 4,
+            "value": 4
+        },
+        "data4": {
+            "test1": 2.5,
+            "test1": 2.5,
+            "test2": [5, 0],
+            "test3": 0.0,
+            "test4": 2.5,
+            "test5": 2.5,
+            "explicit": 2.5,
+            "value": [5, 2]
         }
     }
 }
