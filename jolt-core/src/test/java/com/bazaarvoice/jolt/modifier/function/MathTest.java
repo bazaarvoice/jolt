@@ -133,7 +133,7 @@ public class MathTest extends AbstractTester {
         testCases.add( new Object[] { "abs-null", ABS_OF, null, Optional.empty() } );
         testCases.add( new Object[] { "abs-invalid", ABS_OF, new Object(), Optional.empty() } );
         testCases.add( new Object[] { "abs-empty-list", ABS_OF, new Object[] {}, Optional.empty() } );
-        testCases.add( new Object[] { "abs-empty-array", ABS_OF, Arrays.asList(  ), Optional.of( Arrays.asList(  ) ) } );
+        testCases.add( new Object[] { "abs-empty-array", ABS_OF, Arrays.asList(  ), Optional.empty() } );
 
         testCases.add( new Object[] { "abs-single-negative-int", ABS_OF, -1, Optional.of( 1 ) } );
         testCases.add( new Object[] { "abs-single-negative-long", ABS_OF, -1L, Optional.of(1L) } );
@@ -153,8 +153,8 @@ public class MathTest extends AbstractTester {
 
         testCases.add( new Object[] { "toInt-null", TO_INTEGER, null, Optional.empty() } );
         testCases.add( new Object[] { "toInt-invalid", TO_INTEGER, new Object(), Optional.empty() } );
-        testCases.add( new Object[] { "toInt-empty-array", TO_INTEGER, new Object[] {}, Optional.of(Arrays.asList(  )) } );
-        testCases.add( new Object[] { "toInt-empty-list", TO_INTEGER, Arrays.asList(  ), Optional.of(Arrays.asList(  )) } );
+        testCases.add( new Object[] { "toInt-empty-array", TO_INTEGER, new Object[] {}, Optional.empty() } );
+        testCases.add( new Object[] { "toInt-empty-list", TO_INTEGER, Arrays.asList(  ), Optional.empty() } );
 
         testCases.add( new Object[] { "toInt-single-positive-string", TO_INTEGER, "1", Optional.of( 1 ) } );
         testCases.add( new Object[] { "toInt-single-negative-string", TO_INTEGER, "-1", Optional.of( -1 ) } );
@@ -178,8 +178,8 @@ public class MathTest extends AbstractTester {
 
         testCases.add( new Object[] { "toDouble-null", TO_DOUBLE, null, Optional.empty() } );
         testCases.add( new Object[] { "toDouble-invalid", TO_DOUBLE, new Object(), Optional.empty() } );
-        testCases.add( new Object[] { "toDouble-empty-array", TO_DOUBLE, new Object[] {}, Optional.of(Arrays.asList(  )) } );
-        testCases.add( new Object[] { "toDouble-empty-list", TO_DOUBLE, Arrays.asList(  ), Optional.of(Arrays.asList(  )) } );
+        testCases.add( new Object[] { "toDouble-empty-array", TO_DOUBLE, new Object[] {}, Optional.empty() } );
+        testCases.add( new Object[] { "toDouble-empty-list", TO_DOUBLE, Arrays.asList(  ), Optional.empty() } );
 
         testCases.add( new Object[] { "toDouble-single-positive-string", TO_DOUBLE, "1", Optional.of( 1.0 ) } );
         testCases.add( new Object[] { "toDouble-single-negative-string", TO_DOUBLE, "-1", Optional.of( -1.0 ) } );
@@ -203,8 +203,8 @@ public class MathTest extends AbstractTester {
 
         testCases.add( new Object[] { "toLong-null", TO_LONG, null, Optional.empty() } );
         testCases.add( new Object[] { "toLong-invalid", TO_LONG, new Object(), Optional.empty() } );
-        testCases.add( new Object[] { "toLong-empty-array", TO_LONG, new Object[] {}, Optional.of(Arrays.asList(  )) } );
-        testCases.add( new Object[] { "toLong-empty-list", TO_LONG, Arrays.asList(  ), Optional.of(Arrays.asList(  )) } );
+        testCases.add( new Object[] { "toLong-empty-array", TO_LONG, new Object[] {}, Optional.empty() } );
+        testCases.add( new Object[] { "toLong-empty-list", TO_LONG, Arrays.asList(  ), Optional.empty() } );
 
         testCases.add( new Object[] { "toLong-single-positive-string", TO_LONG, "1", Optional.of( 1L ) } );
         testCases.add( new Object[] { "toLong-single-negative-string", TO_LONG, "-1", Optional.of( -1L ) } );
