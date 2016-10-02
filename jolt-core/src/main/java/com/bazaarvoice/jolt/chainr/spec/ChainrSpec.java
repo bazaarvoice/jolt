@@ -47,6 +47,10 @@ public class ChainrSpec {
      * @param chainrSpec Plain vanilla hydrated JSON representation of a Chainr spec .json file.
      */
     public ChainrSpec( Object chainrSpec ) {
+        this( chainrSpec, ChainrSpec.class.getClassLoader() );
+    }
+
+    public ChainrSpec( Object chainrSpec, ClassLoader classLoader ) {
 
         if ( !( chainrSpec instanceof List ) ) {
             throw new SpecException(  "JOLT Chainr expects a JSON array of objects - Malformed spec." );
@@ -65,7 +69,7 @@ public class ChainrSpec {
 
             Object chainrEntryObj = operations.get( index );
 
-            ChainrEntry entry = new ChainrEntry( index, chainrEntryObj );
+            ChainrEntry entry = new ChainrEntry( index, chainrEntryObj, classLoader );
 
             entries.add( entry );
         }
