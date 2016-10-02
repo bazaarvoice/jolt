@@ -205,18 +205,39 @@ public class Math {
     }
 
     @SuppressWarnings( "unchecked" )
-    public static final class max extends Function.ListFunction {
+    public static final class max extends Function.BaseFunction<Object> {
         @Override
         protected Optional<Object> applyList( final List argList ) {
             return (Optional) max( argList );
         }
+
+        @Override
+        protected Optional<Object> applySingle( final Object arg ) {
+            if(arg instanceof Number) {
+                return Optional.of(arg);
+            }
+            else {
+                return Optional.empty();
+            }
+        }
     }
 
     @SuppressWarnings( "unchecked" )
-    public static final class min extends Function.ListFunction {
+    public static final class min extends Function.BaseFunction<Object> {
+
         @Override
         protected Optional<Object> applyList( final List<Object> argList ) {
             return (Optional) min( argList );
+        }
+
+        @Override
+        protected Optional<Object> applySingle(Object arg) {
+            if(arg instanceof Number) {
+                return Optional.of(arg);
+            }
+            else {
+                return Optional.empty();
+            }
         }
     }
 
