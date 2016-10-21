@@ -1,0 +1,38 @@
+{
+    "input": {
+        "simpleArray": [
+            0, // 0
+            null, // 1
+            "pants", // 2
+            3 // 3
+        ]
+    },
+
+    "spec": {
+        "element0" : "=elementAt(0,@(1,simpleArray))",
+        "element1" : "=elementAt(1,@(1,simpleArray))",
+        "element2" : "=elementAt(2,@(1,simpleArray))"
+    },
+
+    "context": {
+    },
+
+    "OVERWRITR": {
+        "simpleArray": [0, null, "pants", 3],
+        "element0" : 0,
+        "element1" : null,
+        "element2" : "pants"
+    },
+    "DEFAULTR": {
+        "simpleArray": [0, null, "pants", 3],
+        "element0" : 0,
+        "element1" : null,
+        "element2" : "pants"
+    },
+    "DEFINR": {
+        "simpleArray": [0, null, "pants", 3],
+        "element0" : 0,
+        "element1" : null,
+        "element2" : "pants"
+    }
+}
