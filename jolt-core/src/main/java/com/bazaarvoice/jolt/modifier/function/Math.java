@@ -204,19 +204,97 @@ public class Math {
         return  count == 0 ? Optional.<Double>empty() : Optional.of( sum / count );
     }
 
+    public static Optional<Integer> intSum(List<Object> args) {
+        Integer sum = 0;
+        for(Object arg: args) {
+            Optional<? extends Integer> numberOptional = Objects.toInteger(arg);
+            if(numberOptional.isPresent()) {
+                sum = sum + numberOptional.get();
+            }
+        }
+        return Optional.of(sum);
+    }
+
+    public static Optional<Double> doubleSum(List<Object> args) {
+        Double sum = 0.0;
+        for(Object arg: args) {
+            Optional<? extends Double> numberOptional = Objects.toDouble(arg);
+            if(numberOptional.isPresent()) {
+                sum = sum + numberOptional.get();
+            }
+        }
+        return Optional.of(sum);
+    }
+
+    public static Optional<Long> longSum(List<Object> args) {
+        Long sum = 0l;
+        for(Object arg: args) {
+            Optional<? extends Long> numberOptional = Objects.toLong(arg);
+            if(numberOptional.isPresent()) {
+                sum = sum + numberOptional.get();
+            }
+        }
+        return Optional.of(sum);
+    }
+
+    public static Optional<Double> div(List<Object> argList) {
+
+        if(argList.size() < 2) {
+            return Optional.empty();
+        }
+
+        Optional<? extends Number> numerator = Objects.toNumber(argList.get(0));
+        Optional<? extends Number> denominator = Objects.toNumber(argList.get(1));
+
+        if(numerator.isPresent() && denominator.isPresent()) {
+
+            Double drDoubleValue = denominator.get().doubleValue();
+            if(drDoubleValue == 0) {
+                return Optional.empty();
+            }
+
+            Double nrDoubleValue = numerator.get().doubleValue();
+            Double result = nrDoubleValue/drDoubleValue;
+            return Optional.of(result);
+        }
+
+        return Optional.empty();
+    }
+
     @SuppressWarnings( "unchecked" )
-    public static final class max extends Function.ListFunction {
+    public static final class max extends Function.BaseFunction<Object> {
         @Override
         protected Optional<Object> applyList( final List argList ) {
             return (Optional) max( argList );
         }
+
+        @Override
+        protected Optional<Object> applySingle( final Object arg ) {
+            if(arg instanceof Number) {
+                return Optional.of(arg);
+            }
+            else {
+                return Optional.empty();
+            }
+        }
     }
 
     @SuppressWarnings( "unchecked" )
-    public static final class min extends Function.ListFunction {
+    public static final class min extends Function.BaseFunction<Object> {
+
         @Override
         protected Optional<Object> applyList( final List<Object> argList ) {
             return (Optional) min( argList );
+        }
+
+        @Override
+        protected Optional<Object> applySingle(Object arg) {
+            if(arg instanceof Number) {
+                return Optional.of(arg);
+            }
+            else {
+                return Optional.empty();
+            }
         }
     }
 
@@ -229,10 +307,43 @@ public class Math {
     }
 
     @SuppressWarnings( "unchecked" )
+    public static final class div extends Function.ListFunction {
+
+        @Override
+        protected Optional<Object> applyList(List<Object> argList) {
+           return (Optional)div(argList);
+        }
+
+    }
+    @SuppressWarnings( "unchecked" )
     public static final class avg extends Function.ListFunction {
         @Override
         protected Optional<Object> applyList( final List<Object> argList ) {
             return (Optional) avg( argList );
+        }
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public static final class intSum extends Function.ListFunction {
+        @Override
+        protected Optional<Object> applyList( final List<Object> argIntList ) {
+            return (Optional) intSum(argIntList);
+        }
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public static final class doubleSum extends Function.ListFunction {
+        @Override
+        protected Optional<Object> applyList( final List<Object> argDoubleList ) {
+            return (Optional) doubleSum(argDoubleList);
+        }
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public static final class longSum extends Function.ListFunction {
+        @Override
+        protected Optional<Object> applyList( final List<Object> argLongList ) {
+            return (Optional) longSum(argLongList);
         }
     }
 }

@@ -199,7 +199,15 @@ public interface Function {
             }
             else if(args.length == 1) {
                 if(args[0] instanceof List ) {
-                    return applyList( (List) args[0] );
+                    if(((List) args[0]).isEmpty()) {
+                        return Optional.empty();
+                    }
+                    else {
+                        return applyList((List) args[0]);
+                    }
+                }
+                else if(args[0] == null) {
+                    return Optional.empty();
                 }
                 else {
                     return (Optional) applySingle( args[0] );
@@ -295,7 +303,11 @@ public interface Function {
         }
 
         @Override
-        public final Optional<Object> apply( final Object... args ) {
+        public final Optional<Object> apply( Object... args ) {
+
+            if(args.length == 1 && args[0] instanceof List) {
+                args = ((List) args[0]).toArray();
+            }
 
             Optional<S> specialArgOptional = getSpecialArg( args );
             if ( specialArgOptional.isPresent() ) {

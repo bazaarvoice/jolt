@@ -43,6 +43,11 @@ public class MathTest extends AbstractTester {
         Function TO_DOUBLE = new Objects.toDouble();
         Function TO_LONG = new Objects.toLong();
 
+        Function INT_SUM_OF = new Math.intSum();
+        Function DOUBLE_SUM_OF = new Math.doubleSum();
+        Function LONG_SUM_OF = new Math.longSum();
+
+        Function DIV_OF = new Math.div();
 
         testCases.add( new Object[] { "max-empty-array", MAX_OF, new Object[] {}, Optional.empty() } );
         testCases.add( new Object[] { "max-empty-list", MAX_OF, new ArrayList( ), Optional.empty() } );
@@ -133,7 +138,7 @@ public class MathTest extends AbstractTester {
         testCases.add( new Object[] { "abs-null", ABS_OF, null, Optional.empty() } );
         testCases.add( new Object[] { "abs-invalid", ABS_OF, new Object(), Optional.empty() } );
         testCases.add( new Object[] { "abs-empty-list", ABS_OF, new Object[] {}, Optional.empty() } );
-        testCases.add( new Object[] { "abs-empty-array", ABS_OF, Arrays.asList(  ), Optional.of( Arrays.asList(  ) ) } );
+        testCases.add( new Object[] { "abs-empty-array", ABS_OF, Arrays.asList(  ), Optional.empty() } );
 
         testCases.add( new Object[] { "abs-single-negative-int", ABS_OF, -1, Optional.of( 1 ) } );
         testCases.add( new Object[] { "abs-single-negative-long", ABS_OF, -1L, Optional.of(1L) } );
@@ -153,8 +158,8 @@ public class MathTest extends AbstractTester {
 
         testCases.add( new Object[] { "toInt-null", TO_INTEGER, null, Optional.empty() } );
         testCases.add( new Object[] { "toInt-invalid", TO_INTEGER, new Object(), Optional.empty() } );
-        testCases.add( new Object[] { "toInt-empty-array", TO_INTEGER, new Object[] {}, Optional.of(Arrays.asList(  )) } );
-        testCases.add( new Object[] { "toInt-empty-list", TO_INTEGER, Arrays.asList(  ), Optional.of(Arrays.asList(  )) } );
+        testCases.add( new Object[] { "toInt-empty-array", TO_INTEGER, new Object[] {}, Optional.empty() } );
+        testCases.add( new Object[] { "toInt-empty-list", TO_INTEGER, Arrays.asList(  ), Optional.empty() } );
 
         testCases.add( new Object[] { "toInt-single-positive-string", TO_INTEGER, "1", Optional.of( 1 ) } );
         testCases.add( new Object[] { "toInt-single-negative-string", TO_INTEGER, "-1", Optional.of( -1 ) } );
@@ -178,8 +183,8 @@ public class MathTest extends AbstractTester {
 
         testCases.add( new Object[] { "toDouble-null", TO_DOUBLE, null, Optional.empty() } );
         testCases.add( new Object[] { "toDouble-invalid", TO_DOUBLE, new Object(), Optional.empty() } );
-        testCases.add( new Object[] { "toDouble-empty-array", TO_DOUBLE, new Object[] {}, Optional.of(Arrays.asList(  )) } );
-        testCases.add( new Object[] { "toDouble-empty-list", TO_DOUBLE, Arrays.asList(  ), Optional.of(Arrays.asList(  )) } );
+        testCases.add( new Object[] { "toDouble-empty-array", TO_DOUBLE, new Object[] {}, Optional.empty() } );
+        testCases.add( new Object[] { "toDouble-empty-list", TO_DOUBLE, Arrays.asList(  ), Optional.empty() } );
 
         testCases.add( new Object[] { "toDouble-single-positive-string", TO_DOUBLE, "1", Optional.of( 1.0 ) } );
         testCases.add( new Object[] { "toDouble-single-negative-string", TO_DOUBLE, "-1", Optional.of( -1.0 ) } );
@@ -203,8 +208,8 @@ public class MathTest extends AbstractTester {
 
         testCases.add( new Object[] { "toLong-null", TO_LONG, null, Optional.empty() } );
         testCases.add( new Object[] { "toLong-invalid", TO_LONG, new Object(), Optional.empty() } );
-        testCases.add( new Object[] { "toLong-empty-array", TO_LONG, new Object[] {}, Optional.of(Arrays.asList(  )) } );
-        testCases.add( new Object[] { "toLong-empty-list", TO_LONG, Arrays.asList(  ), Optional.of(Arrays.asList(  )) } );
+        testCases.add( new Object[] { "toLong-empty-array", TO_LONG, new Object[] {}, Optional.empty() } );
+        testCases.add( new Object[] { "toLong-empty-list", TO_LONG, Arrays.asList(  ), Optional.empty() } );
 
         testCases.add( new Object[] { "toLong-single-positive-string", TO_LONG, "1", Optional.of( 1L ) } );
         testCases.add( new Object[] { "toLong-single-negative-string", TO_LONG, "-1", Optional.of( -1L ) } );
@@ -227,8 +232,33 @@ public class MathTest extends AbstractTester {
 
 
         testCases.add( new Object[] { "toInteger-combo-string-array", TO_INTEGER, Arrays.asList( "-1", 2, -3L, 4.0 ), Optional.of( Arrays.asList( -1, 2, -3, 4 ) ) } );
-        testCases.add( new Object[] { "toLong-combo-int-array", TO_LONG, Arrays.asList( "-1", 2, -3L, 4.0 ), Optional.of( Arrays.asList( -1L, 2L, -3L, 4L ) ) } );
-        testCases.add( new Object[] { "toDouble-combo-long-array", TO_DOUBLE, Arrays.asList( "-1", 2, -3L, 4.0 ), Optional.of( Arrays.asList( -1.0, 2.0, -3.0, 4.0 ) ) } );
+        testCases.add( new Object[] { "toLong-combo-int-array",       TO_LONG,    Arrays.asList( "-1", 2, -3L, 4.0 ), Optional.of( Arrays.asList( -1L, 2L, -3L, 4L ) ) } );
+        testCases.add( new Object[] { "toDouble-combo-long-array",    TO_DOUBLE,  Arrays.asList( "-1", 2, -3L, 4.0 ), Optional.of( Arrays.asList( -1.0, 2.0, -3.0, 4.0 ) ) } );
+
+        testCases.add( new Object[] { "intsum-combo-string-array",    INT_SUM_OF,  Arrays.asList(1, 2.0, "random", 0), Optional.of(3)});
+        testCases.add( new Object[] { "intsum-single-value",          INT_SUM_OF,  2,                                  Optional.empty()});
+        testCases.add( new Object[] { "intsum-combo-intstring-array", INT_SUM_OF,  Arrays.asList(1L, 2, "-3.0", 0), Optional.of(0)});
+
+        testCases.add( new Object[] { "doublesum-combo-string-array",    DOUBLE_SUM_OF, Arrays.asList(1, 2.0, "random", 0), Optional.of(3.0)});
+        testCases.add( new Object[] { "doublesum-single-value",          DOUBLE_SUM_OF, 2,                                  Optional.empty()});
+        testCases.add( new Object[] { "doublesum-combo-intstring-array", DOUBLE_SUM_OF, Arrays.asList(1L, 2, "-3.0", 0),    Optional.of(0.0)});
+
+        testCases.add( new Object[] { "longsum-combo-string-array",      LONG_SUM_OF,   Arrays.asList(1, 2.0, "random", 0), Optional.of(3L)});
+        testCases.add( new Object[] { "longsum-single-value",            LONG_SUM_OF,   2, Optional.empty()});
+        testCases.add( new Object[] { "longsum-combo-intstring-array",   LONG_SUM_OF,   Arrays.asList(1L, 2, "-3.0", 0),    Optional.of(0L)});
+
+        // Test to make sure "div" only uses the first and second element in the array and ignores the rest.
+        testCases.add( new Object[] { "div-combo-array",          DIV_OF, Arrays.asList(10L, 5.0, 2), Optional.of(2.0)});
+        testCases.add( new Object[] { "div-combo-string-array",   DIV_OF, Arrays.asList(10L, "5", 2), Optional.of(2.0)});
+        testCases.add( new Object[] { "div-single-element-array", DIV_OF, Arrays.asList("5"),         Optional.empty()});
+        testCases.add( new Object[] { "div-single-element",       DIV_OF, "10",                       Optional.empty()});
+
+        // Dividing by 0 returns an empty result.
+        testCases.add( new Object[] { "div-combo-invalid-array",  DIV_OF, Arrays.asList(10L, 0, 2),   Optional.empty()});
+
+        // Dividing 0 by any number returns 0.0(double)
+        testCases.add( new Object[] { "div-combo-valid-array",    DIV_OF, Arrays.asList(0.0,  10, 2), Optional.of(0.0)});
+
 
         return testCases.iterator();
     }
