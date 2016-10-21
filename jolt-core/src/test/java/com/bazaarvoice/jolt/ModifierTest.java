@@ -78,6 +78,8 @@ public class ModifierTest {
         testCases.add( new Object[]{"/json/modifier/mapLiteralWithMissingInput.json"} );
         testCases.add( new Object[]{"/json/modifier/mapLiteralWithEmptyInput.json"} );
 
+        testCases.add( new Object[]{"/json/modifier/arrayElementAt.json"} );
+
         testCases.add( new Object[]{"/json/modifier/arrayLiteral.json"} );
         testCases.add( new Object[]{"/json/modifier/arrayLiteralWithNullInput.json"} );
         testCases.add( new Object[]{"/json/modifier/arrayLiteralWithEmptyInput.json"} );
