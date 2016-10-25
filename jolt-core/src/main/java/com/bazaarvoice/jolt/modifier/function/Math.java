@@ -18,6 +18,9 @@ package com.bazaarvoice.jolt.modifier.function;
 
 import com.bazaarvoice.jolt.common.Optional;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.List;
 
 @SuppressWarnings( "deprecated" )
@@ -237,7 +240,7 @@ public class Math {
         return Optional.of(sum);
     }
 
-    public static Optional<Double> div(List<Object> argList) {
+    public static Optional<Double> divide(List<Object> argList) {
 
         if(argList.size() < 2) {
             return Optional.empty();
@@ -259,6 +262,19 @@ public class Math {
         }
 
         return Optional.empty();
+    }
+
+    public static Optional<Double> divideAndRound(List<Object> argList, int digitsAfterDecimalPoint ) {
+
+       Optional<Double> divideResult = divide(argList);
+
+       if(divideResult.isPresent()){
+           Double divResult = divideResult.get();
+           BigDecimal bigDecimal = new BigDecimal(divResult).setScale(digitsAfterDecimalPoint, RoundingMode.HALF_UP);
+           return Optional.of(bigDecimal.doubleValue());
+       }
+
+       return Optional.empty();
     }
 
     @SuppressWarnings( "unchecked" )
@@ -307,14 +323,25 @@ public class Math {
     }
 
     @SuppressWarnings( "unchecked" )
-    public static final class div extends Function.ListFunction {
+    public static final class divide extends Function.ListFunction {
 
         @Override
         protected Optional<Object> applyList(List<Object> argList) {
-           return (Optional)div(argList);
+           return (Optional)divide(argList);
         }
 
     }
+
+    @SuppressWarnings( "unchecked" )
+    public static final class divideAndRound extends Function.ArgDrivenListFunction<Integer> {
+
+
+        @Override
+        protected Optional<Object> applyList(Integer digitsAfterDecimalPoint, List<Object> args) {
+            return (Optional)divideAndRound(args, digitsAfterDecimalPoint);
+        }
+    }
+
     @SuppressWarnings( "unchecked" )
     public static final class avg extends Function.ListFunction {
         @Override

@@ -47,7 +47,8 @@ public class MathTest extends AbstractTester {
         Function DOUBLE_SUM_OF = new Math.doubleSum();
         Function LONG_SUM_OF = new Math.longSum();
 
-        Function DIV_OF = new Math.div();
+        Function DIV_OF = new Math.divide();
+        Function DIV_AND_ROUND_OF = new Math.divideAndRound();
 
         testCases.add( new Object[] { "max-empty-array", MAX_OF, new Object[] {}, Optional.empty() } );
         testCases.add( new Object[] { "max-empty-list", MAX_OF, new ArrayList( ), Optional.empty() } );
@@ -134,7 +135,6 @@ public class MathTest extends AbstractTester {
         testCases.add( new Object[] { "min-NaN-positive-infinity", MIN_OF, Arrays.asList( -1.0, Double.NaN, Double.NEGATIVE_INFINITY ), Optional.of( Double.NaN ) } );
 
 
-
         testCases.add( new Object[] { "abs-null", ABS_OF, null, Optional.empty() } );
         testCases.add( new Object[] { "abs-invalid", ABS_OF, new Object(), Optional.empty() } );
         testCases.add( new Object[] { "abs-empty-list", ABS_OF, new Object[] {}, Optional.empty() } );
@@ -153,7 +153,6 @@ public class MathTest extends AbstractTester {
         testCases.add( new Object[] { "abs-Nan", ABS_OF, Double.NaN, Optional.of(Double.NaN) } );
         testCases.add( new Object[] { "abs-PosInfinity", ABS_OF, Double.POSITIVE_INFINITY, Optional.of(Double.POSITIVE_INFINITY) } );
         testCases.add( new Object[] { "abs-NefInfinity", ABS_OF, Double.NEGATIVE_INFINITY, Optional.of(Double.POSITIVE_INFINITY) } );
-
 
 
         testCases.add( new Object[] { "toInt-null", TO_INTEGER, null, Optional.empty() } );
@@ -180,7 +179,6 @@ public class MathTest extends AbstractTester {
         testCases.add( new Object[] { "toInt-single-negative-double-array", TO_INTEGER, Arrays.asList( -1.0, -2.0 ), Optional.of( Arrays.asList( -1, -2 ) ) } );
 
 
-
         testCases.add( new Object[] { "toDouble-null", TO_DOUBLE, null, Optional.empty() } );
         testCases.add( new Object[] { "toDouble-invalid", TO_DOUBLE, new Object(), Optional.empty() } );
         testCases.add( new Object[] { "toDouble-empty-array", TO_DOUBLE, new Object[] {}, Optional.empty() } );
@@ -205,7 +203,6 @@ public class MathTest extends AbstractTester {
         testCases.add( new Object[] { "toDouble-single-negative-double-array", TO_DOUBLE, Arrays.asList( -1.0, -2.0 ), Optional.of( Arrays.asList( -1.0, -2.0 ) ) } );
 
 
-
         testCases.add( new Object[] { "toLong-null", TO_LONG, null, Optional.empty() } );
         testCases.add( new Object[] { "toLong-invalid", TO_LONG, new Object(), Optional.empty() } );
         testCases.add( new Object[] { "toLong-empty-array", TO_LONG, new Object[] {}, Optional.empty() } );
@@ -228,8 +225,6 @@ public class MathTest extends AbstractTester {
         testCases.add( new Object[] { "toLong-single-negative-long-array", TO_LONG, Arrays.asList( -1L, -2L ), Optional.of( Arrays.asList( -1L, -2L ) ) } );
         testCases.add( new Object[] { "toLong-single-positive-double-list", TO_LONG, new Object[] {1L, 2L}, Optional.of( Arrays.asList( 1L, 2L ) ) } );
         testCases.add( new Object[] { "toLong-single-negative-double-array", TO_LONG, Arrays.asList( -1L, -2L ), Optional.of( Arrays.asList( -1L, -2L ) ) } );
-
-
 
         testCases.add( new Object[] { "toInteger-combo-string-array", TO_INTEGER, Arrays.asList( "-1", 2, -3L, 4.0 ), Optional.of( Arrays.asList( -1, 2, -3, 4 ) ) } );
         testCases.add( new Object[] { "toLong-combo-int-array",       TO_LONG,    Arrays.asList( "-1", 2, -3L, 4.0 ), Optional.of( Arrays.asList( -1L, 2L, -3L, 4L ) ) } );
@@ -259,6 +254,11 @@ public class MathTest extends AbstractTester {
         // Dividing 0 by any number returns 0.0(double)
         testCases.add( new Object[] { "div-combo-valid-array",    DIV_OF, Arrays.asList(0.0,  10, 2), Optional.of(0.0)});
 
+        testCases.add( new Object[] { "divAndRound-single-precision-array",      DIV_AND_ROUND_OF, Arrays.asList(1, 5.0, 2), Optional.of(2.5)});
+        testCases.add( new Object[] { "divAndRound-double-precision-array",      DIV_AND_ROUND_OF, Arrays.asList(2, 5.0, 2), Optional.of(2.50)});
+        testCases.add( new Object[] { "divAndRound-trailing-precision-array",    DIV_AND_ROUND_OF, Arrays.asList(3, 5.0, 2), Optional.of(2.500)});
+        testCases.add( new Object[] { "divAndRound-no-precision-array",          DIV_AND_ROUND_OF, Arrays.asList(0, 5.0, 2), Optional.of(3.0)}); // Round up as >= 0.5
+        testCases.add( new Object[] { "divAndRound-no-precision-array",          DIV_AND_ROUND_OF, Arrays.asList(0, 4.8, 2), Optional.of(2.0)}); // Round down as < 0.5
 
         return testCases.iterator();
     }
