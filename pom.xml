@@ -16,7 +16,6 @@
         <url>https://github.com/bazaarvoice/jolt</url>
         <connection>scm:git:git@github.com:bazaarvoice/jolt.git</connection>
         <developerConnection>scm:git:git@github.com:bazaarvoice/jolt.git</developerConnection>
-      <tag>jolt-0.0.19-SNAPSHOT</tag>
   </scm>
 
     <modules>

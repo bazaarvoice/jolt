@@ -21,24 +21,23 @@
         <url>https://github.com/bazaarvoice/jolt</url>
         <connection>scm:git:git@github.com:bazaarvoice/jolt.git</connection>
         <developerConnection>scm:git:git@github.com:bazaarvoice/jolt.git</developerConnection>
-        <tag>jolt-0.0.19-SNAPSHOT</tag>
     </scm>
 
     <properties>
         <!-- Override Java compiler version from the parent super-pom. -->
-        <java.minimum.version>1.7</java.minimum.version>
+        <java.minimum.version>1.8</java.minimum.version>
 
         <!-- core -->
-        <commons-lang3.version>3.3.2</commons-lang3.version>
+        <commons-lang3.version>3.4</commons-lang3.version>
         <javax-inject.version>1</javax-inject.version>
 
         <!-- module dependencies -->
         <jackson.version>2.5.0</jackson.version>
-        <guice.version>3.0</guice.version>
+        <guice.version>4.1.0</guice.version>
         <argparse4j.version>0.4.4</argparse4j.version>
 
         <!-- TEST -->
-        <guava.version>18.0</guava.version>
+        <guava.version>19.0</guava.version>
         <testng.version>6.8.21</testng.version>
     </properties>
 
@@ -46,11 +45,6 @@
         <dependencies>
 
             <!-- Core -->
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${commons-lang3.version}</version>
-            </dependency>
             <dependency>
                 <groupId>javax.inject</groupId>
                 <artifactId>javax.inject</artifactId>
@@ -85,6 +79,12 @@
 
             <!-- Testing -->
             <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
@@ -115,7 +115,7 @@
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
-                <version>0.11</version>
+                <version>0.12</version>
                 <configuration>
                     <includes>
                         <include>**/*.java</include>
