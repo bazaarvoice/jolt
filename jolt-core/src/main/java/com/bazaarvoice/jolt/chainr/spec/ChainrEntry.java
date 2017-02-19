@@ -23,6 +23,7 @@ import com.bazaarvoice.jolt.Modifier;
 import com.bazaarvoice.jolt.Removr;
 import com.bazaarvoice.jolt.Shiftr;
 import com.bazaarvoice.jolt.Sortr;
+import com.bazaarvoice.jolt.Callr;
 import com.bazaarvoice.jolt.SpecDriven;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.utils.StringTools;
@@ -56,6 +57,7 @@ public class ChainrEntry {
         temp.put( "remove", Removr.class.getName() );
         temp.put( "sort", Sortr.class.getName() );
         temp.put( "cardinality", CardinalityTransform.class.getName() );
+        temp.put( "callr", Callr.class.getName() );
         STOCK_TRANSFORMS = Collections.unmodifiableMap( temp );
     }
 
