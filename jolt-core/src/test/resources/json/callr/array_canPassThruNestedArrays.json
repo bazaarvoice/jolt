@@ -1,0 +1,71 @@
+{
+  "input": {
+    "arrayObjects": [
+      [
+        {
+          "removeThis": "gone",
+          "testStay": "firstArray"
+        },
+        {
+          "removeThis": "gone",
+          "testStay": "still here firstArray"
+        }
+      ],
+      [
+        {
+          "removeThis": "gone",
+          "testStay": "secondaryArray"
+        },
+        {
+          "removeThis": "gone",
+          "testStay": "still here secondArray"
+        }
+      ]
+    ]
+  },
+  "spec": {
+    "arrayObjects": {
+      "*": {
+        "*": {
+          "removeThis": {
+            "~class": "java.lang.String",
+            "~method": "toUpperCase",
+            "~args": []
+          },
+          "testStay": {
+            "~class": "java.lang.String",
+            "~method": "replaceAll",
+            "~args": [
+              "Array",
+              ""
+            ]
+          }
+        }
+      }
+    }
+  },
+  "expected": {
+    "arrayObjects": [
+      [
+        {
+          "removeThis": "GONE",
+          "testStay": "first"
+        },
+        {
+          "removeThis": "GONE",
+          "testStay": "still here first"
+        }
+      ],
+      [
+        {
+          "removeThis": "GONE",
+          "testStay": "secondary"
+        },
+        {
+          "removeThis": "GONE",
+          "testStay": "still here second"
+        }
+      ]
+    ]
+  }
+}
