@@ -35,10 +35,10 @@ import java.util.Map;
  *
  * In Shiftr, the input path is a JSON tree structure, and the output path is flattened "dot notation" path notation.
  *
- * The idea is that you can start with a copy your JSon input data data and modify it into a Shiftr spec by
+ * The idea is that you can start with a copy of your JSON input data and modify it into a Shiftr spec by
  *  supplying a "dot notation" output path for each piece of data that you care about.
  *
- * For example, given this simple input JSON :
+ * For example, given this simple input JSON:
  * <pre>
  * {
  *   "rating": {
@@ -49,7 +49,7 @@ import java.util.Map;
  *    }
  * }
  * </pre>
- * A simple Shiftr spec could be constructed by coping of that input, and modifying it to supply an output path for each piece of data :
+ * A simple Shiftr spec could be constructed by copying that input, and modifying it to supply an output path for each piece of data:
  * <pre>
  * {
  *   "rating": {
@@ -59,20 +59,20 @@ import java.util.Map;
  *     }
  * }
  * </pre>
- * would product the following output JSON :
+ * would produce the following output JSON:
  * <pre>
  * {
- *   "SecondaryRatings" : {
- *     "quality" : {
- *       "Value" : 3,
- *       "RatingRange" : 5
+ *   "SecondaryRatings": {
+ *     "quality": {
+ *       "Value": 3,
+ *       "RatingRange": 5
  *     }
  *   }
  * }
  * </pre>
  *
- * As shown above, Shiftr specs can be entirely made up of literal string values, but it's real power comes from its wildcards.
- * Using wildcards, you can leverage the fact that you know, not just the data and it's immediate key, but the whole input
+ * As shown above, Shiftr specs can be entirely made up of literal string values, but its real power comes from its wildcards.
+ * Using wildcards, you can leverage the fact that you know, not just the data and its immediate key, but the whole input
  *  path to that data.
  *
  * Expanding the example above, say we have the following expanded Input JSON:
@@ -87,14 +87,14 @@ import java.util.Map;
  *           "value": 3,   // want this value to goto output path "SecondaryRatings.quality.Value"
  *           "max": 5      // want this value to goto output path "SecondaryRatings.quality.Range"
  *       },
- *       "sharpness" : {   // want output path "SecondaryRatings.sharpness.Id" = "sharpness"
- *           "value" : 7,  // want this value to goto output path "SecondaryRatings.sharpness.Value"
- *           "max" : 10    // want this value to goto output path "SecondaryRatings.sharpness.Range"
+ *       "sharpness": {   // want output path "SecondaryRatings.sharpness.Id" = "sharpness"
+ *           "value": 7,  // want this value to goto output path "SecondaryRatings.sharpness.Value"
+ *           "max": 10    // want this value to goto output path "SecondaryRatings.sharpness.Range"
  *       }
  *   }
  * }
  * </pre>
- * The Spec would be :
+ * The Spec would be:
  * <pre>
  * {
  *   "rating": {
@@ -147,7 +147,7 @@ import java.util.Map;
  *   Valid only on the LHS ( input JSON keys ) side of a Shiftr Spec
  *   The '*' wildcard can be used by itself or to match part of a key.
  *
- *   '*' wildcard by itself :
+ *   '*' wildcard by itself:
  *    As illustrated in the example above, the '*' wildcard by itself is useful for "templating" JSON maps,
  *      where each key / value has the same "format".
  *    <pre>
@@ -165,15 +165,15 @@ import java.util.Map;
  *    }
  *    </pre>
  *    In this example, "rating.quality" and "rating.sharpness" both have the same structure/format, and thus we can use the '*'
- *     to allow use to write more compact rules and avoid having to to explicitly write very similar rules for both "quality" and "sharpness".
+ *     to allow us to write more compact rules and avoid having to explicitly write very similar rules for both "quality" and "sharpness".
  *
- *   '*' wildcard as part of a key :
+ *   '*' wildcard as part of a key:
  *    This is useful for working with input JSON with keys that are "prefixed".
- *    Ex : if you had an input document like
+ *    Ex: if you had an input document like
  *    <pre>
  *    {
- *       "tag-Pro" : "Awesome",
- *       "tag-Con" : "Bogus"
+ *       "tag-Pro": "Awesome",
+ *       "tag-Con": "Bogus"
  *    }
  *    </pre>
  *    A 'tag-*' would match both keys, and make the whole key and "matched" part of the key available.
@@ -194,12 +194,12 @@ import java.util.Map;
  *   '&' Path lookup
  *    As Shiftr processes data and walks down the spec, it maintains a data structure describing the path it has walked.
  *    The '&' wildcard can access data from that path in a 0 major, upward oriented way.
- *    Example :
+ *    Example:
  *    <pre>
  *    {
  *        "foo" : {
- *            "bar" : {
- *                "baz" :  // &0 = baz, &1 = bar, &2 = foo
+ *            "bar": {
+ *                "baz":  // &0 = baz, &1 = bar, &2 = foo
  *            }
  *        }
  *    }
@@ -226,7 +226,7 @@ import java.util.Map;
  *     1) when a "key" in the input JSON needs to be a "id" value in the output JSON, see the ' "$": "SecondaryRatings.&1.Id" ' example above.
  *     2) you want to make a list of all the input keys.
  *
- *   Example of "a list of the input keys" :
+ *   Example of "a list of the input keys":
  *   <pre>
  *   // input
  *   {
@@ -244,7 +244,7 @@ import java.util.Map;
  *
  *   // desired output
  *   {
- *     "ratings" : [ "primary", "quality" ]    // Aside : this is an example of implicit JSON array creation in the output which is detailed further down.
+ *     "ratings" : [ "primary", "quality" ]    // Aside: this is an example of implicit JSON array creation in the output which is detailed further down.
  *                                             // For now just observe that the input keys "primary" and "quality" have both made it to the output.
  *   }
  *
@@ -260,10 +260,10 @@ import java.util.Map;
  *
  * '#' Wildcard
  *   Valid both on the LHS and RHS, but has different behavior / format on either side.
- *   They way to think of it, is that it allows you to specify a "synthentic" value, aka a value not found in the input data.
+ *   The way to think of it, is that it allows you to specify a "synthentic" value, aka a value not found in the input data.
  *
  *   On the RHS of the spec, # is only valid in the the context of an array, like "[#2]".
- *   What "[#2]" means is, go up the three 2 levels and ask that node how many matches it has had, and then use that as an index
+ *   What "[#2]" means is, go up the three levels and ask that node how many matches it has had, and then use that as an index
  *    in the arrays.
  *   This means that, while Shiftr is doing its parallel tree walk of the input data and the spec, it tracks how many matches it
  *    has processed at each level of the spec tree.
@@ -298,11 +298,11 @@ import java.util.Map;
  *
  *
  * '@' Wildcard
- *   Valid only on both sides of the spec.
+ *   Valid on both sides of the spec.
  *
  *   The basic '@' on the LHS.
  *
- *   This wildcard is necessary if you want to do put both the input value and the input key somewhere in the output JSON.
+ *   This wildcard is necessary if you want to put both the input value and the input key somewhere in the output JSON.
  *
  *  Example '@' wildcard usage :
  *  <pre>
