@@ -68,10 +68,10 @@ Available [here](https://github.com/bazaarvoice/jolt/tree/master/jolt-core/src/t
     {
         "rating": {
             "primary": {
-                "values": 3
+                "value": 3
             },
             "quality": {
-                "values": 3
+                "value": 3
             }
         }
     }
