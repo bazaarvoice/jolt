@@ -1,0 +1,9 @@
+{
+  "input": {
+    "str2double": "12.0ab"
+  },
+
+  "spec": {
+    "str2double": "STRICT_DOUBLE"
+  }
+}

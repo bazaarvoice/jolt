@@ -1,0 +1,13 @@
+{
+    "input": {
+        "foo": null
+    },
+
+    "spec": {
+        "foo": "STRING"
+    },
+
+    "expected": {
+        "foo": null
+    }
+}

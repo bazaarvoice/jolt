@@ -1,0 +1,9 @@
+{
+  "input": {
+    "int2boolean": 123
+  },
+
+  "spec": {
+    "int2boolean": "STRICT_BOOLEAN"
+  }
+}

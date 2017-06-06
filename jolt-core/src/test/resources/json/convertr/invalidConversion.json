@@ -1,0 +1,40 @@
+{
+    "input": {
+        "conversion": {
+            "boolean2num": {
+                "boolean2int": true,
+                "boolean2double": false
+            },
+            "str2num": {
+                "str2int": "abc55",
+                "str2double": "abc3.1"
+            }
+        }
+    },
+
+    "spec": {
+        "conversion": {
+            "boolean2num": {
+                "boolean2int": "INT",
+                "boolean2double": "DOUBLE"
+            },
+            "str2num": {
+                "str2int": "INT",
+                "str2double": "DOUBLE"
+            }
+        }
+    },
+
+    "expected": {
+        "conversion": {
+            "boolean2num": {
+                "boolean2int": true,
+                "boolean2double": false
+            },
+            "str2num": {
+                "str2int": "abc55",
+                "str2double": "abc3.1"
+            }
+        }
+    }
+}
