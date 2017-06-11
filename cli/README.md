@@ -28,24 +28,18 @@ curl -s "http://some.host.com/stuff/data.json" | jolt diffy moreData.json
 
 The transform sub command will ingest a JSON spec file and an JSON input (from a file or standard input) and run the transforms specified in the spec file on the input. The program will return an exit code of 0 if the input is transformed successfully or a 1 if an error is encountered.
 
-``` man
     usage: jolt transform [-h] [-u] spec [input]
-```
 
 positional arguments:
 
-``` man
-spec               File path to Jolt Transform Spec to execute on the input. This file should contain valid JSON.
-input              File path to the input JSON for the Jolt  Transform  operation. This file should contain valid JSON. If this
-                   argument is not specified then standard input will be used.
-```
+    spec               File path to Jolt Transform Spec to execute on the input. This file should contain valid JSON.
+    input              File path to the input JSON for the Jolt  Transform  operation. This file should contain valid JSON. If this
+                       argument is not specified then standard input will be used.
 
 optional arguments:
 
-``` man
--h, --help         show this help message and exit
--u                 Turns off pretty print for the output. Output will be raw json with no formatting. (default: false)
-```
+    -h, --help         show this help message and exit
+    -u                 Turns off pretty print for the output. Output will be raw json with no formatting. (default: false)
 
 ### Example
 
@@ -59,55 +53,41 @@ jolt transform spec.json input.json
 
 Jolt CLI Diffy Tool. This tool will ingest two JSON inputs (from files or standard input) and perform the Jolt Diffy operation to detect any differences. The program will return an exit code of 0 if no differences are found or a 1 if a difference is found or an error is encountered.
 
-``` man
-usage: jolt diffy [-h] [-s] [-a] [-i] filePath1 [filePath2]
-```
+    usage: jolt diffy [-h] [-s] [-a] [-i] filePath1 [filePath2]
 
 positional arguments:
 
-``` man
-filePath1          File path to feed to Input #1 for the Diffy operation. This file should contain valid JSON.
-filePath2          File path to feed to Input #2 for the  Diffy  operation.  This file should contain valid JSON. This argument
-                   is mutually exclusive with -i; one or the other should be specified.
-```
+    filePath1          File path to feed to Input #1 for the Diffy operation. This file should contain valid JSON.
+    filePath2          File path to feed to Input #2 for the  Diffy  operation.  This file should contain valid JSON. This argument
+                       is mutually exclusive with -i; one or the other should be specified.
 
 optional arguments:
 
-``` man
--h, --help         show this help message and exit
--s                 Diffy will suppress output and run silently. (default: false)
--a                 Diffy will not consider array order when detecting differences (default: false)
-```
+    -h, --help         show this help message and exit
+    -s                 Diffy will suppress output and run silently. (default: false)
+    -a                 Diffy will not consider array order when detecting differences (default: false)
 
 ### Example
 
 To find the differences between files 'input1.json' and 'input2.json':
 
-``` sh
-jolt diffy input1.json input2.json
-```
+    jolt diffy input1.json input2.json
 
 ## Sort Sub Command
 
 The sort sub command will ingest one JSON input (from a file or standard input) and perform the Jolt sort operation on it. The sort order is standard alphabetical ascending, with a special case for "~" prefixed keys to be bumped to the top. The program will return an exit code of 0 if the sort operation is performed successfully or a 1 if an error is encountered.
 
-``` man
-usage: usage: jolt sort [-h] [-u] [input]
-```
+    usage: usage: jolt sort [-h] [-u] [input]
 
 positional arguments:
 
-``` man
-input              File path to the input JSON that the sort  operation  should be performed on. This file should contain valid
-                   JSON. If this argument is not specified then standard input will be used.
-```
+    input              File path to the input JSON that the sort  operation  should be performed on. This file should contain valid
+                       JSON. If this argument is not specified then standard input will be used.
 
 optional arguments:
 
-``` man
--h, --help         show this help message and exit
--u                 Turns off pretty print for the output. Output will be raw json with no formatting. (default: false)
-```
+    -h, --help         show this help message and exit
+    -u                 Turns off pretty print for the output. Output will be raw json with no formatting. (default: false)
 
 ### Example
 
