@@ -10,18 +10,18 @@ JSON to JSON transformation library written in Java where the "specification" fo
 
 ## Table of Contents
 
-   * [1 Overview](#Overview)
-   * [2 Documentation](#Documentation)
-   * [3 Shiftr Transform DSL](#Shiftr_Transform_DSL)
-   * [4 Demo](#Demo)
-   * [5 Getting Started](#Getting_Started)
-   * [6 Getting Transform Help](#Getting_Transform_Help)
-   * [7 Why Jolt Exists](#Why Jolt Exists)
-   * [8 Alternatives](#Alternatives)
-   * [9 Performance](#Performance)
-   * [10 CLI](#CLI)
-   * [11 Code Coverage](#Code_Coverage)
-   * [12 Release Notes](#Release_Notes)
+   1. [Overview](#Overview)
+   2. [Documentation](#Documentation)
+   3. [Shiftr Transform DSL](#Shiftr_Transform_DSL)
+   4. [Demo](#Demo)
+   5. [Getting Started](#Getting_Started)
+   6. [Getting Transform Help](#Getting_Transform_Help)
+   7. [Why Jolt Exists](#Why_Jolt_Exists)
+   8. [Alternatives](#Alternatives)
+   9. [Performance](#Performance)
+   10. [CLI](#CLI)
+   11. [Code Coverage](#Code_Coverage)
+   12. [Release Notes](#Release_Notes)
 
 ## <a name="Overview"></a> Overview
 
@@ -72,13 +72,15 @@ The JSON spec for Chainr looks like : [unit test](https://github.com/bazaarvoice
 
 The Java side looks like :
 
-    Chainr chainr = JsonUtils.classpathToList( "/path/to/chainr/spec.json" );
+``` java
+Chainr chainr = JsonUtils.classpathToList( "/path/to/chainr/spec.json" );
 
-    Object input = elasticSearchHit.getSource(); // ElasticSearch already returns hydrated JSon
+Object input = elasticSearchHit.getSource(); // ElasticSearch already returns hydrated JSon
 
-    Object output = chainr.transform( input );
+Object output = chainr.transform( input );
 
-    return output;
+return output;
+```
 
 ### <a name="Shiftr_Transform_DSL"></a> Shiftr Transform DSL
 
@@ -87,19 +89,21 @@ To see the Shiftr DSL in action, please look at our unit tests ([shiftr tests](h
 
 Our unit tests follow the pattern :
 
-    {
-        "input": {
-            // sample input
-        },
+``` json
+{
+    "input": {
+        // sample input
+    },
 
-        "spec": {
-            // transform spec
-        },
+    "spec": {
+        // transform spec
+    },
 
-        "expected": {
-            // what the output of the transform looks like
-        }
+    "expected": {
+        // what the output of the transform looks like
     }
+}
+```
 
 We read in "input", apply the "spec", and [Diffy](https://github.com/bazaarvoice/jolt/blob/master/json-utils/src/main/java/com/bazaarvoice/jolt/Diffy.java) it against the "expected".
 
@@ -128,7 +132,7 @@ If you can't get a transform working and you need help, create and Issue in Jolt
 
 Make sure you include what your "input" is, and what you want your "output" to be.
 
-## <a name="Why Jolt Exists"></a> Why Jolt Exists
+## <a name="Why_Jolt_Exists"></a> Why Jolt Exists
 
 Aside from writing your own custom code to do a transform, there are two general approaches to doing a JSON to JSON transforms in Java.
 
@@ -177,8 +181,10 @@ Jolt Transforms and tools can be run from the command line. Command line interfa
 
 For the moment we have Cobertura configured in our poms.
 
-    mvn cobertura:cobertura
-    open jolt-core/target/site/cobertura/index.html
+``` sh
+mvn cobertura:cobertura
+open jolt-core/target/site/cobertura/index.html
+```
 
 Currently, for the jolt-core artifact, code coverage is at 89% line, and 83% branch.
 

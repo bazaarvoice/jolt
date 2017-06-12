@@ -11,8 +11,10 @@ The bin/ directory contains a command line interface (CLI) tool for using some o
 
 The Jolt tool has the ability to accept input from standard in:
 
-    curl -s "http://some.json.api.com/data/you/will/take/our/stupid/format/and/like/it" | jolt transform makeSaneSpec.json | jolt sort
-    curl -s "http://some.host.com/stuff/data.json" | jolt diffy moreData.json
+``` sh
+curl -s "http://some.json.api.com/data/you/will/take/our/stupid/format/and/like/it" | jolt transform makeSaneSpec.json | jolt sort
+curl -s "http://some.host.com/stuff/data.json" | jolt diffy moreData.json
+```
 
 # Setup
 
@@ -43,7 +45,9 @@ optional arguments:
 
 To run transforms specified in 'spec.json' on input 'input.json':
 
-    jolt transform spec.json input.json
+``` sh
+jolt transform spec.json input.json
+```
 
 ## Diffy Sub Command
 
@@ -89,4 +93,6 @@ optional arguments:
 
 To sort input specified in 'input.json':
 
-    jolt sort input.json
+``` sh
+jolt sort input.json
+```

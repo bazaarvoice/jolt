@@ -3,7 +3,7 @@
 ## 1 Add Jolt maven dependencies to your pom file
 
 Maven Dependency to Add to your pom file
-```
+``` xml
 <dependency>
     <groupId>com.bazaarvoice.jolt</groupId>
     <artifactId>jolt-core</artifactId>
@@ -28,7 +28,7 @@ The two maven artifacts are:
 
 ## 2 Code and Sample Data
 
-1. Copy - paste this code and sample data.
+1. Copy-paste this code and sample data.
 2. Get it to run
 3. Replace the input and spec file with your own
 
@@ -36,89 +36,97 @@ The two maven artifacts are:
 
 Available [here](https://github.com/bazaarvoice/jolt/tree/master/jolt-core/src/test/java/com/bazaarvoice/jolt/sample/JoltSample.java).
 
-    package com.bazaarvoice.jolt.sample;
+``` java
+package com.bazaarvoice.jolt.sample;
 
-    import com.bazaarvoice.jolt.Chainr;
-    import com.bazaarvoice.jolt.JsonUtils;
+import com.bazaarvoice.jolt.Chainr;
+import com.bazaarvoice.jolt.JsonUtils;
 
-    import java.io.IOException;
-    import java.util.List;
+import java.io.IOException;
+import java.util.List;
 
-    public class JoltSample {
+public class JoltSample {
 
-        public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
 
-            // How to access the test artifacts, i.e. JSON files
-            //  JsonUtils.classpathToList : assumes you put the test artifacts in your class path
-            //  JsonUtils.filepathToList : you can use an absolute path to specify the files
-            
-            List chainrSpecJSON = JsonUtils.classpathToList( "/json/sample/spec.json" );
-            Chainr chainr = Chainr.fromSpec( chainrSpecJSON );
+        // How to access the test artifacts, i.e. JSON files
+        //  JsonUtils.classpathToList : assumes you put the test artifacts in your class path
+        //  JsonUtils.filepathToList : you can use an absolute path to specify the files
 
-            Object inputJSON = JsonUtils.classpathToObject( "/json/sample/input.json" );
+        List chainrSpecJSON = JsonUtils.classpathToList( "/json/sample/spec.json" );
+        Chainr chainr = Chainr.fromSpec( chainrSpecJSON );
 
-            Object transformedOutput = chainr.transform( inputJSON );
-            System.out.println( JsonUtils.toJsonString( transformedOutput ) );
-        }
+        Object inputJSON = JsonUtils.classpathToObject( "/json/sample/input.json" );
+
+        Object transformedOutput = chainr.transform( inputJSON );
+        System.out.println( JsonUtils.toJsonString( transformedOutput ) );
     }
+}
+```
 
 ### /json/sample/input.json
 Available [here](https://github.com/bazaarvoice/jolt/tree/master/jolt-core/src/test/resources/json/sample/input.json).
 
-    {
-        "rating": {
-            "primary": {
-                "value": 3
-            },
-            "quality": {
-                "value": 3
-            }
+``` json
+{
+    "rating": {
+        "primary": {
+            "value": 3
+        },
+        "quality": {
+            "value": 3
         }
     }
+}
+```
 
 ### /json/sample/spec.json
 Available [here](https://github.com/bazaarvoice/jolt/tree/master/jolt-core/src/test/resources/json/sample/spec.json).
 
-    [
-        {
-            "operation": "shift",
-            "spec": {
-                "rating": {
-                    "primary": {
-                        "values": "Rating"
-                    },
-                    "*": {
-                        "values": "SecondaryRatings.&1.Value",
-                        "$": "SecondaryRatings.&.Id"
-                    }
-                }
-            }
-        },
-        {
-            "operation": "default",
-            "spec": {
-                "Range" : 5,
-                "SecondaryRatings" : {
-                    "*" : {
-                        "Range" : 5
-                    }
+``` json
+[
+    {
+        "operation": "shift",
+        "spec": {
+            "rating": {
+                "primary": {
+                    "values": "Rating"
+                },
+                "*": {
+                    "values": "SecondaryRatings.&1.Value",
+                    "$": "SecondaryRatings.&.Id"
                 }
             }
         }
-    ]
-
-### Output
-
-With pretty formatting, looks like :
-
+    },
     {
-        "Rating": 3,
-        "Range": 5,
-        "SecondaryRatings": {
-            "quality": {
-                "Id": "quality",
-                "Value": 3,
-                "Range": 5
+        "operation": "default",
+        "spec": {
+            "Range" : 5,
+            "SecondaryRatings" : {
+                "*" : {
+                    "Range" : 5
+                }
             }
         }
     }
+]
+```
+
+### Output
+
+With pretty formatting, looks like:
+
+``` json
+{
+    "Rating": 3,
+    "Range": 5,
+    "SecondaryRatings": {
+        "quality": {
+            "Id": "quality",
+            "Value": 3,
+            "Range": 5
+        }
+    }
+}
+```
