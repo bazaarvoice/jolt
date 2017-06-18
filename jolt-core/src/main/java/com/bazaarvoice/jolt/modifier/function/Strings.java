@@ -36,6 +36,12 @@ public class Strings {
             return arg == null ? Optional.<String>of( null ): Optional.of( arg.toString().toUpperCase() );
         }
     }
+    public static final class trim extends Function.SingleFunction<String> {
+        @Override
+        protected Optional<String> applySingle( final Object arg ) {
+            return arg == null ? Optional.<String>of( null ): Optional.of( arg.toString().trim());
+        }
+    }
 
     public static final class concat extends Function.ListFunction {
         @Override
@@ -71,4 +77,62 @@ public class Strings {
             return Optional.<Object>of( sb.toString() );
         }
     }
+
+    public static final class remove extends Function.ArgDrivenSingleFunction<String,String> {
+
+        @Override
+        protected Optional<String> applySingle( String specialArg, Object arg )
+        {
+
+            return arg == null ? Optional.<String>of( null ) : Optional.of( arg.toString().replace( specialArg,"" ));
+        }
+    }
+
+    public static final class replace extends Function.ArgDrivenSingleFunction<String,String> {
+
+        @Override
+        protected Optional<String> applySingle( String specialArg, Object arg )
+        {
+
+            if (specialArg != null && !specialArg.isEmpty()) {
+                String[] args = specialArg.split( "(?<!\\\\)\\|" );
+                if (args != null && args.length >1) {
+                    return Optional.of( arg.toString().replace( args[0],args[1] ) );
+                }
+            }
+            return Optional.<String>of( null );
+        }
+    }
+
+//    public static final class replace extends Function.ArgDrivenSingleFunction<List<String>,String> {
+//
+//        @Override
+//        protected Optional<String> applySingle( List<String> specialArg, Object arg )
+//        {
+//
+//            if (arg == null) {
+//                return Optional.of( null );
+//
+//            } else {
+//                 String _args = arg.toString();
+//                 if (!_args.isEmpty()) {
+//                     if (!specialArg.isEmpty()) {
+//                         String one = specialArg.get( 0 );
+//                         String two = "";
+//                         if (specialArg.size() > 1) {
+//                             two = specialArg.get( 1 );
+//                         }
+//                         return Optional.of( _args.replace( one,two ));
+//                     }
+//
+//                 } else {
+//                     return Optional.of( "" );
+//                 }
+//
+//            }
+//
+//            return Optional.of( null );
+//        }
+//
+//    }
 }

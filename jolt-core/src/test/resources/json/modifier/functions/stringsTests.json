@@ -17,7 +17,10 @@
             "custom2": "=toUpper('yabadabadoo')"
         },
         "concat": "=concat(@(1,lower.leading) , ' ' , @(1,lower.trailing))",
-        "join": "=join('_' , @(1,lower.leading) ,  , @(1,lower.trailing))"
+        "join": "=join('_' , @(1,lower.leading) ,  , @(1,lower.trailing))",
+        "remove": "=remove('the' , @(1,string))",
+        "replace": "=replace('the|what' , @(1,string))",
+        "trim": "=trim('  hello world  ')"
     },
 
     "context": {
@@ -39,6 +42,9 @@
             "custom2": "YABADABADOO"
         },
         "concat": "the quick brown fox jumped over the lazy dog",
-        "join": "the quick brown fox_jumped over the lazy dog"
+        "join": "the quick brown fox_jumped over the lazy dog",
+        "remove" :" QuIcK brOwn fox",
+        "replace" :"what QuIcK brOwn fox",
+        "trim" :"hello world"
     }
 }
