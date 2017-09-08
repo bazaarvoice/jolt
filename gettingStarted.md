@@ -90,10 +90,10 @@ Available [here](https://github.com/bazaarvoice/jolt/tree/master/jolt-core/src/t
         "spec": {
             "rating": {
                 "primary": {
-                    "values": "Rating"
+                    "value": "Rating"
                 },
                 "*": {
-                    "values": "SecondaryRatings.&1.Value",
+                    "value": "SecondaryRatings.&1.Value",
                     "$": "SecondaryRatings.&.Id"
                 }
             }
