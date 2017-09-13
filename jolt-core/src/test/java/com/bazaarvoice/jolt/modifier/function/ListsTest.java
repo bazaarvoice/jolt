@@ -35,7 +35,7 @@ public class ListsTest extends AbstractTester {
         Function LAST_ELEMENT = new Lists.lastElement();
         Function ELEMENT_AT = new Lists.elementAt();
 
-
+        Function SIZE = new Objects.size();
 
         testCases.add( new Object[] {"first-empty-array", FIRST_ELEMENT, new Object[0], Optional.empty() } );
         testCases.add( new Object[] {"first-empty-list", FIRST_ELEMENT, Arrays.asList(  ), Optional.empty() } );
@@ -65,6 +65,10 @@ public class ListsTest extends AbstractTester {
 
         testCases.add( new Object[] {"at-array-missing", ELEMENT_AT, new Object[]{ 5, 1, 2, 3 }, Optional.empty() } );
         testCases.add( new Object[] {"at-list-missing", ELEMENT_AT, Arrays.asList( 5, 1, 2, 3 ), Optional.empty() } );
+
+
+        testCases.add( new Object[] {"size-list", SIZE, new Object[]{ 5, 1, 2, 3 }, Optional.of(4) } );
+        testCases.add( new Object[] {"size-list-empty", SIZE, Arrays.asList( ), Optional.of(0) } );
 
         return testCases.iterator();
     }
