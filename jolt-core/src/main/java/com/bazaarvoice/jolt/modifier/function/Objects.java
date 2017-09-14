@@ -202,23 +202,36 @@ public class Objects {
         }
     }
 
-    public static final class size extends Function.BaseFunction<Integer> {
-        @Override
-        protected Optional<Integer> applySingle( final Object arg ) {
-            if(arg instanceof String) {
-                return Optional.of( ((String) arg).length() );
-            }
-            else if(arg instanceof Map) {
-                return Optional.of( ((Map) arg).size() );
-            }
-            else {
-                return Optional.empty();
-            }
-        }
+    /**
+     * Size is a special snowflake and needs specific care
+     */
+    public static final class size implements Function {
 
         @Override
-        protected Optional<Object> applyList( final List<Object> input ) {
-            return Optional.<Object>of( input.size() );
+        public Optional<Object> apply(Object... args) {
+            if(args.length == 0) {
+                return Optional.empty();
+            }
+            else if(args.length == 1) {
+                if(args[0] == null) {
+                    return Optional.empty();
+                }
+                else if(args[0] instanceof List ) {
+                    return Optional.of(((List) args[0]).size());
+                }
+                else if(args[0] instanceof String) {
+                    return Optional.of( ((String) args[0]).length() );
+                }
+                else if(args[0] instanceof Map) {
+                    return Optional.of( ((Map) args[0]).size() );
+                }
+                else {
+                    return Optional.empty();
+                }
+            }
+            else {
+                return Optional.of(args.length);
+            }
         }
     }
 }
