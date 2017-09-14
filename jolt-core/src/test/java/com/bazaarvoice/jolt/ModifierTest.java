@@ -168,7 +168,8 @@ public class ModifierTest {
         testCases.add( new Object[]{"/json/modifier/functions/stringsTests.json", TemplatrTestCase.OVERWRITR});
         testCases.add( new Object[]{"/json/modifier/functions/mathTests.json", TemplatrTestCase.OVERWRITR} );
         testCases.add( new Object[]{"/json/modifier/functions/arrayTests.json", TemplatrTestCase.OVERWRITR} );
-        testCases.add( new Object[]{"/json/modifier/functions/computationTest.json", TemplatrTestCase.DEFAULTR} );
+        testCases.add( new Object[]{"/json/modifier/functions/sizeTests.json", TemplatrTestCase.OVERWRITR} );
+        testCases.add( new Object[]{"/json/modifier/functions/labelsLookupTest.json", TemplatrTestCase.DEFAULTR} );
         testCases.add( new Object[]{"/json/modifier/functions/valueTests.json", TemplatrTestCase.OVERWRITR }  );
 
         return testCases.iterator();

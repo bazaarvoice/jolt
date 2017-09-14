@@ -1,0 +1,49 @@
+{
+    "input": {
+        "emptyList" : [],
+        "emptyMap" : {},
+        "emptyString" : "",
+        "emptyNull" : null,
+
+        "legitList" : [ 1, "foo" ],
+        "legitMap" : { "a":"b", "d":"e"},
+        "legitString" : "foo",
+        "legitNumber" : 3.1415
+    },
+
+    "spec": {
+        "emptyListSize": "=size(@(1,emptyList))",
+        "emptyMapSize": "=size(@(1,emptyMap))",
+        "emptyStringSize": "=size(@(1,emptyString))",
+        "emptyNullSize": "=size(@(1,emptyNull))",
+
+        "legitListSize": "=size(@(1,legitList))",
+        "legitMapSize": "=size(@(1,legitMap))",
+        "legitStringSize": "=size(@(1,legitString))",
+        "legitNumberSize": "=size(@(1,legitNumber))"
+    },
+    "context": {},
+
+    "OVERWRITR": {
+        // original input that passes thru
+        "emptyList" : [],
+        "emptyMap" : {},
+        "emptyString" : "",
+        "emptyNull" : null,
+
+        "emptyListSize": 0,
+        "emptyMapSize": 0,
+        "emptyStringSize": 0,
+        // note emptyNullSize does not get created because there can be no value for it
+
+        "legitList" : [ 1, "foo" ],
+        "legitMap" : { "a":"b", "d":"e"},
+        "legitString" : "foo",
+        "legitNumber" : 3.1415,
+
+        "legitListSize": 2,
+        "legitMapSize": 2,
+        "legitStringSize": 3
+        // legitNumberSize does not get created because there can be no value for it
+    }
+}
