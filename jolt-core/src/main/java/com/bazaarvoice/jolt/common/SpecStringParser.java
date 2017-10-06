@@ -320,11 +320,15 @@ public class SpecStringParser {
             char c = argString.charAt(i);
             switch ( c ) {
                 case '(':
-                    inBetweenBrackets = true;
+                    if (!inBetweenQuotes) {
+                        inBetweenBrackets = true;
+                    }
                     sb.append( c );
                     break;
                 case ')':
-                    inBetweenBrackets = false;
+                    if (!inBetweenQuotes) {
+                        inBetweenBrackets = false;
+                    }
                     sb.append( c );
                     break;
                 case '\'':
