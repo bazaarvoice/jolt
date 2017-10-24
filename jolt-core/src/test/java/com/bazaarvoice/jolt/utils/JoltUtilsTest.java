@@ -161,6 +161,52 @@ public class JoltUtilsTest {
         }
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    public void replaceRecursive() throws IOException {
+
+        String testFixture = "/json/utils/joltUtils-replaceRecursive.json";
+
+        List<Map<String, Object>> tests = (List<Map<String, Object>>) JsonUtils.classpathToObject( testFixture );
+
+        for ( Map<String,Object> testUnit : tests ) {
+            Object data = testUnit.get( "input" );
+            Map<String,Object> toReplace = (Map<String, Object>)testUnit.get( "replace" );
+            Object expected = testUnit.get( "expected" );
+
+            for(String key : toReplace.keySet()) {
+                JoltUtils.replaceRecursive(data, key, toReplace.get(key));
+            }
+
+            Diffy.Result result = diffy.diff( expected, data );
+            if (!result.isEmpty()) {
+                Assert.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
+            }
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void replaceValues() throws IOException {
+
+        String testFixture = "/json/utils/joltUtils-replaceRecursive.json";
+
+        List<Map<String, Object>> tests = (List<Map<String, Object>>) JsonUtils.classpathToObject( testFixture );
+
+        for ( Map<String,Object> testUnit : tests ) {
+            Object data = testUnit.get( "input" );
+            Map<String,Object> toReplace = (Map<String, Object>)testUnit.get( "replace" );
+            Object expected = testUnit.get( "expected" );
+
+            JoltUtils.replaceValues(data, toReplace);
+
+            Diffy.Result result = diffy.diff( expected, data );
+            if (!result.isEmpty()) {
+                Assert.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
+            }
+        }
+    }
+
     @Test( description = "No exception if we don't try to remove from an ImmutableMap.")
     public void doNotUnnecessarilyDieOnImmutableMaps() throws IOException
     {

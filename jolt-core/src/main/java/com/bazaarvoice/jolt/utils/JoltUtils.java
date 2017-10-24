@@ -62,6 +62,54 @@ public class JoltUtils {
     }
 
     /**
+     * Replaces a value recursively from anywhere in a JSON document.
+     * NOTE: mutates its input.
+     *
+     * @param json        the Jackson Object version of the JSON document
+     *                    (contents changed by this call)
+     * @param keyToReplace the key to remove from the document
+     * @param value        the new value for the keyToReplace
+     */
+    public static void replaceRecursive( Object json, String keyToReplace, Object value ) {
+        if ( ( json == null ) || ( keyToReplace == null || value == null) ) {
+            return;
+        }
+        if ( json instanceof Map ) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> jsonMap = (Map<String, Object>) json;
+
+            // If this level of the tree has the key we are looking for, replace the value
+            if ( jsonMap.containsKey( keyToReplace ) ) {
+                jsonMap.put( keyToReplace, value );
+            }
+
+            // regardless, recurse down the tree
+            for ( Object node : jsonMap.values() ) {
+                replaceRecursive( node, keyToReplace, value );
+            }
+        }
+        if ( json instanceof List ) {
+            for ( Object node : (List) json ) {
+                replaceRecursive( node, keyToReplace, value );
+            }
+        }
+    }
+
+    /**
+     * Receives a Map with the keys and values to replace in a Jackson Object
+     * every key in the params should match with the key that want to replace
+     * value on the Jackson Object.
+     *
+     * @param json
+     * @param params
+     */
+    public static void replaceValues(Object json, Map<String, Object> params){
+        for(String key : params.keySet()) {
+            replaceRecursive(json, key, params.get(key));
+        }
+    }
+
+    /**
      * Navigate inside a json object in quick and dirty way.
      *
      * @param source the source json object
