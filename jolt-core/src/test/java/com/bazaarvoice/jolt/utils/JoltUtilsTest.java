@@ -163,42 +163,19 @@ public class JoltUtilsTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void replaceRecursive() throws IOException {
-
-        String testFixture = "/json/utils/joltUtils-replaceRecursive.json";
-
-        List<Map<String, Object>> tests = (List<Map<String, Object>>) JsonUtils.classpathToObject( testFixture );
-
-        for ( Map<String,Object> testUnit : tests ) {
-            Object data = testUnit.get( "input" );
-            Map<String,Object> toReplace = (Map<String, Object>)testUnit.get( "replace" );
-            Object expected = testUnit.get( "expected" );
-
-            for(String key : toReplace.keySet()) {
-                JoltUtils.replaceRecursive(data, key, toReplace.get(key));
-            }
-
-            Diffy.Result result = diffy.diff( expected, data );
-            if (!result.isEmpty()) {
-                Assert.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
-            }
-        }
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
     public void replaceValues() throws IOException {
 
-        String testFixture = "/json/utils/joltUtils-replaceRecursive.json";
+        String testFixture = "/json/utils/joltUtils-replaceValues.json";
 
         List<Map<String, Object>> tests = (List<Map<String, Object>>) JsonUtils.classpathToObject( testFixture );
 
         for ( Map<String,Object> testUnit : tests ) {
             Object data = testUnit.get( "input" );
-            Map<String,Object> toReplace = (Map<String, Object>)testUnit.get( "replace" );
+            Map<String,Object> mappingPaths = (Map<String, Object>)testUnit.get( "mappingPaths" );
+            Map<String,Object> valuesToReplace = (Map<String, Object>)testUnit.get( "valuesToReplace" );
             Object expected = testUnit.get( "expected" );
 
-            JoltUtils.replaceValues(data, toReplace);
+            JoltUtils.replaceValues(data, mappingPaths, valuesToReplace);
 
             Diffy.Result result = diffy.diff( expected, data );
             if (!result.isEmpty()) {

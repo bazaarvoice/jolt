@@ -10,26 +10,31 @@
             },
             "L1_B" : "l1_b",
 
-            "L3_B" : "ReplaceThis"
+            "L3_B" : "This not should be replaced"
         },
 
-        "replace" : {
-            "L3_A" : "Replaced1",
-            "L3_B" : "Replaced2"
+        "mappingPaths" : {
+            "L3_B" : ["L1_A.L2_A.L3_B"]
+        },
+
+        "valuesToReplace" : {
+            "L3_B" : {
+                "ReplaceThis" : "This has been replaced."
+            }
 
         },
 
         "expected" : {
             "L1_A" : {
                 "L2_A" : {
-                    "L3_A" : "Replaced1",
-                    "L3_B" : "Replaced2"
+                    "L3_A" : "Good",
+                    "L3_B" : "This has been replaced."
                 },
                 "L2_B" : "l2_b"
             },
             "L1_B" : "l1_b",
 
-            "L3_B" : "Replaced2"
+            "L3_B" : "This not should be replaced"
         }
     }
 ]
