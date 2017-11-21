@@ -10,7 +10,7 @@
             },
             "L1_B" : "l1_b",
 
-            "L3_B" : "This not should be replaced"
+            "L3_B" : "This should not be replaced"
         },
 
         "mappingPaths" : {
@@ -34,7 +34,50 @@
             },
             "L1_B" : "l1_b",
 
-            "L3_B" : "This not should be replaced"
+            "L3_B" : "This should not be replaced"
+        }
+    },
+
+    {
+        "input" : {
+            "L1_A" : {
+                "L2_A" : {
+                    "L3_A" : "Good",
+                    "L3_B" : "ReplaceThis"
+                },
+                "L2_B" : "l2_b"
+            },
+            "L1_B" : "l1_b",
+
+            "L3_B" : "Replace any content"
+        },
+
+        "mappingPaths" : {
+            "L3_B" : [
+                "L1_A.L2_A.L3_B",
+                "L3_B"
+            ]
+        },
+
+        "valuesToReplace" : {
+            "L3_B" : {
+                "ReplaceThis" : "This has been replaced.",
+                "*" : "The star replace any content"
+            }
+
+        },
+
+        "expected" : {
+            "L1_A" : {
+                "L2_A" : {
+                    "L3_A" : "Good",
+                    "L3_B" : "This has been replaced."
+                },
+                "L2_B" : "l2_b"
+            },
+            "L1_B" : "l1_b",
+
+            "L3_B" : "The star replace any content"
         }
     }
 ]

@@ -80,10 +80,12 @@ public class JoltUtils {
 
             if ( jsonMap.containsKey( key ) ) {
                 Object keyToReplace = jsonMap.get(key);
-                if(valueMappings.containsKey(keyToReplace)){
-                    jsonMap.replace(key, valueMappings.get(keyToReplace));
-                    return;
+                Object valueToReplace = valueMappings.containsKey(keyToReplace)
+                        ? valueMappings.get(keyToReplace) : valueMappings.get("*");
+                if(valueToReplace != null){
+                    jsonMap.replace(key, valueToReplace);
                 }
+                return;
             }
             // regardless, recurse down the tree
             for ( Object node : jsonMap.values() ) {
