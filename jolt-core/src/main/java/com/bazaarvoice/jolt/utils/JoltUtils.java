@@ -70,7 +70,7 @@ public class JoltUtils {
      * @param key         the key where the value should be replaced.
      * @param valueMappings  map that contains the values to replace the key on json and map should be the same
      */
-    public static void replaceRecursive( Object json, String key, Map<String,Object> valueMappings) {
+    private static void replaceValueRecursive( Object json, String key, Map<String,Object> valueMappings) {
         if ( json == null || key == null || valueMappings == null) {
             return;
         }
@@ -89,12 +89,12 @@ public class JoltUtils {
             }
             // regardless, recurse down the tree
             for ( Object node : jsonMap.values() ) {
-                replaceRecursive( node, key, valueMappings);
+                replaceValueRecursive( node, key, valueMappings);
             }
         }
         if ( json instanceof List ) {
             for ( Object node : (List) json ) {
-                replaceRecursive( node, key, valueMappings);
+                replaceValueRecursive( node, key, valueMappings);
             }
         }
     }
@@ -195,7 +195,7 @@ public class JoltUtils {
                     parentNode = ((Map<String, Object>) parentNode).get(splittedPath[i]);
                 }
             }
-            replaceRecursive(parentNode, key, valueMappings);
+            replaceValueRecursive(parentNode, key, valueMappings);
         }
     }
 
