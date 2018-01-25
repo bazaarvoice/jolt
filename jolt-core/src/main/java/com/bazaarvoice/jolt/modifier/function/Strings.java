@@ -18,6 +18,7 @@ package com.bazaarvoice.jolt.modifier.function;
 
 import com.bazaarvoice.jolt.common.Optional;
 
+import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings( "deprecated" )
@@ -70,5 +71,16 @@ public class Strings {
             }
             return Optional.<Object>of( sb.toString() );
         }
+    }
+
+    public static final class split extends Function.ArgDrivenSingleFunction<String, List> {
+      @Override
+      protected Optional<List> applySingle(final String separator, final Object source) {
+        if (source == null || separator == null) {
+          return Optional.empty();
+        } else {
+          return Optional.<List>of( Arrays.asList(source.toString().split(separator)) );
+        }
+      }
     }
 }
