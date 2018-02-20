@@ -1,10 +1,6 @@
 {
     "input": {
-        "string": "the QuIcK brOwn fox",
-        "object": {
-          "leCaca": 1,
-          "pisu": "pepeLepe"
-        }
+        "string": "the QuIcK brOwn fox"
     },
 
     "spec": {
@@ -21,8 +17,7 @@
             "custom2": "=toUpper('yabadabadoo')"
         },
         "concat": "=concat(@(1,lower.leading) , ' ' , @(1,lower.trailing))",
-        "join": "=join('_' , @(1,lower.leading) ,  , @(1,lower.trailing))",
-        "toJsonString": "=toJsonString(@(2,object))"
+        "join": "=join('_' , @(1,lower.leading) ,  , @(1,lower.trailing))"
     },
 
     "context": {
@@ -31,10 +26,6 @@
 
     "OVERWRITR": {
         "string" : "the QuIcK brOwn fox",
-        "object" : {
-          "leCaca" : 1,
-          "pisu" : "pepeLepe"
-        },
         "lower": {
             "leading": "the quick brown fox",
             "trailing": "jumped over the lazy dog",
@@ -48,7 +39,6 @@
             "custom2": "YABADABADOO"
         },
         "concat": "the quick brown fox jumped over the lazy dog",
-        "join": "the quick brown fox_jumped over the lazy dog",
-        "toJsonString": "{\"leCaca\":1,\"pisu\":\"pepeLepe\"}"
+        "join": "the quick brown fox_jumped over the lazy dog"
     }
 }
