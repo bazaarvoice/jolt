@@ -16,7 +16,10 @@
             "custom1": "=toUpper(bazinga)",
             "custom2": "=toUpper('yabadabadoo')"
         },
-        "concat": "=concat(@(1,lower.leading) , ' ' , @(1,lower.trailing))",
+        "concat": {
+            "basic": "=concat(@(2,lower.leading) , ' ' , @(2,lower.trailing))",
+            "parens": "=concat(@(2,lower.leading) , ' (', @(2,lower.trailing), ')')"
+        },
         "join": "=join('_' , @(1,lower.leading) ,  , @(1,lower.trailing))"
     },
 
@@ -38,7 +41,10 @@
             "custom1": "BAZINGA",
             "custom2": "YABADABADOO"
         },
-        "concat": "the quick brown fox jumped over the lazy dog",
+        "concat": {
+            "basic": "the quick brown fox jumped over the lazy dog",
+            "parens": "the quick brown fox (jumped over the lazy dog)"
+        },
         "join": "the quick brown fox_jumped over the lazy dog"
     }
 }
