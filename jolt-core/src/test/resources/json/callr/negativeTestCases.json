@@ -1,0 +1,13 @@
+{
+  "input": {
+    "field": "value"
+  },
+  "spec": {
+    "gender": {
+      "~class": "java.lang.String",
+      "~method": "toLowerCase"
+    },
+    "expected": {
+    }
+  }
+}

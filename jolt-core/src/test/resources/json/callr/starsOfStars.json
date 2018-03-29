@@ -1,0 +1,44 @@
+{
+  "input": {
+    "rating": {
+      "quality": {
+        "Range": 7.3,
+        "Value": 3.5,
+        "Id": "     quality    "
+      },
+      "sharpness": {
+        "Value": 4.8,
+        "Id": "   sharpness     "
+      }
+    }
+  },
+  "spec": {
+    "*": {
+      "*": {
+        "Id": {
+          "~class": "java.lang.String",
+          "~method": "trim",
+          "~args": []
+        },
+        "*": {
+          "~class": "java.lang.Double",
+          "~method": "intValue",
+          "~args": []
+        }
+      }
+    }
+  },
+  "expected": {
+    "rating": {
+      "quality": {
+        "Range": 7,
+        "Value": 3,
+        "Id": "quality"
+      },
+      "sharpness": {
+        "Value": 4,
+        "Id": "sharpness"
+      }
+    }
+  }
+}

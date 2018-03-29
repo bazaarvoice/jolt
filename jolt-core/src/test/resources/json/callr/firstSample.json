@@ -1,0 +1,104 @@
+{
+  "input": {
+    "Rating": 3,
+    "SecondaryRatings": {
+      "quality": {
+        "Range": 7,
+        "Value": 3,
+        "Id": "quality"
+      },
+      "sharpness": {
+        "Value": 4.8,
+        "Id": "sharpness"
+      }
+    },
+    "AdditionalInfo": {
+      "tech": "local dimming",
+      "type": "led",
+      "date": "2017-01-19"
+    }
+  },
+  "spec": {
+    "Rating": {
+      "~class": "java.lang.String",
+      "~method": "valueOf",
+      "~args": [
+        {
+          "~class": "java.lang.Integer",
+          "~method": "intValue",
+          "~args": []
+        }
+      ]
+    },
+    "SecondaryRatings": {
+      "quality": {
+        "Range": {
+          "~class": "java.lang.Math",
+          "~method": "max",
+          "~args": [
+            15,
+            {
+              "~class": "java.lang.Integer",
+              "~method": "intValue",
+              "~args": []
+            }
+          ]
+        },
+        "Id": {
+          "~class": "java.lang.String",
+          "~method": "toUpperCase",
+          "~args": []
+        }
+      },
+      "sharpness": {
+        "Value": {
+          "~class": "java.lang.Double",
+          "~method": "intValue",
+          "~args": []
+        },
+        "Id": {
+          "~class": "java.lang.String",
+          "~method": "replaceAll",
+          "~args": [
+            "sharpness",
+            "edge"
+          ]
+        }
+      }
+    },
+    "AdditionalInfo": {
+      "date": {
+        "~class": "java.lang.String",
+        "~method": "replaceAll",
+        "~args": [
+          "-",
+          "/"
+        ]
+      },
+      "*": {
+        "~class": "java.lang.String",
+        "~method": "toUpperCase",
+        "~args": []
+      }
+    }
+  },
+  "expected": {
+    "Rating": "3",
+    "SecondaryRatings": {
+      "quality": {
+        "Range": 15,
+        "Value": 3,
+        "Id": "QUALITY"
+      },
+      "sharpness": {
+        "Value": 4,
+        "Id": "edge"
+      }
+    },
+    "AdditionalInfo": {
+      "tech": "LOCAL DIMMING",
+      "type": "LED",
+      "date": "2017/01/19"
+    }
+  }
+}
