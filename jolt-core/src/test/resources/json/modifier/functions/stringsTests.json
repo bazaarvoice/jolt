@@ -16,11 +16,17 @@
             "custom1": "=toUpper(bazinga)",
             "custom2": "=toUpper('yabadabadoo')"
         },
+        "join": "=join('_' , @(1,lower.leading) ,  , @(1,lower.trailing))",
+        "split": {
+            "single": "=split(',', @(2,string))",
+            "multiple": "=split(' ', @(2,string))",
+            "regex": "=split('[Oo]', @(2,string))",
+            "regex2": "=split('\\s+', @(2,string))"
+        },
         "concat": {
             "basic": "=concat(@(2,lower.leading) , ' ' , @(2,lower.trailing))",
             "parens": "=concat(@(2,lower.leading) , ' (', @(2,lower.trailing), ')')"
-        },
-        "join": "=join('_' , @(1,lower.leading) ,  , @(1,lower.trailing))"
+        }
     },
 
     "context": {
@@ -41,10 +47,32 @@
             "custom1": "BAZINGA",
             "custom2": "YABADABADOO"
         },
+        "join": "the quick brown fox_jumped over the lazy dog",
+        "split": {
+            "single": [
+                "the QuIcK brOwn fox"
+            ],
+            "multiple": [
+                "the",
+                "QuIcK",
+                "brOwn",
+                "fox"
+            ],
+            "regex": [
+                "the QuIcK br",
+                "wn f",
+                "x"
+            ],
+            "regex2": [
+                "the",
+                "QuIcK",
+                "brOwn",
+                "fox"
+            ]
+        },
         "concat": {
             "basic": "the quick brown fox jumped over the lazy dog",
             "parens": "the quick brown fox (jumped over the lazy dog)"
-        },
-        "join": "the quick brown fox_jumped over the lazy dog"
+        }
     }
 }
