@@ -69,7 +69,7 @@
                 "brOwn",
                 "fox"
             ]
-        }
+        },
         "concat": {
             "basic": "the quick brown fox jumped over the lazy dog",
             "parens": "the quick brown fox (jumped over the lazy dog)"
