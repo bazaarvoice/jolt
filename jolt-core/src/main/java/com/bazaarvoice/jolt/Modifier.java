@@ -65,6 +65,9 @@ public abstract class Modifier implements SpecDriven, ContextualTransform {
         STOCK_FUNCTIONS.put( "toString", new Objects.toString() );
         STOCK_FUNCTIONS.put( "size", new Objects.size() );
 
+        STOCK_FUNCTIONS.put( "squashNulls", new Objects.squashNulls() );
+        STOCK_FUNCTIONS.put( "recursivelySquashNulls", new Objects.recursivelySquashNulls() );
+
         STOCK_FUNCTIONS.put( "noop", Function.noop );
         STOCK_FUNCTIONS.put( "isPresent", Function.isPresent );
         STOCK_FUNCTIONS.put( "notNull", Function.notNull );

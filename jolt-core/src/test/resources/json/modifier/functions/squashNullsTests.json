@@ -1,0 +1,28 @@
+{
+    "input": {
+        "squashThisList" : [ "a", null, 1, null, "b" ],
+        "squashThisMap" :  { "a": "A", "b": null, "c" : "C" },
+
+        "superSquashThis" : [ "a", null, { "x": "X", "y": null, "zList" : [ "z1", null, "z3" ] }, null, "b"  ],
+
+        "doNotSquash" : { "a": "A", "b": null, "c" : "C" }
+    },
+
+    "spec": {
+        "squashThisList" : "=squashNulls",
+        "squashThisMap" : "=squashNulls(@(1,squashThisMap))",
+
+        "superSquashThis" : "=recursivelySquashNulls"
+    },
+
+    "context": {},
+
+    "OVERWRITR": {
+        "squashThisList" : [ "a", 1, "b" ],
+        "squashThisMap" : { "a": "A", "c" : "C"},
+
+        "superSquashThis" : [ "a", { "x": "X", "zList" : [ "z1", "z3" ] }, "b" ],
+
+        "doNotSquash" : { "a": "A", "b": null, "c" : "C" }
+    }
+}
