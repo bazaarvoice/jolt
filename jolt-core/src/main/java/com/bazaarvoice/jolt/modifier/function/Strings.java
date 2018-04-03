@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.bazaarvoice.jolt.modifier.function;
 
 import com.bazaarvoice.jolt.common.Optional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings( "deprecated" )
 public class Strings {
@@ -78,8 +78,14 @@ public class Strings {
       protected Optional<List> applySingle(final String separator, final Object source) {
         if (source == null || separator == null) {
           return Optional.empty();
-        } else {
-          return Optional.<List>of( Arrays.asList(source.toString().split(separator)) );
+        }
+        else if ( source instanceof String ) {
+          // only try to split input strings
+          String inputString = (String) source;
+          return Optional.<List>of( Arrays.asList(inputString.split(separator)) );
+        }
+        else {
+          return Optional.empty();
         }
       }
     }

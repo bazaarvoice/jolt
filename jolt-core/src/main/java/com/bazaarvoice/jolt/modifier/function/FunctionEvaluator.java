@@ -68,6 +68,11 @@ public class FunctionEvaluator {
                 Object[] evaluatedArgs = evaluateArgsValue( functionArgs, context, walkedPath );
                 valueOptional = function.apply( evaluatedArgs );
             }
+            //
+            // FYI this is where the "magic" happens that allows functions that take a single method
+            //  default to the current "match" rather than an explicit "reference".
+            // Note, this does not work for functions that take more than a single input.
+            //
             // "key": "=abs"
             else {
                 // pass current value as arg if present
