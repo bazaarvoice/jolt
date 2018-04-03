@@ -61,26 +61,123 @@ public class JoltUtils {
         }
     }
 
+
     /**
-     * Navigate inside a json object in quick and dirty way.
+     * Navigate a JSON tree (made up of Maps and Lists) to "lookup" the value
+     *  at a particular path.
      *
-     * @param source the source json object
-     * @param paths the paths array to travel
+     * Example : given Json
+     *
+     * Object json =
+     * {
+     *     "a" : {
+     *         "b" : [ "x", "y", "z" ]
+     *     }
+     * }
+     *
+     * navigate( json, "a", "b", 0 ) will return "x".
+     *
+     * It will traverse down the nested "a" and return the zeroth item of the "b" array.
+     *
+     * You will either get your data, or null.
+     *
+     * It should never throw an Exception; even if
+     *  - you ask to index an array with a negative number
+     *  - you ask to index an array wiht a number bigger than the array size
+     *  - you ask to index a map that does not exist
+     *  - your input data has objects in it other than Map, List, String, Number.
+     *
+     * @param source the source JSON object (Map, List, String, Number)
+     * @param paths varargs path you want to travel
      * @return the object of Type <T> at final destination
-     * @throws NullPointerException if the source is null
-     * @throws UnsupportedOperationException if the source is not Map or List
      */
-    public static <T> T navigate(final Object source, final Object... paths) {
+    public static <T> T navigate( final Object source, final Object... paths ) {
+
         Object destination = source;
-        for (Object path : paths) {
-            if(path == null || destination == null) {
-                throw new NullPointerException("source or path is null");
+        for ( Object path : paths ) {
+
+            if ( path == null || destination == null ) {
+                return null;
             }
-            if(destination instanceof Map) {
-                destination = ((Map) destination).get(path);
+
+            if ( destination instanceof Map ) {
+                destination = ((Map) destination).get( path );
             }
-            else if(path instanceof Integer && destination instanceof List) {
-                destination = ((List) destination).get((Integer)path);
+            else if ( destination instanceof List ) {
+
+                if ( ! (path instanceof Integer) ) {
+                    return null;
+                }
+
+                List destList = (List) destination;
+                int pathInt = (Integer) path;
+
+                if ( pathInt < 0 || pathInt >= destList.size() ) {
+                    return null;
+                }
+
+                destination = destList.get( pathInt );
+            }
+            else {
+                // the input at this level is not a Map or List
+                //  so return null
+                return null;
+            }
+        }
+        return cast(destination);
+    }
+
+    /**
+     * Navigate a JSON tree (made up of Maps and Lists) to "lookup" the value
+     *  at a particular path.
+     *
+     * You will either get your data, or an exception will be thrown.
+     *
+     * This method should generally only be used in situations where you "know"
+     *  that the navigate call will "always succeed".
+     *
+     * @param source the source JSON object (Map, List, String, Number)
+     * @param paths varargs path you want to travel
+     * @return the object of Type <T> at final destination
+     * @throws UnsupportedOperationException if there was any problem walking the JSON tree structure
+     */
+    public static <T> T navigateStrict( final Object source, final Object... paths ) throws UnsupportedOperationException {
+
+        Object destination = source;
+        for ( Object path : paths ) {
+            if ( path == null ) {
+                throw new UnsupportedOperationException("path is null");
+            }
+            if ( destination == null ) {
+                throw new UnsupportedOperationException("source is null");
+            }
+
+            if ( destination instanceof Map ) {
+                Map temp = (Map) destination;
+                if (temp.containsKey( path ) ) {
+
+                    // if we don't check for containsKey first, then the Map.get call
+                    //  would return null for keys that don't actually exist.
+                    destination = ((Map) destination).get(path);
+                }
+                else {
+                    throw new UnsupportedOperationException("no entry for '" + path  + "' found while traversing the JSON");
+                }
+            }
+            else if ( destination instanceof List ) {
+
+                if ( ! (path instanceof Integer) ) {
+                    throw new UnsupportedOperationException( "path '" + path + "' is trying to be used as an array index");
+                }
+
+                List destList = (List) destination;
+                int pathInt = (Integer) path;
+
+                if ( pathInt < 0 || pathInt > destList.size() ) {
+                    throw new UnsupportedOperationException( "path '" + path + "' is negative or outside the range of the list");
+                }
+
+                destination = destList.get( pathInt );
             }
             else {
                 throw new UnsupportedOperationException("Navigation supports only Map and List source types and non-null String and Integer path types");
@@ -90,17 +187,18 @@ public class JoltUtils {
     }
 
     /**
-     * Navigate inside a json object in quick and "dirtier" way, i.e. returns a default value NPE
-     * or out-of-index errors encountered
+     * Navigate a JSON tree (made up of Maps and Lists) to "lookup" the value
+     *  at a particular path, but will return the supplied default value if
+     *  there are any problems.
      *
-     * @param source the source
-     * @param paths the paths array
+     * @param source the source JSON object (Map, List, String, Number)
+     * @param paths varargs path you want to travel
      * @return the object of Type <T> at final destination or defaultValue if non existent
-     * @throws UnsupportedOperationException the unsupported operation exception
      */
-    public static <T> T navigateSafe(final T defaultValue, final Object source, final Object... paths) {
+    public static <T> T navigateOrDefault( final T defaultValue, final Object source, final Object... paths ) {
+
         Object destination = source;
-        for (Object path : paths) {
+        for ( Object path : paths ) {
             if(path == null || destination == null) {
                 return defaultValue;
             }
@@ -114,28 +212,34 @@ public class JoltUtils {
                 }
             }
             else if(path instanceof Integer && destination instanceof List) {
-                List destinationList = (List) destination;
-                if ( (Integer) path >= destinationList.size() ) {
+
+                List destList = (List) destination;
+                int pathInt = (Integer) path;
+
+                if ( pathInt < 0 || pathInt >= destList.size() ) {
                     return defaultValue;
                 }
                 else {
-                    destination = destinationList.get((Integer)path);
+                    destination = destList.get( pathInt );
                 }
             }
             else {
-                throw new UnsupportedOperationException("Navigation supports only Map and List source types and non-null String and Integer path types");
+                return defaultValue;
             }
         }
         return cast(destination);
     }
 
     /**
-     * Deprecated: use isVacantJson() instead
+     * Use navigateOrDefault which is a much better name.
      */
     @Deprecated
-    public static boolean isEmptyJson(final Object obj) {
-        return isVacantJson(obj);
+    public static <T> T navigateSafe(final T defaultValue, final Object source, final Object... paths) {
+        return navigateOrDefault( defaultValue, source, paths );
     }
+
+
+
     /**
      * Vacant implies there are empty placeholders, i.e. a vacant hotel
      * Given a json document, checks if it has any "leaf" values, can handle deep nesting of lists and maps
@@ -192,6 +296,7 @@ public class JoltUtils {
         }
         throw new UnsupportedOperationException("map or list is supported, got ${obj?obj.getClass():null}");
     }
+
 
     /**
      * Given a json document, finds out absolute path to every leaf element

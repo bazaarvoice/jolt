@@ -26,7 +26,6 @@ import java.util.List;
 
 /**
 * StringTools Tester.
-* 
 */
 public class StringToolsTest {
 
