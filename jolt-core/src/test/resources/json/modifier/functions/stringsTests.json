@@ -26,6 +26,17 @@
         "concat": {
             "basic": "=concat(@(2,lower.leading) , ' ' , @(2,lower.trailing))",
             "parens": "=concat(@(2,lower.leading) , ' (', @(2,lower.trailing), ')')"
+        },
+        "substring": {
+            "basic1": "=substring(@(2,string), 0, 9)",
+            "basic2": "=substring(@(2,string), 4, 9)",
+            "outOfBounds1": "=substring(@(2,string), -4, 9)",
+            "outOfBounds2": "=substring(@(2,string), 0, 200)",
+            "badArgs1": "=substring(0, 9, @(2, substring))",
+            "badArgs2": "=substring(0, 4, 9)",
+            "badArgs3": "=substring('', 0, 0)",
+            "custom1": "=substring('the quick brown fox', 0, 15)",
+            "custom2": "=substring('the quick brown fox', 16, 19)"
         }
     },
 
@@ -73,6 +84,17 @@
         "concat": {
             "basic": "the quick brown fox jumped over the lazy dog",
             "parens": "the quick brown fox (jumped over the lazy dog)"
+        },
+        "substring": {
+            "basic1": "the QuIcK",
+            "basic2": "QuIcK",
+            "outOfBounds1": "",
+            "outOfBounds2": "",
+            "badArgs1": "",
+            "badArgs2": "",
+            "badArgs3": "",
+            "custom1": "the quick brown",
+            "custom2": "fox"
         }
     }
 }
