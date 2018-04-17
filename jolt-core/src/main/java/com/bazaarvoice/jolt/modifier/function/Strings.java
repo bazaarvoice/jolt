@@ -51,6 +51,37 @@ public class Strings {
         }
     }
 
+    public static final class substring extends Function.ListFunction {
+
+        @Override
+        protected Optional<Object> applyList(List<Object> argList) {
+            String argString = "";
+            int start = -1;
+            int end = -1;
+            for(int i = 0; i < argList.size(); i++) {
+                Object arg = argList.get(i);
+                if(arg != null) {
+                    if(i == 0 && arg instanceof String) {
+                        argString = arg.toString();
+                    }
+                    else if(i == 1 && arg instanceof Integer) {
+                        start = (Integer) arg;
+                    } else if(i == 2 && arg instanceof Integer) {
+                        end = (Integer) arg;
+                    }
+                }
+            }
+            System.out.println(argString + " start: " + Integer.toString(start) + " end: " + Integer.toString(end));
+            if(start >= 0 && end > 0 && argString.length() > 0) {
+                if(start < argString.length() && end <= argString.length() && start < end) {
+                    return Optional.of(argString.substring(start, end));
+                }
+            }
+
+            return Optional.of("");
+        }
+    }
+
     @SuppressWarnings( "unchecked" )
     public static final class join extends Function.ArgDrivenListFunction<String> {
 
