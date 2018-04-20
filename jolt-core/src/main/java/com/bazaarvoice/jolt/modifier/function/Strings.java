@@ -20,7 +20,6 @@ import com.bazaarvoice.jolt.common.Optional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.OptionalInt;
 
 @SuppressWarnings( "deprecated" )
 public class Strings {
