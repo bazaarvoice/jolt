@@ -44,7 +44,6 @@
             "advancedLookupRanges" : "=substring(@(2,string), @(2,zeroIndex), @(2,threeIndex))"
         }
     },
-
     "context": {
         "value" : "JumpeD OVeR THE laZy dog"
     },

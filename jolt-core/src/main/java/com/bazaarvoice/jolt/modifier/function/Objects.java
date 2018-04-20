@@ -176,7 +176,7 @@ public class Objects {
     public static void squashNulls( Object input ) {
         if ( input instanceof List ) {
             List inputList = (List) input;
-            inputList.removeIf( i -> i == null );
+            inputList.removeIf( java.util.Objects::isNull );
         }
         else if ( input instanceof Map ) {
             Map<String,Object> inputMap = (Map<String,Object>) input;

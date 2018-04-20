@@ -165,6 +165,7 @@ public class ModifierTest {
         List<Object[]> testCases = Lists.newLinkedList();
 
         testCases.add( new Object[]{"/json/modifier/functions/stringsSplitTest.json", TemplatrTestCase.OVERWRITR});
+        testCases.add( new Object[]{"/json/modifier/functions/padStringsTest.json", TemplatrTestCase.OVERWRITR});
         testCases.add( new Object[]{"/json/modifier/functions/stringsTests.json", TemplatrTestCase.OVERWRITR});
         testCases.add( new Object[]{"/json/modifier/functions/mathTests.json", TemplatrTestCase.OVERWRITR} );
         testCases.add( new Object[]{"/json/modifier/functions/arrayTests.json", TemplatrTestCase.OVERWRITR} );

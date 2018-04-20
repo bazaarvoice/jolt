@@ -128,4 +128,81 @@ public class Strings {
         }
       }
     }
+
+
+    public static final class leftPad extends Function.ArgDrivenListFunction<String> {
+        @Override
+        protected Optional<Object> applyList(String source, List<Object> args) {
+
+            return padString( true, source, args );
+        }
+    }
+
+    public static final class rightPad extends Function.ArgDrivenListFunction<String> {
+        @Override
+        protected Optional<Object> applyList(String source, List<Object> args) {
+
+            return padString( false, source, args );
+        }
+    }
+
+    private static Optional<Object> padString( boolean leftPad, String source, List<Object> args ) {
+
+        // There is only one path that leads to success and many
+        //  ways for this to fail.   So using a do/while loop
+        //  to make the bailing easy.
+        do {
+
+            if(source == null || args == null ) {
+                break;
+            }
+
+            if ( ! ( args.get(0) instanceof Integer &&
+                     args.get(1) instanceof String ) ) {
+                break;
+            }
+
+            Integer width = (Integer) args.get(0);
+
+            // if the width param is stupid; bail
+            if ( width <= 0 || width > 500 ) {
+                break;
+            }
+
+            String filler = (String) args.get(1);
+
+            // filler can only be a single char
+            //  otherwise the math becomes hard
+            if ( filler.length() != 1 ) {
+                break;
+            }
+
+            char fillerChar = filler.charAt( 0 );
+
+            // if the desired width of the overall padding is smaller than
+            //  the source string, then just return the source string.
+            if( width <= source.length() ) {
+                return Optional.of( source );
+            }
+
+            int padLength = width - source.length();
+            char[] padArray = new char[padLength];
+
+            Arrays.fill( padArray, fillerChar );
+
+            StringBuilder sb = new StringBuilder();
+
+            if ( leftPad ) {
+                sb.append( padArray ).append( source );
+            }
+            else {
+                sb.append( source ).append( padArray );
+            }
+
+            return Optional.of( sb.toString() );
+
+        } while ( false );
+
+        return Optional.empty();
+    }
 }
