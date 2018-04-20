@@ -97,7 +97,7 @@ import java.util.List;
 @Deprecated
 public interface Function {
 
-    public Optional<Object> apply(Object... args);
+    Optional<Object> apply(Object... args);
 
     /**
      * Does nothing
@@ -106,7 +106,7 @@ public interface Function {
      *
      * will cause the key to remain unchanged
      */
-    public static final Function noop = new Function() {
+    Function noop = new Function() {
         @Override
         public Optional<Object> apply( final Object... args ) {
             return Optional.empty();
@@ -128,7 +128,7 @@ public interface Function {
      * output - "key": "otherValue"
      *
      */
-    public static final Function isPresent = new Function() {
+    Function isPresent = new Function() {
         @Override
         public Optional<Object> apply( final Object... args ) {
             if (args.length == 0) {
@@ -150,7 +150,7 @@ public interface Function {
      * output - "key": "value"
      *
      */
-    public static final Function notNull = new Function() {
+    Function notNull = new Function() {
         @Override
         public Optional<Object> apply( final Object... args ) {
             if (args.length == 0 || args[0] == null) {
@@ -172,7 +172,7 @@ public interface Function {
      * output - "key": "otherValue"
      *
      */
-    public static final Function isNull = new Function() {
+    Function isNull = new Function() {
         @Override
         public Optional<Object> apply( final Object... args ) {
             if (args.length == 0 || args[0] != null) {
@@ -191,7 +191,7 @@ public interface Function {
      * @param <T> type of return value
      */
     @SuppressWarnings( "unchecked" )
-    public static abstract class BaseFunction<T> implements Function {
+    abstract class BaseFunction<T> implements Function {
 
         public final Optional<Object> apply( final Object... args ) {
             if(args.length == 0) {
@@ -232,7 +232,7 @@ public interface Function {
      * @param <T> type of return value
      */
     @SuppressWarnings( "unchecked" )
-    public static abstract class SingleFunction<T> extends BaseFunction<T> {
+    abstract class SingleFunction<T> extends BaseFunction<T> {
 
         protected final Optional<Object> applyList( final List<Object> input ) {
             List<Object> ret = new ArrayList<>( input.size() );
@@ -254,7 +254,7 @@ public interface Function {
      *
      */
     @SuppressWarnings( "unchecked" )
-    public static abstract class ListFunction extends BaseFunction<Object> {
+    abstract class ListFunction extends BaseFunction<Object> {
 
         protected abstract Optional<Object> applyList( final List<Object> argList );
 
@@ -272,7 +272,7 @@ public interface Function {
      * @param <RETTYPE> type of return value
      */
     @SuppressWarnings( "unchecked" )
-    public static abstract class ArgDrivenFunction<SOURCE, RETTYPE> implements Function {
+    abstract class ArgDrivenFunction<SOURCE, RETTYPE> implements Function {
 
         private final Class<SOURCE> specialArgType;
 
@@ -322,7 +322,7 @@ public interface Function {
                 }
                 else {
                     List<Object> input = Arrays.asList( Arrays.copyOfRange(args, 1, args.length) );
-                    return (Optional) applyList( specialArg, input );
+                    return applyList( specialArg, input );
                 }
             }
             else {
@@ -345,7 +345,7 @@ public interface Function {
      * @param <R> type of return value
      */
     @SuppressWarnings( "unchecked" )
-    public static abstract class ArgDrivenSingleFunction<S, R> extends ArgDrivenFunction<S, R> {
+    abstract class ArgDrivenSingleFunction<S, R> extends ArgDrivenFunction<S, R> {
 
         protected final Optional<Object> applyList( S specialArg, List<Object> input ) {
             List<Object> ret = new ArrayList<>( input.size() );
@@ -368,7 +368,7 @@ public interface Function {
      * @param <S> type of special argument
      */
     @SuppressWarnings( "unchecked" )
-    public static abstract class ArgDrivenListFunction<S> extends ArgDrivenFunction<S, Object> {
+    abstract class ArgDrivenListFunction<S> extends ArgDrivenFunction<S, Object> {
 
         protected abstract Optional<Object> applyList( S specialArg, List<Object> args );
 
