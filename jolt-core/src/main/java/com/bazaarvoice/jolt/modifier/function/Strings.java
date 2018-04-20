@@ -83,4 +83,16 @@ public class Strings {
         }
       }
     }
+
+    public static final class leftPad extends Function.ListFunction {
+
+        @Override
+        protected Optional<Object> applyList(List<Object> argList) {
+            if(argList == null) {
+                return Optional.of("");
+            } else {
+
+            }
+        }
+    }
 }
