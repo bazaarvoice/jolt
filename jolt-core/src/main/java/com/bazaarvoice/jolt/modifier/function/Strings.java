@@ -84,15 +84,40 @@ public class Strings {
       }
     }
 
-    public static final class leftPad extends Function.ListFunction {
-
+    public static final class leftPad extends Function.ArgDrivenListFunction<String>{
         @Override
-        protected Optional<Object> applyList(List<Object> argList) {
-            if(argList == null) {
-                return Optional.of("");
-            } else {
+        protected Optional<Object> applyList(String filler, List<Object> args) {
 
+            if(filler == null || args == null) {
+                return Optional.empty();
+            } else {
+                if(args.size() == 2) {
+                    Object widthObj = args.get(0);
+                    Object sourceObj = args.get(1);
+                    if(widthObj instanceof Integer && sourceObj instanceof String) {
+                        int width = (Integer) widthObj;
+                        if(filler.length() == 1) {
+                            String source = (String) sourceObj;
+                            if(source.length() >= width) {
+                                return Optional.of(source);
+                            } else {
+                                char[] sourceArray = source.toCharArray();
+                                char[] destinationArray = new char[width];
+                                int destIndex = width - 1;
+                                for(int i = sourceArray.length - 1; i >= 0; i--) {
+                                    destinationArray[destIndex] = sourceArray[i];
+                                    destIndex--;
+                                }
+                                for(int i = destIndex; i >= 0; i--) {
+                                    destinationArray[i] = filler.charAt(0);
+                                }
+                                return Optional.of(new String(destinationArray));
+                            }
+                        }
+                    }
+                }
             }
+            return Optional.empty();
         }
     }
 }

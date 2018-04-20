@@ -26,6 +26,11 @@
         "concat": {
             "basic": "=concat(@(2,lower.leading) , ' ' , @(2,lower.trailing))",
             "parens": "=concat(@(2,lower.leading) , ' (', @(2,lower.trailing), ')')"
+        },
+        "leftPad": {
+            "basic": "=leftPad('X', 10, 'fox')",
+            "basic2": "=leftPad('X', 5, 'brown')",
+            "basic3": "=leftPad('X', 0, @(2,string))"
         }
     },
 
@@ -73,6 +78,11 @@
         "concat": {
             "basic": "the quick brown fox jumped over the lazy dog",
             "parens": "the quick brown fox (jumped over the lazy dog)"
+        },
+        "leftPad": {
+            "basic": "XXXXXXXfox",
+            "basic2": "brown",
+            "basic3": "the QuIcK brOwn fox"
         }
     }
 }
