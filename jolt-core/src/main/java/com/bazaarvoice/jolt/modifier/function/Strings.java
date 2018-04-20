@@ -20,6 +20,7 @@ import com.bazaarvoice.jolt.common.Optional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.OptionalInt;
 
 @SuppressWarnings( "deprecated" )
 public class Strings {
@@ -89,7 +90,7 @@ public class Strings {
         protected Optional<Object> applyList(String filler, List<Object> args) {
 
             if(filler == null || args == null) {
-                return Optional.empty();
+                return Optional.of("");
             } else {
                 if(args.size() == 2) {
                     Object widthObj = args.get(0);
@@ -117,7 +118,45 @@ public class Strings {
                     }
                 }
             }
-            return Optional.empty();
+            return Optional.of("");
+        }
+    }
+
+    public static final class rightPad extends Function.ArgDrivenListFunction<String> {
+
+        @Override
+        protected Optional<Object> applyList(String filler, List<Object> args) {
+
+            if(filler == null || args == null) {
+                return Optional.of("");
+            } else {
+                if(args.size() == 2) {
+                    Object widthObj = args.get(0);
+                    Object sourceObj = args.get(1);
+                    if(widthObj instanceof Integer && sourceObj instanceof String) {
+                        int width = (Integer) widthObj;
+                        if(filler.length() == 1) {
+                            String source = (String) sourceObj;
+                            if(source.length() >= width) {
+                                return Optional.of(source);
+                            } else {
+                                char[] sourceArray = source.toCharArray();
+                                char[] destinationArray = new char[width];
+                                int destIndex = 0;
+                                for(int i = 0; i <= sourceArray.length - 1; i++) {
+                                    destinationArray[destIndex] = sourceArray[i];
+                                    destIndex++;
+                                }
+                                for(int i = destIndex; i <= width - 1; i++) {
+                                    destinationArray[i] = filler.charAt(0);
+                                }
+                                return Optional.of(new String(destinationArray));
+                            }
+                        }
+                    }
+                }
+            }
+            return Optional.of("");
         }
     }
 }

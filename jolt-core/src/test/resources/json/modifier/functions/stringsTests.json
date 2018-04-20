@@ -28,9 +28,14 @@
             "parens": "=concat(@(2,lower.leading) , ' (', @(2,lower.trailing), ')')"
         },
         "leftPad": {
-            "basic": "=leftPad('X', 10, 'fox')",
+            "basic1": "=leftPad('X', 10, 'fox')",
             "basic2": "=leftPad('X', 5, 'brown')",
             "basic3": "=leftPad('X', 0, @(2,string))"
+        },
+        "rightPad": {
+            "basic1": "=rightPad('X', 10, 'fox')",
+            "basic2": "=rightPad('X', 5, 'brown')",
+            "basic3": "=rightPad('X', 0, @(2,string))"
         }
     },
 
@@ -80,9 +85,14 @@
             "parens": "the quick brown fox (jumped over the lazy dog)"
         },
         "leftPad": {
-            "basic": "XXXXXXXfox",
+            "basic1": "XXXXXXXfox",
             "basic2": "brown",
             "basic3": "the QuIcK brOwn fox"
+        },
+        "rightPad": {
+          "basic1": "foxXXXXXXX",
+          "basic2": "brown",
+          "basic3": "the QuIcK brOwn fox"
         }
     }
 }

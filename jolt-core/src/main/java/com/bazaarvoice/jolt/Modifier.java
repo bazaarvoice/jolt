@@ -47,6 +47,7 @@ public abstract class Modifier implements SpecDriven, ContextualTransform {
         STOCK_FUNCTIONS.put( "join", new Strings.join() );
         STOCK_FUNCTIONS.put( "split", new Strings.split() );
         STOCK_FUNCTIONS.put( "leftPad", new Strings.leftPad() );
+        STOCK_FUNCTIONS.put( "rightPad", new Strings.rightPad() );
 
         STOCK_FUNCTIONS.put( "min", new Math.min() );
         STOCK_FUNCTIONS.put( "max", new Math.max() );
