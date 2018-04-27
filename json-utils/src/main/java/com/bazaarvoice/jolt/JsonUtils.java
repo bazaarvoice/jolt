@@ -219,6 +219,30 @@ public class JsonUtils {
         return util.toPrettyJsonString( obj );
     }
 
+    /**
+     * Diffy considers two types to be valid JSON: a Map, or a List. This
+     * ensures that the Object is one of those types.
+     *
+     * @param toEnsure the Object whose type we ensure is a Map or List
+     * @throws IllegalArgumentException if toEnsure is neither Map nor List
+     */
+    public static void ensureJSONType(Object toEnsure) {
+        if (!isJSONType(toEnsure)) {
+            throw new IllegalArgumentException("Argument '"+ toEnsure +
+                    "' was not of type Map or List.");
+        }
+    }
+
+    /**
+     * Diffy considers two types to be valid JSON: a Map, or a List. This
+     * checks if the Object is either of those, and is thus a 'JSON-like'
+     * data structure (for Jolt's definition).
+     *
+     * @param toCheck the Object whose type we check is a Map or List
+     */
+    public static boolean isJSONType(Object toCheck) {
+        return (toCheck instanceof Map || toCheck instanceof List);
+    }
 
     /**
      * Makes a deep copy of a Map<String, Object> object by converting it to a String and then

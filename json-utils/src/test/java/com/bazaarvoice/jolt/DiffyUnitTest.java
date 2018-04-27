@@ -15,18 +15,27 @@
  */
 package com.bazaarvoice.jolt;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import org.testng.collections.Lists;
+
+import static com.bazaarvoice.jolt.JsonUtils.isJSONType;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 public class DiffyUnitTest {
 
@@ -43,8 +52,17 @@ public class DiffyUnitTest {
     }
 
     private void testScalars(Object expected, Object actual, boolean expectDiff) {
-        Diffy.Result result = this.unit.diff( expected, actual );
-        if (expectDiff) {
+        Diffy.Result result = null;
+        try {
+            result = this.unit.diff(expected, actual);
+        } catch (IllegalArgumentException e) {
+            if (isJSONType(actual) && isJSONType(expected)) {
+                Assert.fail("Map/List parameters are legal diff arguments, " +
+                "but threw IllegalArgumentException: " + e.getMessage());
+            }
+        }
+
+        if (null != result && expectDiff) {
             Assert.assertEquals( expected, result.expected );
             Assert.assertEquals( actual, result.actual );
         }
@@ -136,6 +154,91 @@ public class DiffyUnitTest {
                 JsonUtils.jsonToMap( "{\"foo\":\"apple\", \"bar\":\"baz\"}" ) );
         Assert.assertEquals( JsonUtils.jsonToMap( "{\"foo\":1}" ), result.expected );
         Assert.assertEquals( JsonUtils.jsonToMap( "{\"foo\":\"apple\"}" ), result.actual );
+    }
+
+    /**
+     * Generates all combinations of argument types from a set of basic
+     * arguments: primitives, Object, Maps, and Lists. Associated with each
+     * type is a boolean, indicating whether the argument type is valid or not.
+     * For our purposes, only Maps and Lists are valid.
+     *
+     * Each combination contains the 'expected' and 'actual' arguments for
+     * Diffy.diff, as well as a boolean indicating whether the combination is
+     * valid or not.
+     *
+     * @return a list of all combinations of argument types, alongside a boolean
+     *         indicating whether the combination is valid or not
+     */
+    @DataProvider
+    public static Iterator<Object[]> provideAllCombinationsOfArgumentTypes() {
+        List<Object[]> argumentTypes = Lists.newArrayList();
+
+        // Test all primitives
+        argumentTypes.add(new Object[] {null,  false});
+        argumentTypes.add(new Object[] {true,  false});
+        argumentTypes.add(new Object[] {(byte) 0,  false});
+        argumentTypes.add(new Object[] {(short) 0,  false});
+        argumentTypes.add(new Object[] {0L,  false});
+        argumentTypes.add(new Object[] {0.0f,  false});
+        argumentTypes.add(new Object[] {0.0d,  false});
+        argumentTypes.add(new Object[] {'a',  false});
+        argumentTypes.add(new Object[] {"",  false});
+
+        // Make sure it's not just that all Objects are accepted
+        argumentTypes.add(new Object[] {new Object(),  false});
+
+        // Looks like JSON, but not JSON
+        argumentTypes.add(new Object[] {"\"key\": \"value\"",  false});
+        argumentTypes.add(new Object[] {"{\n\"key\": \"value\"\n}",  false});
+        argumentTypes.add(new Object[] {"{\n\"key\": [\"value1\", \"value2\"]\n}",  false});
+        argumentTypes.add(new Object[] {"{\n\"key\": \n{\"subKey : \"value\"\n}\n}",  false});
+
+        // Maps and Lists: only valid types
+        argumentTypes.add(new Object[] {Lists.newArrayList(),  true});
+        argumentTypes.add(new Object[] {new LinkedList(),  true});
+        argumentTypes.add(new Object[] {new Stack(),  true});
+        argumentTypes.add(new Object[] {Lists.newArrayList("value1", "value2", "value3"),  true});
+
+        argumentTypes.add(new Object[] {Maps.newHashMap(),  true});
+        argumentTypes.add(new Object[] {Maps.newLinkedHashMap(),  true});
+        argumentTypes.add(new Object[] {Maps.newTreeMap(),  true});
+        argumentTypes.add(new Object[] {ImmutableMap.builder().put("key1", "value1").put("key2", "value2").build(),  true});
+
+        List<Object[]> allCombinations = new LinkedList<>();
+        for (Object[] testCaseI : argumentTypes) {
+            for (Object[] testCaseJ : argumentTypes) {
+                Object expected = testCaseI[0];
+                Object actual = testCaseJ[0];
+                // Only a combination of two valid arguments is valid.
+                boolean shouldNotThrowException = (boolean) testCaseI[1] && (boolean) testCaseJ[1];
+
+                allCombinations.add(new Object[] {expected, actual, shouldNotThrowException});
+            }
+        }
+
+        return allCombinations.iterator();
+    }
+
+    @Test (dataProvider = "provideAllCombinationsOfArgumentTypes")
+    public void testInvalidArguments(Object expected, Object actual, boolean isValid) {
+        boolean threwException = false;
+        try {
+            this.unit.diff(expected, actual);
+        } catch (IllegalArgumentException e) {
+            threwException = true;
+        }
+
+        // If we shouldn't have thrown an exception, but did, fail
+        if (isValid && threwException) {
+            Assert.fail("Threw IllegalArgumentException for valid arguments "
+                    + expected + " and " + actual + " when should not have");
+        }
+
+        // If we should have thrown an exception, but did not, fail
+        if (!isValid && !threwException) {
+            Assert.fail("Did not throw IllegalArgumentException for invalid " +
+                    "arguments " + expected + " and " + actual + " when should have");
+        }
     }
 
     /**

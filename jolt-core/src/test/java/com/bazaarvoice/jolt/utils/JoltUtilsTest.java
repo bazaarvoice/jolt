@@ -136,6 +136,12 @@ public class JoltUtilsTest {
 
         JoltUtils.removeRecursive( json, key );
 
+        // If the values are scalar, need to change to List of one element
+        // so Diffy can compare them. In this way, removeRecursive can still
+        // test scalar values, and Diffy.diff will still function.
+        json = JsonUtils.isJSONType(json) ? json : Lists.newArrayList(json);
+        expected = JsonUtils.isJSONType(expected) ? expected : Lists.newArrayList(expected);
+
         Diffy.Result result = diffy.diff( expected, json );
         if (!result.isEmpty()) {
             Assert.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString( result.expected ) + "\n  actual: " + JsonUtils.toJsonString( result.actual ) );
