@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.bazaarvoice.jolt.modifier.function;
 
 import com.bazaarvoice.jolt.common.Optional;
@@ -47,7 +46,47 @@ public class Strings {
                     sb.append(arg.toString() );
                 }
             }
-            return Optional.<Object>of(sb.toString());
+            return Optional.of(sb.toString());
+        }
+    }
+
+    public static final class substring extends Function.ListFunction {
+
+        @Override
+        protected Optional<Object> applyList(List<Object> argList) {
+
+            // There is only one path that leads to success and many
+            //  ways for this to fail.   So using a do/while loop
+            //  to make the bailing easy.
+            do {
+
+                // if argList is null or not the right size; bail
+                if(argList == null || argList.size() != 3 ) {
+                    break;
+                }
+
+                if ( ! ( argList.get(0) instanceof String &&
+                         argList.get(1) instanceof Integer &&
+                         argList.get(2) instanceof Integer ) ) {
+                    break;
+                }
+
+                // If we get here, then all these casts should work.
+                String tuna = (String) argList.get(0);
+                int start = (Integer) argList.get(1);
+                int end = (Integer) argList.get(2);
+
+                // do start and end make sense?
+                if ( start >= end || start < 0 || end < 1 || end > tuna.length() ) {
+                    break;
+                }
+
+                return Optional.of(tuna.substring(start, end));
+
+            } while( false );
+
+            // if we got here, then return an Optional.empty.
+            return Optional.empty();
         }
     }
 
@@ -69,7 +108,7 @@ public class Strings {
                     }
                 }
             }
-            return Optional.<Object>of( sb.toString() );
+            return Optional.of( sb.toString() );
         }
     }
 
@@ -78,8 +117,14 @@ public class Strings {
       protected Optional<List> applySingle(final String separator, final Object source) {
         if (source == null || separator == null) {
           return Optional.empty();
-        } else {
-          return Optional.<List>of( Arrays.asList(source.toString().split(separator)) );
+        }
+        else if ( source instanceof String ) {
+          // only try to split input strings
+          String inputString = (String) source;
+          return Optional.of( Arrays.asList(inputString.split(separator)) );
+        }
+        else {
+          return Optional.empty();
         }
       }
     }

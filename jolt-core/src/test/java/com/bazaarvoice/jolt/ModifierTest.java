@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.bazaarvoice.jolt;
 
 import com.bazaarvoice.jolt.common.Optional;
@@ -165,12 +164,14 @@ public class ModifierTest {
     public Iterator<Object[]> getFunctionTests() {
         List<Object[]> testCases = Lists.newLinkedList();
 
+        testCases.add( new Object[]{"/json/modifier/functions/stringsSplitTest.json", TemplatrTestCase.OVERWRITR});
         testCases.add( new Object[]{"/json/modifier/functions/stringsTests.json", TemplatrTestCase.OVERWRITR});
         testCases.add( new Object[]{"/json/modifier/functions/mathTests.json", TemplatrTestCase.OVERWRITR} );
         testCases.add( new Object[]{"/json/modifier/functions/arrayTests.json", TemplatrTestCase.OVERWRITR} );
         testCases.add( new Object[]{"/json/modifier/functions/sizeTests.json", TemplatrTestCase.OVERWRITR} );
         testCases.add( new Object[]{"/json/modifier/functions/labelsLookupTest.json", TemplatrTestCase.DEFAULTR} );
         testCases.add( new Object[]{"/json/modifier/functions/valueTests.json", TemplatrTestCase.OVERWRITR }  );
+        testCases.add( new Object[]{"/json/modifier/functions/squashNullsTests.json", TemplatrTestCase.OVERWRITR }  );
 
         return testCases.iterator();
     }
