@@ -47,6 +47,10 @@ public class MathTest extends AbstractTester {
         Function DOUBLE_SUM_OF = new Math.doubleSum();
         Function LONG_SUM_OF = new Math.longSum();
 
+        Function INT_SUBTRACT_OF = new Math.intSubtract();
+        Function DOUBLE_SUBTRACT_OF = new Math.doubleSubtract();
+        Function LONG_SUBTRACT_OF = new Math.longSubtract();
+
         Function DIV_OF = new Math.divide();
         Function DIV_AND_ROUND_OF = new Math.divideAndRound();
 
@@ -242,9 +246,21 @@ public class MathTest extends AbstractTester {
         testCases.add( new Object[] { "longsum-single-value",            LONG_SUM_OF,   2, Optional.empty()});
         testCases.add( new Object[] { "longsum-combo-intstring-array",   LONG_SUM_OF,   Arrays.asList(1L, 2, "-3.0", 0),    Optional.of(0L)});
 
+        testCases.add( new Object[] { "intsubtract-happy-path",      INT_SUBTRACT_OF,  Arrays.asList(4, 1),  Optional.of(3)});
+        testCases.add( new Object[] { "intsubtract-single-value",    INT_SUBTRACT_OF,  2,                    Optional.empty()});
+        testCases.add( new Object[] { "intsubtract-wrong-type",      INT_SUBTRACT_OF,  Arrays.asList(4L, 1), Optional.empty()});
+
+        testCases.add( new Object[] { "doublesubtract-happy-path",   DOUBLE_SUBTRACT_OF,  Arrays.asList(4.0, 1.0),  Optional.of(3.0)});
+        testCases.add( new Object[] { "doublesubtract-single-value", DOUBLE_SUBTRACT_OF,  2.0,                      Optional.empty()});
+        testCases.add( new Object[] { "doublesubtract-wrong-type",   DOUBLE_SUBTRACT_OF,  Arrays.asList(4L, 1),     Optional.empty()});
+
+        testCases.add( new Object[] { "longsubtract-happy-path",     LONG_SUBTRACT_OF,  Arrays.asList(4L, 1L),  Optional.of(3L)});
+        testCases.add( new Object[] { "longsubtract-single-value",   LONG_SUBTRACT_OF,  2L,                     Optional.empty()});
+        testCases.add( new Object[] { "longsubtract-wrong-type",     LONG_SUBTRACT_OF,  Arrays.asList(4.0, 1),  Optional.empty()});
+
         // Test to make sure "div" only uses the first and second element in the array and ignores the rest.
-        testCases.add( new Object[] { "div-combo-array",          DIV_OF, Arrays.asList(10L, 5.0, 2), Optional.of(2.0)});
-        testCases.add( new Object[] { "div-combo-string-array",   DIV_OF, Arrays.asList(10L, "5", 2), Optional.of(2.0)});
+        testCases.add( new Object[] { "div-combo-array",          DIV_OF, Arrays.asList(10L, 5.0, 2), Optional.empty()});
+        testCases.add( new Object[] { "div-combo-string-array",   DIV_OF, Arrays.asList(10L, "5", 2), Optional.empty()});
         testCases.add( new Object[] { "div-single-element-array", DIV_OF, Arrays.asList("5"),         Optional.empty()});
         testCases.add( new Object[] { "div-single-element",       DIV_OF, "10",                       Optional.empty()});
 
@@ -252,7 +268,7 @@ public class MathTest extends AbstractTester {
         testCases.add( new Object[] { "div-combo-invalid-array",  DIV_OF, Arrays.asList(10L, 0, 2),   Optional.empty()});
 
         // Dividing 0 by any number returns 0.0(double)
-        testCases.add( new Object[] { "div-combo-valid-array",    DIV_OF, Arrays.asList(0.0,  10, 2), Optional.of(0.0)});
+        testCases.add( new Object[] { "div-combo-valid-array",    DIV_OF, Arrays.asList(0.0,  10), Optional.of(0.0)});
 
         testCases.add( new Object[] { "divAndRound-single-precision-array",      DIV_AND_ROUND_OF, Arrays.asList(1, 5.0, 2), Optional.of(2.5)});
         testCases.add( new Object[] { "divAndRound-double-precision-array",      DIV_AND_ROUND_OF, Arrays.asList(2, 5.0, 2), Optional.of(2.50)});

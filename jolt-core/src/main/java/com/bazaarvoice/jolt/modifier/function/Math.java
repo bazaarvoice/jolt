@@ -19,7 +19,6 @@ package com.bazaarvoice.jolt.modifier.function;
 import com.bazaarvoice.jolt.common.Optional;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.List;
 
@@ -240,9 +239,58 @@ public class Math {
         return Optional.of(sum);
     }
 
+    public static Optional<Integer> intSubtract(List<Object> argList) {
+
+        if ( argList == null || argList.size() != 2 ) {
+            return Optional.empty();
+        }
+
+        if ( ! ( argList.get(0) instanceof Integer && argList.get(1) instanceof Integer ) ) {
+            return Optional.empty();
+        }
+
+        int a = (Integer) argList.get(0);
+        int b = (Integer) argList.get(1);
+
+        return Optional.of( a - b );
+    }
+
+    public static Optional<Double> doubleSubtract(List<Object> argList) {
+
+        if ( argList == null || argList.size() != 2 ) {
+            return Optional.empty();
+        }
+
+        if ( ! ( argList.get(0) instanceof Double && argList.get(1) instanceof Double ) ) {
+            return Optional.empty();
+        }
+
+        double a = (Double) argList.get(0);
+        double b = (Double) argList.get(1);
+
+        return Optional.of( a - b );
+    }
+
+    public static Optional<Long> longSubtract(List<Object> argList) {
+
+        if ( argList == null || argList.size() != 2 ) {
+            return Optional.empty();
+        }
+
+        if ( ! ( argList.get(0) instanceof Long && argList.get(1) instanceof Long ) ) {
+            return Optional.empty();
+        }
+
+        long a = (Long) argList.get(0);
+        long b = (Long) argList.get(1);
+
+        return Optional.of( a - b );
+    }
+
+
     public static Optional<Double> divide(List<Object> argList) {
 
-        if(argList.size() < 2) {
+        if ( argList == null || argList.size() != 2 ) {
             return Optional.empty();
         }
 
@@ -371,6 +419,30 @@ public class Math {
         @Override
         protected Optional<Object> applyList( final List<Object> argLongList ) {
             return (Optional) longSum(argLongList);
+        }
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public static final class intSubtract extends Function.ListFunction {
+        @Override
+        protected Optional<Object> applyList( final List<Object> argIntList ) {
+            return (Optional) intSubtract(argIntList);
+        }
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public static final class doubleSubtract extends Function.ListFunction {
+        @Override
+        protected Optional<Object> applyList( final List<Object> argDoubleList ) {
+            return (Optional) doubleSubtract(argDoubleList);
+        }
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public static final class longSubtract extends Function.ListFunction {
+        @Override
+        protected Optional<Object> applyList( final List<Object> argLongList ) {
+            return (Optional) longSubtract(argLongList);
         }
     }
 }
