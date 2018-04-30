@@ -19,7 +19,6 @@ import com.bazaarvoice.jolt.common.Optional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings( "deprecated" )
 public class Strings {
@@ -47,7 +46,7 @@ public class Strings {
                     sb.append(arg.toString() );
                 }
             }
-            return Optional.<Object>of(sb.toString());
+            return Optional.of(sb.toString());
         }
     }
 
@@ -55,33 +54,39 @@ public class Strings {
 
         @Override
         protected Optional<Object> applyList(List<Object> argList) {
-            if(argList == null) {
-                return Optional.of("");
-            } else {
-                String argString = "";
-                int start = 0;
-                int end = 0;
-                for(int i = 0; i < argList.size() && i <= 2; i++) {
-                    Object arg = argList.get(i);
-                    if(arg != null) {
-                        if(i == 0 && arg instanceof String) {
-                            argString = arg.toString();
-                        }
-                        else if(i == 1 && arg instanceof Integer) {
-                            start = (Integer) arg;
-                        } else if(i == 2 && arg instanceof Integer) {
-                            end = (Integer) arg;
-                        }
-                    }
-                }
-                if(start >= 0 && end > 0 && argString.length() > 0) {
-                    if(start < argString.length() && end <= argString.length() && start < end) {
-                        return Optional.of(argString.substring(start, end));
-                    }
+
+            // There is only one path that leads to success and many
+            //  ways for this to fail.   So using a do/while loop
+            //  to make the bailing easy.
+            do {
+
+                // if argList is null or not the right size; bail
+                if(argList == null || argList.size() != 3 ) {
+                    break;
                 }
 
-                return Optional.of("");
-            }
+                if ( ! ( argList.get(0) instanceof String &&
+                         argList.get(1) instanceof Integer &&
+                         argList.get(2) instanceof Integer ) ) {
+                    break;
+                }
+
+                // If we get here, then all these casts should work.
+                String tuna = (String) argList.get(0);
+                int start = (Integer) argList.get(1);
+                int end = (Integer) argList.get(2);
+
+                // do start and end make sense?
+                if ( start >= end || start < 0 || end < 1 || end > tuna.length() ) {
+                    break;
+                }
+
+                return Optional.of(tuna.substring(start, end));
+
+            } while( false );
+
+            // if we got here, then return an Optional.empty.
+            return Optional.empty();
         }
     }
 
@@ -103,7 +108,7 @@ public class Strings {
                     }
                 }
             }
-            return Optional.<Object>of( sb.toString() );
+            return Optional.of( sb.toString() );
         }
     }
 
@@ -116,7 +121,7 @@ public class Strings {
         else if ( source instanceof String ) {
           // only try to split input strings
           String inputString = (String) source;
-          return Optional.<List>of( Arrays.asList(inputString.split(separator)) );
+          return Optional.of( Arrays.asList(inputString.split(separator)) );
         }
         else {
           return Optional.empty();

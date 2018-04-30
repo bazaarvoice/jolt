@@ -1,14 +1,16 @@
 {
     "input": {
-        "string": "the QuIcK brOwn fox"
+        "string": "the QuIcK brOwn fox",
+        "zeroIndex" : 0,
+        "threeIndex" : 3
     },
 
     "spec": {
         "lower": {
-            "leading": "=toLower(@(2,string))",
+            "leading":  "=toLower(@(2,string))",
             "trailing": "=toLower(^value)",
-            "custom1": "=toLower(bazinga)",
-            "custom2": "=toLower('yabadabadoo')"
+            "custom1":  "=toLower(bazinga)",
+            "custom2":  "=toLower('yabadabadoo')"
         },
         "upper": {
             "leading": "=toUpper(@(2,string))",
@@ -24,13 +26,22 @@
         "substring": {
             "basic1": "=substring(@(2,string), 0, 9)",
             "basic2": "=substring(@(2,string), 4, 9)",
-            "outOfBounds1": "=substring(@(2,string), -4, 9)",
-            "outOfBounds2": "=substring(@(2,string), 0, 200)",
-            "badArgs1": "=substring(0, 9, @(2, substring))",
-            "badArgs2": "=substring(0, 4, 9)",
+            "outOfBounds1": "=substring(@(2,string), -4, 9)",  // start is negative
+            "outOfBounds2": "=substring(@(2,string), 0, 200)", // end it way past the size of the string
+            "outOfBounds3": "=substring(@(2,string), 0, 20)",  // verify that asking for one char after the end fails
+            "badArgs1": "=substring(0, 9, @(2, substring))",  // input is not a string
+            "badArgs2": "=substring(0, 4, 9)",      // ranges are ok, but input string is not a string
             "badArgs3": "=substring('', 0, 0)",
-            "custom1": "=substring('the quick brown fox', 0, 15)",
-            "custom2": "=substring('the quick brown fox', 16, 19)"
+            "badArgs4": "=substring('abc', 0, 0)",  // start and end are the same, both are zero
+            "badArgs5": "=substring('abc', 1, 1)",  // start and end are the same, and non-zero
+            "badArgs6": "=substring('abc', 1, 0)",  // start before end
+            "badArgs7": "=substring('abc', 0, 1, 2)", // too many args
+            "badArgs8": "=substring('abc', 0)", // not enough args
+            "custom1":  "=substring('the quick brown fox', 0, 15)",
+            "custom2":  "=substring('the quick brown fox', 16, 19)",
+            //
+            // verify that we can actually lookup start and end indices
+            "advancedLookupRanges" : "=substring(@(2,string), @(2,zeroIndex), @(2,threeIndex))"
         }
     },
 
@@ -39,7 +50,13 @@
     },
 
     "OVERWRITR": {
+        //
+        // the input
         "string" : "the QuIcK brOwn fox",
+        "zeroIndex" : 0,
+        "threeIndex" : 3,
+        //
+        // the things modify added
         "lower": {
             "leading": "the quick brown fox",
             "trailing": "jumped over the lazy dog",
@@ -60,13 +77,9 @@
         "substring": {
             "basic1": "the QuIcK",
             "basic2": "QuIcK",
-            "outOfBounds1": "",
-            "outOfBounds2": "",
-            "badArgs1": "",
-            "badArgs2": "",
-            "badArgs3": "",
             "custom1": "the quick brown",
-            "custom2": "fox"
+            "custom2": "fox",
+            "advancedLookupRanges": "the"
         }
     }
 }
