@@ -129,7 +129,7 @@ public class Strings {
       }
     }
 
-    public static final class pad extends Function.ArgDrivenListFunction<String>{
+    public static class pad extends Function.ArgDrivenListFunction<String>{
         @Override
         protected Optional<Object> applyList(String filler, List<Object> args) {
 
@@ -140,45 +140,88 @@ public class Strings {
                     Object arg1 = args.get(0);
                     Object arg2 = args.get(1);
                     if(arg1 instanceof Integer && arg2 instanceof String) {
-                            int width = (Integer) arg1;
-                            String source = (String) arg2;
-                            if(source.length() >= width) {
-                                return Optional.of(source);
-                            } else {
-                                char[] sourceArray = source.toCharArray();
-                                char[] destinationArray = new char[width];
-                                int destIndex = width - 1;
-                                for(int i = sourceArray.length - 1; i >= 0; i--) {
-                                    destinationArray[destIndex] = sourceArray[i];
-                                    destIndex--;
-                                }
-                                for(int i = destIndex; i >= 0; i--) {
-                                    destinationArray[i] = filler.charAt(0);
-                                }
-                                return Optional.of(new String(destinationArray));
-                            }
-                    } else if(arg1 instanceof String && arg2 instanceof Integer) {
-                        String source = (String) arg1;
-                        int width = (Integer) arg2;
-                        if(source.length() >= width) {
-                            return Optional.of(source);
-                        } else {
-                            char[] sourceArray = source.toCharArray();
-                            char[] destinationArray = new char[width];
-                            int destIndex = 0;
-                            for(int i = 0; i <= sourceArray.length - 1; i++) {
-                                destinationArray[destIndex] = sourceArray[i];
-                                destIndex++;
-                            }
-                            for(int i = destIndex; i <= width - 1; i++) {
-                                destinationArray[i] = filler.charAt(0);
-                            }
-                            return Optional.of(new String(destinationArray));
-                        }
+                        return leftPad(filler, args);
+                    }
+                    else if(arg1 instanceof String && arg2 instanceof Integer) {
+                        args.set(0, arg2);
+                        args.set(1, arg1);
+                        return rightPad(filler, args);
                     }
                 }
             }
             return Optional.of("");
+        }
+
+        Optional<Object> leftPad(String filler, List<Object> args) {
+            if(filler == null || args == null) {
+                return Optional.of("");
+            } else {
+                Object arg1 = args.get(0);
+                Object arg2 = args.get(1);
+                if(arg1 instanceof Integer && arg2 instanceof String) {
+                    int width = (Integer) arg1;
+                    String source = (String) arg2;
+                    if(source.length() >= width) {
+                        return Optional.of(source);
+                    } else {
+                        char[] sourceArray = source.toCharArray();
+                        char[] destinationArray = new char[width];
+                        int destIndex = width - 1;
+                        for(int i = sourceArray.length - 1; i >= 0; i--) {
+                            destinationArray[destIndex] = sourceArray[i];
+                            destIndex--;
+                        }
+                        for(int i = destIndex; i >= 0; i--) {
+                            destinationArray[i] = filler.charAt(0);
+                        }
+                        return Optional.of(new String(destinationArray));
+                    }
+                }
+            }
+            return Optional.of("");
+        }
+
+        Optional<Object> rightPad(String filler, List<Object> args) {
+            if(filler == null || args == null) {
+                return Optional.of("");
+            } else {
+                Object arg1 = args.get(0);
+                Object arg2 = args.get(1);
+                if(arg1 instanceof Integer && arg2 instanceof String) {
+                    int width = (Integer) arg1;
+                    String source = (String) arg2;
+                    if(source.length() >= width) {
+                        return Optional.of(source);
+                    } else {
+                        char[] sourceArray = source.toCharArray();
+                        char[] destinationArray = new char[width];
+                        int destIndex = 0;
+                        for(int i = 0; i <= sourceArray.length - 1; i++) {
+                            destinationArray[destIndex] = sourceArray[i];
+                            destIndex++;
+                        }
+                        for(int i = destIndex; i <= width - 1; i++) {
+                            destinationArray[i] = filler.charAt(0);
+                        }
+                        return Optional.of(new String(destinationArray));
+                    }
+                }
+            }
+            return Optional.of("");
+        }
+    }
+
+    public static final class leftPad extends pad {
+        @Override
+        protected Optional<Object> applyList(String filler, List<Object> args) {
+            return leftPad(filler, args);
+        }
+    }
+
+    public static final class rightPad extends pad {
+        @Override
+        protected Optional<Object> applyList(String filler, List<Object> args) {
+            return rightPad(filler, args);
         }
     }
 }

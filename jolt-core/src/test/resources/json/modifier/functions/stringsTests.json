@@ -31,6 +31,16 @@
             "rightBasic2": "=pad('X', 'brown', 5)",
             "rightBasic3": "=pad('X', @(2,string), 0)"
         },
+        "leftPad": {
+            "basic1": "=leftPad('X', 10, 'fox')",
+            "basic2": "=leftPad('X', 5, 'brown')",
+            "basic3": "=leftPad('X', 0, @(2,string))"
+        },
+        "rightPad": {
+            "basic1": "=rightPad('X', 10, 'fox')",
+            "basic2": "=rightPad('X', 5, 'brown')",
+            "basic3": "=rightPad('X', 0, @(2,string))"
+        },
         "substring": {
             "basic1": "=substring(@(2,string), 0, 9)",
             "basic2": "=substring(@(2,string), 4, 9)",
@@ -90,6 +100,16 @@
             "rightBasic1": "foxXXXXXXX",
             "rightBasic2": "brown",
             "rightBasic3": "the QuIcK brOwn fox"
+        },
+        "leftPad": {
+            "basic1": "XXXXXXXfox",
+            "basic2": "brown",
+            "basic3": "the QuIcK brOwn fox"
+        },
+        "rightPad": {
+            "basic1": "foxXXXXXXX",
+            "basic2": "brown",
+            "basic3": "the QuIcK brOwn fox"
         },
         "substring": {
             "basic1": "the QuIcK",
