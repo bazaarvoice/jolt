@@ -23,6 +23,24 @@
             "basic": "=concat(@(2,lower.leading) , ' ' , @(2,lower.trailing))",
             "parens": "=concat(@(2,lower.leading) , ' (', @(2,lower.trailing), ')')"
         },
+        "pad": {
+            "leftBasic1": "=pad('X', 10, 'fox')",
+            "leftBasic2": "=pad('X', 5, 'brown')",
+            "leftBasic3": "=pad('X', 0, @(2,string))",
+            "rightBasic1": "=pad('X', 'fox', 10)",
+            "rightBasic2": "=pad('X', 'brown', 5)",
+            "rightBasic3": "=pad('X', @(2,string), 0)"
+        },
+        "leftPad": {
+            "basic1": "=leftPad('X', 10, 'fox')",
+            "basic2": "=leftPad('X', 5, 'brown')",
+            "basic3": "=leftPad('X', 0, @(2,string))"
+        },
+        "rightPad": {
+            "basic1": "=rightPad('X', 10, 'fox')",
+            "basic2": "=rightPad('X', 5, 'brown')",
+            "basic3": "=rightPad('X', 0, @(2,string))"
+        },
         "substring": {
             "basic1": "=substring(@(2,string), 0, 9)",
             "basic2": "=substring(@(2,string), 4, 9)",
@@ -74,12 +92,32 @@
             "basic": "the quick brown fox jumped over the lazy dog",
             "parens": "the quick brown fox (jumped over the lazy dog)"
         },
+
+        "pad": {
+            "leftBasic1": "XXXXXXXfox",
+            "leftBasic2": "brown",
+            "leftBasic3": "the QuIcK brOwn fox",
+            "rightBasic1": "foxXXXXXXX",
+            "rightBasic2": "brown",
+            "rightBasic3": "the QuIcK brOwn fox"
+        },
+        "leftPad": {
+            "basic1": "XXXXXXXfox",
+            "basic2": "brown",
+            "basic3": "the QuIcK brOwn fox"
+        },
+        "rightPad": {
+            "basic1": "foxXXXXXXX",
+            "basic2": "brown",
+            "basic3": "the QuIcK brOwn fox"
+        },
         "substring": {
             "basic1": "the QuIcK",
             "basic2": "QuIcK",
             "custom1": "the quick brown",
             "custom2": "fox",
             "advancedLookupRanges": "the"
+
         }
     }
 }
