@@ -2,7 +2,8 @@
     "input": {
         "string": "the QuIcK brOwn fox",
         "zeroIndex" : 0,
-        "threeIndex" : 3
+        "threeIndex" : 3,
+        "trimMe" : "  tuna "
     },
 
     "spec": {
@@ -10,13 +11,15 @@
             "leading":  "=toLower(@(2,string))",
             "trailing": "=toLower(^value)",
             "custom1":  "=toLower(bazinga)",
-            "custom2":  "=toLower('yabadabadoo')"
+            "custom2":  "=toLower('yabadabadoo')",
+            "badArgs1"  :  "=toLower(@2)"
         },
         "upper": {
             "leading": "=toUpper(@(2,string))",
             "trailing": "=toUpper(^value)",
             "custom1": "=toUpper(bazinga)",
-            "custom2": "=toUpper('yabadabadoo')"
+            "custom2": "=toUpper('yabadabadoo')",
+            "badArgs1"  : "=toLower(@2)"
         },
         "join": "=join('_' , @(1,lower.leading) ,  , @(1,lower.trailing))",
         "concat": {
@@ -42,7 +45,11 @@
             //
             // verify that we can actually lookup start and end indices
             "advancedLookupRanges" : "=substring(@(2,string), @(2,zeroIndex), @(2,threeIndex))"
-        }
+        },
+        "trim" :{
+            "trimed" : "=trim(@(2,trimMe))"
+        },
+        "trimMe" : "=trim"
     },
     "context": {
         "value" : "JumpeD OVeR THE laZy dog"
@@ -54,6 +61,9 @@
         "string" : "the QuIcK brOwn fox",
         "zeroIndex" : 0,
         "threeIndex" : 3,
+        //
+        // from the input, but overwritten by modify
+        "trimMe" : "tuna",
         //
         // the things modify added
         "lower": {
@@ -79,6 +89,9 @@
             "custom1": "the quick brown",
             "custom2": "fox",
             "advancedLookupRanges": "the"
+        },
+        "trim" :{
+            "trimed" : "tuna"
         }
     }
 }

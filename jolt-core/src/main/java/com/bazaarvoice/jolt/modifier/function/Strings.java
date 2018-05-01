@@ -26,14 +26,42 @@ public class Strings {
     public static final class toLowerCase extends Function.SingleFunction<String> {
         @Override
         protected Optional<String> applySingle( final Object arg ) {
-            return arg == null ? Optional.<String>of( null ) : Optional.of( arg.toString().toLowerCase() );
+
+            if ( ! (arg instanceof String) ) {
+                return Optional.empty();
+            }
+
+            String argString = (String) arg;
+
+            return Optional.of( argString.toLowerCase() );
         }
     }
 
     public static final class toUpperCase extends Function.SingleFunction<String> {
         @Override
         protected Optional<String> applySingle( final Object arg ) {
-            return arg == null ? Optional.<String>of( null ): Optional.of( arg.toString().toUpperCase() );
+
+            if ( ! (arg instanceof String) ) {
+                return Optional.empty();
+            }
+
+            String argString = (String) arg;
+
+            return Optional.of( argString.toUpperCase() );
+        }
+    }
+
+    public static final class trim extends Function.SingleFunction<String> {
+        @Override
+        protected Optional<String> applySingle( final Object arg ) {
+
+            if ( ! (arg instanceof String) ) {
+                return Optional.empty();
+            }
+
+            String argString = (String) arg;
+
+            return Optional.of( argString.trim() );
         }
     }
 
