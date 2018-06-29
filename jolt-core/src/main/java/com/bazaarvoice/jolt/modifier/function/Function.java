@@ -206,6 +206,14 @@ public interface Function {
                         return applyList((List) args[0]);
                     }
                 }
+                else if( args[0] instanceof Object[] ) {
+                    if(((Object[]) args[0]).length == 0) {
+                        return Optional.empty();
+                    }
+                    else {
+                        return applyList(Arrays.asList(((Object[]) args[0])));
+                    }
+                }
                 else if(args[0] == null) {
                     return Optional.empty();
                 }
