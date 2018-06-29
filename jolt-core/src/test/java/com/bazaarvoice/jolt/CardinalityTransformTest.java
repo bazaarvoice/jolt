@@ -20,6 +20,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 public class CardinalityTransformTest {
@@ -59,5 +60,45 @@ public class CardinalityTransformTest {
 
         // Should throw exception
         new CardinalityTransform( spec );
+    }
+
+    @Test
+    public void testArrayCardinalityOne() throws IOException {
+        // The above tests cover cardinality on elements that are Lists, this test covers elements that are arrays
+        Map<String, Object> input = new HashMap<String, Object>() {{
+            put("input", new Integer[]{5, 4});
+        }};
+
+        Map<String, Object> spec = new HashMap<String, Object>() {{
+            put("input", "ONE");
+        }};
+
+        Map<String, Object> expected = new HashMap<String, Object>() {{
+            put("input", 5);
+        }};
+
+        CardinalityTransform cardinalityTransform = new CardinalityTransform(spec);
+        Object actual = cardinalityTransform.transform(input);
+        JoltTestUtil.runDiffy("failed array test", expected, actual);
+    }
+
+    @Test
+    public void testArrayCardinalityMany() throws IOException {
+        // The above tests cover cardinality on elements that are Lists, this test covers elements that are arrays
+        Map<String, Object> input = new HashMap<String, Object>() {{
+            put("input", new Integer[]{5, 4});
+        }};
+
+        Map<String, Object> spec = new HashMap<String, Object>() {{
+            put("input", "MANY");
+        }};
+
+        Map<String, Object> expected = new HashMap<String, Object>() {{
+            put("input", new Integer[]{5, 4});
+        }};
+
+        CardinalityTransform cardinalityTransform = new CardinalityTransform(spec);
+        Object actual = cardinalityTransform.transform(input);
+        JoltTestUtil.runDiffy("failed array test", expected, actual);
     }
 }

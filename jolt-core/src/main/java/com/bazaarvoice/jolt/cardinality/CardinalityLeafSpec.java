@@ -20,6 +20,7 @@ import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.exception.SpecException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +95,9 @@ public class CardinalityLeafSpec extends CardinalitySpec {
             if ( input instanceof List ) {
                 returnValue = input;
             }
+            else if ( input instanceof Object[] ) {
+                returnValue = Arrays.asList(((Object[]) input));
+            }
             else if ( input instanceof Map || input instanceof String || input instanceof Number || input instanceof Boolean ) {
                 Object one = parentContainer.remove( inputKey );
                 List<Object> tempList =  new ArrayList<>();
@@ -112,6 +116,9 @@ public class CardinalityLeafSpec extends CardinalitySpec {
                     returnValue = ( (List) input ).get( 0 );
                 }
                 parentContainer.put( inputKey, returnValue );
+            } else if ( input instanceof Object[] ) {
+                returnValue = ((Object[]) input)[0];
+                parentContainer.put(inputKey, returnValue);
             }
         }
 
