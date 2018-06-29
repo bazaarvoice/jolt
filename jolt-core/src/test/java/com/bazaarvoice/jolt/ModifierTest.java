@@ -24,7 +24,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -201,6 +203,26 @@ public class ModifierTest {
     public void testFunctionArgParse(String argString, String[] expected) throws Exception {
         List<String> actual = SpecStringParser.parseFunctionArgs( argString );
         JoltTestUtil.runArrayOrderObliviousDiffy(" failed case " + argString, expected, actual );
+    }
+
+    @Test
+    public void testModifierFirstElementArray() throws IOException {
+        Map<String, Object> input = new HashMap<String, Object>() {{
+            put("input", new Integer[]{5, 4});
+        }};
+
+        Map<String, Object> spec = new HashMap<String, Object>() {{
+            put("first", "=firstElement(@(1,input))");
+        }};
+
+        Map<String, Object> expected = new HashMap<String, Object>() {{
+            put("input", new Integer[]{5, 4});
+            put("first", 5);
+        }};
+
+        Modifier modifier = new Modifier.Overwritr( spec );
+        Object actual = modifier.transform( input, null );
+        JoltTestUtil.runArrayOrderObliviousDiffy( "failed modifierFirstElementArray", expected, actual );
     }
 
     @SuppressWarnings( "unused" )
