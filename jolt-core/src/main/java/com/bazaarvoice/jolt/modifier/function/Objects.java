@@ -16,9 +16,9 @@
 
 package com.bazaarvoice.jolt.modifier.function;
 
-import com.bazaarvoice.jolt.JsonUtils;
 import com.bazaarvoice.jolt.common.Optional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -169,11 +169,53 @@ public class Objects {
     }
 
     /**
-     * Returns json String representation of argument, wrapped in Optional
+     * Squashes nulls in a list or map.
+     *
+     * Modifies the data.
      */
-    public static Optional<String> toJsonString(Object arg) {
-        return Optional.of( JsonUtils.toJsonString( arg ) );
+    public static void squashNulls( Object input ) {
+        if ( input instanceof List ) {
+            List inputList = (List) input;
+            inputList.removeIf( java.util.Objects::isNull );
+        }
+        else if ( input instanceof Map ) {
+            Map<String,Object> inputMap = (Map<String,Object>) input;
+
+            List<String> keysToNuke = new ArrayList<>();
+            for (Map.Entry<String,Object> entry : inputMap.entrySet()) {
+                if ( entry.getValue() == null ) {
+                    keysToNuke.add( entry.getKey() );
+                }
+            }
+
+            inputMap.keySet().removeAll( keysToNuke );
+        }
     }
+
+    /**
+     * Recursively squash nulls in maps and lists.
+     *
+     * Modifies the data.
+     */
+    public static void recursivelySquashNulls(Object input) {
+
+        // Makes two passes thru the data.
+        Objects.squashNulls( input );
+
+        if ( input instanceof List ) {
+            List inputList = (List) input;
+            inputList.forEach( i -> recursivelySquashNulls( i ) );
+        }
+        else if ( input instanceof Map ) {
+            Map<String,Object> inputMap = (Map<String,Object>) input;
+
+            for (Map.Entry<String,Object> entry : inputMap.entrySet()) {
+                recursivelySquashNulls( entry.getValue() );
+            }
+        }
+    }
+
+
 
     public static final class toInteger extends Function.SingleFunction<Integer> {
         @Override
@@ -210,10 +252,19 @@ public class Objects {
         }
     }
 
-    public static final class toJsonString extends Function.SingleFunction<String> {
+    public static final class squashNulls extends Function.SingleFunction<Object> {
         @Override
-        protected Optional<String> applySingle( final Object arg ) {
-            return Objects.toJsonString( arg );
+        protected Optional<Object> applySingle( final Object arg ) {
+            Objects.squashNulls( arg );
+            return Optional.of( arg );
+        }
+    }
+
+    public static final class recursivelySquashNulls extends Function.SingleFunction<Object> {
+        @Override
+        protected Optional<Object> applySingle( final Object arg ) {
+            Objects.recursivelySquashNulls( arg );
+            return Optional.of( arg );
         }
     }
 

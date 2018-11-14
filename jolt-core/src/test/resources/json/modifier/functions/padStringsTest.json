@@ -1,0 +1,58 @@
+{
+    "input": {
+        "string": "the QuIcK brOwn fox",
+        "padChar" : "Y",
+        "padAmount" : 10
+    },
+
+    "spec": {
+        "leftPad": {
+            "basic1": "=leftPad('fox', 10, 'X')",       // happy path : actually do some padding
+            "basic2": "=leftPad('brown', 5, 'X')",      // ok path : desired pad width is the same as the input
+            "basic3": "=leftPad('brown', 2, 'X')",      // ok path : desired pad width less than the size of the input
+            "basic4": "=leftPad(@(2,string), 22, 'X')", // happy path : actually pad a looked up string from the data
+            "complex1" : "=leftPad('quick', @(2,padAmount), @(2,padChar))", // happy path : lookup pad amount and pad char
+            "badArgs1" : "=leftPad('quick', -1, 'X')",  // negative pad amount
+            "badArgs2" : "=leftPad('quick', 0, 'X')",   // zero pad amount
+            "badArgs3" : "=leftPad('quick', 8, 'AB')",  // pad char is not a single character
+            "badArgs4" : "=leftPad('quick', 1000, 'F')" // stupidly big pad width should fail
+        },
+        "rightPad": {
+            "basic1": "=rightPad('fox', 10, 'X')",       // happy path : actually do some padding
+            "basic2": "=rightPad('brown', 5, 'X')",      // ok path : desired pad width is the same as the input
+            "basic3": "=rightPad('brown', 2, 'X')",      // ok path : desired pad width less than the size of the input
+            "basic4": "=rightPad(@(2,string), 22, 'X')", // happy path : actually pad a looked up string from the data
+            "complex1" : "=rightPad('quick', @(2,padAmount), @(2,padChar))", // happy path : lookup pad amount and pad char
+            "badArgs1" : "=rightPad('quick', -1, 'X')",  // negative pad amount
+            "badArgs2" : "=rightPad('quick', 0, 'X')",   // zero pad amount
+            "badArgs3" : "=rightPad('quick', 8, 'AB')",  // pad char is not a single character
+            "badArgs4" : "=leftPad('quick', 1000, 'F')"  // stupidly big pad width should fail
+        }
+    },
+
+    "context": {},
+
+    "OVERWRITR": {
+        //
+        // the input
+        "string": "the QuIcK brOwn fox",
+        "padChar" : "Y",
+        "padAmount" : 10,
+        //
+        // the things modify added
+        "leftPad": {
+            "basic1": "XXXXXXXfox",
+            "basic2": "brown",
+            "basic3" : "brown",
+            "basic4": "XXXthe QuIcK brOwn fox",
+            "complex1" : "YYYYYquick"
+        },
+        "rightPad": {
+            "basic1": "foxXXXXXXX",
+            "basic2": "brown",
+            "basic3" : "brown",
+            "basic4": "the QuIcK brOwn foxXXX",
+            "complex1" : "quickYYYYY"
+        }
+    }
+}

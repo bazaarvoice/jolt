@@ -16,6 +16,12 @@
             "test3": [0, 5],     // Divide 0 by any number returns 0
             "nr": 51,
             "dr": 13
+        },
+        "data5": {
+            "aInt" : 10,
+            "bInt" : 3,
+            "aDouble" : 10.0,
+            "bDouble" : 3.0
         }
     },
 
@@ -49,9 +55,23 @@
             "test1": "=divide",
             "test2": "=divide",
             "test3": "=divide",
-            "explicit": "=divide(@(1,value))",
+            "explicit1": "=divide(@(1,value))",
+            "explicit2": "=divide(12,3)",
             "div": "=divide(@(1,nr),@(1,dr))" ,  // Look up the numerator and denominator from the input
-            "roundedDiv": "=divideAndRound(4, @(1,nr),@(1,dr))"   // Round the result to the 4 decimal points
+            "roundedDiv": "=divideAndRound(4, @(1,nr),@(1,dr))",   // Round the result to the 4 decimal points
+            //
+            "badArgs1" : "=divide(1,2,3)", // too many params
+            "badArgs2" : "=divide(1)"      // not enough params
+        },
+        "data5": {
+            "happyInt":       "=intSubtract(@(1,aInt),@(1,bInt))",
+            "happyDouble": "=doubleSubtract(@(1,aDouble),@(1,bDouble))",
+            //
+            // Bad Args
+            "badArgsInt1": "=intSubtract(1)",     // not enough args
+            "badArgsInt2": "=intSubtract(1,2,3)", // too many args
+            "badArgsDouble1": "=doubleSubtract(1)",    // not enough args
+            "badArgsDouble2": "=doubleSubtract(1,2,3)" // too many args
         }
     },
 
@@ -74,7 +94,6 @@
             "value" : 2.0
         },
         "data3" : {
-            "value" : [ -1, 2, 3.0 ],
             "min" : -1,
             "max" : 3.0,
             "int" : [ -1, 2, 3 ],
@@ -91,10 +110,22 @@
             "test3": 0.0,
             "div": 3.923076923076923,
             "roundedDiv":3.9231,
-            "explicit": 2.5,
+            "explicit1": 2.5,
+            "explicit2": 4.0,
             "value": [5, 2],
             "nr": 51,
             "dr": 13
+        },
+        "data5": {
+            // og data
+            "aInt" : 10,
+            "bInt" : 3,
+            "aDouble" : 10.0,
+            "bDouble" : 3.0,
+            //
+            // computed
+            "happyInt": 7,
+            "happyDouble": 7.0
         }
     }
 }

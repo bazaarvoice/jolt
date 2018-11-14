@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.bazaarvoice.jolt;
 
 import com.bazaarvoice.jolt.common.Optional;
@@ -25,7 +24,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -165,12 +166,15 @@ public class ModifierTest {
     public Iterator<Object[]> getFunctionTests() {
         List<Object[]> testCases = Lists.newLinkedList();
 
+        testCases.add( new Object[]{"/json/modifier/functions/stringsSplitTest.json", TemplatrTestCase.OVERWRITR});
+        testCases.add( new Object[]{"/json/modifier/functions/padStringsTest.json", TemplatrTestCase.OVERWRITR});
         testCases.add( new Object[]{"/json/modifier/functions/stringsTests.json", TemplatrTestCase.OVERWRITR});
         testCases.add( new Object[]{"/json/modifier/functions/mathTests.json", TemplatrTestCase.OVERWRITR} );
         testCases.add( new Object[]{"/json/modifier/functions/arrayTests.json", TemplatrTestCase.OVERWRITR} );
         testCases.add( new Object[]{"/json/modifier/functions/sizeTests.json", TemplatrTestCase.OVERWRITR} );
         testCases.add( new Object[]{"/json/modifier/functions/labelsLookupTest.json", TemplatrTestCase.DEFAULTR} );
         testCases.add( new Object[]{"/json/modifier/functions/valueTests.json", TemplatrTestCase.OVERWRITR }  );
+        testCases.add( new Object[]{"/json/modifier/functions/squashNullsTests.json", TemplatrTestCase.OVERWRITR }  );
 
         return testCases.iterator();
     }
@@ -199,6 +203,26 @@ public class ModifierTest {
     public void testFunctionArgParse(String argString, String[] expected) throws Exception {
         List<String> actual = SpecStringParser.parseFunctionArgs( argString );
         JoltTestUtil.runArrayOrderObliviousDiffy(" failed case " + argString, expected, actual );
+    }
+
+    @Test
+    public void testModifierFirstElementArray() throws IOException {
+        Map<String, Object> input = new HashMap<String, Object>() {{
+            put("input", new Integer[]{5, 4});
+        }};
+
+        Map<String, Object> spec = new HashMap<String, Object>() {{
+            put("first", "=firstElement(@(1,input))");
+        }};
+
+        Map<String, Object> expected = new HashMap<String, Object>() {{
+            put("input", new Integer[]{5, 4});
+            put("first", 5);
+        }};
+
+        Modifier modifier = new Modifier.Overwritr( spec );
+        Object actual = modifier.transform( input, null );
+        JoltTestUtil.runArrayOrderObliviousDiffy( "failed modifierFirstElementArray", expected, actual );
     }
 
     @SuppressWarnings( "unused" )

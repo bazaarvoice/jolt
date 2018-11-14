@@ -45,6 +45,11 @@ public abstract class Modifier implements SpecDriven, ContextualTransform {
         STOCK_FUNCTIONS.put( "toUpper", new Strings.toUpperCase() );
         STOCK_FUNCTIONS.put( "concat", new Strings.concat() );
         STOCK_FUNCTIONS.put( "join", new Strings.join() );
+        STOCK_FUNCTIONS.put( "split", new Strings.split() );
+        STOCK_FUNCTIONS.put( "substring", new Strings.substring() );
+        STOCK_FUNCTIONS.put( "trim", new Strings.trim() );
+        STOCK_FUNCTIONS.put( "leftPad", new Strings.leftPad() );
+        STOCK_FUNCTIONS.put( "rightPad", new Strings.rightPad() );
 
         STOCK_FUNCTIONS.put( "min", new Math.min() );
         STOCK_FUNCTIONS.put( "max", new Math.max() );
@@ -53,6 +58,9 @@ public abstract class Modifier implements SpecDriven, ContextualTransform {
         STOCK_FUNCTIONS.put( "intSum", new Math.intSum() );
         STOCK_FUNCTIONS.put( "doubleSum", new Math.doubleSum() );
         STOCK_FUNCTIONS.put( "longSum", new Math.longSum() );
+        STOCK_FUNCTIONS.put( "intSubtract", new Math.intSubtract() );
+        STOCK_FUNCTIONS.put( "doubleSubtract", new Math.doubleSubtract() );
+        STOCK_FUNCTIONS.put( "longSubtract", new Math.longSubtract() );
         STOCK_FUNCTIONS.put( "divide", new Math.divide() );
         STOCK_FUNCTIONS.put( "divideAndRound", new Math.divideAndRound() );
 
@@ -62,8 +70,10 @@ public abstract class Modifier implements SpecDriven, ContextualTransform {
         STOCK_FUNCTIONS.put( "toLong", new Objects.toLong() );
         STOCK_FUNCTIONS.put( "toBoolean", new Objects.toBoolean() );
         STOCK_FUNCTIONS.put( "toString", new Objects.toString() );
-        STOCK_FUNCTIONS.put( "toJsonString", new Objects.toJsonString() );
         STOCK_FUNCTIONS.put( "size", new Objects.size() );
+
+        STOCK_FUNCTIONS.put( "squashNulls", new Objects.squashNulls() );
+        STOCK_FUNCTIONS.put( "recursivelySquashNulls", new Objects.recursivelySquashNulls() );
 
         STOCK_FUNCTIONS.put( "noop", Function.noop );
         STOCK_FUNCTIONS.put( "isPresent", Function.isPresent );
@@ -111,7 +121,7 @@ public abstract class Modifier implements SpecDriven, ContextualTransform {
         return input;
     }
 
-/**
+    /**
      * This variant of modifier creates the key/index is missing,
      * and overwrites the value if present
      */
