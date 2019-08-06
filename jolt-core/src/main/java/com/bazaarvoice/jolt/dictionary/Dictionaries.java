@@ -3,6 +3,12 @@ package com.bazaarvoice.jolt.dictionary;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 
+ * Simple dictionary manager. Keep the dictionary in memory allowing them to be used during transformation.
+ * Structure is thread safe, we keep only a copy of the given dictionaries. 
+ *
+ */
 public class Dictionaries {
 
 	static ConcurrentHashMap<String, Map<String, String>> dictionaries = new ConcurrentHashMap<>();
@@ -14,6 +20,11 @@ public class Dictionaries {
 	public static boolean removeDictionary(String name) {
 
 		return (dictionaries.remove(name) != null);
+	}
+
+	public static void removeAll() {
+
+		dictionaries.clear();
 	}
 
 	public Dictionaries() {
