@@ -43,7 +43,7 @@ The Stock transforms are:
     sort        : sort the Map key values alphabetically ( for debugging and human readability )
     cardinality : "fix" the cardinality of input data.  Eg, the "urls" element is usually a List, but if there is only one, then it is a String
 
-Each transform has it's own DSL (Domain Specific Language) in order to facilitate it's narrow job.
+Each transform has its own DSL (Domain Specific Language) in order to facilitate its narrow job.
 
 Currently, all the Stock transforms just effect the "structure" of the data.
 To do data manipulation, you will need to write Java code.   If you write your Java "data manipulation" code to implement the Transform interface, then you can insert your code in the transform chain.
@@ -124,7 +124,7 @@ Note
 
 ## <a name="Getting_Started"></a> Getting Started
 
-Getting started code wise has it's [own doc](gettingStarted.md).
+Getting started code wise has its [own doc](gettingStarted.md).
 
 ## <a name="Getting_Transform_Help"></a> Getting Transform Help
 
