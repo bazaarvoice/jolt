@@ -6,25 +6,18 @@ Maven Dependency to Add to your pom file
 ``` xml
 <dependency>
     <groupId>com.bazaarvoice.jolt</groupId>
-    <artifactId>jolt-core</artifactId>
-    <version>${latest.jolt.version}</version>
-</dependency>
-<dependency>
-    <groupId>com.bazaarvoice.jolt</groupId>
-    <artifactId>json-utils</artifactId>
+    <artifactId>jolt-core-all</artifactId>
     <version>${latest.jolt.version}</version>
 </dependency>
 ```
 
 Where `latest.jolt.version` looks like `0.0.16`, and can be found by looking at the [project's releases](https://github.com/bazaarvoice/jolt/releases).
 
-The two maven artifacts are:
+The maven artifact is:
 
-1. `jolt-core` : only one dependency on apache.commons for StringUtils
-    * The goal is for the `jolt-core` artifact to be pure Java, so that it does not cause any dependency issues.
-2. `json-utils` : Jackson wrapper and testing utilities.   Used by jolt-core as a test dependency.
-    * If you are willing to pull in Jackson 2, this artifact provides nice utility methods.
-
+1. `jolt-core-all` : Previously there were two dependencies but that made it incompatible with Java 9+, and they were pretty much always
+used together so, they have been merged into one. 
+    * Only dependencies are on apache.commons for StringUtils and Jackson 2 to provide nice utility methods.
 
 ## 2 Code and Sample Data
 
