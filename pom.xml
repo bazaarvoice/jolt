@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.bazaarvoice.jolt</groupId>
         <artifactId>jolt-parent</artifactId>
-        <version>0.1.2-SNAPSHOT</version>
+        <version>0.2.0-SNAPSHOT</version>
         <relativePath>parent/pom.xml</relativePath>
     </parent>
 
@@ -22,7 +22,6 @@
     <modules>
         <module>parent</module>
         <module>jolt-core</module>
-        <module>json-utils</module>
         <module>cli</module>
         <module>guice</module>
         <module>complete</module>
