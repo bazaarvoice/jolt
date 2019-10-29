@@ -108,7 +108,7 @@ public class Objects {
          DateTimeFormatter formatter = null;
          Instant instant = null;
          try {
-        	 instant = Instant.ofEpochMilli( Long.valueOf(String.valueOf(args.get(0))) );
+        	 instant = Instant.ofEpochMilli( Long.valueOf( String.valueOf( args.get(0) ) ) );
         	 formatter = DateTimeFormatter.ofPattern((String) args.get(1));
          } catch(Exception e) {
         	 return Optional.empty();

@@ -27,13 +27,14 @@ import org.testng.annotations.DataProvider;
 import com.bazaarvoice.jolt.common.Optional;
 
 @SuppressWarnings("deprecation")
-public class DateTest extends AbstractTester {
+public class JavaObjectTest extends AbstractTester {
 
 	@DataProvider(parallel = true)
 	public Iterator<Object[]> getTestCases() {
 		List<Object[]> testCases = new LinkedList<>(  );
 		
 		Function TO_DATE = new Objects.toDate();
+		Function TO_HASH_CODE = new Objects.toHashCode();
 		
 		testCases.add( new Object[] {"null-inputs", TO_DATE, null, Optional.empty() } );
 		testCases.add( new Object[] {"empty-inputs", TO_DATE, Collections.emptyList(), Optional.empty() } );
@@ -58,6 +59,13 @@ public class DateTest extends AbstractTester {
 		testCases.add( new Object[] {"valid-with-timezone-+05:00", TO_DATE, Arrays.asList(1572353915824L,"yyyy-MM-dd HH:mm:ss.SSS", "+05:00"), Optional.of("2019-10-29 17:58:35.824") } );
 		testCases.add( new Object[] {"valid-with-timezone--05:00", TO_DATE, Arrays.asList(1572353915824L,"yyyy-MM-dd HH:mm:ss.SSS", "-05:00"), Optional.of("2019-10-29 07:58:35.824") } );
 		
+		testCases.add( new Object[] { "hash-null", TO_HASH_CODE, null, Optional.empty() } );
+        testCases.add( new Object[] { "hash-invalid", TO_HASH_CODE, new Object(), Optional.empty() } );
+        testCases.add( new Object[] { "hash-empty-list", TO_HASH_CODE, new Object[] {}, Optional.empty() } );
+        testCases.add( new Object[] { "hash-empty-array", TO_HASH_CODE, Arrays.asList(  ), Optional.empty() } );
+        testCases.add( new Object[] { "hash-empty-string", TO_HASH_CODE, "", Optional.of( "".hashCode() ) } );
+        testCases.add( new Object[] { "hash-empty-string", TO_HASH_CODE, "hashcode", Optional.of( "hashcode".hashCode() ) } );
+        
 		return testCases.iterator();
 	}
 
