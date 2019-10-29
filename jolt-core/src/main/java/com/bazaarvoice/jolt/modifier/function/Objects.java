@@ -18,6 +18,10 @@ package com.bazaarvoice.jolt.modifier.function;
 
 import com.bazaarvoice.jolt.common.Optional;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,6 +43,7 @@ public class Objects {
      * also, see: MathTest#testNitPicks
      *
      */
+	
     public static Optional<? extends Number> toNumber(Object arg) {
         if ( arg instanceof Number ) {
             return Optional.of( ( (Number) arg ));
@@ -79,6 +84,53 @@ public class Objects {
             else {
                 return Optional.empty();
             }
+        }
+        else {
+            return Optional.empty();
+        }
+    }
+    
+    //return date
+    public static Optional<String> toDate(final List args) {
+    	
+    	 if ( args == null || args.size() < 2 || args.size() > 3 ) {
+             return Optional.empty();
+         }
+
+         if ( ! (( args.get(0) instanceof Long || args.get(0) instanceof Integer ) && args.get(1) instanceof String ) ) {
+             return Optional.empty();
+         }
+         
+         if( args.size() == 3 && ! (args.get(2) instanceof String ) ) {
+        	 return Optional.empty();
+         }
+         
+         DateTimeFormatter formatter = null;
+         Instant instant = null;
+         try {
+        	 instant = Instant.ofEpochMilli( Long.valueOf(String.valueOf(args.get(0))) );
+        	 formatter = DateTimeFormatter.ofPattern((String) args.get(1));
+         } catch(Exception e) {
+        	 return Optional.empty();
+         }
+         
+         ZoneId zone = null;
+         try {
+        	 zone = ZoneId.of((String) args.get(2));
+         } catch(Exception e) {
+        	 if(args.size() > 2) {
+        		 return Optional.empty();
+        	 } else {
+        		 zone = ZoneOffset.UTC;
+        	 }
+         }
+         return Optional.of(formatter.withZone(zone).format(instant));
+    }
+    
+    
+    public static Optional<Integer> toHashCode(Object arg) {
+        if ( arg instanceof String ) {
+            return Optional.of(arg.hashCode());
         }
         else {
             return Optional.empty();
@@ -231,6 +283,13 @@ public class Objects {
         }
     }
 
+    public static final class toDate  extends Function.ListFunction {
+        @Override
+        protected Optional<Object> applyList( final List<Object> argIntList ) {
+            return (Optional) toDate(argIntList);
+        }
+    }
+    
     public static final class toDouble extends Function.SingleFunction<Double> {
         @Override
         protected Optional<Double> applySingle( final Object arg ) {
@@ -238,6 +297,14 @@ public class Objects {
         }
     }
 
+    public static final class toHashCode extends Function.SingleFunction<Integer> {
+        @Override
+        protected Optional<Integer> applySingle( final Object arg ) {
+            return toHashCode( arg );
+        }
+    }
+
+    
     public static final class toBoolean extends Function.SingleFunction<Boolean> {
         @Override
         protected Optional<Boolean> applySingle( final Object arg ) {
