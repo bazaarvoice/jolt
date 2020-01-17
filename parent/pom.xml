@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.bazaarvoice.commons</groupId>
         <artifactId>bv-opensource-super-pom</artifactId>
-        <version>1.4</version>
+        <version>1.9</version>
         <relativePath />
         <!--an empty relativePath for the super-pom, makes maven happy -->
     </parent>
@@ -29,17 +29,17 @@
         <java.minimum.version>1.8</java.minimum.version>
 
         <!-- core -->
-        <commons-lang3.version>3.4</commons-lang3.version>
+        <commons-lang3.version>3.9</commons-lang3.version>
         <javax-inject.version>1</javax-inject.version>
 
         <!-- module dependencies -->
-        <jackson.version>2.9.4</jackson.version>
-        <guice.version>4.1.0</guice.version>
-        <argparse4j.version>0.4.4</argparse4j.version>
+        <jackson.version>2.10.2</jackson.version>
+        <guice.version>4.2.2</guice.version>
+        <argparse4j.version>0.8.1</argparse4j.version>
 
         <!-- TEST -->
-        <guava.version>19.0</guava.version>
-        <testng.version>6.8.21</testng.version>
+        <guava.version>28.2-jre</guava.version>
+        <testng.version>7.1.1</testng.version>
     </properties>
 
     <dependencyManagement>
@@ -117,7 +117,7 @@
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
-                <version>0.12</version>
+                <version>0.13</version>
                 <configuration>
                     <includes>
                         <include>**/*.java</include>
@@ -138,7 +138,7 @@
                     <dependency>
                       <groupId>org.apache.maven.doxia</groupId>
                       <artifactId>doxia-core</artifactId>
-                      <version>1.6</version>
+                      <version>1.9</version>
                       <exclusions>
                         <exclusion>
                           <groupId>xerces</groupId>
