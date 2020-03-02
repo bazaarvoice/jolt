@@ -19,6 +19,7 @@ import com.bazaarvoice.jolt.common.Optional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 @SuppressWarnings( "deprecated" )
 public class Strings {
@@ -47,7 +48,7 @@ public class Strings {
 
             String argString = (String) arg;
 
-            return Optional.of( argString.toUpperCase() );
+            return Optional.of( argString.toUpperCase(Locale.ENGLISH) );
         }
     }
 
