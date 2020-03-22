@@ -64,6 +64,7 @@ import java.util.List;
  *      toLower     - returns toLower value of toString() value of first arg, rest is ignored
  *      toUpper     - returns toUpper value of toString() value of first arg, rest is ignored
  *      concat      - concatenate all given arguments' toString() values
+ *      decode      - decode all given arguments' values similar to a SQL decode
  *
  *      min       - returns the min of all numbers provided in the arguments, non-numbers are ignored
  *      max       - returns the max of all numbers provided in the arguments, non-numbers are ignored
@@ -71,6 +72,7 @@ import java.util.List;
  *      toInteger   - returns the intValue() value of first argument if its numeric, rest is ignored
  *      toDouble    - returns the doubleValue() value of first argument if its numeric, rest is ignored
  *      toLong      - returns the longValue() value of first argument if its numeric, rest is ignored
+ *      toBoolean   - returns the booleanValue() value of first argument if its boolean, rest is ignored
  *
  * All of these functions returns Optional.EMPTY if unsuccessful, which results in a no-op when performing
  * the actual write in the json doc.

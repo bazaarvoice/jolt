@@ -78,6 +78,28 @@ public class Strings {
         }
     }
 
+    public static final class decode extends Function.ListFunction {
+	@Override
+	protected Optional<Object> applyList(final List<Object> argList) {
+	    if (argList.size() > 0) {
+		Object value = argList.get(0);
+		for (int index = 1; index < argList.size() - 1; index += 2) {
+		    Object test = argList.get(index);
+		    if (java.util.Objects.equals(value, test)) {
+			Object result = argList.get(index + 1);
+			return Optional.of(result);
+		    }
+		}
+		// default
+		if (argList.size() % 2 == 0) {
+		    Object result = argList.get(argList.size() - 1);
+		    return Optional.of(result);
+		}
+	    }
+	    return Optional.of(null);
+	}
+    }
+    
     public static final class substring extends Function.ListFunction {
 
         @Override
