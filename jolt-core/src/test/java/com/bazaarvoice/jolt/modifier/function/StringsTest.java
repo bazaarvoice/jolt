@@ -32,6 +32,7 @@ public class StringsTest extends AbstractTester {
     List<Object[]> testCases = new LinkedList<>(  );
 
     Function SPLIT = new Strings.split();
+    Function REPLACE = new Strings.replace();
 
     testCases.add( new Object[] {"split-invalid-null", SPLIT, null, Optional.empty() } );
     testCases.add( new Object[] {"split-invalid-string", SPLIT, "", Optional.empty() } );
@@ -49,6 +50,8 @@ public class StringsTest extends AbstractTester {
 
     testCases.add( new Object[] {"split-regex-token-string", SPLIT, new Object[] {"[eE]", "test,TEST"}, Optional.of( Arrays.asList("t", "st,T", "ST") )} );
     testCases.add( new Object[] {"split-regex2-token-string", SPLIT, new Object[] {"\\s+", "test TEST  Test    TeSt"}, Optional.of( Arrays.asList("test", "TEST", "Test", "TeSt") )} );
+
+    testCases.add( new Object[] {"replace-regex-token-string", REPLACE, new Object[] {"brown--black", "The quick brown fox jumps over the lazy dog."}, Optional.of("The quick black fox jumps over the lazy dog.")} );
 
     return testCases.iterator();
   }

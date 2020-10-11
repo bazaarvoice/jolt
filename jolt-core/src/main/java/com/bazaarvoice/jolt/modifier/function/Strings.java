@@ -233,4 +233,29 @@ public class Strings {
 
         return Optional.empty();
     }
+
+    @SuppressWarnings( "unchecked" )
+    public static final class replace extends Function.ArgDrivenSingleFunction<String,String> {
+
+        @Override
+        protected Optional<String> applySingle(String specialArg, Object arg) {
+            if(!(specialArg != null && (!specialArg.trim().isEmpty()) && specialArg.contains("--")))
+                return Optional.empty();
+
+            if(!(arg instanceof String))
+                return Optional.empty();
+
+            String actual = String.valueOf(arg);
+
+            if(!(actual != null || !(actual.trim().isEmpty())))
+                return Optional.empty();
+
+            String split []= specialArg.split("--");
+
+            String toReturn = actual.replaceAll(split[0],split[1]);
+
+            return Optional.of(toReturn);
+        }
+    }
+
 }
