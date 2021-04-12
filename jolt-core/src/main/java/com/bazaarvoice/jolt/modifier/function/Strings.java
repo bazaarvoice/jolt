@@ -101,8 +101,8 @@ public class Strings {
 
                 // If we get here, then all these casts should work.
                 String tuna = (String) argList.get(0);
-                int start = (Integer) argList.get(1);
-                int end = (Integer) argList.get(2);
+                int start = tuna.offsetByCodePoints(0, (Integer) argList.get(1));
+                int end = tuna.offsetByCodePoints(0, (Integer) argList.get(2));
 
                 // do start and end make sense?
                 if ( start >= end || start < 0 || end < 1 || end > tuna.length() ) {
