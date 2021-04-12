@@ -8,6 +8,7 @@
         "legitList" : [ 1, "foo" ],
         "legitMap" : { "a":"b", "d":"e"},
         "legitString" : "foo",
+        "legitUtf8String": "\uD83D\uDC47",
         "legitNumber" : 3.1415
     },
 
@@ -20,6 +21,7 @@
         "legitListSize": "=size(@(1,legitList))",
         "legitMapSize": "=size(@(1,legitMap))",
         "legitStringSize": "=size(@(1,legitString))",
+        "legitUtf8StringSize": "=size(@(1,legitUtf8String))",
         "legitNumberSize": "=size(@(1,legitNumber))"
     },
     "context": {},
@@ -39,11 +41,13 @@
         "legitList" : [ 1, "foo" ],
         "legitMap" : { "a":"b", "d":"e"},
         "legitString" : "foo",
+        "legitUtf8String": "\uD83D\uDC47",
         "legitNumber" : 3.1415,
 
         "legitListSize": 2,
         "legitMapSize": 2,
-        "legitStringSize": 3
+        "legitStringSize": 3,
+        "legitUtf8StringSize": 1
         // legitNumberSize does not get created because there can be no value for it
     }
 }

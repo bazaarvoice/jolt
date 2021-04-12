@@ -286,7 +286,7 @@ public class Objects {
                     return Optional.of(((List) args[0]).size());
                 }
                 else if(args[0] instanceof String) {
-                    return Optional.of( ((String) args[0]).length() );
+                    return Optional.of(((String) args[0]).codePointCount(0, ((String) args[0]).length()));
                 }
                 else if(args[0] instanceof Map) {
                     return Optional.of( ((Map) args[0]).size() );
