@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.bazaarvoice.jolt</groupId>
         <artifactId>jolt-parent</artifactId>
-        <version>0.1.5</version>
+        <version>0.1.6-SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
