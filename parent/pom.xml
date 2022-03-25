@@ -33,7 +33,7 @@
         <javax-inject.version>1</javax-inject.version>
 
         <!-- module dependencies -->
-        <jackson.version>2.9.10.8</jackson.version>
+        <jackson.version>2.13.2</jackson.version>
         <guice.version>4.1.0</guice.version>
         <argparse4j.version>0.4.4</argparse4j.version>
 
