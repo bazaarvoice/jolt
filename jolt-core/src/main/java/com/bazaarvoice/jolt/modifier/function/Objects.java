@@ -252,7 +252,7 @@ public class Objects {
         }
     }
 
-    public static final class squashNulls extends Function.SingleFunction<Object> {
+    public static final class squashNulls extends Function.SquashFunction<Object> {
         @Override
         protected Optional<Object> applySingle( final Object arg ) {
             Objects.squashNulls( arg );
@@ -260,7 +260,7 @@ public class Objects {
         }
     }
 
-    public static final class recursivelySquashNulls extends Function.SingleFunction<Object> {
+    public static final class recursivelySquashNulls extends Function.SquashFunction<Object> {
         @Override
         protected Optional<Object> applySingle( final Object arg ) {
             Objects.recursivelySquashNulls( arg );

@@ -385,4 +385,47 @@ public interface Function {
         }
     }
 
+    /**
+     * squashNull is a special kind of null processing,the input is always a list or map as a singleton
+     *
+     * @param <T> type of return value
+     */
+    abstract class SquashFunction<T> implements Function {
+
+        public final Optional<Object> apply( final Object... args ) {
+            if(args.length == 0) {
+                return Optional.empty();
+            }
+            else if(args.length == 1) {
+                if(args[0] instanceof List ) {
+                    if(((List) args[0]).isEmpty()) {
+                        return Optional.empty();
+                    }
+                    else {
+                        return (Optional)applySingle((List) args[0]);
+                    }
+                }
+                else if( args[0] instanceof Object[] ) {
+                    if(((Object[]) args[0]).length == 0) {
+                        return Optional.empty();
+                    }
+                    else {
+                        return (Optional)applySingle(Arrays.asList(((Object[]) args[0])));
+                    }
+                }
+                else if(args[0] == null) {
+                    return Optional.empty();
+                }
+                else {
+                    return (Optional) applySingle( args[0] );
+                }
+            }
+            else {
+                return (Optional)applySingle( Arrays.asList( args ) );
+            }
+        }
+
+        protected abstract Optional<T> applySingle( final Object arg );
+    }
+
 }
