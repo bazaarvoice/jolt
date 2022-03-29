@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Objects {
 
@@ -215,7 +216,18 @@ public class Objects {
         }
     }
 
-
+    /**
+     * Squashes/Deletes duplicates in lists.
+     *
+     * Modifies the data.
+     */
+    public static Optional<Object> squashDuplicates( Object input ) {
+        if ( input instanceof List ) {
+            List inputList = (List) input;
+            return Optional.of(inputList.stream().distinct().collect(Collectors.toList()));
+        }
+        return Optional.of(input);
+    }
 
     public static final class toInteger extends Function.SingleFunction<Integer> {
         @Override
@@ -265,6 +277,13 @@ public class Objects {
         protected Optional<Object> applySingle( final Object arg ) {
             Objects.recursivelySquashNulls( arg );
             return Optional.of( arg );
+        }
+    }
+
+    public static final class squashDuplicates extends Function.SquashFunction<Object> {
+        @Override
+        protected Optional<Object> applySingle( final Object arg ) {
+            return Objects.squashDuplicates( arg );
         }
     }
 
