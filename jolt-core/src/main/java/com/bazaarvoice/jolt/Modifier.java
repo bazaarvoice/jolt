@@ -71,6 +71,7 @@ public abstract class Modifier implements SpecDriven, ContextualTransform {
         STOCK_FUNCTIONS.put( "toBoolean", new Objects.toBoolean() );
         STOCK_FUNCTIONS.put( "toString", new Objects.toString() );
         STOCK_FUNCTIONS.put( "size", new Objects.size() );
+        STOCK_FUNCTIONS.put( "toJsonString", new Objects.toJsonString() );
 
         STOCK_FUNCTIONS.put( "squashNulls", new Objects.squashNulls() );
         STOCK_FUNCTIONS.put( "recursivelySquashNulls", new Objects.recursivelySquashNulls() );
