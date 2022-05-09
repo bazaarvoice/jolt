@@ -184,9 +184,18 @@ public class ModifierTest {
         doTest( testFile, testCase);
     }
 
-    @Test
-    public void doSquashNullsTest() throws Exception {
-        String testFile = "/json/modifier/functions/squashNullsTests.json";
+    @DataProvider
+    public Iterator<Object[]> getSquashTests() {
+        List<Object[]> testCases = Lists.newLinkedList();
+
+        testCases.add( new Object[]{"/json/modifier/functions/squashNullsTests.json"});
+        testCases.add( new Object[]{"/json/modifier/functions/deleteDuplicatesTests.json"});
+
+        return testCases.iterator();
+    }
+
+    @Test (dataProvider = "getSquashTests")
+    public void doSquashNullsTest(String testFile) throws Exception {
         TemplatrTestCase testCase = TemplatrTestCase.OVERWRITR;
         Map<String, Object> testUnit = JsonUtils.classpathToMap( testFile );
         Object input = testUnit.get( "input" );
