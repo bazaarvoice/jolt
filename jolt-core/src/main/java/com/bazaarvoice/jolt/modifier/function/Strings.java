@@ -233,4 +233,44 @@ public class Strings {
 
         return Optional.empty();
     }
+
+    public static class indexOf implements Function {
+        @Override
+        public Optional<Object> apply(Object... args) {
+            if(args == null || args.length != 2) {
+                return Optional.empty();
+            }
+            Object arg0 = args[0];
+            if(!(arg0 instanceof String)) {
+                return Optional.empty();
+            }
+            Object arg1 = args[1];
+            if(!(arg1 instanceof String)) {
+                return Optional.empty();
+            }
+            String string = (String) arg0;
+            String substring = (String) arg1;
+            return Optional.of(string.indexOf(substring));
+        }
+    }
+
+    public static class lastIndexOf implements Function {
+        @Override
+        public Optional<Object> apply(Object... args) {
+            if(args == null || args.length != 2) {
+                return Optional.empty();
+            }
+            Object arg0 = args[0];
+            if(!(arg0 instanceof String)) {
+                return Optional.empty();
+            }
+            Object arg1 = args[1];
+            if(!(arg1 instanceof String)) {
+                return Optional.empty();
+            }
+            String string = (String) arg0;
+            String substring = (String) arg1;
+            return Optional.of(string.lastIndexOf(substring));
+        }
+    }
 }
