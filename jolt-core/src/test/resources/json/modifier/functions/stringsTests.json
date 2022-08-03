@@ -49,7 +49,30 @@
         "trim" :{
             "trimed" : "=trim(@(2,trimMe))"
         },
-        "trimMe" : "=trim"
+        "trimMe" : "=trim",
+        "indexOf": {
+            "char": "=indexOf(@(2,string), 't')",
+            "substring": "=indexOf(@(2,string), 'the')",
+            "substringMiddle": "=indexOf(@(2,string), 'brOwn')",
+            "notExistedSubstring": "=indexOf(@(2,string), 'notExistedSubstring')",
+            "staticString": "=indexOf('static string', 'string')",
+            // invalid args
+            "tooMuchArgs": "=indexOf(@(2,string), 't', 1)",
+            "tooLittleArgs": "=indexOf(@(2,string))",
+            "withoutArgs": "=indexOf()"
+        },
+        "lastIndexOf": {
+            "char": "=lastIndexOf(@(2,string), 't')",
+            "substring": "=lastIndexOf(@(2,string), 'the')",
+            "substringMiddle": "=lastIndexOf(@(2,string), 'brOwn')",
+            "notExistedSubstring": "=lastIndexOf(@(2,string), 'notExistedSubstring')",
+            "staticString": "=lastIndexOf('static string', 'string')",
+            "sameSubstringMoreThanOneTimes": "=lastIndexOf('abcabcabc', 'abc')",
+            // invalid args
+            "tooMuchArgs": "=lastIndexOf(@(2,string), 't', 1)",
+            "tooLittleArgs": "=lastIndexOf(@(2,string))",
+            "withoutArgs": "=lastIndexOf()"
+        }
     },
     "context": {
         "value" : "JumpeD OVeR THE laZy dog"
@@ -92,6 +115,21 @@
         },
         "trim" :{
             "trimed" : "tuna"
+        },
+        "indexOf": {
+            "char": 0,
+            "substring": 0,
+            "substringMiddle": 10,
+            "staticString": 7,
+            "notExistedSubstring": -1
+        },
+        "lastIndexOf": {
+            "char": 0,
+            "substring": 0,
+            "substringMiddle": 10,
+            "staticString": 7,
+            "sameSubstringMoreThanOneTimes": 6,
+            "notExistedSubstring": -1
         }
     }
 }

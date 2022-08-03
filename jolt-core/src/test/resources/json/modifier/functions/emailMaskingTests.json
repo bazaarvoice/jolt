@@ -1,0 +1,21 @@
+{
+    "input": {
+        "email": "user@domain.com"
+    },
+
+    "spec": {
+        "emailLength": "=size(@(1,email))",
+        "dividerIndex": "=indexOf(@(1,email), '@')",
+        "userNameSub": "=substring(@(1,email), 0, 1)",
+        "domainPart": "=substring(@(1,email), @(1,dividerIndex), @(1,emailLength))",
+        "email": "=concat(@(1,userNameSub), '***', @(1,domainPart))"
+    },
+
+    "OVERWRITR": {
+        "emailLength": 15,
+        "dividerIndex": 4,
+        "userNameSub": "u",
+        "domainPart": "@domain.com",
+        "email": "u***@domain.com"
+    }
+}
