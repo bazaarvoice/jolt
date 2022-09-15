@@ -6,7 +6,7 @@
         <groupId>com.bazaarvoice.commons</groupId>
         <artifactId>bv-opensource-super-pom</artifactId>
         <version>1.4</version>
-        <relativePath />
+        <relativePath/>
         <!--an empty relativePath for the super-pom, makes maven happy -->
     </parent>
 
@@ -34,7 +34,7 @@
 
         <!-- module dependencies -->
         <jackson.version>2.13.2</jackson.version>
-        <guice.version>4.1.0</guice.version>
+        <guice.version>4.2.3</guice.version>
         <argparse4j.version>0.4.4</argparse4j.version>
 
         <!-- TEST -->
