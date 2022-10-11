@@ -174,7 +174,6 @@ public class ModifierTest {
         testCases.add( new Object[]{"/json/modifier/functions/sizeTests.json", TemplatrTestCase.OVERWRITR} );
         testCases.add( new Object[]{"/json/modifier/functions/labelsLookupTest.json", TemplatrTestCase.DEFAULTR} );
         testCases.add( new Object[]{"/json/modifier/functions/valueTests.json", TemplatrTestCase.OVERWRITR }  );
-        testCases.add( new Object[]{"/json/modifier/functions/squashNullsTests.json", TemplatrTestCase.OVERWRITR }  );
 
         return testCases.iterator();
     }
@@ -183,6 +182,31 @@ public class ModifierTest {
     @Test (dataProvider = "getFunctionTests")
     public void testFunctions(String testFile, TemplatrTestCase testCase) throws Exception {
         doTest( testFile, testCase);
+    }
+
+    @DataProvider
+    public Iterator<Object[]> getSquashTests() {
+        List<Object[]> testCases = Lists.newLinkedList();
+
+        testCases.add( new Object[]{"/json/modifier/functions/squashNullsTests.json"});
+        testCases.add( new Object[]{"/json/modifier/functions/deleteDuplicatesTests.json"});
+
+        return testCases.iterator();
+    }
+
+    @Test (dataProvider = "getSquashTests")
+    public void doSquashNullsTest(String testFile) throws Exception {
+        TemplatrTestCase testCase = TemplatrTestCase.OVERWRITR;
+        Map<String, Object> testUnit = JsonUtils.classpathToMap( testFile );
+        Object input = testUnit.get( "input" );
+        Object spec = testUnit.get( "spec" );
+        Object context = testUnit.get( "context" );
+        Object expected = testUnit.get( testCase.name() );
+        if(expected != null) {
+            Modifier modifier = testCase.getTemplatr( spec );
+            Object actual = modifier.transform( input, (Map<String, Object>) context );
+            JoltTestUtil.runDiffy( testCase.name() + " failed case " + testFile, expected, actual );
+        }
     }
 
     @DataProvider

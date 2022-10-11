@@ -1,0 +1,21 @@
+{
+  "input": {
+    "squashDuplicates1" : [ "abc", "abc", "xyz", "cde", "bcd" ],
+    "squashDuplicates2" : [ 1, 1, 2, 2, 3, 4 ],
+    "squashNoDuplicates" : [ "abc", "xyz", "cde", "bcd" ]
+  },
+
+  "spec": {
+    "squashDuplicates1" : "=squashDuplicates",
+    "squashDuplicates2" : "=squashDuplicates",
+    "squashNoDuplicates" : "=squashDuplicates"
+  },
+
+  "context": {},
+
+  "OVERWRITR": {
+    "squashDuplicates1" : [ "abc", "xyz", "cde", "bcd" ],
+    "squashDuplicates2" : [ 1, 2, 3, 4 ],
+    "squashNoDuplicates" : [ "abc", "xyz", "cde", "bcd" ]
+  }
+}
