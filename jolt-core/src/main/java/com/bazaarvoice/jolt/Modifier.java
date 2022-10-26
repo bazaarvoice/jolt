@@ -43,6 +43,7 @@ public abstract class Modifier implements SpecDriven, ContextualTransform {
     static {
         STOCK_FUNCTIONS.put( "toLower", new Strings.toLowerCase() );
         STOCK_FUNCTIONS.put( "toUpper", new Strings.toUpperCase() );
+        STOCK_FUNCTIONS.put( "toPascal", new Strings.toPascalCase() );
         STOCK_FUNCTIONS.put( "concat", new Strings.concat() );
         STOCK_FUNCTIONS.put( "join", new Strings.join() );
         STOCK_FUNCTIONS.put( "split", new Strings.split() );
