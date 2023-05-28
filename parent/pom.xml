@@ -6,7 +6,7 @@
         <groupId>com.bazaarvoice.commons</groupId>
         <artifactId>bv-opensource-super-pom</artifactId>
         <version>1.4</version>
-        <relativePath />
+        <relativePath/>
         <!--an empty relativePath for the super-pom, makes maven happy -->
     </parent>
 
