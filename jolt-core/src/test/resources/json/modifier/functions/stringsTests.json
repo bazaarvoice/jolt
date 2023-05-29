@@ -49,6 +49,13 @@
         "trim" :{
             "trimed" : "=trim(@(2,trimMe))"
         },
+        "pascal" :{
+            "leading":  "=toPascal(@(2,string))",
+            "trailing": "=toPascal(^value)",
+            "custom1":  "=toPascal(bazinga)",
+            "custom2":  "=toPascal('yabadabadoo')",
+            "badArgs1"  :  "=toPascal(@2)"
+        },
         "trimMe" : "=trim"
     },
     "context": {
@@ -89,6 +96,12 @@
             "custom1": "the quick brown",
             "custom2": "fox",
             "advancedLookupRanges": "the"
+        },
+        "pascal": {
+            "leading": "The Quick Brown Fox",
+            "trailing": "Jumped Over The Lazy Dog",
+            "custom1": "Bazinga",
+            "custom2": "Yabadabadoo"
         },
         "trim" :{
             "trimed" : "tuna"

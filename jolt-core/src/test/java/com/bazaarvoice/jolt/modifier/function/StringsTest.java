@@ -32,6 +32,7 @@ public class StringsTest extends AbstractTester {
     List<Object[]> testCases = new LinkedList<>(  );
 
     Function SPLIT = new Strings.split();
+    Function TO_PASCAL = new Strings.toPascalCase();
 
     testCases.add( new Object[] {"split-invalid-null", SPLIT, null, Optional.empty() } );
     testCases.add( new Object[] {"split-invalid-string", SPLIT, "", Optional.empty() } );
@@ -49,6 +50,10 @@ public class StringsTest extends AbstractTester {
 
     testCases.add( new Object[] {"split-regex-token-string", SPLIT, new Object[] {"[eE]", "test,TEST"}, Optional.of( Arrays.asList("t", "st,T", "ST") )} );
     testCases.add( new Object[] {"split-regex2-token-string", SPLIT, new Object[] {"\\s+", "test TEST  Test    TeSt"}, Optional.of( Arrays.asList("test", "TEST", "Test", "TeSt") )} );
+
+    testCases.add( new Object[] {"to-pascal-empty-string", TO_PASCAL, new Object[] {""}, Optional.of("")} );
+    testCases.add( new Object[] {"to-pascal-two-strings", TO_PASCAL, new Object[] {"tESt tesT"}, Optional.of("Test Test")} );
+    testCases.add( new Object[] {"to-pascal-separated-by-dot", TO_PASCAL, new Object[] {"tESt.tesT.tEsT"}, Optional.of("Test.Test.Test")} );
 
     return testCases.iterator();
   }

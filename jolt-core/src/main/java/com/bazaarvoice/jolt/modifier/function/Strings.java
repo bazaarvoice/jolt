@@ -51,6 +51,33 @@ public class Strings {
         }
     }
 
+    public static final class toPascalCase extends Function.SingleFunction<String> {
+        @Override
+        protected Optional<String> applySingle( final Object arg ) {
+
+            if ( ! (arg instanceof String) ) {
+                return Optional.empty();
+            }
+
+            String argString = (String) arg;
+            boolean capital = true;
+            StringBuilder result = new StringBuilder();
+            for(int i=0; i< argString.length(); i++) {
+                char currentChar = argString.charAt(i);
+                if(Character.isLetter(currentChar) && capital) {
+                    result.append(Character.toUpperCase(currentChar));
+                    capital = false;
+                } else if(Character.isLetter(currentChar)) {
+                    result.append(Character.toLowerCase(currentChar));
+                } else {
+                    result.append(currentChar);
+                    capital = true;
+                }
+            }
+            return Optional.of(result.toString());
+        }
+    }
+
     public static final class trim extends Function.SingleFunction<String> {
         @Override
         protected Optional<String> applySingle( final Object arg ) {
@@ -233,4 +260,5 @@ public class Strings {
 
         return Optional.empty();
     }
+    
 }
