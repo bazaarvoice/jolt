@@ -61,7 +61,8 @@
             "roundedDiv": "=divideAndRound(4, @(1,nr),@(1,dr))",   // Round the result to the 4 decimal points
             //
             "badArgs1" : "=divide(1,2,3)", // too many params
-            "badArgs2" : "=divide(1)"      // not enough params
+            "badArgs2" : "=divide(1)",      // not enough params
+            "multiply": "=multiply(@(1,nr),@(1,dr))" 
         },
         "data5": {
             "happyInt":       "=intSubtract(@(1,aInt),@(1,bInt))",
@@ -114,7 +115,8 @@
             "explicit2": 4.0,
             "value": [5, 2],
             "nr": 51,
-            "dr": 13
+            "dr": 13,
+            "multiply":663
         },
         "data5": {
             // og data

@@ -324,6 +324,32 @@ public class Math {
 
        return Optional.empty();
     }
+    
+    public static Optional<Integer> multiply(List<Object> argList) {
+
+        if ( argList == null || argList.size() != 2 ) {
+            return Optional.empty();
+        }
+
+        Optional<? extends Number> numerator = Objects.toNumber(argList.get(0));
+        Optional<? extends Number> denominator = Objects.toNumber(argList.get(1));
+
+        if(numerator.isPresent() && denominator.isPresent()) {
+
+            long drLongValue = denominator.get().longValue();
+            if(drLongValue == 0) {
+                return Optional.empty();
+            }
+
+            long nrLongValue = numerator.get().longValue();
+//            long result = nrLongValue * drLongValue;
+            long result = java.lang.Math.multiplyExact(nrLongValue, drLongValue);
+            return Optional.of((int)result);
+        }
+
+        return Optional.empty();
+    }
+    
 
     @SuppressWarnings( "unchecked" )
     public static final class max extends Function.BaseFunction<Object> {
@@ -444,5 +470,15 @@ public class Math {
         protected Optional<Object> applyList( final List<Object> argLongList ) {
             return (Optional) longSubtract(argLongList);
         }
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    public static final class multiply extends Function.ListFunction {
+
+        @Override
+        protected Optional<Object> applyList(List<Object> argList) {
+           return (Optional)multiply(argList);
+        }
+
     }
 }

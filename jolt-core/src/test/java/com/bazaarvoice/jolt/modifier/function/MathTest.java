@@ -53,6 +53,8 @@ public class MathTest extends AbstractTester {
 
         Function DIV_OF = new Math.divide();
         Function DIV_AND_ROUND_OF = new Math.divideAndRound();
+        
+        Function MULTIPLY_OF = new Math.multiply();
 
         testCases.add( new Object[] { "max-empty-array", MAX_OF, new Object[] {}, Optional.empty() } );
         testCases.add( new Object[] { "max-empty-list", MAX_OF, new ArrayList( ), Optional.empty() } );
@@ -275,7 +277,9 @@ public class MathTest extends AbstractTester {
         testCases.add( new Object[] { "divAndRound-trailing-precision-array",    DIV_AND_ROUND_OF, Arrays.asList(3, 5.0, 2), Optional.of(2.500)});
         testCases.add( new Object[] { "divAndRound-no-precision-array",          DIV_AND_ROUND_OF, Arrays.asList(0, 5.0, 2), Optional.of(3.0)}); // Round up as >= 0.5
         testCases.add( new Object[] { "divAndRound-no-precision-array",          DIV_AND_ROUND_OF, Arrays.asList(0, 4.8, 2), Optional.of(2.0)}); // Round down as < 0.5
-
+        
+        testCases.add( new Object[] { "multiply-combo-array",          MULTIPLY_OF, Arrays.asList(30, 2), Optional.of(60)}); 
+        
         return testCases.iterator();
     }
 
