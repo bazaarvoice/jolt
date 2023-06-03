@@ -7,7 +7,14 @@
         <version>0.1.9-SNAPSHOT</version>
         <relativePath>parent/pom.xml</relativePath>
     </parent>
-
+    
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+    
     <artifactId>jolt</artifactId>
     <packaging>pom</packaging>
     <name>Jolt</name>
@@ -16,8 +23,8 @@
         <url>https://github.com/bazaarvoice/jolt</url>
         <connection>scm:git:git@github.com:bazaarvoice/jolt.git</connection>
         <developerConnection>scm:git:git@github.com:bazaarvoice/jolt.git</developerConnection>
-    <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <modules>
         <module>parent</module>
