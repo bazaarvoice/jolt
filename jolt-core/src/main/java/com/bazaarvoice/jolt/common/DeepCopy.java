@@ -36,13 +36,10 @@ public class DeepCopy {
      */
     public static Object simpleDeepCopy( Object object ) {
 
-        try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(bos);
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+             ObjectOutputStream oos = new ObjectOutputStream(bos);) {
             oos.writeObject(object);
             oos.flush();
-            oos.close();
-            bos.close();
 
             byte [] byteData = bos.toByteArray();
             ByteArrayInputStream bais = new ByteArrayInputStream(byteData);

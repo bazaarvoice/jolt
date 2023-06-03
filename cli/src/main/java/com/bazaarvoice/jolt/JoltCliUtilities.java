@@ -48,10 +48,8 @@ public class JoltCliUtilities {
      */
     public static Object createJsonObjectFromFile( File file, boolean suppressOutput ) {
         Object jsonObject = null;
-        try {
-            FileInputStream inputStream = new FileInputStream( file );
+        try (FileInputStream inputStream = new FileInputStream( file );) {
             jsonObject = JsonUtils.jsonToObject( inputStream );
-            inputStream.close();
         } catch ( IOException e ) {
             if ( e instanceof JsonParseException ) {
                 printToStandardOut( "File " + file.getAbsolutePath() + " did not contain properly formatted JSON.", suppressOutput );
