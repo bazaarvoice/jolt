@@ -26,6 +26,11 @@
             "basic": "=concat(@(2,lower.leading) , ' ' , @(2,lower.trailing))",
             "parens": "=concat(@(2,lower.leading) , ' (', @(2,lower.trailing), ')')"
         },
+        "decode": {
+            "decodeTrue": "=decode('1' , '1' , 'true', '0', 'false')",
+            "decodeFalse": "=decode('0' , '1' , 'true', '0', 'false')",
+            "decodeDefault": "=decode('0' , '1' , 'true', 'false')"
+        },        
         "substring": {
             "basic1": "=substring(@(2,string), 0, 9)",
             "basic2": "=substring(@(2,string), 4, 9)",
@@ -83,6 +88,11 @@
             "basic": "the quick brown fox jumped over the lazy dog",
             "parens": "the quick brown fox (jumped over the lazy dog)"
         },
+        "decode": {
+            "decodeTrue": "true",
+            "decodeFalse": "false",
+            "decodeDefault": "false"
+        },        
         "substring": {
             "basic1": "the QuIcK",
             "basic2": "QuIcK",
