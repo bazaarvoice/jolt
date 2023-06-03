@@ -3,7 +3,8 @@
         "string": "the QuIcK brOwn fox",
         "zeroIndex" : 0,
         "threeIndex" : 3,
-        "trimMe" : "  tuna "
+        "trimMe" : "  tuna ",
+        "utf8String": "\uD83D\uDC47\uD83D\uDD34 UTF-8 String"
     },
 
     "spec": {
@@ -44,7 +45,8 @@
             "custom2":  "=substring('the quick brown fox', 16, 19)",
             //
             // verify that we can actually lookup start and end indices
-            "advancedLookupRanges" : "=substring(@(2,string), @(2,zeroIndex), @(2,threeIndex))"
+            "advancedLookupRanges" : "=substring(@(2,string), @(2,zeroIndex), @(2,threeIndex))",
+            "utf8Substring": "=substring(@(2,utf8String), 3, 15)"
         },
         "trim" :{
             "trimed" : "=trim(@(2,trimMe))"
@@ -61,6 +63,7 @@
         "string" : "the QuIcK brOwn fox",
         "zeroIndex" : 0,
         "threeIndex" : 3,
+        "utf8String": "\uD83D\uDC47\uD83D\uDD34 UTF-8 String",
         //
         // from the input, but overwritten by modify
         "trimMe" : "tuna",
@@ -88,7 +91,8 @@
             "basic2": "QuIcK",
             "custom1": "the quick brown",
             "custom2": "fox",
-            "advancedLookupRanges": "the"
+            "advancedLookupRanges": "the",
+            "utf8Substring": "UTF-8 String"
         },
         "trim" :{
             "trimed" : "tuna"
