@@ -63,6 +63,144 @@ public class JoltUtils {
 
 
     /**
+     * Replaces a value recursively from anywhere in a JSON document.
+     * NOTE: mutates its input.
+     *
+     * @param json        the Jackson Object version of the JSON document
+     *                    (contents changed by this call)
+     * @param key         the key where the value should be replaced.
+     * @param valueMappings  map that contains the values to replace the key on json and map should be the same
+     */
+    private static void replaceValueRecursive( Object json, String key, Map<String,Object> valueMappings) {
+        if ( json == null || key == null || valueMappings == null) {
+            return;
+        }
+        if ( json instanceof Map ) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> jsonMap = (Map<String, Object>) json;
+
+            if ( jsonMap.containsKey( key ) ) {
+                Object keyToReplace = jsonMap.get(key);
+                Object valueToReplace = valueMappings.containsKey(keyToReplace)
+                        ? valueMappings.get(keyToReplace) : valueMappings.get("*");
+                if(valueToReplace != null){
+                    jsonMap.replace(key, valueToReplace);
+                }
+                return;
+            }
+            // regardless, recurse down the tree
+            for ( Object node : jsonMap.values() ) {
+                replaceValueRecursive( node, key, valueMappings);
+            }
+        }
+        if ( json instanceof List ) {
+            for ( Object node : (List) json ) {
+                replaceValueRecursive( node, key, valueMappings);
+            }
+        }
+    }
+
+    /**
+     * Receives a Map with the keys and values to replace in a Jackson Object
+     * every key in the params should match with the key that want to replace
+     * value on the Jackson Object.
+     *
+     * @param json              The jackson object where values will be replaced.
+     * @param mappingPaths      It's a map wich contains the keys to find and the fullPaths on the
+     *                          jackson object where the values will be replaced.
+     * @param valuesToReplace   It's a map which contains the keys with 'oldValues' and 'newValues' to be replaced.
+     *
+     * Example json:
+     *
+     * {
+         "L1_A" : {
+            "L2_A" : {
+                "L3_A" : "Good",
+                "L3_B" : "ReplaceThis"
+            },
+            "L2_B" : "l2_b"
+        },
+        "L1_B" : "l1_b",
+
+        "L3_B" : "This not should be replaced"
+       }
+     *
+     * Example mappingPaths:
+     *
+     * { "L3_B" : ["L1_A.L2_A.L3_B"] }
+     *
+     * Example valuesToReplace:
+     *
+     * {
+         "L3_B" : {
+            "ReplaceThis" : "This has been replaced.",
+            "AnotherValueToReplace" : "Another new value"
+         }
+       }
+     */
+    public static void replaceValues(Object json, Map<String, Object> mappingPaths, Map<String, Object> valuesToReplace){
+        if(valuesToReplace != null){
+            for(Map.Entry<String, Object> param : mappingPaths.entrySet()){
+                List<String> paths = (List<String>) param.getValue();
+                Map<String,Object> mappings = (Map<String, Object>) valuesToReplace.get(param.getKey());
+                replaceValuesInPath(json, paths, mappings);
+            }
+
+        }
+    }
+
+    /**
+     *  This method verify if the main object is an Array, then the replaceValuesInPath will be applied each element.
+     *
+     * @param raw       The original json object
+     * @param paths     a list of paths where the replacement will take effect, the last element of each path
+     *                  is the key of the element to be replaced.
+     * @param valueMappings the value mappings is a map which contains the { "oldValueToReplace" : "newValueWhenOldMatch" }
+     */
+    private static void replaceValuesInPath(Object raw, List<String> paths, Map<String,Object> valueMappings){
+        if(raw == null || paths == null || valueMappings == null){
+            return;
+        }
+
+        if(raw instanceof List){
+            List<Map<String, Object>> rawList = (List<Map<String, Object>>)raw;
+            for(Map<String, Object> element : rawList){
+                replaceValuesInPath(element, paths, valueMappings);
+            }
+        }
+        if(raw instanceof Map){
+            replaceValuesInPath((Map<String, Object>)raw, paths, valueMappings);
+        }
+    }
+
+
+    /**
+     * This method navigates in the method till find the parent node where the values will be replaced a path
+     * @param raw       The original json object
+     * @param paths     a list of paths where the replacement will take effect, the last element of each path
+     *                  is the key of the element to be replaced.
+     * @param valueMappings the value mappings is a map which contains the { "oldValueToReplace" : "newValueWhenOldMatch" }
+     */
+    private static void replaceValuesInPath(Map<String, Object> raw, List<String> paths, Map<String,Object> valueMappings){
+        for(String fullPath : paths){
+            String[] splittedPath = fullPath.split("\\.");
+            int length = splittedPath.length;
+            String key = splittedPath[length-1]; // the last element of the path is the key to be replaced
+            Object parentNode = raw;
+            if(length > 1) {
+                for (int i = 0; i < length - 1; i++) {
+                    if (parentNode instanceof List) {
+                        break;
+                    }
+                    // The 'parentNode' is the node where the replace recursive will going to start.
+                    parentNode = ((Map<String, Object>) parentNode).get(splittedPath[i]);
+                }
+            }
+            replaceValueRecursive(parentNode, key, valueMappings);
+        }
+    }
+
+    /**
      * Navigate a JSON tree (made up of Maps and Lists) to "lookup" the value
      *  at a particular path.
      *

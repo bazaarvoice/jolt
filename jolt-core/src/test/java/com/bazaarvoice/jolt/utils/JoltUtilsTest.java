@@ -26,6 +26,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -71,6 +72,31 @@ public class JoltUtilsTest {
 
         jsonSource_empty = JsonUtils.javason(jsonSourceString_empty);
     }
+
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void replaceValues() throws IOException {
+
+        String testFixture = "/json/utils/joltUtils-replaceValues.json";
+
+        List<Map<String, Object>> tests = (List<Map<String, Object>>) JsonUtils.classpathToObject( testFixture );
+
+        for ( Map<String,Object> testUnit : tests ) {
+            Object data = testUnit.get( "input" );
+            Map<String,Object> mappingPaths = (Map<String, Object>)testUnit.get( "mappingPaths" );
+            Map<String,Object> valuesToReplace = (Map<String, Object>)testUnit.get( "valuesToReplace" );
+            Object expected = testUnit.get( "expected" );
+
+            JoltUtils.replaceValues(data, mappingPaths, valuesToReplace);
+
+            Diffy.Result result = diffy.diff( expected, data );
+            if (!result.isEmpty()) {
+                Assert.fail( "Failed.\nhere is a diff:\nexpected: " + JsonUtils.toJsonString(result.expected) + "\n  actual: " + JsonUtils.toJsonString(result.actual));
+            }
+        }
+    }
+
 
     @Test
     public void testIsEmptyJson() {
