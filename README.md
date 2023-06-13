@@ -121,6 +121,10 @@ Note
 
 * it is hosted on a free Google App Engine instance, so it may take a minute to spin up.
 * it validates in input JSON and spec client side.
+* on page refresh you will lose your spec on the Jolt demo, for saving your last performed transformation input, output, and spec in local storage you can use **Jolt Saver** Chrome Extension. It is free and available on the Chrome web store. Please find the link below.
+
+**Jolt Saver**
+: https://chrome.google.com/webstore/detail/jolt-saver/giddplgjhaloidmmhnednabjjdpnpine?hl=en&authuser=3 
 
 ## <a name="Getting_Started"></a> Getting Started
 
