@@ -6,7 +6,7 @@ Jolt Command Line Interface
 The bin/ directory contains a command line interface (CLI) tool for using some of the functionality contained in Jolt. Three sub commands are available:
 
 * transform: given a Jolt transform spec, runs the specified transforms on the input data.
-* diffy: compare to json documents to see if there are any differences.
+* diffy: compare two json documents to see if there are any differences.
 * sort: sort a json document.
 
 The Jolt tool has the ability to accept input from standard in:
