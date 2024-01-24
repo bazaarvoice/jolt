@@ -10,20 +10,20 @@ JSON to JSON transformation library written in Java where the "specification" fo
 
 ## Table of Contents
 
-   1. [Overview](#Overview)
-   2. [Documentation](#Documentation)
-   3. [Shiftr Transform DSL](#Shiftr_Transform_DSL)
-   4. [Demo](#Demo)
-   5. [Getting Started](#Getting_Started)
-   6. [Getting Transform Help](#Getting_Transform_Help)
-   7. [Why Jolt Exists](#Why_Jolt_Exists)
-   8. [Alternatives](#Alternatives)
-   9. [Performance](#Performance)
-   10. [CLI](#CLI)
-   11. [Code Coverage](#Code_Coverage)
-   12. [Release Notes](#Release_Notes)
+   1. [Overview](#overview)
+   2. [Documentation](#documentation)
+   3. [Shiftr Transform DSL](#shiftr-transform-dsl)
+   4. [Demo](#demo)
+   5. [Getting Started](#getting-started)
+   6. [Getting Transform Help](#getting-transform-help)
+   7. [Why Jolt Exists](#why-jolt-exists)
+   8. [Alternatives](#alternatives)
+   9. [Performance](#performance)
+   10. [CLI](#cli)
+   11. [Code Coverage](#code-coverage)
+   12. [Release Notes](#release-notes)
 
-## <a name="Overview"></a> Overview
+## Overview
 
 Jolt :
 
@@ -50,7 +50,7 @@ To do data manipulation, you will need to write Java code.   If you write your J
 
 The out-of-the-box Jolt transforms should be able to do most of your structural transformation, with custom Java Transforms implementing your data manipulation.
 
-## <a name="Documentation"></a> Documentation
+## Documentation
 
 Jolt [Slide Deck](https://docs.google.com/presentation/d/1sAiuiFC4Lzz4-064sg1p8EQt2ev0o442MfEbvrpD1ls/edit?usp=sharing) : covers motivation, development, and transforms.
 
@@ -82,7 +82,7 @@ Object output = chainr.transform( input );
 return output;
 ```
 
-### <a name="Shiftr_Transform_DSL"></a> Shiftr Transform DSL
+### Shiftr Transform DSL
 
 The Shiftr transform generally does most of the "heavy lifting" in the transform chain.
 To see the Shiftr DSL in action, please look at our unit tests ([shiftr tests](https://github.com/bazaarvoice/jolt/tree/master/jolt-core/src/test/resources/json/shiftr)) for nice bite sized transform examples, and read the extensive Shiftr [javadoc](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/main/java/com/bazaarvoice/jolt/Shiftr.java).
@@ -112,7 +112,7 @@ To learn the Shiftr DSL, examine "input" and "output" json, get an understanding
 For reference, [this](https://github.com/bazaarvoice/jolt/blob/master/jolt-core/src/test/resources/json/shiftr/firstSample.json) was the very first test we wrote.
 
 
-## <a name="Demo"></a> Demo
+## Demo
 
 There is a demo available at [jolt-demo.appspot.com](http://jolt-demo.appspot.com/).
 You can paste in JSON input data and a Spec, and it will post the data to server and run the transform.
@@ -122,17 +122,17 @@ Note
 * it is hosted on a free Google App Engine instance, so it may take a minute to spin up.
 * it validates in input JSON and spec client side.
 
-## <a name="Getting_Started"></a> Getting Started
+## Getting Started
 
 Getting started code wise has its [own doc](gettingStarted.md).
 
-## <a name="Getting_Transform_Help"></a> Getting Transform Help
+## Getting Transform Help
 
 If you can't get a transform working and you need help, create and Issue in Jolt (for now).
 
 Make sure you include what your "input" is, and what you want your "output" to be.
 
-## <a name="Why_Jolt_Exists"></a> Why Jolt Exists
+## Why Jolt Exists
 
 Aside from writing your own custom code to do a transform, there are two general approaches to doing a JSON to JSON transforms in Java.
 
@@ -146,7 +146,7 @@ With this approach you are working from the output format backwards to the input
 Eg, the structure of your template will be dictated by the output JSON format, and you will end up coding a parallel tree walk of the input data and the output format in your template.
 Jolt works forward from the input data to the output format which is simpler, and it does the parallel tree walk for you.
 
-## <a name="Alternatives"></a> Alternatives
+## Alternatives
 
 Being in the Java JSON processing "space", here are some other interesting JSON manipulation tools to look at / consider :
 
@@ -154,7 +154,7 @@ Being in the Java JSON processing "space", here are some other interesting JSON 
 * [JsonPath](https://github.com/jayway/JsonPath) - Java : Extract data from JSON using XPATH like syntax.
 * [JsonSurfer](https://github.com/jsurfer/JsonSurfer) - Java : Streaming JsonPath processor dedicated to processing big and complicated JSON data.
 
-## <a name="Performance"></a> Performance
+## Performance
 
 The primary goal of Jolt was to improve "developer speed" by providing the ability to have a declarative rather than imperative transforms.
 That said, Jolt should have a better runtime than the alternatives listed above.
@@ -171,11 +171,11 @@ Two things to be aware of :
 1. Jolt is not "stream" based, so if you have a very large Json document to transform you need to have enough memory to hold it.
 2. The transform process will create and discard a lot of objects, so the garbage collector will have work to do.
 
-## <a name="CLI"></a> Jolt CLI
+## Jolt CLI
 
 Jolt Transforms and tools can be run from the command line. Command line interface doc [here](cli/README.md).
 
-## <a name="Code_Coverage"></a> Code Coverage
+## Code Coverage
 
 [![Build Status](https://secure.travis-ci.org/bazaarvoice/jolt.png)](http://travis-ci.org/bazaarvoice/jolt)
 
@@ -188,6 +188,6 @@ open jolt-core/target/site/cobertura/index.html
 
 Currently, for the jolt-core artifact, code coverage is at 89% line, and 83% branch.
 
-## <a name="Release_Notes"></a> Release Notes
+## Release Notes
 
 [Versions and Release Notes available here](https://github.com/bazaarvoice/jolt/releases).
