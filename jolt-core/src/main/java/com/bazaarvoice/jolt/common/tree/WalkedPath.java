@@ -54,8 +54,8 @@ public class WalkedPath extends ArrayList<PathStep> {
         return super.add( new PathStep( treeRef, matchedElement ) );
     }
 
-    public void removeLast() {
-        remove(size() - 1);
+    public PathStep removeLast() {
+        return remove(size() - 1);
     }
 
     /**
