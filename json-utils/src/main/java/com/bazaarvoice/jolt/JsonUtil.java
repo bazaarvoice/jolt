@@ -82,7 +82,7 @@ public interface JsonUtil {
     String toPrettyJsonString( Object obj );
 
     /**
-     * Makes a deep copy of a Map<String, Object> object by converting it to a String and then
+     * Makes a deep copy of a {@link Map<String,Object>} object by converting it to a String and then
      * back onto stock JSON objects.
      *
      * Leverages Serialization

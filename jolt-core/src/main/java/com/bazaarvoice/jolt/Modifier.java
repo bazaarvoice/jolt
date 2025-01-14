@@ -22,6 +22,7 @@ import com.bazaarvoice.jolt.common.tree.WalkedPath;
 import com.bazaarvoice.jolt.exception.SpecException;
 import com.bazaarvoice.jolt.modifier.OpMode;
 import com.bazaarvoice.jolt.modifier.TemplatrSpecBuilder;
+import com.bazaarvoice.jolt.modifier.function.Dates;
 import com.bazaarvoice.jolt.modifier.function.Function;
 import com.bazaarvoice.jolt.modifier.function.Lists;
 import com.bazaarvoice.jolt.modifier.function.Math;
@@ -86,6 +87,11 @@ public abstract class Modifier implements SpecDriven, ContextualTransform {
         STOCK_FUNCTIONS.put( "elementAt", new Lists.elementAt() );
         STOCK_FUNCTIONS.put( "toList", new Lists.toList() );
         STOCK_FUNCTIONS.put( "sort", new Lists.sort() );
+
+        STOCK_FUNCTIONS.put( "fromEpochMilli", new Dates.fromEpochMilli() );
+        STOCK_FUNCTIONS.put( "toEpochMilli", new Dates.toEpochMilli() );
+        STOCK_FUNCTIONS.put( "now", new Dates.now());
+
     }
 
     private final ModifierCompositeSpec rootSpec;
