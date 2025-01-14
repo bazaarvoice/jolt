@@ -12,7 +12,7 @@
 
     <groupId>com.bazaarvoice.jolt</groupId>
     <artifactId>jolt-parent</artifactId>
-    <version>0.1.8-SNAPSHOT</version>
+    <version>0.1.9-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Jolt Parent</name>
@@ -33,7 +33,7 @@
         <javax-inject.version>1</javax-inject.version>
 
         <!-- module dependencies -->
-        <jackson.version>2.13.2</jackson.version>
+        <jackson.version>2.13.4</jackson.version>
         <guice.version>4.1.0</guice.version>
         <argparse4j.version>0.4.4</argparse4j.version>
 
