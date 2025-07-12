@@ -29,7 +29,7 @@
         <java.minimum.version>1.8</java.minimum.version>
 
         <!-- core -->
-        <commons-lang3.version>3.4</commons-lang3.version>
+        <commons-lang3.version>3.18.0</commons-lang3.version>
         <javax-inject.version>1</javax-inject.version>
 
         <!-- module dependencies -->
