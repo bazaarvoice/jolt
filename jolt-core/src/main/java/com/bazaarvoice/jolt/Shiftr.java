@@ -322,7 +322,7 @@ import java.util.Map;
  *  Thus the '@' wildcard is the mean "copy the value of the data at this level in the tree, to the output".
  *
  *  Advanced '@' sign wildcard.
- *  The format is lools like "@(3,title)", where
+ *  The format looks like "@(3,title)", where
  *    "3" means go up the tree 3 levels and then lookup the key
  *    "title" and use the value at that key.
  *
