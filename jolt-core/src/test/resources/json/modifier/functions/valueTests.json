@@ -1,37 +1,33 @@
 {
     "input": {
-
         "p": "",
         "q": "",
         "r": "",
-
         "x": null,
         "y": null,
         "z": null
     },
-
     "spec": {
         "a": "=isPresent",
         "b": "=notNull",
         "c": "=isNull",
-
         "p": "=isPresent",
         "q": "=notNull",
         "r": "=isNull",
-
         "x": "=isPresent",
-        "y": [ "=notNull", 3 ],
+        "y": [
+            "=notNull",
+            3
+        ],
         "z": "=isNull"
     },
-
     "context": {},
-
     "OVERWRITR": {
-        "p" : "",
-        "q" : "",
-        "r" : "",
-        "x" : null,
-        "y" : 3,
-        "z" : null
+        "p": "",
+        "q": "",
+        "r": "",
+        "x": null,
+        "y": 3,
+        "z": null
     }
 }

@@ -15,7 +15,6 @@
             }
         }
     },
-
     "spec": {
         "\\@rating": {
             "\\$primary": {
@@ -27,12 +26,11 @@
             }
         }
     },
-
     "expected": {
-        "data" : {
-            "$rating" : 4,
-            "$rating-&quality" : 3,
-            "$rating-#sharpness" : 5
+        "data": {
+            "$rating": 4,
+            "$rating-&quality": 3,
+            "$rating-#sharpness": 5
         }
     }
 }

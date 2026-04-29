@@ -11,10 +11,8 @@
             }
         }
     },
-
     "spec": {
     },
-
     "expected": {
         "rating": {
             "primary": {

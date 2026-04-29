@@ -1,52 +1,51 @@
 {
     "input": {
-        "clients" : {
-            "Acme" : {
+        "clients": {
+            "Acme": {
                 "clientId": "Acme",
-                "index" : 1
+                "index": 1
             },
-            "Axe" : {
+            "Axe": {
                 "clientId": "AXE",
-                "index" : 0
+                "index": 0
             },
-            "Bob's Burgers" : {
+            "Bob's Burgers": {
                 "clientId": "BBurgers",
-
                 // the idea here is that index is non-numeric and non-coercible to numeric
                 // in this case Shiftr will just ignore the output, thus preventing "BBurgers" from getting to the output
-                "index" : "abc"
+                "index": "abc"
             },
-            "PhoVan" : {
+            "PhoVan": {
                 "clientId": "pho",
-
                 // the idea here is that the index is a String, but is coercible to numeric
-                "index" : "3"
+                "index": "3"
             },
-            "Weyland-Yutani" : {
+            "Weyland-Yutani": {
                 "clientId": "Walmart",
-
                 // the idea here is that negative index values get ignored
-                "index" : -1
+                "index": -1
             },
-            "UmbrellaCorporation" : {
+            "UmbrellaCorporation": {
                 "clientId": "Monsanto",
-
                 // the idea here is that negative index values get ignored
-                "index" : "-2"
+                "index": "-2"
             }
         }
     },
-
     "spec": {
-        "clients" : {
+        "clients": {
             "*": {
                 // test the abilyt to lookup the numeric index using a @ / Transpose operator, aka [@(1,index)]
                 "clientId": "clientIdArray[@(1,index)]"
             }
         }
     },
-
     "expected": {
-        "clientIdArray" : [ "AXE", "Acme", null, "pho" ]
+        "clientIdArray": [
+            "AXE",
+            "Acme",
+            null,
+            "pho"
+        ]
     }
 }

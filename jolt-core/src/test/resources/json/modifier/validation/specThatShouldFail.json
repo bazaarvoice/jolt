@@ -95,7 +95,7 @@
             }
         }
     },
-        {
+    {
         "thumbnail": {
             "[1]": {
                 "label": "^photo.label.main"
@@ -105,7 +105,8 @@
             },
             "[2]": {
                 "label": "aux photo"
-            }        }
+            }
+        }
     },
     {
         "thumbnail": {

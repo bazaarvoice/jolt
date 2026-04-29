@@ -1,0 +1,14 @@
+{
+  "input": {
+    "photos": null
+  },
+  "spec": {
+    "photos": {
+      "url": "ONE",
+      "caption": "MANY"
+    }
+  },
+  "expected": {
+    "photos": null
+  }
+}

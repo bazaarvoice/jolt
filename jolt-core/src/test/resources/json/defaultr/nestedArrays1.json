@@ -1,43 +1,41 @@
 {
-    "input" :
+    "input": [
         [
-            [
-                {
-                    "order" : {
-                        "id" : "OD1"
-                    }
-                },
-                {
-                    "order" : {
-                        "id" : "OD2"
-                    }
+            {
+                "order": {
+                    "id": "OD1"
                 }
-            ]
-        ],
-    "spec" : {
-        "*[]" : {
-            "*" : {
-                "order" : {
-                    "url" : "http://default.com"
+            },
+            {
+                "order": {
+                    "id": "OD2"
+                }
+            }
+        ]
+    ],
+    "spec": {
+        "*[]": {
+            "*": {
+                "order": {
+                    "url": "http://default.com"
                 }
             }
         }
     },
-    "expected" :
+    "expected": [
         [
-            [
-                {
-                    "order" : {
-                        "id" : "OD1",
-                        "url" : "http://default.com"
-                    }
-                },
-                {
-                    "order" : {
-                        "id" : "OD2",
-                        "url" : "http://default.com"
-                    }
+            {
+                "order": {
+                    "id": "OD1",
+                    "url": "http://default.com"
                 }
-            ]
+            },
+            {
+                "order": {
+                    "id": "OD2",
+                    "url": "http://default.com"
+                }
+            }
         ]
+    ]
 }

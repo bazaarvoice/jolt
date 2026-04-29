@@ -1,7 +1,6 @@
 {
     "input": {
     },
-
     "spec": {
         "Rating": 3,
         "RatingRange": 5,
@@ -26,7 +25,6 @@
                 "Range": 3,
                 "Value": 2
             },
-
             "quality|value": {
                 "Range": 7,
                 "MaxLabel": "Great",
@@ -43,7 +41,6 @@
             }
         }
     },
-
     "expected": {
         "Rating": 3,
         "RatingRange": 5,

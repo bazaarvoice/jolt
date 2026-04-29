@@ -4,7 +4,6 @@
             "a": "a",
             "b": "b",
             "c": "c",
-
             "p": null,
             "q": null,
             "r": null
@@ -17,17 +16,14 @@
             // c missing
         }
     },
-
     "spec": {
         "data": {
             "+a": "aa",
             "~b": "bb",
             "_c": "cc",
-
             "+p": "pp",
             "~q": "qq",
             "_r": "rr",
-
             "+x": "xx",
             "~y": "yy",
             "_z": "zz"
@@ -38,63 +34,59 @@
             "c": "cc"
         }
     },
-
-    "context": { },
-
+    "context": {},
     "OVERWRITR": {
         "data": {
-            "a" : "aa",
-            "b" : "b",
-            "c" : "c",
-            "p" : "pp",
-            "q" : "qq",
-            "r" : null,
-            "x" : "xx",
-            "y" : "yy",
-            "z" : "zz"
+            "a": "aa",
+            "b": "b",
+            "c": "c",
+            "p": "pp",
+            "q": "qq",
+            "r": null,
+            "x": "xx",
+            "y": "yy",
+            "z": "zz"
         },
-        "data2" : {
-            "a" : "aa",
-            "b" : "bb",
-            "c" : "cc"
+        "data2": {
+            "a": "aa",
+            "b": "bb",
+            "c": "cc"
         }
     },
-
     "DEFAULTR": {
         "data": {
-            "a" : "aa",
-            "b" : "b",
-            "c" : "c",
-            "p" : "pp",
-            "q" : "qq",
-            "r" : null,
-            "x" : "xx",
-            "y" : "yy",
-            "z" : "zz"
+            "a": "aa",
+            "b": "b",
+            "c": "c",
+            "p": "pp",
+            "q": "qq",
+            "r": null,
+            "x": "xx",
+            "y": "yy",
+            "z": "zz"
         },
-        "data2" : {
-            "a" : "a",
-            "b" : "bb",
-            "c" : "cc"
+        "data2": {
+            "a": "a",
+            "b": "bb",
+            "c": "cc"
         }
     },
-
     "DEFINR": {
         "data": {
-            "a" : "aa",
-            "b" : "b",
-            "c" : "c",
-            "p" : "pp",
-            "q" : "qq",
-            "r" : null,
-            "x" : "xx",
-            "y" : "yy",
-            "z" : "zz"
+            "a": "aa",
+            "b": "b",
+            "c": "c",
+            "p": "pp",
+            "q": "qq",
+            "r": null,
+            "x": "xx",
+            "y": "yy",
+            "z": "zz"
         },
-        "data2" : {
-            "a" : "a",
-            "b" : null,
-            "c" : "cc"
+        "data2": {
+            "a": "a",
+            "b": null,
+            "c": "cc"
         }
     }
 }

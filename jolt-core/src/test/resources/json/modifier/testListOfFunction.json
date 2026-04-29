@@ -4,42 +4,62 @@
             "a": null,
             "b": null,
             "c": null,
-
-            "p" : 0,
-            "q" : 0,
-            "r" : 0
+            "p": 0,
+            "q": 0,
+            "r": 0
 
             // xyz missing
         }
     },
-
     "spec": {
         "data": {
-            "+a": [ "=noop", "=min(1 , 2 , 3)" ],
-            "~b": [ "=notNull", "1" ],
-            "_c": [ "=min(1 , 2 , 3)" ],
-
-            "_p": [ "=isNull", "=min(1,2,3,@(1,&0))" ],
-            "+q": [ "=max('a','b','c')", "@(1,&0)" ],
-            "~r": [ "=toDouble" ],
-
-            "~x": [ "=notNull", "=max(1,2,3)" ],
-            "_y": [ "=notNull", "=toDouble" ],
-            "+z": [ "=nonnull", "=min('a','b','c')", "=toList" ]
+            "+a": [
+                "=noop",
+                "=min(1 , 2 , 3)"
+            ],
+            "~b": [
+                "=notNull",
+                "1"
+            ],
+            "_c": [
+                "=min(1 , 2 , 3)"
+            ],
+            "_p": [
+                "=isNull",
+                "=min(1,2,3,@(1,&0))"
+            ],
+            "+q": [
+                "=max('a','b','c')",
+                "@(1,&0)"
+            ],
+            "~r": [
+                "=toDouble"
+            ],
+            "~x": [
+                "=notNull",
+                "=max(1,2,3)"
+            ],
+            "_y": [
+                "=notNull",
+                "=toDouble"
+            ],
+            "+z": [
+                "=nonnull",
+                "=min('a','b','c')",
+                "=toList"
+            ]
         }
     },
-
-    "context": { },
-
+    "context": {},
     "OVERWRITR": {
         "data": {
-            "a" : 1,
-            "b" : "1",
-            "c" : null,
-            "p" : 0,
-            "q" : 0,
-            "r" : 0,
-            "x" : 3
+            "a": 1,
+            "b": "1",
+            "c": null,
+            "p": 0,
+            "q": 0,
+            "r": 0,
+            "x": 3
         }
     }
 }

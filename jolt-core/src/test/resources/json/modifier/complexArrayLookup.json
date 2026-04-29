@@ -103,7 +103,8 @@
                     "DimensionLabel": "Gender",
                     "Id": "Gender"
                 }
-            }]
+            }
+        ]
     },
     "context": {
         "cdvs": {

@@ -46,7 +46,6 @@
             }
         ]
     },
-
     "spec": {
         // In this test / example, we want to change some of the LHS keys in this Json document.
         // To accomplish this we escape the leading '@' chars both as spec matches (left hand side)
@@ -56,14 +55,13 @@
             "ingredient": "&1.Inputs",
             "yield": "\\@context.Makes",
             // pass the rest thru
-            "*" : "&1.&"
+            "*": "&1.&"
         },
         "name": "Name",
         "ingredient": "Inputs",
         "yield": "Makes",
-        "*" : "&"
+        "*": "&"
     },
-
     "expected": {
         "@context": {
             "Name": "http://rdf.data-vocabulary.org/#name",

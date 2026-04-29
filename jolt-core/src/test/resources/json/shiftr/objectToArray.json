@@ -11,13 +11,11 @@
             }
         }
     },
-
     "spec": {
         "rating": {
             "*": ""
         }
     },
-
     "expected": [
         {
             "value": 3,

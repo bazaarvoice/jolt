@@ -6,11 +6,10 @@
         "[yield": "open array",
         "[]yield": "full array",
         "]yield": "back array",
-        "*" : "star",
-        "#" : "hash",
-        "(" : "left paren"
+        "*": "star",
+        "#": "hash",
+        "(": "left paren"
     },
-
     "spec": {
         // TEST escaping all the things when they are the first char(s) of the spec LHS and RHS
         "\\@context": "\\@A",
@@ -19,18 +18,17 @@
         "\\[yield": "\\[D",
         "\\[\\]yield": "\\[\\]E",
         "\\]yield": "\\]F",
-        "\\*" : "\\*G",
-        "\\#" : "\\#H"
+        "\\*": "\\*G",
+        "\\#": "\\#H"
     },
-
     "expected": {
-        "@A" : "atSymbol",
-        "$B" : "Mojito",
-        "&C" : "mint",
+        "@A": "atSymbol",
+        "$B": "Mojito",
+        "&C": "mint",
         "[D": "open array",
-        "[]E" : "full array",
-        "]F" : "back array",
-        "*G" : "star",
-        "#H" : "hash"
+        "[]E": "full array",
+        "]F": "back array",
+        "*G": "star",
+        "#H": "hash"
     }
 }

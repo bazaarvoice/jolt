@@ -1,22 +1,23 @@
 {
     "input": {
-        "data" : [
+        "data": [
             {
                 "clientId": "1234",
                 "data": "Acme"
             }
         ]
     },
-
     "spec": {
-        "*" : {  // catch the data
-            "*": {  // for all array elements
-                "@&1": "CLIENTNAME" // match the key "data" based on what the key was two levels up
+        "*": {
+            // catch the data
+            "*": {
+                // for all array elements
+                "@&1": "CLIENTNAME"
+                // match the key "data" based on what the key was two levels up
             }
         }
     },
-
     "expected": {
-        "CLIENTNAME" : "Acme"
+        "CLIENTNAME": "Acme"
     }
 }

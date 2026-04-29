@@ -1,33 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.bazaarvoice.jolt</groupId>
-        <artifactId>jolt-parent</artifactId>
-        <version>0.1.9-SNAPSHOT</version>
+        <groupId>io.github.jolt-community.jolt</groupId>
+        <artifactId>jolt-community-parent</artifactId>
+        <version>1.2.0</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>jolt-complete</artifactId>
+    <artifactId>jolt-community-complete</artifactId>
     <name>Jolt Complete</name>
     <packaging>jar</packaging>
 
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
     <dependencies>
         <dependency>
-            <groupId>com.bazaarvoice.jolt</groupId>
-            <artifactId>jolt-core</artifactId>
+            <groupId>io.github.jolt-community.jolt</groupId>
+            <artifactId>jolt-community-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.bazaarvoice.jolt</groupId>
-            <artifactId>json-utils</artifactId>
+            <groupId>io.github.jolt-community.jolt</groupId>
+            <artifactId>json-community-utils</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

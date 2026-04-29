@@ -39,7 +39,6 @@
             }
         ]
     },
-
     // We aren't radically transforming the data here, just changing the case of the keys.
     // This illustrates the usage of the '[]' and '&' operators, to put all the content in the right place, aka maintain order
     "spec": {
@@ -56,7 +55,6 @@
             }
         }
     },
-
     "expected": {
         "photos": [
             {
@@ -85,5 +83,4 @@
             }
         ]
     }
-
 }

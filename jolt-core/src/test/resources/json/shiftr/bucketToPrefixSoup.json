@@ -1,25 +1,22 @@
 {
-    "input" : {
-        "Rating":1,
+    "input": {
+        "Rating": 1,
         // Given input all the entries below a field are the same type
         // We want to turn that into prefixed data
-        "SecondaryRatings":{
-            "Design":4,
-            "Price":2,
-            "RatingDimension3":1
+        "SecondaryRatings": {
+            "Design": 4,
+            "Price": 2,
+            "RatingDimension3": 1
         }
     },
-
-    "spec" : {
-        "Rating" : "rating-primary",
-
-        "SecondaryRatings" : {
-            "*" : "rating-&"
+    "spec": {
+        "Rating": "rating-primary",
+        "SecondaryRatings": {
+            "*": "rating-&"
         }
     },
-
-    "expected" : {
-        "rating-primary":1,
+    "expected": {
+        "rating-primary": 1,
         "rating-Design": 4,
         "rating-Price": 2,
         "rating-RatingDimension3": 1

@@ -1,34 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.bazaarvoice.jolt</groupId>
-        <artifactId>jolt-parent</artifactId>
-        <version>0.1.9-SNAPSHOT</version>
+        <groupId>io.github.jolt-community.jolt</groupId>
+        <artifactId>jolt-community-parent</artifactId>
+        <version>1.2.0</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>jolt-cli</artifactId>
+    <artifactId>jolt-community-cli</artifactId>
 
     <name>Jolt Command Line Tools</name>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
 
     <dependencies>
 
         <dependency>
             <groupId>net.sourceforge.argparse4j</groupId>
             <artifactId>argparse4j</artifactId>
+            <version>${argparse4j.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.bazaarvoice.jolt</groupId>
-            <artifactId>jolt-complete</artifactId>
+            <groupId>io.github.jolt-community.jolt</groupId>
+            <artifactId>jolt-community-complete</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -39,7 +49,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>1.6</version>
+                <version>${maven-shade-plugin.version}</version>
                 <configuration>
                     <createDependencyReducedPom>true</createDependencyReducedPom>
                     <filters>
@@ -61,9 +71,11 @@
                         </goals>
                         <configuration>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.bazaarvoice.jolt.JoltCli</mainClass>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>io.joltcommunity.jolt.JoltCli</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

@@ -13,7 +13,6 @@
             }
         }
     },
-
     "spec": {
         "rating": {
             "*": {
@@ -22,7 +21,6 @@
             }
         }
     },
-
     "expected": {
         "ratings": {
             "primary": {

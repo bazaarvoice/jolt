@@ -1,36 +1,49 @@
 {
-    "input" : {
-        "tuna-a" : "A",
-        "tuna-b" : "B",
-
+    "input": {
+        "tuna-a": "A",
+        "tuna-b": "B",
         "foo-a": "bar",
-
-        "axis-x" : "horizontal"
+        "axis-x": "horizontal"
     },
-
-    "spec" : {
+    "spec": {
         "foo-*": "listOfFooValues[]",
-
-        "tuna-*" : {
-            "@" : "listOfTunaValues[]",
-            "$(0,1)" : [ "listOfTunaIds[]", "sillyListOfTunaIds[].id" ]
+        "tuna-*": {
+            "@": "listOfTunaValues[]",
+            "$(0,1)": [
+                "listOfTunaIds[]",
+                "sillyListOfTunaIds[].id"
+            ]
         },
-
-        "axis-*" : {
-            "@" : "listOfAxisValues[]",
-            "$(0,1)" : "listOfAxisIds[]"
+        "axis-*": {
+            "@": "listOfAxisValues[]",
+            "$(0,1)": "listOfAxisIds[]"
         }
     },
-
-    "expected" : {
-        "listOfFooValues" : [ "bar" ],
-
-        "listOfTunaValues" : [ "A", "B" ],
-        "listOfTunaIds"    : [ "a", "b" ],
-
-        "sillyListOfTunaIds" : [ { "id" : "a" }, { "id" : "b" } ],
-
-        "listOfAxisValues" : [ "horizontal" ],
-        "listOfAxisIds"    : [ "x" ]
+    "expected": {
+        "listOfFooValues": [
+            "bar"
+        ],
+        "listOfTunaValues": [
+            "A",
+            "B"
+        ],
+        "listOfTunaIds": [
+            "a",
+            "b"
+        ],
+        "sillyListOfTunaIds": [
+            {
+                "id": "a"
+            },
+            {
+                "id": "b"
+            }
+        ],
+        "listOfAxisValues": [
+            "horizontal"
+        ],
+        "listOfAxisIds": [
+            "x"
+        ]
     }
 }

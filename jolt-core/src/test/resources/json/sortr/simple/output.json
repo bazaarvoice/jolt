@@ -1,15 +1,16 @@
 {
     "~id": 1234,
-    "" : "damn empty string",
+    "": "damn empty string",
     "bar": 14,
     "baz": 15,
     "foo": 3,
-    "list" : [
-        "zz", "aa",
+    "list": [
+        "zz",
+        "aa",
         {
-            "~id" : "ID-123",
-            "~zed" : "zed",
-            "b" : "b",
+            "~id": "ID-123",
+            "~zed": "zed",
+            "b": "b",
             "z": "z"
         }
     ],

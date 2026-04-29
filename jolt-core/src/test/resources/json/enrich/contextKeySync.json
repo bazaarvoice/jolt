@@ -1,0 +1,39 @@
+{
+    "spec": [
+        {
+            "operation": "enrich",
+            "spec": {
+                "executionMode": "sync",
+                "enrichments": [
+                    {
+                        "path": "customer.id",
+                        "outputPath": "customer.profile",
+                        "contextKey": "lookupBean",
+                        "method": "describeViaBean"
+                    }
+                ]
+            }
+        }
+    ],
+    "input": {
+        "customer": {
+            "id": "cust-123"
+        }
+    },
+    "context": {
+        "tenant": "acme"
+    },
+    "helperContextKeys": [
+        "lookupBean"
+    ],
+    "expected": {
+        "customer": {
+            "id": "cust-123",
+            "profile": {
+                "original": "cust-123",
+                "inputType": "LinkedHashMap",
+                "tenant": "acme"
+            }
+        }
+    }
+}

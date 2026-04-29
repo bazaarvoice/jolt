@@ -11,7 +11,6 @@
             "comment": "anything not in spec is a pass-through"
         }
     },
-
     "spec": {
         "thumbnail": {
             "label": "^photo.label.thumbnail",
@@ -19,9 +18,9 @@
             "special": "\\^escaped value"
         },
         "context": "^",
-        "*WithMatch": "@(1,&0)" // this is an explicit pass through
+        "*WithMatch": "@(1,&0)"
+        // this is an explicit pass through
     },
-
     "context": {
         "photo": {
             "label": {
@@ -29,7 +28,6 @@
             }
         }
     },
-
     "OVERWRITR": {
         "thumbnail": {
             "Url": "http://test.com/0001/1234/photoThumb.jpg",
@@ -52,50 +50,48 @@
             }
         }
     },
-
     "DEFAULTR": {
-        "thumbnail" : {
-            "Url" : "http://test.com/0001/1234/photoThumb.jpg",
-            "Id" : "thumbnail",
-            "label" : "thumbnail photo",
-            "default" : "defaultValue",
-            "special" : "\\^escaped value"
+        "thumbnail": {
+            "Url": "http://test.com/0001/1234/photoThumb.jpg",
+            "Id": "thumbnail",
+            "label": "thumbnail photo",
+            "default": "defaultValue",
+            "special": "\\^escaped value"
         },
-        "passThroughWithMatch" : {
-            "comment" : "matched in spec but marked to be passThrough with @"
+        "passThroughWithMatch": {
+            "comment": "matched in spec but marked to be passThrough with @"
         },
-        "passThroughWithoutMatch" : {
-            "comment" : "anything not in spec is a pass-through"
+        "passThroughWithoutMatch": {
+            "comment": "anything not in spec is a pass-through"
         },
-        "context" : {
-            "photo" : {
-                "label" : {
-                    "thumbnail" : "thumbnail photo"
+        "context": {
+            "photo": {
+                "label": {
+                    "thumbnail": "thumbnail photo"
                 }
             }
         }
     },
     "DEFINR": {
-        "thumbnail" : {
-            "Url" : "http://test.com/0001/1234/photoThumb.jpg",
-            "Id" : "thumbnail",
-            "label" : "thumbnail photo",
-            "default" : "defaultValue",
-            "special" : "\\^escaped value"
+        "thumbnail": {
+            "Url": "http://test.com/0001/1234/photoThumb.jpg",
+            "Id": "thumbnail",
+            "label": "thumbnail photo",
+            "default": "defaultValue",
+            "special": "\\^escaped value"
         },
-        "passThroughWithMatch" : {
-            "comment" : "matched in spec but marked to be passThrough with @"
+        "passThroughWithMatch": {
+            "comment": "matched in spec but marked to be passThrough with @"
         },
-        "passThroughWithoutMatch" : {
-            "comment" : "anything not in spec is a pass-through"
+        "passThroughWithoutMatch": {
+            "comment": "anything not in spec is a pass-through"
         },
-        "context" : {
-            "photo" : {
-                "label" : {
-                    "thumbnail" : "thumbnail photo"
+        "context": {
+            "photo": {
+                "label": {
+                    "thumbnail": "thumbnail photo"
                 }
             }
         }
     }
-
 }

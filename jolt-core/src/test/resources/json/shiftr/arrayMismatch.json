@@ -4,11 +4,9 @@
     //   array mismatches
 
     "input": {
-
         "id": "reviewId",
         "text": "This is a review.",
-        "rating" : 5,
-
+        "rating": 5,
         "statistics": {
             "id": "statsId",
             "feedbackCount": "10"
@@ -20,28 +18,23 @@
             }
         ]
     },
-
     "spec": {
-
-        "id" : "Id",
-        "text" : "ReviewText",
-        "rating" : "Rating",
-
-        "statistics" : {
-            "0" : {
-                "feedbackCount" : "FeedbackCount"
+        "id": "Id",
+        "text": "ReviewText",
+        "rating": "Rating",
+        "statistics": {
+            "0": {
+                "feedbackCount": "FeedbackCount"
             }
         },
-        "author" : {
-            "id" : "AuthorId",
-            "name" : "AuthorName"
+        "author": {
+            "id": "AuthorId",
+            "name": "AuthorName"
         }
     },
-
     "expected": {
-
-        "Id" : "reviewId",
-        "ReviewText" : "This is a review.",
-        "Rating" : 5
+        "Id": "reviewId",
+        "ReviewText": "This is a review.",
+        "Rating": 5
     }
 }

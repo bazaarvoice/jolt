@@ -5,13 +5,11 @@
             "clientName": "Acme"
         }
     },
-
     "spec": {
         "data": {
             "@clientName": "bookMap.@clientId"
         }
     },
-
     "expected": {
         "bookMap": {
             "1234": "Acme"

@@ -11,15 +11,16 @@
             }
         }
     },
-
     "comment0": "Shiftr was weak on transforming Maps to lists.",
     "comment1": "We introduced the # to the RHS so we can do it.",
     "comment2": "It means each node above creates an integer index.",
-
     "spec": {
         "cdvHisto": {
             "*": {
-                "$": [ "ContextDataDistribution.&1.Id", "ContextDataDistribution.&1.Label" ],
+                "$": [
+                    "ContextDataDistribution.&1.Id",
+                    "ContextDataDistribution.&1.Label"
+                ],
                 "*": {
                     "@": "ContextDataDistribution.&2.Values.[#2].Count",
                     "$": "ContextDataDistribution.&2.Values.[#2].Value"
@@ -27,7 +28,6 @@
             }
         }
     },
-
     "expected": {
         "ContextDataDistribution": {
             "Expertise": {

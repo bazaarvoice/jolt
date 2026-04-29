@@ -1,5 +1,8 @@
 {
-    "TagDistributionOrder": [ "ProsGames", "ConsGames" ],
+    "TagDistributionOrder": [
+        "ProsGames",
+        "ConsGames"
+    ],
     "TagDistribution": {
         "ProsGames": {
             "Id": "ProsGames",

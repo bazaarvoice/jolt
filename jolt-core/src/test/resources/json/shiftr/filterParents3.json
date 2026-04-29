@@ -28,7 +28,6 @@
             }
         ]
     },
-
     "spec": {
         "Planet": {
             "*": {
@@ -42,21 +41,20 @@
             }
         }
     },
-
     "expected": {
-        "PlanetsWithMoons" : [
+        "PlanetsWithMoons": [
             {
-                "Satellite" : {
-                    "PhysicalData" : {
-                        "pd1" : "pdv1",
-                        "pd2" : "pdv2"
+                "Satellite": {
+                    "PhysicalData": {
+                        "pd1": "pdv1",
+                        "pd2": "pdv2"
                     },
-                    "ChemicalData" : {
-                        "cd1" : "cdv1",
-                        "cd2" : "cdv2"
+                    "ChemicalData": {
+                        "cd1": "cdv1",
+                        "cd2": "cdv2"
                     }
                 },
-                "Name" : "Earth"
+                "Name": "Earth"
             }
         ]
     }

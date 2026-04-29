@@ -8,7 +8,6 @@
             "caption": "Review all the things."
         }
     ],
-
     "spec": {
         "*": {
             "url": "http://default.com",
@@ -19,7 +18,6 @@
             "caption": "The Best"
         }
     },
-
     "expected": [
         {
             "url": "http://slashdot.org",

@@ -1,31 +1,29 @@
 {
     "input": {
-        "splitMe" : "split me",
-
+        "splitMe": "split me",
         "string": "the QuIcK brOwn fox",
-
-        "intputMapShouldNotSplit" : { "a" : "b" }
+        "intputMapShouldNotSplit": {
+            "a": "b"
+        }
     },
-
     "spec": {
-        "splitMe" : "=split(' ',@(1,splitMe))",
+        "splitMe": "=split(' ',@(1,splitMe))",
         "split": {
             "single": "=split(',', @(2,string))",
             "multiple": "=split(' ', @(2,string))",
             "regex": "=split('[Oo]', @(2,string))",
             "regex2": "=split('\\s+', @(2,string))"
         },
-        "intputMapShouldNotSplit" : "=split('=', @(1,intputMapShouldNotSplit))"
+        "intputMapShouldNotSplit": "=split('=', @(1,intputMapShouldNotSplit))"
     },
-
     "context": {
     },
-
     "OVERWRITR": {
         "string": "the QuIcK brOwn fox",
-
-        "splitMe" : [ "split",  "me" ],
-
+        "splitMe": [
+            "split",
+            "me"
+        ],
         "split": {
             "single": [
                 "the QuIcK brOwn fox"
@@ -48,7 +46,8 @@
                 "fox"
             ]
         },
-
-        "intputMapShouldNotSplit" : { "a" : "b" }
+        "intputMapShouldNotSplit": {
+            "a": "b"
+        }
     }
 }

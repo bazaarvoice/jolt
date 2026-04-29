@@ -1,33 +1,39 @@
 {
     "input": {
-        "clients" : {
-            "Acme" : {
+        "clients": {
+            "Acme": {
                 "clientId": "guid",
-                "enabled" : true
+                "enabled": true
             },
-            "Axe" : {
+            "Axe": {
                 "clientId": 2,
-                "enabled" : false
+                "enabled": false
             },
-            "Bob's Burgers" : {
+            "Bob's Burgers": {
                 "clientId": 3,
-                "enabled" : true
+                "enabled": true
             }
         }
     },
-
     "spec": {
-        "clients" : {
-            "*": { // clientName
-                "clientId": "clientsById.@(1,enabled)[]"  // coerce the boolean into the string "true" or "false"
+        "clients": {
+            "*": {
+                // clientName
+                "clientId": "clientsById.@(1,enabled)[]"
+                // coerce the boolean into the string "true" or "false"
             }
         }
     },
-
     "expected": {
-        "clientsById" : {
-            "true"  : [ "guid", 3 ],  // Note the Ids, whatever they are get passed along, because they are data
-            "false" : [ 2 ]
+        "clientsById": {
+            "true": [
+                "guid",
+                3
+            ],
+            // Note the Ids, whatever they are get passed along, because they are data
+            "false": [
+                2
+            ]
         }
     }
 }

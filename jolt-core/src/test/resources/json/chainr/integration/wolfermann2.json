@@ -31,7 +31,6 @@
             ]
         }
     },
-
     "spec": [
         {
             "operation": "shift",
@@ -62,7 +61,6 @@
             }
         }
     ],
-
     "expected": {
         "Data2": {
             "Data": [

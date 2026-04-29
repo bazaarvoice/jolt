@@ -11,19 +11,20 @@
             }
         }
     },
-
     "spec": {
         "rating": {
             "primary": {
-                "value": "Rating",  // simple match.  Put the value '4' in the output under the "Rating" field
+                "value": "Rating",
+                // simple match.  Put the value '4' in the output under the "Rating" field
                 "max": "RatingRange"
             },
-
             // match any children of "rating".
             // Shiftr has a precendence order when matching, so the "*" will match anything that isn't "primary"
             "*": {
-                "value": "SecondaryRatings.&1.Value", // &1 means, go up one level and grab that value and substitute it in
-                "max": "SecondaryRatings.&1.Range",   //  in this example &1 = "quality"
+                "value": "SecondaryRatings.&1.Value",
+                // &1 means, go up one level and grab that value and substitute it in
+                "max": "SecondaryRatings.&1.Range",
+                //  in this example &1 = "quality"
 
                 "$": "SecondaryRatings.&1.Id"
                 // we want "quality" to be a value field in the output under
@@ -32,13 +33,14 @@
             }
         }
     },
-
     "expected": {
         "Rating": 4,
         "RatingRange": 5,
         "SecondaryRatings": {
-            "quality": {          // created by the '"value": "SecondaryRatings.&1.Value"' or "max": "SecondaryRatings.&1.Range" lines
-                "Id": "quality",  // created by the '"$": "SecondaryRatings.&1.Id"' from the spec
+            "quality": {
+                // created by the '"value": "SecondaryRatings.&1.Value"' or "max": "SecondaryRatings.&1.Range" lines
+                "Id": "quality",
+                // created by the '"$": "SecondaryRatings.&1.Id"' from the spec
                 "Value": 3,
                 "Range": 7
             }

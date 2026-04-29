@@ -6,25 +6,21 @@
         "contentLocale": "en_US",
         "id": "123124",
         "productId": "31231231",
-
         "ipAddress": "192.168.1.100",
         "ipAdd": "192.168.1.100",
         "lastModificationTime": "yesterday",
         "submissionId": "34343",
-
         "this": "stays",
-
         "configured": {
             "a": "b",
             "c": {
-                "d":"e",
-                "f":"g"
+                "d": "e",
+                "f": "g"
             }
         },
-        "non-nested-input":{},
-        "iamnotinspec":"eh?"
+        "non-nested-input": {},
+        "iamnotinspec": "eh?"
     },
-
     "spec": {
         "~emVersion": "",
         "authorId": "",
@@ -32,33 +28,28 @@
         "contentLocale": "",
         "id": "",
         "productId": "",
-
         "ipAddress|ipAdd": "",
         "lastModificationTime": "",
         "submissionId": "",
-
-        "non-nested-input":{
-            "a":""
+        "non-nested-input": {
+            "a": ""
         },
         "configured": {
             "c": {
-                "d":""
+                "d": ""
             }
         },
-        "iamnotininput":""
-
+        "iamnotininput": ""
     },
-
     "expected": {
         "this": "stays",
-
         "configured": {
             "a": "b",
             "c": {
-                "f":"g"
+                "f": "g"
             }
         },
-        "non-nested-input":{},
-        "iamnotinspec":"eh?"
+        "non-nested-input": {},
+        "iamnotinspec": "eh?"
     }
 }

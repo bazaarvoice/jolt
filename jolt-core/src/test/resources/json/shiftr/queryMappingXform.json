@@ -1,65 +1,198 @@
 {
     "input": {
         "review": {
-            "id": [ "ref.self.id", "text" ],
-            "authorid": [ "ref.author.id", "text" ],
-            "campaignid": [ "wholeText.campaignId", "text" ],
-
-            "categoryancestorid": [ "wholeText.BANANA", "text" ],
-
-            "contentlocale": [ "wholeText.contentLocale", "text" ],
-            "hascomments": [  "boolean.hasComments", "boolean" ],
-            "hasphotos": [  "boolean.hasPhotos", "boolean" ],
-            "hastags": [ "boolean.hasTags", "boolean" ],
-            "hasvideos": [  "boolean.hasVideos", "boolean" ],
-            "helpfulness": [  "double.helpfulness", "double" ],
-            "isfeatured": [ "boolean.featured", "boolean" ],
-            "isratingsonly": [ "boolean.ratingsOnly", "boolean" ],
-            "isrecommended": [ "boolean.recommended", "boolean" ],
-            "issubjectactive": [ "boolean.subjectActive", "boolean" ],
-            "issyndicated": [ "boolean.syndicated", "boolean" ],
-            "lastmoderatedtime": [  "datetime.lastmoderatedtime", "datetime" ],
-            "lastmodificationtime": [ "datetime.lastModificationTime", "datetime" ],
-
-            "moderatorcode": [ "BANANA.BANANA", "text" ],
-
-            "productid": [ "wholeText.subjectExternalId", "text" ],
-            "rating": [ "rating.primary", "integer" ],
-            "submissionid": [ "wholeText.submissionId", "text" ],
-            "submissiontime": [ "datetime.submissionTime", "datetime" ],
-            "totalcommentcount": [ "integer.totalCommentCount", "integer" ],
-            "totalfeedbackcount": [ "integer.totalFeedbackCount", "integer" ],
-            "totalnegativefeedbackcount": [ "integer.totalNegativeFeedbackCount", "integer" ],
-            "totalpositivefeedbackcount": [ "integer.totalPositiveFeedbackCount", "integer" ],
-
-            "userlocation": [ "wholeText.geographicOrigin", "text" ],
-
-            "additionalfield": [ "field.&", "text" ],
-            "contextdatavalue": [ "cdv.&", "text" ],
-            "tag": [ "tag.&", "text" ],
-            "secondaryrating": [ "rating.&", "integer" ]
+            "id": [
+                "ref.self.id",
+                "text"
+            ],
+            "authorid": [
+                "ref.author.id",
+                "text"
+            ],
+            "campaignid": [
+                "wholeText.campaignId",
+                "text"
+            ],
+            "categoryancestorid": [
+                "wholeText.BANANA",
+                "text"
+            ],
+            "contentlocale": [
+                "wholeText.contentLocale",
+                "text"
+            ],
+            "hascomments": [
+                "boolean.hasComments",
+                "boolean"
+            ],
+            "hasphotos": [
+                "boolean.hasPhotos",
+                "boolean"
+            ],
+            "hastags": [
+                "boolean.hasTags",
+                "boolean"
+            ],
+            "hasvideos": [
+                "boolean.hasVideos",
+                "boolean"
+            ],
+            "helpfulness": [
+                "double.helpfulness",
+                "double"
+            ],
+            "isfeatured": [
+                "boolean.featured",
+                "boolean"
+            ],
+            "isratingsonly": [
+                "boolean.ratingsOnly",
+                "boolean"
+            ],
+            "isrecommended": [
+                "boolean.recommended",
+                "boolean"
+            ],
+            "issubjectactive": [
+                "boolean.subjectActive",
+                "boolean"
+            ],
+            "issyndicated": [
+                "boolean.syndicated",
+                "boolean"
+            ],
+            "lastmoderatedtime": [
+                "datetime.lastmoderatedtime",
+                "datetime"
+            ],
+            "lastmodificationtime": [
+                "datetime.lastModificationTime",
+                "datetime"
+            ],
+            "moderatorcode": [
+                "BANANA.BANANA",
+                "text"
+            ],
+            "productid": [
+                "wholeText.subjectExternalId",
+                "text"
+            ],
+            "rating": [
+                "rating.primary",
+                "integer"
+            ],
+            "submissionid": [
+                "wholeText.submissionId",
+                "text"
+            ],
+            "submissiontime": [
+                "datetime.submissionTime",
+                "datetime"
+            ],
+            "totalcommentcount": [
+                "integer.totalCommentCount",
+                "integer"
+            ],
+            "totalfeedbackcount": [
+                "integer.totalFeedbackCount",
+                "integer"
+            ],
+            "totalnegativefeedbackcount": [
+                "integer.totalNegativeFeedbackCount",
+                "integer"
+            ],
+            "totalpositivefeedbackcount": [
+                "integer.totalPositiveFeedbackCount",
+                "integer"
+            ],
+            "userlocation": [
+                "wholeText.geographicOrigin",
+                "text"
+            ],
+            "additionalfield": [
+                "field.&",
+                "text"
+            ],
+            "contextdatavalue": [
+                "cdv.&",
+                "text"
+            ],
+            "tag": [
+                "tag.&",
+                "text"
+            ],
+            "secondaryrating": [
+                "rating.&",
+                "integer"
+            ]
         },
         "product": {
-            "id": [ "wholeText.externalId", "text" ],
-            "averageoverallrating": [ "double.averagePrimaryRating", "double" ],
-            "categoryancestorid": [ "BANANA", "BANANA" ],
-            "categoryid": [ "wholeText.categoryExternalId", "text" ],
-            "isactive": [ "boolean.active", "boolean" ],
-            "isdisabled": [ "boolean.disabled", "boolean" ],
-            "lastanswertime": [ "datetime.lastAnswerTime", "datetime" ],
-            "lastquestiontime": [ "datetime.lastQuestionTime", "datetime" ],
-            "lastreviewtime": [ "datetime.lastReviewTime", "datetime" ],
-            "laststorytime": [ "datetime.lastReviewTime", "datetime" ],
-            "name": [ "wholeText.name", "text" ],
-            "ratingsonlyreviewcount": [ "integer.ratingsOnlyReviewCount", "integer" ],
-            "totalanswercount": [ "integer.totalAnswerCount", "integer" ],
-            "totalquestioncount": [ "integer.totalQuestionCount", "integer" ],
-            "totalreviewcount": [ "integer.totalReviewCount", "integer" ],
-            "totalstorycount": [ "integer.totalStoryCount", "integer" ]
+            "id": [
+                "wholeText.externalId",
+                "text"
+            ],
+            "averageoverallrating": [
+                "double.averagePrimaryRating",
+                "double"
+            ],
+            "categoryancestorid": [
+                "BANANA",
+                "BANANA"
+            ],
+            "categoryid": [
+                "wholeText.categoryExternalId",
+                "text"
+            ],
+            "isactive": [
+                "boolean.active",
+                "boolean"
+            ],
+            "isdisabled": [
+                "boolean.disabled",
+                "boolean"
+            ],
+            "lastanswertime": [
+                "datetime.lastAnswerTime",
+                "datetime"
+            ],
+            "lastquestiontime": [
+                "datetime.lastQuestionTime",
+                "datetime"
+            ],
+            "lastreviewtime": [
+                "datetime.lastReviewTime",
+                "datetime"
+            ],
+            "laststorytime": [
+                "datetime.lastReviewTime",
+                "datetime"
+            ],
+            "name": [
+                "wholeText.name",
+                "text"
+            ],
+            "ratingsonlyreviewcount": [
+                "integer.ratingsOnlyReviewCount",
+                "integer"
+            ],
+            "totalanswercount": [
+                "integer.totalAnswerCount",
+                "integer"
+            ],
+            "totalquestioncount": [
+                "integer.totalQuestionCount",
+                "integer"
+            ],
+            "totalreviewcount": [
+                "integer.totalReviewCount",
+                "integer"
+            ],
+            "totalstorycount": [
+                "integer.totalStoryCount",
+                "integer"
+            ]
         }
     },
-
-
     "spec": {
         "*": {
             "*": {
@@ -68,8 +201,6 @@
             }
         }
     },
-
-
     "expected": {
         "product": {
             "totalquestioncount": {

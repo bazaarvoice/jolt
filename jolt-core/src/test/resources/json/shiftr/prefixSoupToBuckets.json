@@ -6,11 +6,9 @@
         "rating-Design": 4,
         "rating-RatingDimension3": 1
     },
-
     "spec": {
         // match one explicitly
         "rating-primary": "Rating",
-
         // match the rest using the * wildcard.
         "rating-*": "SecondaryRatings.&(0,1)"
         // Assuming "rating-Price" :
@@ -18,7 +16,6 @@
         // "SecondaryRatings.&0" = "rating-Price"  // the whole key, explict about how far up the tree to look, aka 0
         // "SecondaryRatings.&(0,1)" = "Price"     // the first * in the key &0 levels up the intput tree
     },
-
     "expected": {
         "Rating": 1,
         "SecondaryRatings": {

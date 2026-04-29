@@ -1,0 +1,23 @@
+{
+    "spec": [
+        {
+            "operation": "enrich",
+            "spec": {
+                "executionMode": "sync",
+                "enrichments": [
+                    {
+                        "path": "name",
+                        "className": "io.joltcommunity.jolt.enrich.EnrichrTestHelper",
+                        "method": "uppercase"
+                    }
+                ]
+            }
+        }
+    ],
+    "input": {
+        "name": "alice"
+    },
+    "expected": {
+        "name": "ALICE"
+    }
+}

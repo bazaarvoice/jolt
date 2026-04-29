@@ -5,7 +5,6 @@
             "quality": 4
         }
     },
-
     "spec": {
         "ratings": {
             "*": {
@@ -16,7 +15,6 @@
             }
         }
     },
-
     "expected": {
         "Ratings": [
             {

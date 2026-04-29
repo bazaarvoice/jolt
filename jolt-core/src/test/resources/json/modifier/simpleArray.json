@@ -12,7 +12,6 @@
         ],
         "default": "defaultValue"
     },
-
     "spec": {
         "thumbnail": {
             "*": {
@@ -21,7 +20,6 @@
             }
         }
     },
-
     "context": {
         "photo": {
             "label": {
@@ -29,7 +27,6 @@
             }
         }
     },
-
     "OVERWRITR": {
         "thumbnail": [
             {

@@ -2,7 +2,6 @@
     "input": {
         "data": {}
     },
-
     "spec": {
         "data": {
             "a?": "x",
@@ -10,25 +9,20 @@
             "c": "z"
         }
     },
-
-    "context": { },
-
+    "context": {},
     "OVERWRITR": {
         "data": {
-            "c" : "z"
-        }
-    }
-    ,
-
-    "DEFAULTR": {
-        "data": {
-            "c" : "z"
+            "c": "z"
         }
     },
-
+    "DEFAULTR": {
+        "data": {
+            "c": "z"
+        }
+    },
     "DEFINR": {
         "data": {
-             "c" : "z"
+            "c": "z"
         }
     }
 }

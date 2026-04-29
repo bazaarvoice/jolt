@@ -58,7 +58,6 @@
             }
         ]
     },
-
     // The test uses this Chainr spec, on the input data to produce the "expected" JSON below
     "spec": [
         {
@@ -75,7 +74,6 @@
             }
         }
     ],
-
     // The expected result
     "expected": {
         "phone_num": "6503301096",

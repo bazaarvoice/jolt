@@ -1,18 +1,16 @@
 {
     "input": {
-        "data" : {
+        "data": {
             "clientId": "1234",
             "clientName": "Acme"
         }
     },
-
     "spec": {
-        "data" : {
-            "@clientName" : "@clientId"
+        "data": {
+            "@clientName": "@clientId"
         }
     },
-
     "expected": {
-        "1234" : "Acme"
+        "1234": "Acme"
     }
 }

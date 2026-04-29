@@ -1,0 +1,53 @@
+{
+    "spec": [
+        {
+            "operation": "enrich",
+            "spec": {
+                "executionMode": "async",
+                "enrichments": [
+                    {
+                        "path": "customers.[*].id",
+                        "outputPath": "customers.[*].profile",
+                        "contextKey": "customerLookupClient",
+                        "method": "lookupProfile"
+                    }
+                ]
+            }
+        }
+    ],
+    "input": {
+        "customers": [
+            {
+                "id": "cust-101"
+            },
+            {
+                "id": "cust-202"
+            }
+        ]
+    },
+    "context": {
+        "tenant": "acme"
+    },
+    "expected": {
+        "customers": [
+            {
+                "id": "cust-101",
+                "profile": {
+                    "customerId": "cust-101",
+                    "tenant": "acme",
+                    "segment": "gold",
+                    "source": "external-api"
+                }
+            },
+            {
+                "id": "cust-202",
+                "profile": {
+                    "customerId": "cust-202",
+                    "tenant": "acme",
+                    "segment": "gold",
+                    "source": "external-api"
+                }
+            }
+        ]
+    }
+}

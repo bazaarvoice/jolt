@@ -1,0 +1,13 @@
+{
+  "input": {
+    "photos": "scalar"
+  },
+  "spec": {
+    "photos": {
+      "scalar": "MANY"
+    }
+  },
+  "expected": {
+    "photos": "scalar"
+  }
+}

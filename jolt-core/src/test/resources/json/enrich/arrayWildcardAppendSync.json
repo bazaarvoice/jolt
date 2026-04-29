@@ -1,0 +1,42 @@
+{
+    "spec": [
+        {
+            "operation": "enrich",
+            "spec": {
+                "executionMode": "sync",
+                "enrichments": [
+                    {
+                        "path": "customers.[*].id",
+                        "outputPath": "profiles.[]",
+                        "className": "io.joltcommunity.jolt.enrich.EnrichrTestHelper",
+                        "method": "uppercase"
+                    }
+                ]
+            }
+        }
+    ],
+    "input": {
+        "customers": [
+            {
+                "id": "cust-1"
+            },
+            {
+                "id": "cust-2"
+            }
+        ]
+    },
+    "expected": {
+        "customers": [
+            {
+                "id": "cust-1"
+            },
+            {
+                "id": "cust-2"
+            }
+        ],
+        "profiles": [
+            "CUST-1",
+            "CUST-2"
+        ]
+    }
+}

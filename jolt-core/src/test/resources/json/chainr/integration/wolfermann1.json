@@ -16,7 +16,6 @@
             }
         }
     },
-
     "spec": [
         {
             "operation": "shift",
@@ -36,7 +35,6 @@
             }
         }
     ],
-
     "expected": {
         "level1": {
             "L1Attribute": "6643287c-4800-49dd-b5cb-e0cf3ea637a9",

@@ -1,4 +1,3 @@
-
 // Even better format.  Values are a list and are typed.
 // Now that the RealFilters values are a list, Real and Logicial Fitlers can
 //  share a getValues( List<T> list ) interface, which is kinda nice.
@@ -16,46 +15,59 @@
 //    ...
 // })
 {
-    "AND" : [
+    "AND": [
         {
-            "type" : "INTEGER",
+            "type": "INTEGER",
             "field": "RATING",
-            "operator" : "EQ",
-            "values": [ 3 ]
+            "operator": "EQ",
+            "values": [
+                3
+            ]
         },
         {
-            "type" : "STRING",
+            "type": "STRING",
             "field": "PRODUCTID",
-            "operator" : "EQ",
-            "values": [ "Acme-1234" ]
+            "operator": "EQ",
+            "values": [
+                "Acme-1234"
+            ]
         },
         {
-            "OR" : [
+            "OR": [
                 {
-                    "type" : "STRING",
+                    "type": "STRING",
                     "field": "ID",
-                    "operator" : "EQ",
-                    "values": [ "789" ]
+                    "operator": "EQ",
+                    "values": [
+                        "789"
+                    ]
                 },
                 {
-                    "AND" : [
+                    "AND": [
                         {
-                            "type" : "BOOLEAN",
+                            "type": "BOOLEAN",
                             "field": "ISFEATURED",
-                            "operator" : "EQ",
-                            "values": [ true ]
+                            "operator": "EQ",
+                            "values": [
+                                true
+                            ]
                         },
                         {
-                            "type" : "BOOLEAN",
+                            "type": "BOOLEAN",
                             "field": "HASPHOTOS",
-                            "operator" : "EQ",
-                            "values": [ true ]
+                            "operator": "EQ",
+                            "values": [
+                                true
+                            ]
                         },
                         {
-                            "type" : "DATE",
+                            "type": "DATE",
                             "field": "SUBMISSION_TIME",
-                            "operator" : "LTE",
-                            "values": [ "1-1-2014" ]   // This is the reason the type Enum is needed
+                            "operator": "LTE",
+                            "values": [
+                                "1-1-2014"
+                            ]
+                            // This is the reason the type Enum is needed
                             //  as DATE and STRING both "encode" to JSON strings
                         }
                     ]

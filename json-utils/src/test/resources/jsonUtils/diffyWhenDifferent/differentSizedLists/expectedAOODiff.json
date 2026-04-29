@@ -1,4 +1,12 @@
 {
-    "a" : [ null, null ],
-    "b" : [ "w", null, null, null ]
+    "a": [
+        null,
+        null
+    ],
+    "b": [
+        "w",
+        null,
+        null,
+        null
+    ]
 }

@@ -1,0 +1,43 @@
+name-template: '$RESOLVED_VERSION 🌈'
+tag-template: '$RESOLVED_VERSION'
+version-resolver:
+  minor:
+    labels:
+      - 'feature'
+  patch:
+    labels:
+      - 'fix'
+      - 'refactoring'
+      - 'chore'
+  default: patch
+autolabeler:
+  - label: 'feature'
+    branch:
+      - '/feature\/.+/'
+      - '/feat\/.+/'
+  - label: 'fix'
+    branch:
+      - '/fix\/.+/'
+  - label: 'refactoring'
+    branch:
+      - '/refactor\/.+/'
+  - label: 'chore'
+    branch:
+      - '/chore\/.+/'
+      - '/dependabot\/.+/'
+categories:
+  - title: '🚀 Features'
+    label: 'feature'
+  - title: '🐛 Bug Fixes'
+    label: 'fix'
+  - title: '🔀 Refactoring'
+    label: 'refactoring'
+  - title: '🧰 Maintenance'
+    label: 'chore'
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+template: |
+  ## Changes
+
+  $CHANGES
+  
+  $CONTRIBUTORS

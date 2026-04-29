@@ -1,27 +1,26 @@
 {
     "input": {
         "key": null,
-        "bunch-O-keys" : {
-            "a" : null,
-            "b" : null,
-            "c" : null
+        "bunch-O-keys": {
+            "a": null,
+            "b": null,
+            "c": null
         }
     },
-
     "spec": {
         "key": "value",
-        "bunch-O-keys" : {
-            "*" : "values.&",
-            "@(1,notLegit)" : "notLegit" // verify that if we lookup something that does not exist we do not write out a null
+        "bunch-O-keys": {
+            "*": "values.&",
+            "@(1,notLegit)": "notLegit"
+            // verify that if we lookup something that does not exist we do not write out a null
         }
     },
-
     "expected": {
-        "value" : null,
-        "values" : {
-            "a" : null,
-            "b" : null,
-            "c" : null
+        "value": null,
+        "values": {
+            "a": null,
+            "b": null,
+            "c": null
         }
     }
 }

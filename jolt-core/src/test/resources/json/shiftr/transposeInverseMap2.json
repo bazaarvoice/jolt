@@ -1,25 +1,23 @@
 {
     "input": {
-        "data" : [
+        "data": [
             {
                 "clientId": "1",
                 "clientName": "Acme",
-                "otherStuff" : "Boom"
+                "otherStuff": "Boom"
             },
             {
                 "clientId": "2",
                 "clientName": "Bob's",
-                "otherStuff" : "Burgers"
+                "otherStuff": "Burgers"
             }
         ]
     },
-
     "spec": {
-        "data" : {
+        "data": {
             // Verify that if the RHS @ does not find anything, nothing get written
-            "*" : "data.@pants"
+            "*": "data.@pants"
         }
     },
-
     "expected": null
 }

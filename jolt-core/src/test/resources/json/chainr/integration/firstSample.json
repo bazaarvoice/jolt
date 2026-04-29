@@ -16,7 +16,6 @@
             }
         }
     },
-
     // The test uses this Chainr spec, on the input data to produce the "expected" JSON below
     "spec": [
         {
@@ -59,7 +58,6 @@
             "operation": "sort"
         }
     ],
-
     // The expected result
     "expected": {
         "~a": "aa",

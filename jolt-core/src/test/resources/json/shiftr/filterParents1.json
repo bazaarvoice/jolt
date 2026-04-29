@@ -23,17 +23,19 @@
             }
         ]
     },
-
     "spec": {
         "books": {
             "*": {
                 "availability": {
-                    "*": { // match all elements of the availability array
-                        "paperback": { // if the word paperback exists match it
-                            "@(3,title)": "PaperBacks"  // Look up the tree 3 levels, then back down and grab the value for the "title"
-                                                        //  and write it to PaperBacks in the output
+                    "*": {
+                        // match all elements of the availability array
+                        "paperback": {
+                            // if the word paperback exists match it
+                            "@(3,title)": "PaperBacks"
+                            // Look up the tree 3 levels, then back down and grab the value for the "title"
+                            //  and write it to PaperBacks in the output
                         },
-                        "online" : {
+                        "online": {
                             "@(3,title)": "Online"
                         }
                     }
@@ -41,9 +43,14 @@
             }
         }
     },
-
     "expected": {
-        "PaperBacks": [ "Scala", "Java" ],
-        "Online" : [ "JavaScript", "Scala" ]
+        "PaperBacks": [
+            "Scala",
+            "Java"
+        ],
+        "Online": [
+            "JavaScript",
+            "Scala"
+        ]
     }
 }

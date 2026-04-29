@@ -1,0 +1,41 @@
+name: Update version to pom.xml
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to set in pom.xml (e.g., 1.2.3)'
+        required: true
+        type: string
+
+permissions:
+  contents: write # Required for pushing changes and tags
+  pull-requests: write # Required for creating PRs
+  packages: write # Required for publishing packages
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@8d3c67de8e2fe68ef647c8db1e6a09f647780f40 # v2.19.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Update version in pom.xml
+        run: |
+          VERSION=${{ github.event.inputs.version }}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          mvn versions:set -DnewVersion="$VERSION" -DprocessAllModules=true -DgenerateBackupPoms=false
+
+      - name: Create PR to update version
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: update-version-to-${{ env.VERSION }}
+          commit-message: "chore: update version to ${{ env.VERSION }}"
+          title: "Update version to ${{ env.VERSION }}"
+          body: "This PR updates the version in pom.xml to match the release version."
+          delete-branch: true

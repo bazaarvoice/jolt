@@ -1,0 +1,37 @@
+{
+    "spec": [
+        {
+            "operation": "enrich",
+            "spec": {
+                "executionMode": "async",
+                "enrichments": [
+                    {
+                        "path": "customer.id",
+                        "outputPath": "customer.profile",
+                        "contextKey": "customerLookupClient",
+                        "method": "lookupProfile"
+                    }
+                ]
+            }
+        }
+    ],
+    "input": {
+        "customer": {
+            "id": "cust-123"
+        }
+    },
+    "context": {
+        "tenant": "acme"
+    },
+    "expected": {
+        "customer": {
+            "id": "cust-123",
+            "profile": {
+                "customerId": "cust-123",
+                "tenant": "acme",
+                "segment": "gold",
+                "source": "external-api"
+            }
+        }
+    }
+}

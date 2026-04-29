@@ -1,13 +1,10 @@
 {
     "input": {
-        "ineedtoberemoved":"eh?"
+        "ineedtoberemoved": "eh?"
     },
-
-    "spec":
-    {
-        "ineedtoberemoved":"eh?"
+    "spec": {
+        "ineedtoberemoved": "eh?"
     },
-
     "expected": {
     }
 }

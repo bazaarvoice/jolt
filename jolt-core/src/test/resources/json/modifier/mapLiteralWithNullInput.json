@@ -2,7 +2,6 @@
     "input": {
         "simpleMap": null
     },
-
     "spec": {
         "simpleMap": {
             "*": 0,
@@ -12,11 +11,9 @@
             "9": null
         }
     },
-
     "context": {
         "value": 5
     },
-
     "OVERWRITR": {
         "simpleMap": {
             "6": 0,
@@ -25,7 +22,6 @@
             "9": 0
         }
     },
-
     "DEFAULTR": {
         "simpleMap": {
             "6": 1,

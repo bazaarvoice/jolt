@@ -1,38 +1,36 @@
 {
-  "input": {
-    "arrayObjects": [
-      {
-        "a": "b",
-        "testStay": "here"
-      },
-      {
-        "a": "b",
-        "testStay": "still here"
-      }
-    ]
-  },
-
-  "spec": {
-    "arrayObjects": {
-      "pants": {
-        "a": ""
-      },
-      "abc*" : {
-        "a": ""
-      }
+    "input": {
+        "arrayObjects": [
+            {
+                "a": "b",
+                "testStay": "here"
+            },
+            {
+                "a": "b",
+                "testStay": "still here"
+            }
+        ]
+    },
+    "spec": {
+        "arrayObjects": {
+            "pants": {
+                "a": ""
+            },
+            "abc*": {
+                "a": ""
+            }
+        }
+    },
+    "expected": {
+        "arrayObjects": [
+            {
+                "a": "b",
+                "testStay": "here"
+            },
+            {
+                "a": "b",
+                "testStay": "still here"
+            }
+        ]
     }
-  },
-
-  "expected": {
-    "arrayObjects": [
-      {
-        "a": "b",
-        "testStay": "here"
-      },
-      {
-        "a": "b",
-        "testStay": "still here"
-      }
-    ]
-  }
 }

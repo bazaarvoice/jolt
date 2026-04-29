@@ -1,23 +1,21 @@
 {
     "input": {
-        "data" : {
+        "data": {
             "clientId": "1234",
-            "clientNameStuff" : {
+            "clientNameStuff": {
                 "clientName": "Acme",
-                "otherClientStuff" : "pants"
+                "otherClientStuff": "pants"
             }
         }
     },
-
     "spec": {
-        "data" : {
+        "data": {
             // Verify we can write data out to a RHS with syntactic sugar @ in the middle of two literals: "literal.@SUGAR.literal"
-            "@(clientNameStuff.clientName)" : "data.@clientId.clientName"
+            "@(clientNameStuff.clientName)": "data.@clientId.clientName"
         }
     },
-
     "expected": {
-        "data" : {
+        "data": {
             "1234": {
                 "clientName": "Acme"
             }

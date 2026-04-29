@@ -4,7 +4,6 @@
             "Leg4857": {
                 "minLabel": null,
                 "maxLabel": null
-
             },
             "EaseOfAssembly": {},
             "Quality": {},
@@ -18,8 +17,7 @@
             },
             "Cleanliness": {}
         }
-    }
-    ,
+    },
     "spec": {
         "ratings": {
             "*": {
@@ -28,11 +26,10 @@
             }
         }
     },
-
     "context": {
-        "cdvs": { },
-        "tags": { },
-        "additionalFields": { },
+        "cdvs": {},
+        "tags": {},
+        "additionalFields": {},
         "ratings": {
             "Leg4857": {
                 "dimensionLabel": "Leg",
@@ -71,24 +68,23 @@
             }
         }
     },
-
     "DEFAULTR": {
-        "ratings" : {
-            "Leg4857" : {
-                "minLabel" : "Too loose",
-                "maxLabel" : "Too tight"
+        "ratings": {
+            "Leg4857": {
+                "minLabel": "Too loose",
+                "maxLabel": "Too tight"
             },
-            "EaseOfAssembly" : { },
-            "Quality" : { },
-            "Shrinkage69" : {
-                "minLabel" : "More shrinkage",
-                "maxLabel" : "Less shrinkage"
+            "EaseOfAssembly": {},
+            "Quality": {},
+            "Shrinkage69": {
+                "minLabel": "More shrinkage",
+                "maxLabel": "Less shrinkage"
             },
-            "Panels2564" : {
-                "minLabel" : "Highest",
-                "maxLabel" : "Lowest"
+            "Panels2564": {
+                "minLabel": "Highest",
+                "maxLabel": "Lowest"
             },
-            "Cleanliness" : { }
+            "Cleanliness": {}
         }
     }
 }

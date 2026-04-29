@@ -7,7 +7,9 @@
             "a": "A",
             "x": "X"
         },
-        "path": ["a"],
+        "path": [
+            "a"
+        ],
         "value": "ABC",
         "output": {
             "1": 1,
@@ -23,7 +25,9 @@
             "a": "A",
             "x": "X"
         },
-        "path": ["a"],
+        "path": [
+            "a"
+        ],
         "value": 24,
         "output": {
             "1": 1,
@@ -39,8 +43,13 @@
             "a": "A",
             "x": "X"
         },
-        "path": ["a"],
-        "value": { "ABC": "abc", "42": 42 },
+        "path": [
+            "a"
+        ],
+        "value": {
+            "ABC": "abc",
+            "42": 42
+        },
         "output": {
             "1": 1,
             "2": 2,
@@ -55,44 +64,121 @@
             "a": "A",
             "x": "X"
         },
-        "path": ["a"],
-        "value": [24, "abc"],
+        "path": [
+            "a"
+        ],
+        "value": [
+            24,
+            "abc"
+        ],
         "output": {
             "1": 1,
             "2": 2,
             "x": "X"
         }
     },
-
     {
         "description": "src: simple list, path: simple, value: string",
-        "source": [ "zero", 1, "two", 3, "four", 5, "six"],
-        "path": [5],
+        "source": [
+            "zero",
+            1,
+            "two",
+            3,
+            "four",
+            5,
+            "six"
+        ],
+        "path": [
+            5
+        ],
         "value": "ABC",
-        "output": [ "zero", 1, "two", 3, "four", "six" ]
+        "output": [
+            "zero",
+            1,
+            "two",
+            3,
+            "four",
+            "six"
+        ]
     },
     {
         "description": "src: simple list, path: simple, value: int",
-        "source": [ "zero", 1, "two", 3, "four", 5, "six"],
-        "path": [5],
+        "source": [
+            "zero",
+            1,
+            "two",
+            3,
+            "four",
+            5,
+            "six"
+        ],
+        "path": [
+            5
+        ],
         "value": 42,
-        "output": [ "zero", 1, "two", 3, "four", "six" ]
+        "output": [
+            "zero",
+            1,
+            "two",
+            3,
+            "four",
+            "six"
+        ]
     },
     {
         "description": "src: simple list, path: simple, value: map",
-        "source": [ "zero", 1, "two", 3, "four", 5, "six"],
-        "path": [5],
-        "value": {"ABC": "abc", "42": 42},
-        "output": [ "zero", 1, "two", 3, "four", "six" ]
+        "source": [
+            "zero",
+            1,
+            "two",
+            3,
+            "four",
+            5,
+            "six"
+        ],
+        "path": [
+            5
+        ],
+        "value": {
+            "ABC": "abc",
+            "42": 42
+        },
+        "output": [
+            "zero",
+            1,
+            "two",
+            3,
+            "four",
+            "six"
+        ]
     },
     {
         "description": "src: simple list, path: simple, value: list",
-        "source": [ "zero", 1, "two", 3, "four", 5, "six"],
-        "path": [5],
-        "value": ["ABC", 42],
-        "output": [ "zero", 1, "two", 3, "four", "six"]
+        "source": [
+            "zero",
+            1,
+            "two",
+            3,
+            "four",
+            5,
+            "six"
+        ],
+        "path": [
+            5
+        ],
+        "value": [
+            "ABC",
+            42
+        ],
+        "output": [
+            "zero",
+            1,
+            "two",
+            3,
+            "four",
+            "six"
+        ]
     },
-
     {
         "description": "src: complex map, path: simple, value: string",
         "source": {
@@ -100,11 +186,9 @@
                 {
                     "bool": {
                         "should": [
-
                             {
                                 "bool": {
                                     "must": [
-
                                         {
                                             "range": {
                                                 "firstPublishTime": {
@@ -120,7 +204,9 @@
                 }
             ]
         },
-        "path": ["a"],
+        "path": [
+            "a"
+        ],
         "value": "ABC",
         "output": {
             "must": [
@@ -153,11 +239,9 @@
                 {
                     "bool": {
                         "should": [
-
                             {
                                 "bool": {
                                     "must": [
-
                                         {
                                             "range": {
                                                 "firstPublishTime": {
@@ -173,7 +257,9 @@
                 }
             ]
         },
-        "path": ["a"],
+        "path": [
+            "a"
+        ],
         "value": 42,
         "output": {
             "must": [
@@ -206,11 +292,9 @@
                 {
                     "bool": {
                         "should": [
-
                             {
                                 "bool": {
                                     "must": [
-
                                         {
                                             "range": {
                                                 "firstPublishTime": {
@@ -226,8 +310,13 @@
                 }
             ]
         },
-        "path": ["a"],
-        "value": {"ABC": "abc", "42": 24},
+        "path": [
+            "a"
+        ],
+        "value": {
+            "ABC": "abc",
+            "42": 24
+        },
         "output": {
             "must": [
                 {
@@ -259,11 +348,9 @@
                 {
                     "bool": {
                         "should": [
-
                             {
                                 "bool": {
                                     "must": [
-
                                         {
                                             "range": {
                                                 "firstPublishTime": {
@@ -279,8 +366,13 @@
                 }
             ]
         },
-        "path": ["a"],
-        "value": ["ABC", 42],
+        "path": [
+            "a"
+        ],
+        "value": [
+            "ABC",
+            42
+        ],
         "output": {
             "must": [
                 {
@@ -305,7 +397,6 @@
             ]
         }
     },
-
     {
         "description": "src: complex map, path: complex, value: string",
         "source": {
@@ -313,11 +404,9 @@
                 {
                     "bool": {
                         "should": [
-
                             {
                                 "bool": {
                                     "must": [
-
                                         {
                                             "range": {
                                                 "firstPublishTime": {
@@ -333,7 +422,14 @@
                 }
             ]
         },
-        "path": ["a", 3, "b", 4, "c", 5],
+        "path": [
+            "a",
+            3,
+            "b",
+            4,
+            "c",
+            5
+        ],
         "value": "ABC",
         "output": {
             "must": [
@@ -361,7 +457,7 @@
                 {
                     "b": [
                         {
-                            "c": [ ]
+                            "c": []
                         }
                     ]
                 }
@@ -375,11 +471,9 @@
                 {
                     "bool": {
                         "should": [
-
                             {
                                 "bool": {
                                     "must": [
-
                                         {
                                             "range": {
                                                 "firstPublishTime": {
@@ -395,7 +489,14 @@
                 }
             ]
         },
-        "path": ["a", 3, "b", 4, "c", 5],
+        "path": [
+            "a",
+            3,
+            "b",
+            4,
+            "c",
+            5
+        ],
         "value": 42,
         "output": {
             "must": [
@@ -423,7 +524,7 @@
                 {
                     "b": [
                         {
-                            "c": [ ]
+                            "c": []
                         }
                     ]
                 }
@@ -437,11 +538,9 @@
                 {
                     "bool": {
                         "should": [
-
                             {
                                 "bool": {
                                     "must": [
-
                                         {
                                             "range": {
                                                 "firstPublishTime": {
@@ -457,8 +556,18 @@
                 }
             ]
         },
-        "path": ["a", 3, "b", 4, "c", 5],
-        "value": {"ABC": "abc", "42": 42},
+        "path": [
+            "a",
+            3,
+            "b",
+            4,
+            "c",
+            5
+        ],
+        "value": {
+            "ABC": "abc",
+            "42": 42
+        },
         "output": {
             "must": [
                 {
@@ -485,7 +594,7 @@
                 {
                     "b": [
                         {
-                            "c": [ ]
+                            "c": []
                         }
                     ]
                 }
@@ -499,11 +608,9 @@
                 {
                     "bool": {
                         "should": [
-
                             {
                                 "bool": {
                                     "must": [
-
                                         {
                                             "range": {
                                                 "firstPublishTime": {
@@ -519,8 +626,18 @@
                 }
             ]
         },
-        "path": ["a", 3, "b", 4, "c", 5],
-        "value": ["ABC", 42],
+        "path": [
+            "a",
+            3,
+            "b",
+            4,
+            "c",
+            5
+        ],
+        "value": [
+            "ABC",
+            42
+        ],
         "output": {
             "must": [
                 {
@@ -547,25 +664,22 @@
                 {
                     "b": [
                         {
-                            "c": [ ]
+                            "c": []
                         }
                     ]
                 }
             ]
         }
     },
-
     {
         "description": "src: complex list, path: simple, value: string",
         "source": [
             {
                 "bool": {
                     "should": [
-
                         {
                             "bool": {
                                 "must": [
-
                                     {
                                         "range": {
                                             "firstPublishTime": {
@@ -580,7 +694,9 @@
                 }
             }
         ],
-        "path": [5],
+        "path": [
+            5
+        ],
         "value": "ABC",
         "output": [
             {
@@ -610,11 +726,9 @@
             {
                 "bool": {
                     "should": [
-
                         {
                             "bool": {
                                 "must": [
-
                                     {
                                         "range": {
                                             "firstPublishTime": {
@@ -629,7 +743,9 @@
                 }
             }
         ],
-        "path": [5],
+        "path": [
+            5
+        ],
         "value": 42,
         "output": [
             {
@@ -659,11 +775,9 @@
             {
                 "bool": {
                     "should": [
-
                         {
                             "bool": {
                                 "must": [
-
                                     {
                                         "range": {
                                             "firstPublishTime": {
@@ -678,8 +792,13 @@
                 }
             }
         ],
-        "path": [5],
-        "value": {"ABC": "abc", "42": 42},
+        "path": [
+            5
+        ],
+        "value": {
+            "ABC": "abc",
+            "42": 42
+        },
         "output": [
             {
                 "bool": {
@@ -708,11 +827,9 @@
             {
                 "bool": {
                     "should": [
-
                         {
                             "bool": {
                                 "must": [
-
                                     {
                                         "range": {
                                             "firstPublishTime": {
@@ -727,8 +844,13 @@
                 }
             }
         ],
-        "path": [5],
-        "value": ["ABC", 42],
+        "path": [
+            5
+        ],
+        "value": [
+            "ABC",
+            42
+        ],
         "output": [
             {
                 "bool": {
@@ -751,18 +873,15 @@
             }
         ]
     },
-
     {
         "description": "src: complex list, path: complex, value: string",
         "source": [
             {
                 "bool": {
                     "should": [
-
                         {
                             "bool": {
                                 "must": [
-
                                     {
                                         "range": {
                                             "firstPublishTime": {
@@ -776,9 +895,15 @@
                     ]
                 }
             }
-
         ],
-        "path": [2, "a", 3, "b", 4, "c"],
+        "path": [
+            2,
+            "a",
+            3,
+            "b",
+            4,
+            "c"
+        ],
         "value": "ABC",
         "output": [
             {
@@ -804,7 +929,8 @@
                 "a": [
                     {
                         "b": [
-                            { } // "c": null is nuked
+                            {}
+                            // "c": null is nuked
                         ]
                     }
                 ]
@@ -817,11 +943,9 @@
             {
                 "bool": {
                     "should": [
-
                         {
                             "bool": {
                                 "must": [
-
                                     {
                                         "range": {
                                             "firstPublishTime": {
@@ -835,9 +959,15 @@
                     ]
                 }
             }
-
         ],
-        "path": [2, "a", 3, "b", 4, "c"],
+        "path": [
+            2,
+            "a",
+            3,
+            "b",
+            4,
+            "c"
+        ],
         "value": 42,
         "output": [
             {
@@ -863,7 +993,8 @@
                 "a": [
                     {
                         "b": [
-                            { } // "c": null is nuked
+                            {}
+                            // "c": null is nuked
                         ]
                     }
                 ]
@@ -876,11 +1007,9 @@
             {
                 "bool": {
                     "should": [
-
                         {
                             "bool": {
                                 "must": [
-
                                     {
                                         "range": {
                                             "firstPublishTime": {
@@ -894,10 +1023,19 @@
                     ]
                 }
             }
-
         ],
-        "path": [2, "a", 3, "b", 4, "c"],
-        "value": {"ABC": "abc", "42": 42},
+        "path": [
+            2,
+            "a",
+            3,
+            "b",
+            4,
+            "c"
+        ],
+        "value": {
+            "ABC": "abc",
+            "42": 42
+        },
         "output": [
             {
                 "bool": {
@@ -922,7 +1060,8 @@
                 "a": [
                     {
                         "b": [
-                            { } // "c": null is nuked
+                            {}
+                            // "c": null is nuked
                         ]
                     }
                 ]
@@ -935,11 +1074,9 @@
             {
                 "bool": {
                     "should": [
-
                         {
                             "bool": {
                                 "must": [
-
                                     {
                                         "range": {
                                             "firstPublishTime": {
@@ -953,10 +1090,19 @@
                     ]
                 }
             }
-
         ],
-        "path": [2, "a", 3, "b", 4, "c"],
-        "value": ["ABC", 42],
+        "path": [
+            2,
+            "a",
+            3,
+            "b",
+            4,
+            "c"
+        ],
+        "value": [
+            "ABC",
+            42
+        ],
         "output": [
             {
                 "bool": {
@@ -981,7 +1127,8 @@
                 "a": [
                     {
                         "b": [
-                            { } // "c": null is nuked
+                            {}
+                            // "c": null is nuked
                         ]
                     }
                 ]

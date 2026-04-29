@@ -1,8 +1,11 @@
 {
     "input": {
-        "data": [ null,"b","c" ]
+        "data": [
+            null,
+            "b",
+            "c"
+        ]
     },
-
     "spec": {
         "data": {
             "[0]": "x",
@@ -11,21 +14,29 @@
             "[4]?": "e"
         }
     },
-
-    "context": { },
-
+    "context": {},
     "OVERWRITR": {
-        "data":
-            [ "x", "y", "c", "d" ]
+        "data": [
+            "x",
+            "y",
+            "c",
+            "d"
+        ]
     },
-
     "DEFAULTR": {
-        "data":
-            [ "x", "b", "c", "d" ]
+        "data": [
+            "x",
+            "b",
+            "c",
+            "d"
+        ]
     },
-
     "DEFINR": {
-        "data":
-            [ null, "b", "c", "d" ]
+        "data": [
+            null,
+            "b",
+            "c",
+            "d"
+        ]
     }
 }

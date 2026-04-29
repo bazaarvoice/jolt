@@ -1,25 +1,25 @@
 {
     "input": {
         "string": "the QuIcK brOwn fox",
-        "zeroIndex" : 0,
-        "threeIndex" : 3,
-        "trimMe" : "  tuna "
+        "zeroIndex": 0,
+        "threeIndex": 3,
+        "trimMe": "  tuna ",
+        "toBeReplacedAll": "Java123is456fun"
     },
-
     "spec": {
         "lower": {
-            "leading":  "=toLower(@(2,string))",
+            "leading": "=toLower(@(2,string))",
             "trailing": "=toLower(^value)",
-            "custom1":  "=toLower(bazinga)",
-            "custom2":  "=toLower('yabadabadoo')",
-            "badArgs1"  :  "=toLower(@2)"
+            "custom1": "=toLower(bazinga)",
+            "custom2": "=toLower('yabadabadoo')",
+            "badArgs1": "=toLower(@2)"
         },
         "upper": {
             "leading": "=toUpper(@(2,string))",
             "trailing": "=toUpper(^value)",
             "custom1": "=toUpper(bazinga)",
             "custom2": "=toUpper('yabadabadoo')",
-            "badArgs1"  : "=toLower(@2)"
+            "badArgs1": "=toLower(@2)"
         },
         "join": "=join('_' , @(1,lower.leading) ,  , @(1,lower.trailing))",
         "concat": {
@@ -29,41 +29,69 @@
         "substring": {
             "basic1": "=substring(@(2,string), 0, 9)",
             "basic2": "=substring(@(2,string), 4, 9)",
-            "outOfBounds1": "=substring(@(2,string), -4, 9)",  // start is negative
-            "outOfBounds2": "=substring(@(2,string), 0, 200)", // end it way past the size of the string
-            "outOfBounds3": "=substring(@(2,string), 0, 20)",  // verify that asking for one char after the end fails
-            "badArgs1": "=substring(0, 9, @(2, substring))",  // input is not a string
-            "badArgs2": "=substring(0, 4, 9)",      // ranges are ok, but input string is not a string
+            "outOfBounds1": "=substring(@(2,string), -4, 9)",
+            // start is negative
+            "outOfBounds2": "=substring(@(2,string), 0, 200)",
+            // end it way past the size of the string
+            "outOfBounds3": "=substring(@(2,string), 0, 20)",
+            // verify that asking for one char after the end fails
+            "badArgs1": "=substring(0, 9, @(2, substring))",
+            // input is not a string
+            "badArgs2": "=substring(0, 4, 9)",
+            // ranges are ok, but input string is not a string
             "badArgs3": "=substring('', 0, 0)",
-            "badArgs4": "=substring('abc', 0, 0)",  // start and end are the same, both are zero
-            "badArgs5": "=substring('abc', 1, 1)",  // start and end are the same, and non-zero
-            "badArgs6": "=substring('abc', 1, 0)",  // start before end
-            "badArgs7": "=substring('abc', 0, 1, 2)", // too many args
-            "badArgs8": "=substring('abc', 0)", // not enough args
-            "custom1":  "=substring('the quick brown fox', 0, 15)",
-            "custom2":  "=substring('the quick brown fox', 16, 19)",
+            "badArgs4": "=substring('abc', 0, 0)",
+            // start and end are the same, both are zero
+            "badArgs5": "=substring('abc', 1, 1)",
+            // start and end are the same, and non-zero
+            "badArgs6": "=substring('abc', 1, 0)",
+            // start before end
+            "badArgs7": "=substring('abc', 0, 1, 2)",
+            // too many args
+            "badArgs8": "=substring('abc', 0)",
+            // not enough args
+            "custom1": "=substring('the quick brown fox', 0, 15)",
+            "custom2": "=substring('the quick brown fox', 16, 19)",
             //
             // verify that we can actually lookup start and end indices
-            "advancedLookupRanges" : "=substring(@(2,string), @(2,zeroIndex), @(2,threeIndex))"
+            "advancedLookupRanges": "=substring(@(2,string), @(2,zeroIndex), @(2,threeIndex))"
         },
-        "trim" :{
-            "trimed" : "=trim(@(2,trimMe))"
+        "trim": {
+            "trimed": "=trim(@(2,trimMe))"
         },
-        "trimMe" : "=trim"
+        "trimMe": "=trim",
+        "replace": {
+            "replaced": "=replace(@(2,string), 'fox', 'dog')",
+            "badArgs0": "=relace",
+            "badArgs1": "=replace(@(2,string), 'fox')",
+            "badArgs2": "=replace(@(2,string), 'fox', 2)",
+            "badArgs3": "=replace(@(2,string), 2, 'dog')",
+            "badArgs4": "=replace(2, 'fox', 'dog')"
+        },
+        "replaceAll": {
+            "replaced": "=replaceAll(@(2,toBeReplacedAll), '\\d+', ' ')",
+            "badArgs0": "=replaceAll",
+            "badArgs1": "=replaceAll(@(2,toBeReplacedAll), '\\d+')",
+            "badArgs2": "=replaceAll(@(2,toBeReplacedAll), '\\d+', 2)",
+            "badArgs3": "=replaceAll(@(2,toBeReplacedAll), '[abc', ' ')",
+            "badArgs4": "=replaceAll(@(2,toBeReplacedAll), 2, ' ')",
+            "badArgs5": "=replaceAll(2, '\\d+', ' ')"
+        },
+        "toBeReplacedAll": "=replaceAll(@(2,toBeReplacedAll), '\\d+', ' ')"
     },
     "context": {
-        "value" : "JumpeD OVeR THE laZy dog"
+        "value": "JumpeD OVeR THE laZy dog"
     },
-
     "OVERWRITR": {
         //
         // the input
-        "string" : "the QuIcK brOwn fox",
-        "zeroIndex" : 0,
-        "threeIndex" : 3,
+        "string": "the QuIcK brOwn fox",
+        "zeroIndex": 0,
+        "threeIndex": 3,
         //
         // from the input, but overwritten by modify
-        "trimMe" : "tuna",
+        "trimMe": "tuna",
+        "toBeReplacedAll": "Java is fun",
         //
         // the things modify added
         "lower": {
@@ -90,8 +118,14 @@
             "custom2": "fox",
             "advancedLookupRanges": "the"
         },
-        "trim" :{
-            "trimed" : "tuna"
+        "trim": {
+            "trimed": "tuna"
+        },
+        "replace": {
+            "replaced": "the QuIcK brOwn dog"
+        },
+        "replaceAll": {
+            "replaced": "Java is fun"
         }
     }
 }

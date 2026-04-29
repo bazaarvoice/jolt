@@ -1,23 +1,31 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.bazaarvoice.jolt</groupId>
-        <artifactId>jolt-parent</artifactId>
-        <version>0.1.9-SNAPSHOT</version>
+        <groupId>io.github.jolt-community.jolt</groupId>
+        <artifactId>jolt-community-parent</artifactId>
+        <version>1.2.0</version>
         <relativePath>parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>jolt</artifactId>
+    <artifactId>jolt-community</artifactId>
     <packaging>pom</packaging>
     <name>Jolt</name>
 
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
     <scm>
-        <url>https://github.com/bazaarvoice/jolt</url>
-        <connection>scm:git:git@github.com:bazaarvoice/jolt.git</connection>
-        <developerConnection>scm:git:git@github.com:bazaarvoice/jolt.git</developerConnection>
-    <tag>HEAD</tag>
-  </scm>
+        <url>https://github.com/jolt-community/jolt-community</url>
+        <connection>scm:git:git@github.com:jolt-community/jolt-community.git</connection>
+        <developerConnection>scm:git:git@github.com:jolt-community/jolt-community.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
     <modules>
         <module>parent</module>

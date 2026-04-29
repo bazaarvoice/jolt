@@ -1,5 +1,8 @@
 {
-    "TagDistributionOrder": [ "ConsGames", "ProsGames" ],
+    "TagDistributionOrder": [
+        "ConsGames",
+        "ProsGames"
+    ],
     "TagDistribution": {
         "ConsGames": {
             "Id": "ConsGames",
@@ -8,12 +11,10 @@
                 {
                     "Count": 3,
                     "Value": "Visually Unpleasing"
-
                 },
                 {
                     "Count": 2,
                     "Value": "Poor Quality"
-
                 },
                 {
                     "Count": 2,

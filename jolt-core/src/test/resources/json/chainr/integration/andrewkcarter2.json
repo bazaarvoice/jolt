@@ -25,12 +25,10 @@
             }
         ]
     },
-
     "spec": [
         {
             "operation": "shift",
             "spec": {
-
                 "books": {
                     "*": {
                         "availability": {
@@ -45,19 +43,18 @@
             }
         }
     ],
-
     "expected": {
-        "PaperBooks":[
+        "PaperBooks": [
             {
-                "title":"bar",
-                "availability":[
+                "title": "bar",
+                "availability": [
                     "online",
                     "paperback"
                 ]
             },
             {
-                "title":"baz",
-                "availability":[
+                "title": "baz",
+                "availability": [
                     "paperback"
                 ]
             }

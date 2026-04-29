@@ -1,9 +1,18 @@
 {
     "input": {
-        "states" :   [ "Alabama",    "Alaska", "Arizona",  "Arkansas" ],
-        "capitals" : [ "Montgomery", "Juneau", "Phoenix" , "Little Rock" ]
+        "states": [
+            "Alabama",
+            "Alaska",
+            "Arizona",
+            "Arkansas"
+        ],
+        "capitals": [
+            "Montgomery",
+            "Juneau",
+            "Phoenix",
+            "Little Rock"
+        ]
     },
-
     "spec": {
         "states": {
             "*": {
@@ -20,25 +29,23 @@
             }
         }
     },
-
-
     "expected": {
-        "states" : [
+        "states": [
             {
-                "state" : "Alabama",
-                "capital" : "Montgomery"
+                "state": "Alabama",
+                "capital": "Montgomery"
             },
             {
-                "state" : "Alaska",
-                "capital" : "Juneau"
+                "state": "Alaska",
+                "capital": "Juneau"
             },
             {
-                "state" : "Arizona",
-                "capital" : "Phoenix"
+                "state": "Arizona",
+                "capital": "Phoenix"
             },
             {
-                "state" : "Arkansas",
-                "capital" : "Little Rock"
+                "state": "Arkansas",
+                "capital": "Little Rock"
             }
         ]
     }

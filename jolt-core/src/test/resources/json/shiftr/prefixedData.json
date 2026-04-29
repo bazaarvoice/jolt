@@ -1,32 +1,42 @@
 {
-    "input" : {
-        "data" : {
-            "tunaOrder":["tuna-Age", "tuna-Tone", "tuna-Color"],
-            "marlinOrder" : [ "marlin-Spear" ]
+    "input": {
+        "data": {
+            "tunaOrder": [
+                "tuna-Age",
+                "tuna-Tone",
+                "tuna-Color"
+            ],
+            "marlinOrder": [
+                "marlin-Spear"
+            ]
         }
     },
-
-    "spec" : {
-        "data" : {
-            "tunaOrder" : {
-                "*" : {
-                    "tuna-*" : {
-                        "$(0,1)" : "TunaFishOrder[]"
+    "spec": {
+        "data": {
+            "tunaOrder": {
+                "*": {
+                    "tuna-*": {
+                        "$(0,1)": "TunaFishOrder[]"
                     }
                 }
             },
-            "marlinOrder" : {
-                "*" : {
-                    "marlin-*" : {
-                        "$(0,1)" : "MarlinFishOrder[]"
+            "marlinOrder": {
+                "*": {
+                    "marlin-*": {
+                        "$(0,1)": "MarlinFishOrder[]"
                     }
                 }
             }
         }
     },
-
-    "expected" : {
-        "TunaFishOrder":["Age", "Tone", "Color"],
-        "MarlinFishOrder" : [ "Spear" ]
+    "expected": {
+        "TunaFishOrder": [
+            "Age",
+            "Tone",
+            "Color"
+        ],
+        "MarlinFishOrder": [
+            "Spear"
+        ]
     }
 }

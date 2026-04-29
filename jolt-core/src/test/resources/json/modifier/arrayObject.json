@@ -1,18 +1,24 @@
 {
     "input": {
         "objectMapFill": [
-            {},{},{}
+            {},
+            {},
+            {}
         ],
         "objectArrayFill": [
-            [],[],[]
+            [],
+            [],
+            []
         ]
     },
-
     "spec": {
         "objectMapFill": {
-            "*": {"a": "b"},
-            "[3]": {"x": "y"}
-
+            "*": {
+                "a": "b"
+            },
+            "[3]": {
+                "x": "y"
+            }
         },
         "objectArrayFill": {
             "*": "=toList(0)",
@@ -21,39 +27,100 @@
         "emptyMap": {},
         "emptyList": []
     },
-
     "context": {},
-
     "OVERWRITR": {
         "objectMapFill": [
-            {"a": "b"},{"a": "b"},{"a": "b"},{"a": "b", "x": "y"}
+            {
+                "a": "b"
+            },
+            {
+                "a": "b"
+            },
+            {
+                "a": "b"
+            },
+            {
+                "a": "b",
+                "x": "y"
+            }
         ],
         "objectArrayFill": [
-            [0],[0],[0],[0],[0]
+            [
+                0
+            ],
+            [
+                0
+            ],
+            [
+                0
+            ],
+            [
+                0
+            ],
+            [
+                0
+            ]
         ],
         "emptyMap": {},
         "emptyList": []
     },
-
     "DEFAULTR": {
-        "objectMapFill" : [
-            {"a": "b"},{"a": "b"},{"a": "b"},{"a": "b", "x": "y"}
+        "objectMapFill": [
+            {
+                "a": "b"
+            },
+            {
+                "a": "b"
+            },
+            {
+                "a": "b"
+            },
+            {
+                "a": "b",
+                "x": "y"
+            }
         ],
-        "objectArrayFill" : [
-            [],[],[],[0],[4]
+        "objectArrayFill": [
+            [],
+            [],
+            [],
+            [
+                0
+            ],
+            [
+                4
+            ]
         ],
-        "emptyMap" : { },
-        "emptyList" : []
+        "emptyMap": {},
+        "emptyList": []
     },
-
     "DEFINR": {
-        "objectMapFill" : [
-            {"a": "b"},{"a": "b"},{"a": "b"},{"x": "y"}
+        "objectMapFill": [
+            {
+                "a": "b"
+            },
+            {
+                "a": "b"
+            },
+            {
+                "a": "b"
+            },
+            {
+                "x": "y"
+            }
         ],
-        "objectArrayFill" : [
-            [],[],[],[0],[4]
+        "objectArrayFill": [
+            [],
+            [],
+            [],
+            [
+                0
+            ],
+            [
+                4
+            ]
         ],
-        "emptyMap" : {},
-        "emptyList" : []
+        "emptyMap": {},
+        "emptyList": []
     }
 }

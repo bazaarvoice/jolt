@@ -32,14 +32,16 @@
             }
         ]
     },
-
     "spec": {
         "books": {
             "*": {
                 "availability": {
-                    "*": { // match all elements of the availability array
-                        "*": { // match any availability type
-                            "@(3,book.title)": "&[]"  // Look up the tree 3 levels, then back down and grab the value for the "title"
+                    "*": {
+                        // match all elements of the availability array
+                        "*": {
+                            // match any availability type
+                            "@(3,book.title)": "&[]"
+                            // Look up the tree 3 levels, then back down and grab the value for the "title"
                             //  and write out to the top level
                         }
                     }
@@ -47,9 +49,14 @@
             }
         }
     },
-
     "expected": {
-        "paperback": [ "Scala", "Java" ],
-        "online": [ "JavaScript", "Scala" ]
+        "paperback": [
+            "Scala",
+            "Java"
+        ],
+        "online": [
+            "JavaScript",
+            "Scala"
+        ]
     }
 }

@@ -2,11 +2,12 @@
     "input": {
         "foo": "bar"
     },
-
     "spec": {
-        "foo": ["a", "b"]
+        "foo": [
+            "a",
+            "b"
+        ]
     },
-
     "expected": {
         "a": "bar",
         "b": "bar"

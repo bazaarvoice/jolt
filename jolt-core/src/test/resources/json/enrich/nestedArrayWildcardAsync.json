@@ -1,0 +1,63 @@
+{
+    "spec": [
+        {
+            "operation": "enrich",
+            "spec": {
+                "executionMode": "async",
+                "enrichments": [
+                    {
+                        "path": "orders.[*].items.[*].sku",
+                        "outputPath": "orders.[*].items.[*].inventoryCode",
+                        "className": "io.joltcommunity.jolt.enrich.EnrichrTestHelper",
+                        "method": "asyncUppercase"
+                    }
+                ]
+            }
+        }
+    ],
+    "input": {
+        "orders": [
+            {
+                "items": [
+                    {
+                        "sku": "sku-1"
+                    },
+                    {
+                        "sku": "sku-2"
+                    }
+                ]
+            },
+            {
+                "items": [
+                    {
+                        "sku": "sku-3"
+                    }
+                ]
+            }
+        ]
+    },
+    "expected": {
+        "orders": [
+            {
+                "items": [
+                    {
+                        "sku": "sku-1",
+                        "inventoryCode": "SKU-1"
+                    },
+                    {
+                        "sku": "sku-2",
+                        "inventoryCode": "SKU-2"
+                    }
+                ]
+            },
+            {
+                "items": [
+                    {
+                        "sku": "sku-3",
+                        "inventoryCode": "SKU-3"
+                    }
+                ]
+            }
+        ]
+    }
+}

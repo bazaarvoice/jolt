@@ -1,17 +1,17 @@
 {
-    "must" : [
+    "must": [
         {
-            "bool" : {
-                "should" : [
+            "bool": {
+                "should": [
                     null,
                     {
-                        "bool" : {
-                            "must" : [
+                        "bool": {
+                            "must": [
                                 null,
                                 {
-                                    "range" : {
-                                        "firstPublishTime" : {
-                                            "to" : null
+                                    "range": {
+                                        "firstPublishTime": {
+                                            "to": null
                                         }
                                     }
                                 }

@@ -1,0 +1,36 @@
+{
+    "spec": [
+        {
+            "operation": "enrich",
+            "spec": {
+                "executionMode": "async",
+                "enrichments": [
+                    {
+                        "path": "customer.id",
+                        "outputPath": "customer.profile",
+                        "className": "io.joltcommunity.jolt.enrich.EnrichrTestHelper",
+                        "method": "publisherDescribe"
+                    }
+                ]
+            }
+        }
+    ],
+    "input": {
+        "customer": {
+            "id": "cust-123"
+        }
+    },
+    "context": {
+        "tenant": "acme"
+    },
+    "expected": {
+        "customer": {
+            "id": "cust-123",
+            "profile": {
+                "original": "cust-123",
+                "inputType": "LinkedHashMap",
+                "tenant": "acme"
+            }
+        }
+    }
+}

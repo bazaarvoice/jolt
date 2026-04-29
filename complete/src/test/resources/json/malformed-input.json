@@ -1,10 +1,11 @@
 [
     {
-        "operation" "cardinality",
+        "operation"
+        "cardinality",
         "spec": {
             "facets": {
                 "statistics": {
-                    "_type":"MANY"
+                    "_type": "MANY"
                 }
             }
         }
@@ -14,7 +15,7 @@
         "spec": {
             "facets": {
                 "statistics": {
-                    "id":"abc123"
+                    "id": "abc123"
                 }
             }
         }

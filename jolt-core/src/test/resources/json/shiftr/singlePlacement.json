@@ -2,11 +2,9 @@
     "input": {
         "foo": "bar"
     },
-
     "spec": {
         "foo": "a.b.c"
     },
-
     "expected": {
         "a": {
             "b": {

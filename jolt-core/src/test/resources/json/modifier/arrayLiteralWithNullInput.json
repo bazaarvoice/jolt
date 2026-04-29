@@ -2,28 +2,31 @@
     "input": {
         "simpleArray": null
     },
-
     "spec": {
         "simpleArray": {
             "*": 0,
             "[4]": 1
         }
     },
-
     "context": {},
-
     "OVERWRITR": {
         "simpleArray": [
-            0,0,0,0,0
+            0,
+            0,
+            0,
+            0,
+            0
         ]
     },
-
     "DEFAULTR": {
         "simpleArray": [
-            0,0,0,0,1
+            0,
+            0,
+            0,
+            0,
+            1
         ]
     },
-
     "DEFINR": {
         "simpleArray": null
     }

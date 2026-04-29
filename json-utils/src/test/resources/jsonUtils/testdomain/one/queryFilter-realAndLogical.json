@@ -1,11 +1,10 @@
-
 // This works, but overly wordy.
 // The "queryParam" is needlessly repeated.
 //
 // Also note all the real filter values are Strings, aka "value": "3".
 {
     "queryParam": "AND",
-    "filters" : {
+    "filters": {
         "RATING": {
             "queryParam": "RATING",
             "value": "3"
@@ -16,19 +15,19 @@
         },
         "OR": {
             "queryParam": "OR",
-            "filters" : {
-                "ID" : {
+            "filters": {
+                "ID": {
                     "queryParam": "ID",
                     "value": "789"
                 },
-                "AND" : {
+                "AND": {
                     "queryParam": "AND",
-                    "filters" : {
-                        "ISFEATURED" : {
+                    "filters": {
+                        "ISFEATURED": {
                             "queryParam": "ISFEATURED",
                             "value": "true"
                         },
-                        "HASPHOTOS" : {
+                        "HASPHOTOS": {
                             "queryParam": "HASPHOTOS",
                             "value": "true"
                         }

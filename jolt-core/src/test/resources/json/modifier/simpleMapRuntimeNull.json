@@ -2,19 +2,15 @@
     "input": {
         "simpleMap": null
     },
-
     "spec": {
         "simpleMap": {
             "*": 0
         }
     },
-
     "context": {},
-
     "OVERWRITR": {
         "simpleMap": null
     },
-
     "DEFAULTR": {
         "simpleMap": null
     },

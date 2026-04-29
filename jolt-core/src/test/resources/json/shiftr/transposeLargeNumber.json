@@ -1,0 +1,23 @@
+{
+  "input": {
+    "Student": {
+      "Number": 2147483648,
+      "KEY": "label",
+      "VALUE": "test"
+    }
+  },
+  "spec": {
+    "Student": {
+      "VALUE": "Student.data.@(1,Number).@(1,KEY)"
+    }
+  },
+  "expected": {
+    "Student" : {
+      "data" : {
+        "2147483648" : {
+          "label" : "test"
+        }
+      }
+    }
+  }
+}

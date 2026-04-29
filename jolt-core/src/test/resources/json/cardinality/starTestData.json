@@ -1,21 +1,25 @@
 {
-    "input" : {
-        "rating-primary" : [ 5, 4 ],
-        "rating-quality" : [ 4, 5 ],
-
-        "rating-multi" : 3
+    "input": {
+        "rating-primary": [
+            5,
+            4
+        ],
+        "rating-quality": [
+            4,
+            5
+        ],
+        "rating-multi": 3
     },
-
-    "spec" : {
-        "rating-*" : "ONE",
-
-        "rating-multi" : "MANY"  // this is more specific than the "rating-*" so it should "win"
+    "spec": {
+        "rating-*": "ONE",
+        "rating-multi": "MANY"
+        // this is more specific than the "rating-*" so it should "win"
     },
-
-    "expected" : {
-        "rating-primary" : 5,
-        "rating-quality" : 4,
-
-        "rating-multi" : [ 3 ]
+    "expected": {
+        "rating-primary": 5,
+        "rating-quality": 4,
+        "rating-multi": [
+            3
+        ]
     }
 }

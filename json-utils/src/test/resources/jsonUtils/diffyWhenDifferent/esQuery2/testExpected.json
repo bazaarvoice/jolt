@@ -1,59 +1,59 @@
 {
-    "must" : [
+    "must": [
         {
-            "bool" : {
-                "should" : [
+            "bool": {
+                "should": [
                     {
-                        "bool" : {
-                            "must" : [
+                        "bool": {
+                            "must": [
                                 {
-                                    "term" : {
-                                        "client" : "testcustomer-concierge-synd1"
+                                    "term": {
+                                        "client": "testcustomer-concierge-synd1"
                                     }
                                 },
                                 {
-                                    "term" : {
-                                        "subjectProduct.externalId.lc" : "common-product"
+                                    "term": {
+                                        "subjectProduct.externalId.lc": "common-product"
                                     }
                                 }
                             ]
                         }
                     },
                     {
-                        "bool" : {
-                            "must" : [
+                        "bool": {
+                            "must": [
                                 {
-                                    "terms" : {
-                                        "subjectProduct.coordinate" : [
+                                    "terms": {
+                                        "subjectProduct.coordinate": [
                                             "catalog:testcustomer-concierge-synd:/product::common-product"
                                         ]
                                     }
                                 },
                                 {
-                                    "range" : {
-                                        "firstPublishTime" : {
-                                            "from" : null,
-                                            "to" : null,
-                                            "include_lower" : true,
-                                            "include_upper" : false
+                                    "range": {
+                                        "firstPublishTime": {
+                                            "from": null,
+                                            "to": null,
+                                            "include_lower": true,
+                                            "include_upper": false
                                         }
                                     }
                                 }
                             ],
-                            "must_not" : [
+                            "must_not": [
                                 {
-                                    "term" : {
-                                        "subjectProduct.attribute.DISABLED" : true
+                                    "term": {
+                                        "subjectProduct.attribute.DISABLED": true
                                     }
                                 },
                                 {
-                                    "term" : {
-                                        "subjectCategory.attribute.DISABLED" : true
+                                    "term": {
+                                        "subjectCategory.attribute.DISABLED": true
                                     }
                                 },
                                 {
-                                    "terms" : {
-                                        "contentCodes" : [
+                                    "terms": {
+                                        "contentCodes": [
                                             "RET",
                                             "PC",
                                             "PRI",
@@ -68,8 +68,8 @@
             }
         },
         {
-            "term" : {
-                "status" : "APPROVED"
+            "term": {
+                "status": "APPROVED"
             }
         }
     ]

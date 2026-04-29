@@ -13,7 +13,6 @@
             }
         ]
     },
-
     "spec": {
         "Photos": {
             "*": {
@@ -23,12 +22,10 @@
             }
         }
     },
-
     "expected": {
         "photo-0-id": "327703",
         "photo-0-caption": "TEST>> photo 1",
         "photo-0-url": "http://bob.com/0001/327703/photo.jpg",
-
         "photo-1-id": "327704",
         "photo-1-caption": "TEST>> photo 2",
         "photo-1-url": "http://bob.com/0001/327704/photo.jpg"

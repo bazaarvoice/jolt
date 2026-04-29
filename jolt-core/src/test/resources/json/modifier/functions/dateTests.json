@@ -1,0 +1,126 @@
+{
+    "input": {
+        "epochMilli": 1609459200000,
+        "dateString1": "2021-01-01",
+        "dateString2": "2021-01-01 12:00:00",
+        "dateString3": "2000-01-01T12:30:45",
+        "dateForOps": "2000-01-01",
+        "dateTimeForOps": "2000-01-01 12:00:00",
+        "invalidDate": "not-a-date",
+        "invalidDuration": "invalid-duration",
+        "numberValue": 12345
+    },
+    "spec": {
+        "fromEpochMilli": {
+            "basic": "=fromEpochMilli(@(2,epochMilli))",
+            "withPattern": "=fromEpochMilli(@(2,epochMilli), 'yyyy-MM-dd', 'UTC')",
+            "withTimezone": "=fromEpochMilli(@(2,epochMilli), 'yyyy-MM-dd HH:mm:ss', 'America/New_York')",
+            "badArgs1": "=fromEpochMilli(@(2,invalidDate), 'yyyy-MM-dd', 'UTC')",
+            "badArgs2": "=fromEpochMilli(@(2,epochMilli), 123, 'UTC')",
+            "badArgs3": "=fromEpochMilli(@(2,epochMilli), 'yyyy-MM-dd', 456)",
+            "badArgs4": "=fromEpochMilli(@(2,epochMilli), 'INVALID-PATTERN', 'UTC')",
+            "badArgs5": "=fromEpochMilli(@(2,epochMilli), 'yyyy-MM-dd', 'Invalid/Timezone')"
+        },
+
+        "toEpochMilli": {
+            "basic": "=toEpochMilli(@(2,dateString1), 'yyyy-MM-dd', 'UTC')",
+            "withTime": "=toEpochMilli(@(2,dateString2), 'yyyy-MM-dd HH:mm:ss', 'UTC')",
+            "withTimeZone": "=toEpochMilli(@(2,dateString2), 'yyyy-MM-dd HH:mm:ss', 'Europe/Paris')",
+            "badArgs1": "=toEpochMilli(@(2,numberValue), 'yyyy-MM-dd', 'UTC')",
+            "badArgs2": "=toEpochMilli(@(2,invalidDate), 'yyyy-MM-dd', 'UTC')",
+            "badArgs3": "=toEpochMilli(@(2,dateString1), 123, 'UTC')",
+            "badArgs4": "=toEpochMilli(@(2,dateString1), 'yyyy-MM-dd', 456)",
+            "badArgs5": "=toEpochMilli(@(2,dateString1), 'INVALID-PATTERN', 'UTC')",
+            "badArgs6": "=toEpochMilli(@(2,dateString1), 'yyyy-MM-dd', 'Invalid/Timezone')"
+        },
+
+        "dateAdd": {
+            "addDays": "=dateAdd(@(2,dateForOps), 'yyyy-MM-dd', 'P1D', 'UTC')",
+            "addMonths": "=dateAdd(@(2,dateForOps), 'yyyy-MM-dd', 'P2M', 'UTC')",
+            "addYears": "=dateAdd(@(2,dateForOps), 'yyyy-MM-dd', 'P1Y', 'UTC')",
+            "addCombined": "=dateAdd(@(2,dateForOps), 'yyyy-MM-dd', 'P1Y2M3D', 'UTC')",
+            "addHours": "=dateAdd(@(2,dateTimeForOps), 'yyyy-MM-dd HH:mm:ss', 'PT2H', 'UTC')",
+            "badArgs1": "=dateAdd(@(2,numberValue), 'yyyy-MM-dd', 'P1D', 'UTC')",
+            "badArgs2": "=dateAdd(@(2,invalidDate), 'yyyy-MM-dd', 'P1D', 'UTC')",
+            "badArgs3": "=dateAdd(@(2,dateForOps), 123, 'P1D', 'UTC')",
+            "badArgs4": "=dateAdd(@(2,dateForOps), 'yyyy-MM-dd', 456, 'UTC')",
+            "badArgs5": "=dateAdd(@(2,dateForOps), 'yyyy-MM-dd', 'P1D', 789)",
+            "badArgs6": "=dateAdd(@(2,dateForOps), 'INVALID-PATTERN', 'P1D', 'UTC')",
+            "badArgs7": "=dateAdd(@(2,dateForOps), 'yyyy-MM-dd', @(2,invalidDuration), 'UTC')",
+            "badArgs8": "=dateAdd(@(2,dateForOps), 'yyyy-MM-dd', 'P1D', 'Invalid/Timezone')"
+        },
+
+        "dateSubstract": {
+            "subtractDays": "=dateSubstract(@(2,dateForOps), 'yyyy-MM-dd', 'P1D', 'UTC')",
+            "subtractMonths": "=dateSubstract(@(2,dateForOps), 'yyyy-MM-dd', 'P2M', 'UTC')",
+            "subtractYears": "=dateSubstract(@(2,dateForOps), 'yyyy-MM-dd', 'P1Y', 'UTC')",
+            "subtractHours": "=dateSubstract(@(2,dateTimeForOps), 'yyyy-MM-dd HH:mm:ss', 'PT2H', 'UTC')",
+            "badArgs1": "=dateSubstract(@(2,numberValue), 'yyyy-MM-dd', 'P1D', 'UTC')",
+            "badArgs2": "=dateSubstract(@(2,invalidDate), 'yyyy-MM-dd', 'P1D', 'UTC')",
+            "badArgs3": "=dateSubstract(@(2,dateForOps), 123, 'P1D', 'UTC')",
+            "badArgs4": "=dateSubstract(@(2,dateForOps), 'yyyy-MM-dd', 456, 'UTC')",
+            "badArgs5": "=dateSubstract(@(2,dateForOps), 'yyyy-MM-dd', 'P1D', 789)",
+            "badArgs6": "=dateSubstract(@(2,dateForOps), 'INVALID-PATTERN', 'P1D', 'UTC')",
+            "badArgs7": "=dateSubstract(@(2,dateForOps), 'yyyy-MM-dd', @(2,invalidDuration), 'UTC')",
+            "badArgs8": "=dateSubstract(@(2,dateForOps), 'yyyy-MM-dd', 'P1D', 'Invalid/Timezone')"
+        },
+        "formatDate": {
+            "formatDate": "=formatDate(@(2,dateForOps), 'yyyy-MM-dd', 'yyyy MM dd')",
+            "formatDateTime": "=formatDate(@(2,dateTimeForOps), yyyy-MM-dd HH:mm:ss, yyyy-MM-dd'T'HH:mm:ss'Z')",
+            "formatWithTimeZone": "=formatDate(@(2,dateTimeForOps), yyyy-MM-dd HH:mm:ss, yyyy-MM-dd'T'HH:mm:ssXXX, Europe/Paris)",
+            "formatFromTimeZoneToTimeZone": "=formatDate(@(2,dateTimeForOps), yyyy-MM-dd HH:mm:ss, yyyy-MM-dd'T'HH:mm:ss'Z',Europe/Paris, UTC)",
+            "badArgs1": "=formatDate(@(2,numberValue), 'yyyy-MM-dd', 'yyyy MM dd')",
+            "badArgs2": "=formatDate(@(2,invalidDate), 'yyyy-MM-dd', 'yyyy MM dd')",
+            "badArgs3": "=formatDate(@(2,dateForOps), 'yyyy-MM-dd', 456)",
+            "badArgs4": "=formatDate(@(2,dateForOps), 'yyyy-MM-dd', 'yyyy MM dd', 789)",
+            "badArgs5": "=formatDate(@(2,dateForOps), 'INVALID-PATTERN', 'yyyy MM dd')",
+            "badArgs6": "=formatDate(@(2,dateForOps), 'yyyy-MM-dd', 'INVALID-PATTERN')",
+            "badArgs7": "=formatDate(@(2,dateForOps), 'yyyy-MM-dd', 'yyyy MM dd', 'Invalid/Timezone')",
+            "badArgs8": "=formatDate(@(2,dateForOps), 'yyyy-MM-dd', 'yyyy MM dd', 'UTC', 'Invalid/Timezone')"
+        }
+    },
+    "OVERWRITR": {
+        "epochMilli": 1609459200000,
+        "dateString1": "2021-01-01",
+        "dateString2": "2021-01-01 12:00:00",
+        "dateString3": "2000-01-01T12:30:45",
+        "dateForOps": "2000-01-01",
+        "dateTimeForOps": "2000-01-01 12:00:00",
+        "invalidDate": "not-a-date",
+        "invalidDuration": "invalid-duration",
+        "numberValue": 12345,
+
+        "fromEpochMilli": {
+            "basic": "2021-01-01T00:00:00Z",
+            "withPattern": "2021-01-01",
+            "withTimezone": "2020-12-31 19:00:00"
+        },
+
+        "toEpochMilli": {
+            "basic": 1609459200000,
+            "withTime": 1609502400000,
+            "withTimeZone": 1609498800000
+        },
+
+        "dateAdd": {
+            "addDays": "2000-01-02",
+            "addMonths": "2000-03-01",
+            "addYears": "2001-01-01",
+            "addCombined": "2001-03-04",
+            "addHours": "2000-01-01 14:00:00"
+        },
+
+        "dateSubstract": {
+            "subtractDays": "1999-12-31",
+            "subtractMonths": "1999-11-01",
+            "subtractYears": "1999-01-01",
+            "subtractHours": "2000-01-01 10:00:00"
+        },
+        "formatDate": {
+            "formatDate": "2000 01 01",
+            "formatDateTime": "2000-01-01T12:00:00Z",
+            "formatWithTimeZone": "2000-01-01T12:00:00+01:00",
+            "formatFromTimeZoneToTimeZone": "2000-01-01T11:00:00Z"
+        }
+    }
+}

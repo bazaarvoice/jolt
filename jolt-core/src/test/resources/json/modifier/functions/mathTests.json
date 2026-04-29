@@ -7,31 +7,61 @@
             "value": -2.0
         },
         "data3": {
-            "value": [-1,2,3.0]
+            "value": [
+                -1,
+                2,
+                3.0
+            ]
         },
         "data4": {
-            "value": [5, 2],     // Divide 2 integers returning double
-            "test1": [5, 2.0],   // Divide integer and double returns double
-            "test2": [5, 0],     // Divide by 0 returns empty hence noop
-            "test3": [0, 5],     // Divide 0 by any number returns 0
+            "value": [
+                5,
+                2
+            ],
+            // Divide 2 integers returning double
+            "test1": [
+                5,
+                2.0
+            ],
+            // Divide integer and double returns double
+            "test2": [
+                5,
+                0
+            ],
+            // Divide by 0 returns empty hence noop
+            "test3": [
+                0,
+                5
+            ],
+            // Divide 0 by any number returns 0
             "nr": 51,
             "dr": 13
         },
         "data5": {
-            "aInt" : 10,
-            "bInt" : 3,
-            "aDouble" : 10.0,
-            "bDouble" : 3.0
+            "nr": 51,
+            "dr": 13
+        },
+        "data6": {
+            "aInt": 10,
+            "bInt": 3,
+            "aDouble": 10.0,
+            "bDouble": 3.0
+        },
+        "data7": {
+            "bigInt": 123456789012345678901234567890,
+            "bigDec": 123456789012345678901234567890.6,
+            "int": 10,
+            "double": 3.0
         }
     },
-
     "spec": {
         "data1": {
             "max": "=max(@(1,value) , ^value,0)",
             "min": "=min(@(1,value) , ^value,0.0)",
             "double": "=toDouble(@(1,value))",
             "value": "=abs",
-            "intSum": "=intSum",  // Noop. Sum is a list function. Single arg is being passed here.
+            "intSum": "=intSum",
+            // Noop. Sum is a list function. Single arg is being passed here.
             "doubleSum": "=doubleSum"
         },
         "data2": {
@@ -57,75 +87,133 @@
             "test3": "=divide",
             "explicit1": "=divide(@(1,value))",
             "explicit2": "=divide(12,3)",
-            "div": "=divide(@(1,nr),@(1,dr))" ,  // Look up the numerator and denominator from the input
-            "roundedDiv": "=divideAndRound(4, @(1,nr),@(1,dr))",   // Round the result to the 4 decimal points
-            //
-            "badArgs1" : "=divide(1,2,3)", // too many params
-            "badArgs2" : "=divide(1)"      // not enough params
+            "div": "=divide(@(1,nr),@(1,dr))",
+            "badArgs1": "=divide(1,2,3)",
+            // too many params
+            "badArgs2": "=divide(1)"
+            // not enough params
         },
         "data5": {
-            "happyInt":       "=intSubtract(@(1,aInt),@(1,bInt))",
+            "roundedDiv": "=divideAndRound(4, @(1,nr),@(1,dr))",
+            "roundedDivDown": "=divideAndRound(4, 'DOWN', @(1,nr),@(1,dr))",
+            "badArgs1": "=divideAndRound(@(1,nr),@(1,dr))",
+            "badArgs2": "=divideAndRound('DOWN', @(1,nr),@(1,dr))",
+            "badArgs3": "=divideAndRound(4, 5, @(1,nr),@(1,dr))",
+            "badArgs4": "=divideAndRound(4, 'WE', @(1,nr),@(1,dr))"
+        },
+        "data6": {
+            "happyInt": "=intSubtract(@(1,aInt),@(1,bInt))",
             "happyDouble": "=doubleSubtract(@(1,aDouble),@(1,bDouble))",
             //
             // Bad Args
-            "badArgsInt1": "=intSubtract(1)",     // not enough args
-            "badArgsInt2": "=intSubtract(1,2,3)", // too many args
-            "badArgsDouble1": "=doubleSubtract(1)",    // not enough args
-            "badArgsDouble2": "=doubleSubtract(1,2,3)" // too many args
+            "badArgsInt1": "=intSubtract(1)",
+            // not enough args
+            "badArgsInt2": "=intSubtract(1,2,3)",
+            // too many args
+            "badArgsDouble1": "=doubleSubtract(1)",
+            // not enough args
+            "badArgsDouble2": "=doubleSubtract(1,2,3)"
+            // too many args
+        },
+        "data7": {
+            "bigIntMulBigInt": "=multiply(@(1,bigInt),@(1,bigInt))",
+            "bigIntMulBigDec": "=multiply(@(1,bigInt),@(1,bigDec))",
+            "bigIntMulInt": "=multiply(@(1,bigInt),@(1,int))",
+            "bigIntMulDouble": "=multiply(@(1,bigInt),@(1,double))",
+            "rounded": "=multiplyAndRound(4, 3.453, 3.33)",
+            "roundedDown": "=multiplyAndRound(4, 'DOWN', 3.453, 3.33)",
+            "badArgs1": "=multiplyAndRound(@(1,int),@(1,double))",
+            "badArgs2": "=multiplyAndRound('DOWN', @(1,int),@(1,double))",
+            "badArgs3": "=multiplyAndRound(4, 5, @(1,int),@(1,double))",
+            "badArgs4": "=multiplyAndRound(4, 'WE', @(1,int),@(1,double))"
         }
     },
-
     "context": {
-        "value" : 1.0
+        "value": 1.0
     },
-
     "OVERWRITR": {
-
-        "data1" : {
-            "max" : 1.0,
-            "min" : -2,
-            "double" : -2.0,
-            "value" : 2
+        "data1": {
+            "max": 1.0,
+            "min": -2,
+            "double": -2.0,
+            "value": 2
         },
-        "data2" : {
-            "max" : 1.0,
-            "min" : -2.0,
-            "integer" : -2,
-            "value" : 2.0
+        "data2": {
+            "max": 1.0,
+            "min": -2.0,
+            "integer": -2,
+            "value": 2.0
         },
-        "data3" : {
-            "min" : -1,
-            "max" : 3.0,
-            "int" : [ -1, 2, 3 ],
-            "double" : [ -1.0, 2.0, 3.0 ],
-            "abs" : [ 1, 2, 3.0 ],
-            "intSum" : 4,
-            "doubleSum" : 4.0,
-            "longSum" : 4,
+        "data3": {
+            "min": -1,
+            "max": 3.0,
+            "int": [
+                -1,
+                2,
+                3
+            ],
+            "double": [
+                -1.0,
+                2.0,
+                3.0
+            ],
+            "abs": [
+                1,
+                2,
+                3.0
+            ],
+            "intSum": 4,
+            "doubleSum": 4.0,
+            "longSum": 4,
             "value": 4
         },
         "data4": {
             "test1": 2.5,
-            "test2": [5, 0],
+            "test2": [
+                5,
+                0
+            ],
             "test3": 0.0,
             "div": 3.923076923076923,
-            "roundedDiv":3.9231,
             "explicit1": 2.5,
             "explicit2": 4.0,
-            "value": [5, 2],
+            "value": [
+                5,
+                2
+            ],
             "nr": 51,
             "dr": 13
         },
         "data5": {
+            "roundedDiv": 3.9231,
+            "roundedDivDown": 3.9230,
+            "nr": 51,
+            "dr": 13
+        },
+        "data6": {
             // og data
-            "aInt" : 10,
-            "bInt" : 3,
-            "aDouble" : 10.0,
-            "bDouble" : 3.0,
+            "aInt": 10,
+            "bInt": 3,
+            "aDouble": 10.0,
+            "bDouble": 3.0,
             //
             // computed
             "happyInt": 7,
             "happyDouble": 7.0
+        },
+        "data7": {
+            "bigInt": 123456789012345678901234567890,
+            "bigDec": 123456789012345678901234567890.6,
+            "int": 10,
+            "double": 3.0,
+            //
+            // computed
+            "rounded" : 11.4985,
+            "roundedDown" : 11.4984,
+            "bigIntMulBigInt": 15241578753238836750495351562536198787501905199875019052100,
+            "bigIntMulBigDec": 1.5241578753238838E58,
+            "bigIntMulInt": 1234567890123456789012345678900,
+            "bigIntMulDouble": 3.703703670370371E29
         }
     }
 }

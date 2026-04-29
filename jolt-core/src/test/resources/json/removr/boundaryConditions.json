@@ -1,33 +1,29 @@
 {
     "input": {
-        "iamnotinspec":"eh?",
-        "nested":{
-            "level1":"",
-            "level2":"1"
+        "iamnotinspec": "eh?",
+        "nested": {
+            "level1": "",
+            "level2": "1"
         },
-        "wildcard":""
+        "wildcard": ""
     },
-
-    "spec":
-    {
-        "iamnotininput":"",
-        "nested":
-        {
-            "a":{
-                "b":""
+    "spec": {
+        "iamnotininput": "",
+        "nested": {
+            "a": {
+                "b": ""
             }
         },
-        "wildcard":{
-            "*":""
+        "wildcard": {
+            "*": ""
         }
     },
-
     "expected": {
-        "iamnotinspec":"eh?",
-        "nested":{
-            "level1":"",
-            "level2":"1"
+        "iamnotinspec": "eh?",
+        "nested": {
+            "level1": "",
+            "level2": "1"
         },
-        "wildcard":""
+        "wildcard": ""
     }
 }

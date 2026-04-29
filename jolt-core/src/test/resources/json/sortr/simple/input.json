@@ -3,12 +3,16 @@
     "foo": 3,
     "bar": 14,
     "baz": 15,
-
     "~id": 1234,
-
-    "" : "damn empty string",
-
-    "list" : [
-        "zz", "aa", { "z": "z", "~zed" : "zed", "~id" : "ID-123", "b" : "b" }
+    "": "damn empty string",
+    "list": [
+        "zz",
+        "aa",
+        {
+            "z": "z",
+            "~zed": "zed",
+            "~id": "ID-123",
+            "b": "b"
+        }
     ]
 }

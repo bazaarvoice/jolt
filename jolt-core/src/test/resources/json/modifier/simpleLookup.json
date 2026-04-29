@@ -13,7 +13,6 @@
             }
         }
     },
-
     "spec": {
         "photo": {
             "Sizes": {
@@ -28,7 +27,6 @@
             "default": "some default value"
         }
     },
-
     "context": {
         "textValues": {
             "photo": {
@@ -40,7 +38,6 @@
             }
         }
     },
-
     "OVERWRITR": {
         "photo": {
             "Sizes": {

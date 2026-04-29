@@ -4,41 +4,40 @@
         {
             "operation": "default",
             "spec": {
-                "B": "bb"  // default in a silly "B" value
+                "B": "bb"
+                // default in a silly "B" value
             }
         },
         {
             "operation": "shift",
             "spec": {
-                "a": "a", // pass the input "a" value thru
-                "B": "b"  // "adjust" the silly capital B value
+                "a": "a",
+                // pass the input "a" value thru
+                "B": "b"
+                // "adjust" the silly capital B value
             }
         },
         {
-            "operation": "com.bazaarvoice.jolt.chainr.transforms.GoodContextDrivenTransform"
+            "operation": "io.joltcommunity.jolt.chainr.transforms.GoodContextDrivenTransform"
         },
         {
-            "operation": "com.bazaarvoice.jolt.chainr.transforms.GoodSpecAndContextDrivenTransform",
-            "spec" : {
-                "KEY_TO_ADD" : "d"
+            "operation": "io.joltcommunity.jolt.chainr.transforms.GoodSpecAndContextDrivenTransform",
+            "spec": {
+                "KEY_TO_ADD": "d"
             }
         }
     ],
-
-    "tests" : [
+    "tests": [
         {
-            "testCaseName" : "cc & dd",
-
+            "testCaseName": "cc & dd",
             // Input data for the unit test data.   Will verify that this data passes all the way thru.
             "input": {
-                "a" : "aa"
+                "a": "aa"
             },
-
-            "context" : {
-                "test_context_key_1" : "cc",
-                "test_context_key_2" : "dd"
+            "context": {
+                "test_context_key_1": "cc",
+                "test_context_key_2": "dd"
             },
-
             "expected": {
                 "a": "aa",
                 "b": "bb",
@@ -47,17 +46,15 @@
             }
         },
         {
-            "testCaseName" : "xx & yy",
-
+            "testCaseName": "xx & yy",
             "input": {
-                "a" : "aa"
+                "a": "aa"
             },
-
-            "context" : {
-                "test_context_key_1" : "xx",  // verify the context is being used
-                "test_context_key_2" : "yy"
+            "context": {
+                "test_context_key_1": "xx",
+                // verify the context is being used
+                "test_context_key_2": "yy"
             },
-
             "expected": {
                 "a": "aa",
                 "b": "bb",

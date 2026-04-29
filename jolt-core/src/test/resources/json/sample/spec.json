@@ -16,10 +16,10 @@
     {
         "operation": "default",
         "spec": {
-            "Range" : 5,
-            "SecondaryRatings" : {
-                "*" : {
-                    "Range" : 5
+            "Range": 5,
+            "SecondaryRatings": {
+                "*": {
+                    "Range": 5
                 }
             }
         }

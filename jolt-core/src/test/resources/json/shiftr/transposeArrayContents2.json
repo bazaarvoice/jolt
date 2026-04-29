@@ -1,6 +1,6 @@
 {
     "input": {
-        "photos" : [
+        "photos": [
             {
                 "id": "1234",
                 "fileName": "Acme.jpg"
@@ -11,19 +11,17 @@
             }
         ]
     },
-
     "spec": {
-        "photos" : {
-            "*" : {
+        "photos": {
+            "*": {
                 "@fileName": "photos.@id"
             }
         }
     },
-
     "expected": {
-        "photos" : {
-            "1234" : "Acme.jpg",
-            "9876" : "Boxy.jpg"
+        "photos": {
+            "1234": "Acme.jpg",
+            "9876": "Boxy.jpg"
         }
     }
 }

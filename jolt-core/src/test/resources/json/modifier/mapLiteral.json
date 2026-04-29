@@ -9,7 +9,6 @@
             "5": null
         }
     },
-
     "spec": {
         "simpleMap": {
             "*": 0,
@@ -19,11 +18,9 @@
             "9": null
         }
     },
-
     "context": {
         "value": 5
     },
-
     "OVERWRITR": {
         "simpleMap": {
             "0": 0,
@@ -38,7 +35,6 @@
             "9": 0
         }
     },
-
     "DEFAULTR": {
         "simpleMap": {
             "0": 0,

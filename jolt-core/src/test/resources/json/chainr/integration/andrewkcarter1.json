@@ -18,7 +18,6 @@
             }
         ]
     },
-
     "spec": [
         {
             "operation": "shift",
@@ -26,27 +25,26 @@
                 "entities": {
                     // The "*" matches each Map pair of "type" and "data".
                     // We then write the Map pair, to the value of the "type" key, in a forced array
-                    "*" : "@type[]"
+                    "*": "@type[]"
                 }
             }
         }
     ],
-
     "expected": {
-        "alpha":[
+        "alpha": [
             {
-                "type":"alpha",
-                "data":"foo"
+                "type": "alpha",
+                "data": "foo"
             },
             {
-                "type":"alpha",
-                "data":"baz"
+                "type": "alpha",
+                "data": "baz"
             }
         ],
-        "beta":[
+        "beta": [
             {
-                "type":"beta",
-                "data":"bar"
+                "type": "beta",
+                "data": "bar"
             }
         ]
     }
